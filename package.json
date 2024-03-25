@@ -1,8 +1,10 @@
 {
   "name": "wmm",
-  "private": true,
   "version": "0.0.0",
-  "type": "module",
+  "description": "Where's My Money",
+  "private": true,
+  "author": "xcarolr@gmail.com",
+  "license": "MIT",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -10,11 +12,19 @@
     "tauri": "tauri"
   },
   "dependencies": {
-    "vue": "^3.4.21"
+    "@mdi/js": "^7.4.47",
+    "vue": "^3.4.21",
+    "vuetify": "^3.5.11"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^1.5.11",
     "@vitejs/plugin-vue": "^5.0.4",
-    "vite": "^5.2.0"
+    "@vue/eslint-config-airbnb": "^8.0.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-vue": "^9.24.0",
+    "prettier": "^3.2.5",
+    "vite": "^5.2.0",
+    "vite-plugin-vuetify": "^2.0.3"
   }
 }
