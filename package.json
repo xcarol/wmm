@@ -9,11 +9,13 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
     "tauri": "tauri"
   },
   "dependencies": {
     "@mdi/js": "^7.4.47",
     "vue": "^3.4.21",
+    "vue-router": "^4.3.0",
     "vuetify": "^3.5.11"
   },
   "devDependencies": {
