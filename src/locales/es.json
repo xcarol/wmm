@@ -1,0 +1,24 @@
+{
+  "ca": "Català",
+  "ca-ES": "fallback:ca",
+  "en": "English",
+  "en-US": "fallback:en",
+  "es": "Español",
+  "languages": {
+    "ca": "Català",
+    "es": "Castellano",
+    "en": "English"
+  },
+  "global": {
+    "help": "ayuda",
+    "feedback": "feedback"
+  },
+  "menu": {
+    "account": "Cuenta",
+    "logout": "Salir"
+  },
+  "fields": {
+    "fullname": "Nombre",
+    "email": "Email"
+  }
+}

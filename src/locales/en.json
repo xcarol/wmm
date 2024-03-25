@@ -1,0 +1,24 @@
+{
+  "ca": "Català",
+  "ca-ES": "fallback:ca",
+  "en": "English",
+  "en-US": "fallback:en",
+  "es": "Español",
+  "languages": {
+    "ca": "Català",
+    "es": "Castellano",
+    "en": "English"
+  },
+  "global": {
+    "help": "help",
+    "feedback": "feedback"
+  },
+  "menu": {
+    "account": "Account",
+    "logout": "Logout"
+  },
+  "fields": {
+    "fullname": "Name",
+    "email": "Email"
+  }
+}
