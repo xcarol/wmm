@@ -13,9 +13,9 @@
     "help": "help",
     "feedback": "feedback"
   },
-  "menu": {
-    "account": "Account",
-    "logout": "Logout"
+  "import_csv": {
+    "title": "Import CSV File",
+    "import_button": "Selecct a file..."
   },
   "fields": {
     "fullname": "Name",

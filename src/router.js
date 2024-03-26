@@ -4,12 +4,7 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: () => import('./components/HelloWorld.vue'),
-  },
-  {
-    path: '/footer',
-    name: 'Footer',
-    component: () => import('./components/AppFooter.vue'),
+    component: () => import('./views/ImportCsvFile.vue'),
   },
   {
     path: '/:pathMatch(.*)*',

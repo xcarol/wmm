@@ -13,9 +13,10 @@
     "help": "ajuda",
     "feedback": "feedback"
   },
-  "menu": {
-    "account": "Compte",
-    "logout": "Sortir"
+  "import_csv": {
+    "title": "Importació d'un arxiu CSV",
+    "no_file_selected": "Cap arxiu sel·leccionat",
+    "import_button": "Selecciona un arxiu..."
   },
   "fields": {
     "fullname": "Nom",
