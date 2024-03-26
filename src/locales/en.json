@@ -15,7 +15,8 @@
   },
   "import_csv": {
     "title": "Import CSV File",
-    "import_button": "Selecct a file..."
+    "label": "Selecct a file...",
+    "button": "Import"
   },
   "fields": {
     "fullname": "Name",

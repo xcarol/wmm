@@ -16,7 +16,8 @@
   "import_csv": {
     "title": "Importación de un archivo CSV",
     "no_file_selected": "Ningun archivo seleccionado",
-    "import_button": "Selecciona un archivo..."
+    "label": "Selecciona un archivo...",
+    "button": "Importar"
   },
   "fields": {
     "fullname": "Nombre",
