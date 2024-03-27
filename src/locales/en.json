@@ -16,7 +16,7 @@
   "import_csv": {
     "title": "Import CSV File",
     "label": "Selecct a file...",
-    "button": "Import"
+    "open_button": "Open"
   },
   "fields": {
     "fullname": "Name",

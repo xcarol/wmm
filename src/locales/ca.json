@@ -17,7 +17,7 @@
     "title": "Importació d'un arxiu CSV",
     "no_file_selected": "Cap arxiu sel·leccionat",
     "label": "Selecciona un arxiu...",
-    "button": "Importar"
+    "open_button": "Obrir"
   },
   "fields": {
     "fullname": "Nom",

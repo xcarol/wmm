@@ -17,7 +17,7 @@
     "title": "Importación de un archivo CSV",
     "no_file_selected": "Ningun archivo seleccionado",
     "label": "Selecciona un archivo...",
-    "button": "Importar"
+    "open_button": "Abrir"
   },
   "fields": {
     "fullname": "Nombre",
