@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 class Api {
   endpoints = {
-    endPoint: 'end-point',
+    categories: 'categories',
   };
 
   genericError = 'An error ocurred. Try it again later...';
@@ -29,14 +29,9 @@ class Api {
     return this.genericError;
   }
 
-  login(dataValues) {
-    const url = Api.endpoint(this.endpoints.endPoint);
-
-    const data = {
-      dataValues,
-    };
-
-    return this.axios.post(url, data);
+  categories() {
+    const url = Api.endpoint(this.endpoints.categories);
+    return this.axios.get(url);
   }
 
 }

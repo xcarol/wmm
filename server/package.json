@@ -7,14 +7,14 @@
   "author": "xcarolr@gmail.com",
   "license": "MIT",
   "scripts": {
-    "start": "node server/index.js",
-    "dev": "nodemon server",
-    "lint": "eslint -c .eslintrc.js {server}/**",
-    "lint:fix": "eslint --fix -c .eslintrc.js {server}/**"
+    "start": "node api/index.js",
+    "dev": "nodemon api",
+    "lint": "eslint -c .eslintrc.js {api}/**",
+    "lint:fix": "eslint --fix -c .eslintrc.js {api}/**"
   },
   "dependencies": {
     "express": "^4.19.2",
-    "mysql": "^2.18.1"
+    "mysql2": "^3.10.0"
   },
   "devDependencies": {
     "eslint": "^8.7.0",

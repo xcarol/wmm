@@ -8,13 +8,20 @@
 import axios from 'axios';
 
 // Full config:  https://github.com/axios/axios#request-config
-axios.defaults.baseURL = import.meta.env.VITE_API_URL || '';
+axios.defaults.baseURL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:3000/';
 
 const _axios = axios.create();
 
 _axios.interceptors.request.use(
+  function (_config) {
+    _config.headers = {
+      'Content-Type': 'application/json',
+    };
+    return _config;
+  },
   function (error) {
     // Do something with request error
+    console.log(error);
     return Promise.reject(error);
   },
 );
