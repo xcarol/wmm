@@ -1,5 +1,5 @@
 <template>
-  <a>a</a>
+  <a>{{ $t('global.hello') }}</a>
 </template>
 
 <script setup>
