@@ -1,26 +1,26 @@
 const mysql = require("mysql2/promise");
 
-const connection = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "secret",
-  database: "wmm",
-});
-
-const getAllCategories = () => {
-  return new Promise((resolve, reject) => {
-    const query = "SELECT DISTINCT(category) FROM filters";
-    connection.query(query, (err, result) => {
-      if (err) {
-        reject(err);
-        return;
-      }
-      resolve(result.map((row) => row.category_name));
-    });
+async function getConnection() {
+  return await mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "secret",
+    database: "wmm",
   });
-};
+}
+
+async function getAllCategories() {
+  try {
+    const connection = await getConnection();
+    const query = "SELECT DISTINCT(category) FROM filters";
+    const result = await connection.query(query);
+    return result.map((row) => row.category_name);
+  } catch (err) {
+    console.error("Error fetching categories:", err);
+    throw err; // Re-throw the error for handling in the caller
+  }
+}
 
 module.exports = {
-  connection,
   getAllCategories,
 };
