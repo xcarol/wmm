@@ -1,5 +1,6 @@
+const { getAllCategories } = require("./database");
 
-module.exports = (app, connection) => {
+module.exports = (app) => {
   app.get("/categories", async (req, res) => {
     try {
       const categories = await getAllCategories();
