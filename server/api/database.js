@@ -14,10 +14,10 @@ async function getAllCategories() {
     const connection = await getConnection();
     const query = "SELECT DISTINCT(category) FROM filters";
     const result = await connection.query(query);
-    return result.map((row) => row.category_name);
+    return result.at(0).map((row) => row.category);
   } catch (err) {
     console.error("Error fetching categories:", err);
-    throw err; // Re-throw the error for handling in the caller
+    throw err;
   }
 }
 
