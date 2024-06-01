@@ -7,15 +7,21 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
+.env
+.env.test
+.env.local
+.env.*.local
+
 .DS_Store
-dist
-dist-ssr
 coverage
 *.local
 
 /cypress/videos/
 /cypress/screenshots/
+node_modules/
+
+dist
+dist-ssr
 
 # Editor directories and files
 .vscode/*
