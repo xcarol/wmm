@@ -11,5 +11,9 @@
   },
   "global": {
     "hello": "Hola buenos días!"
+  },
+  "mainDrawer": {
+    "Import": "Importar",
+    "Categorize": "Categorizar"
   }
 }

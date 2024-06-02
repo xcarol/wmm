@@ -11,5 +11,9 @@
   },
   "global": {
     "hello": "Hola noi!"
+  },
+  "mainDrawer": {
+    "Import": "Importar",
+    "Categorize": "Categoritzar"
   }
 }
