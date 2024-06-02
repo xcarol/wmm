@@ -17,6 +17,10 @@
     "categorize": "Categorizar"
   },
   "importView": {
-    "title": "Importa un archivo CSV"
+    "title": "Importa un archivo CSV",
+    "selectFileButton": "Abrir...",
+    "dateColumnLabel": "Columna de la fecha",
+    "descriptionColumnLabel": "Columna de la descripción",
+    "amountColumnLabel": "Columna de la cantidad"
   }
 }
