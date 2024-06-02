@@ -14,7 +14,7 @@
     >
       <v-list :items="items"></v-list>
     </v-navigation-drawer>
-    <v-main>
+    <v-main class="app-backgroud">
       <router-view />
     </v-main>
   </v-app>
@@ -39,3 +39,12 @@ const items = [
   },
 ];
 </script>
+<style scoped>
+.app-backgroud {
+  background-image: url('logo-semi.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh;
+}
+</style>
