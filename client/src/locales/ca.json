@@ -13,7 +13,10 @@
     "hello": "Hola noi!"
   },
   "mainDrawer": {
-    "Import": "Importar",
-    "Categorize": "Categoritzar"
+    "import": "Importar",
+    "categorize": "Categoritzar"
+  },
+  "importView": {
+    "title": "Importa un arxiu CSV"
   }
 }
