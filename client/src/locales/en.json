@@ -1,0 +1,19 @@
+{
+  "ca": "Català",
+  "ca-ES": "fallback:ca",
+  "es": "Español",
+  "en": "English",
+  "en-US": "fallback:en",
+  "languages": {
+    "ca": "Català",
+    "es": "Castellano",
+    "en": "English"
+  },
+  "global": {
+    "hello": "Hello!"
+  },
+  "mainDrawer": {
+    "Import": "Import",
+    "Categorize": "Categorize"
+  }
+}

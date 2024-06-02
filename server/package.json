@@ -1,0 +1,27 @@
+{
+  "name": "wmm-api",
+  "version": "0.0.1",
+  "description": "Where's My Money - Backend",
+  "private": true,
+  "main": "index.js",
+  "author": "xcarolr@gmail.com",
+  "license": "MIT",
+  "scripts": {
+    "start": "node api/index.js",
+    "dev": "nodemon api",
+    "lint": "eslint -c .eslintrc.js {api}/**",
+    "lint:fix": "eslint --fix -c .eslintrc.js {api}/**"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "mysql2": "^3.10.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.7.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-security": "^1.4.0",
+    "nodemon": "^2.0.15"
+  }
+}
