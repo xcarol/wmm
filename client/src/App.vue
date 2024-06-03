@@ -13,12 +13,14 @@
     <v-main class="app-backgroud">
       <router-view />
     </v-main>
+    <snack-bar />
   </v-app>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import AppDrawer from './components/AppDrawer.vue';
+import SnackBar from './components/SnackBar.vue';
 
 const showDrawer = ref(false);
 const title = ref("Where's My Money");

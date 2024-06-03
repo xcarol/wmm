@@ -32,8 +32,12 @@
 <script setup>
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useCsvFile } from '../plugins/csvfile';
+import { useAppStore } from '../stores/app';
 
 const { t: $t } = useI18n();
+const csvfile = useCsvFile();
+const appStore = useAppStore();
 
 const fileName = ref($t('importView.importFileInputLabel'));
 const dateItems = ref([]);
@@ -44,8 +48,10 @@ const readFileContent = (file) => {
   const reader = new FileReader();
   reader.onload = (event) => {
     const fileContent = event.target.result;
-    // Processa el contingut del fitxer
-    console.log(fileContent);
+
+    if (csvfile.isValidCsvFile(fileContent.slice(0,300)) === false) {
+      appStore.alertMessage = $t('importView.invalidFile');
+    }
   };
   reader.readAsText(file);
 };
@@ -56,5 +62,4 @@ const handleFileChange = (event) => {
     readFileContent(selectedFile);
   }
 };
-
 </script>

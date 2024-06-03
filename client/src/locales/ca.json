@@ -10,7 +10,7 @@
     "en": "English"
   },
   "global": {
-    "hello": "Hola noi!"
+    "close": "Tanca"
   },
   "mainDrawer": {
     "import": "Importar",
@@ -21,6 +21,7 @@
     "importFileInputLabel": "Selecciona un arxiu CSV",
     "dateColumnLabel": "Columna de la data",
     "descriptionColumnLabel": "Columna de la descripció",
-    "amountColumnLabel": "Columna de la quantitat"
+    "amountColumnLabel": "Columna de la quantitat",
+    "invalidFile": "Aquest no és un arxiu CSV vàlid"
   }
 }

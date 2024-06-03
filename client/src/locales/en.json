@@ -10,7 +10,7 @@
     "en": "English"
   },
   "global": {
-    "hello": "Hello!"
+    "close": "Close"
   },
   "mainDrawer": {
     "import": "Import",
@@ -21,6 +21,7 @@
     "importFileInputLabel": "Select a CSV file",
     "dateColumnLabel": "Column with the date",
     "descriptionColumnLabel": "Column with the description",
-    "amountColumnLabel": "Column with the amount"
+    "amountColumnLabel": "Column with the amount",
+    "invalidFile": "This is not a valid CSV file"
   }
 }
