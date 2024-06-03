@@ -1,8 +1,14 @@
 /* eslint-disable no-param-reassign */
 class CsvFile {
-  charCode10 = 0x0A;
+  csvRows = [];
 
-  charCode13 = 0x0D;
+  csvRowCount = 0;
+
+  csvFields = 0;
+
+  charCode10 = 0x0a;
+
+  charCode13 = 0x0d;
 
   charCode20 = 0x20;
 
@@ -12,18 +18,43 @@ class CsvFile {
 
   charCodeFF = 0xff;
 
+  lineRegEx = /\n|\r\n/;
+
   isValidCsvFile(content) {
     for (let n = 0; n < content.length; n += 1) {
       const charCode = content.charCodeAt(n);
-      if (!(charCode === this.charCode10 || charCode === this.charCode13 ||
-        (charCode >= this.charCode20 && charCode <= this.charCode7F) ||
-        (charCode >= this.charCodeA0 && charCode <= this.charCodeFF)
-      )) {
+      if (
+        !(
+          charCode === this.charCode10 ||
+          charCode === this.charCode13 ||
+          (charCode >= this.charCode20 && charCode <= this.charCode7F) ||
+          (charCode >= this.charCodeA0 && charCode <= this.charCodeFF)
+        )
+      ) {
         return false;
       }
     }
 
     return true;
+  }
+
+  parseRows(lines) {
+    lines.forEach((line) => {
+      const fields = line.split('","');
+      const rowFields = [];
+      fields.forEach((field) => {
+        rowFields.push(field.replace(/^"|"$|\\n$/, ''));
+      });
+      this.csvRows.push(rowFields);
+    });
+    this.csvRowCount = this.csvRows.length;
+    if (this.csvRowCount) {
+      this.csvFields = this.csvRows.at(0).length;
+    }
+  }
+
+  read(content) {
+    this.parseRows(content.split(this.lineRegEx));
   }
 }
 
