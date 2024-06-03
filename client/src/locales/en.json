@@ -18,7 +18,7 @@
   },
   "importView": {
     "title": "Import CSV File",
-    "selectFileButton": "Open...",
+    "importFileInputLabel": "Select a CSV file",
     "dateColumnLabel": "Column with the date",
     "descriptionColumnLabel": "Column with the description",
     "amountColumnLabel": "Column with the amount"

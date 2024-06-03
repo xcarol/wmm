@@ -18,7 +18,7 @@
   },
   "importView": {
     "title": "Importa un arxiu CSV",
-    "selectFileButton": "Obrir...",
+    "importFileInputLabel": "Selecciona un arxiu CSV",
     "dateColumnLabel": "Columna de la data",
     "descriptionColumnLabel": "Columna de la descripció",
     "amountColumnLabel": "Columna de la quantitat"
