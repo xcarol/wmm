@@ -4,24 +4,12 @@
       <template #prepend>
         <v-app-bar-nav-icon @click.stop="showDrawer = !showDrawer"></v-app-bar-nav-icon>
       </template>
-
       <v-app-bar-title>{{ title }}</v-app-bar-title>
     </v-app-bar>
-    <v-navigation-drawer
-      v-model="showDrawer"
-      :fixed="$vuetify.display.mdAndDown"
-      :bottom="$vuetify.display.xs"
-    >
-      <v-list :items="items">
-        <v-list-item
-          v-for="(item, index) in items"
-          :key="index"
-          @click="selectItem(item)"
-        >
-          {{ item.title }}
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
+    <app-drawer
+      :show="showDrawer"
+      @on-option-selected="optionSelected"
+    />
     <v-main class="app-backgroud">
       <router-view />
     </v-main>
@@ -30,47 +18,17 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useRouter } from 'vue-router';
+import AppDrawer from './components/AppDrawer.vue';
 
-const { t: $t } = useI18n();
-const router = useRouter();
-
-const showDrawer = ref(true);
+const showDrawer = ref(false);
 const title = ref("Where's My Money");
 
-const items = [
-  {
-    title: $t('mainDrawer.import'),
-    value: '/import',
-    barTitle: $t('importView.title'),
-  },
-  {
-    title: $t('mainDrawer.categorize'),
-    value: '/categorize',
-  },
-];
-
-const selectItem = (item) => {
+const optionSelected = (optionTitle) => {
   showDrawer.value = false;
-  router.push(item.value);
+  title.value = optionTitle;
 };
-
-router.beforeEach((to) => {
-  if (to.path === '/') {
-    title.value = "Where's My Money";
-    return;
-  }
-  
-  items.forEach((item) => {
-    if (item.value === to.path) {
-      title.value = item.barTitle;
-    }
-  });
-});
-
-
 </script>
+
 <style scoped>
 .app-backgroud {
   background-image: url('logo-semi.png');
