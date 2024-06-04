@@ -9,7 +9,7 @@ async function getConnection() {
   });
 }
 
-async function getAllCategories() {
+async function getCategories() {
   try {
     const connection = await getConnection();
     const query = "SELECT DISTINCT(category) FROM filters";
@@ -21,6 +21,19 @@ async function getAllCategories() {
   }
 }
 
+async function getBankNames() {
+  try {
+    const connection = await getConnection();
+    const query = "SELECT DISTINCT(bank) FROM transactions";
+    const result = await connection.query(query);
+    return result.at(0).map((row) => row.bank);
+  } catch (err) {
+    console.error("Error fetching bank names:", err);
+    throw err;
+  }
+}
+
 module.exports = {
-  getAllCategories,
+  getCategories,
+  getBankNames
 };

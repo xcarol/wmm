@@ -71,7 +71,7 @@
     <v-combobox
       v-model="selectedBankName"
       :label="$t('importView.bankLabel')"
-      :item="bankNames"
+      :items="bankNames"
       :disabled="noFileLoaded"
       variant="outlined"
     />
@@ -86,15 +86,19 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onBeforeMount } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useCsvFile } from '../plugins/csvfile';
 import { useAppStore } from '../stores/app';
+import { useApi } from '../plugins/api';
 
 const { t: $t } = useI18n();
 const csvfile = useCsvFile();
 const appStore = useAppStore();
+const api = useApi();
+
 const fileName = ref([]);
+const bankNames = ref([]);
 const fileNameLabel = ref($t('importView.importFileInputLabel'));
 const firstRowIsAHeader = ref(false);
 const selectedDateColumn = ref('');
@@ -213,6 +217,14 @@ const handleFileChange = (event) => {
     readFileContent(selectedFile);
   }
 };
+
+const getBankNames = async () => {
+  const dbNames = await api.bankNames();
+  console.log(dbNames);
+  bankNames.value = dbNames.data;
+};
+
+onBeforeMount(() => getBankNames());
 
 const resetView = () => {
   csvfile.reset();

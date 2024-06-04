@@ -2,6 +2,7 @@
 class Api {
   endpoints = {
     categories: 'categories',
+    banknames: 'banknames',
   };
 
   genericError = 'An error ocurred. Try it again later...';
@@ -34,6 +35,10 @@ class Api {
     return this.axios.get(url);
   }
 
+  bankNames() {
+    const url = Api.endpoint(this.endpoints.banknames);
+    return this.axios.get(url);
+  }
 }
 
 const api = new Api();
