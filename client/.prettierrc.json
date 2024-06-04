@@ -5,5 +5,5 @@
   "singleQuote": true,
   "singleAttributePerLine": true,
   "printWidth": 100,
-  "trailingComma": "es5"
+  "trailingComma": "all"
 }
