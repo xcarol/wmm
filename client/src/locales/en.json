@@ -24,6 +24,8 @@
     "amountColumnLabel": "Column with the amount",
     "invalidFile": "This is not a valid CSV file",
     "firstRowIsAHeader": "First row is the header",
-    "rowCountLabel": "This file contains %d rows."
+    "rowCountLabel": "This file contains %d rows.",
+    "bankLabel": "Bank name",
+    "importButtonLabel": "Import"
   }
 }

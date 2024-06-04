@@ -24,6 +24,8 @@
     "amountColumnLabel": "Columna de la cantidad",
     "invalidFile": "Este no es un archivo CSV válido",
     "firstRowIsAHeader": "La primera fila es la cabecera",
-    "rowCountLabel": "Este archivo contiene %d filas."
+    "rowCountLabel": "Este archivo contiene %d filas.",
+    "bankLabel": "Nombre del banco",
+    "importButtonLabel": "Importar"
   }
 }

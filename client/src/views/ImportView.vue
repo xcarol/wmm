@@ -67,6 +67,22 @@
       variant="outlined"
     />
   </v-container>
+  <v-container>
+    <v-combobox
+      v-model="selectedBankName"
+      :label="$t('importView.bankLabel')"
+      :item="bankNames"
+      :disabled="noFileLoaded"
+      variant="outlined"
+    />
+  </v-container>
+  <v-container>
+    <v-btn
+      class="align-button-right"
+      :disabled="formNotFilled"
+      >{{ $t('importView.importButtonLabel') }}</v-btn
+    >
+  </v-container>
 </template>
 
 <script setup>
@@ -84,6 +100,7 @@ const firstRowIsAHeader = ref(false);
 const selectedDateColumn = ref('');
 const selectedDescriptionColumn = ref('');
 const selectedAmountColumn = ref('');
+const selectedBankName = ref('');
 
 const tableRowsItems = () => {
   const items = [];
@@ -161,7 +178,15 @@ const noFileLoaded = computed(() => rowsToParse.value === 0);
 const tableHeaders = computed(() => (rowsToParse.value === 0 ? [] : tableHeaderItems()));
 const tableItems = computed(() => (rowsToParse.value === 0 ? [] : tableRowsItems()));
 const rowCountLabel = computed(() =>
-  rowsToParse.value === 0 ? '' : $t('importView.rowCountLabel').replace('%d', rowsToParse.value)
+  rowsToParse.value === 0 ? '' : $t('importView.rowCountLabel').replace('%d', rowsToParse.value),
+);
+const formNotFilled = computed(() =>
+  rowsToParse.value === 0
+    ? false
+    : selectedDateColumn.value.length === 0 ||
+      selectedDescriptionColumn.value.length === 0 ||
+      selectedAmountColumn.value.length === 0 ||
+      selectedBankName.value.length === 0,
 );
 
 const readFileContent = (file) => {
@@ -201,5 +226,8 @@ const resetView = () => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.align-button-right {
+  float: right;
 }
 </style>

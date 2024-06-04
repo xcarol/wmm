@@ -24,6 +24,8 @@
     "amountColumnLabel": "Columna de la quantitat",
     "invalidFile": "Aquest no és un arxiu CSV vàlid",
     "firstRowIsAHeader": "La primera fila és la capçalera",
-    "rowCountLabel": "Aquest arxiu conté %d files."
+    "rowCountLabel": "Aquest arxiu conté %d files.",
+    "bankLabel": "Nom del banc",
+    "importButtonLabel": "Importar"
   }
 }
