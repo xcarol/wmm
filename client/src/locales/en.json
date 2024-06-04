@@ -22,6 +22,8 @@
     "dateColumnLabel": "Column with the date",
     "descriptionColumnLabel": "Column with the description",
     "amountColumnLabel": "Column with the amount",
-    "invalidFile": "This is not a valid CSV file"
+    "invalidFile": "This is not a valid CSV file",
+    "firstRowIsAHeader": "First row is the header",
+    "rowCountLabel": "This file contains %d rows."
   }
 }

@@ -1,10 +1,10 @@
 /* eslint-disable no-param-reassign */
 class CsvFile {
-  csvRows = [];
+  rows = [];
 
-  csvRowCount = 0;
+  rowCount = 0;
 
-  csvFields = 0;
+  fieldCount = 0;
 
   charCode10 = 0x0a;
 
@@ -45,16 +45,23 @@ class CsvFile {
       fields.forEach((field) => {
         rowFields.push(field.replace(/^"|"$|\\n$/, ''));
       });
-      this.csvRows.push(rowFields);
+      this.rows.push(rowFields);
     });
-    this.csvRowCount = this.csvRows.length;
-    if (this.csvRowCount) {
-      this.csvFields = this.csvRows.at(0).length;
+    this.rowCount = this.rows.length;
+    if (this.rowCount) {
+      this.fieldCount = this.rows.at(0).length;
     }
   }
 
   read(content) {
+    this.reset();
     this.parseRows(content.split(this.lineRegEx));
+  }
+
+  reset() {
+    this.rows = [];
+    this.rowCount = 0;
+    this.fieldCount = 0;
   }
 }
 
