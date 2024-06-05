@@ -89,22 +89,6 @@ const amountColumnItems = () => {
   return columnItems();
 };
 
-const notifyCheckState = (value) => {
-  emits('checkStateChanged', value);
-};
-
-const notifyDateColumnSelected = (value) => {
-  emits('selectedDateColumn', value);
-};
-
-const notifyDescriptionColumnSelected = (value) => {
-  emits('selectedDescriptionColumn', value);
-};
-
-const notifyAmountColumnSelected = (value) => {
-  emits('selectedAmountColumn', value);
-};
-
 const headerStatus = ref(props.hasHeader);
 const noFileLoaded = computed(() => appStore.csvfile.rowCount === 0);
 const dateItems = computed(() => (appStore.csvfile.rowCount === 0 ? [] : dateColumnItems()));
@@ -112,4 +96,20 @@ const descriptionItems = computed(() =>
   appStore.csvfile.rowCount === 0 ? [] : descriptionColumnItems(),
 );
 const amountItems = computed(() => (appStore.csvfile.rowCount === 0 ? [] : amountColumnItems()));
+
+const notifyCheckState = (value) => {
+  emits('checkStateChanged', value);
+};
+
+const notifyDateColumnSelected = (value) => {
+  emits('selectedDateColumn', dateItems.value.indexOf(value) - 1);
+};
+
+const notifyDescriptionColumnSelected = (value) => {
+  emits('selectedDescriptionColumn', descriptionItems.value.indexOf(value) - 1);
+};
+
+const notifyAmountColumnSelected = (value) => {
+  emits('selectedAmountColumn', amountItems.value.indexOf(value) - 1);
+};
 </script>
