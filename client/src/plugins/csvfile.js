@@ -45,7 +45,9 @@ class CsvFile {
       fields.forEach((field) => {
         rowFields.push(field.replace(/^"|"$|\\n$/, ''));
       });
-      this.rows.push(rowFields);
+      if (rowFields.length > 1) {
+        this.rows.push(rowFields);
+      }
     });
     this.rowCount = this.rows.length;
     if (this.rowCount) {
