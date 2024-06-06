@@ -26,6 +26,8 @@
     "firstRowIsAHeader": "First row is the header",
     "rowCountLabel": "This file contains %d rows.",
     "bankLabel": "Bank name",
-    "importButtonLabel": "Import"
+    "importButtonLabel": "Import",
+    "importedRows": "%d rows imported.",
+    "importError": "Error: '%d' at line: %d"
   }
 }

@@ -26,6 +26,8 @@
     "firstRowIsAHeader": "La primera fila és la capçalera",
     "rowCountLabel": "Aquest arxiu conté %d files.",
     "bankLabel": "Nom del banc",
-    "importButtonLabel": "Importar"
+    "importButtonLabel": "Importar",
+    "importedRows": "S'han importat %d files.",
+    "importError": "Error: '%d' a la línia: %d"
   }
 }

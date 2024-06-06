@@ -82,24 +82,30 @@ const csvDateToSql = (date) =>
 const csvAmountToSql = (amount) => amount.replace('.', '').replace(',', '.');
 
 const importFile = async () => {
-  let rowCount = firstRowIsAHeader.value === true ? 1 : 0;
-  console.log(`rowCount: ${rowCount}`);
-  console.log(`appStore.csvfile.rowCount: ${appStore.csvfile.rowCount}`);
+  const firstRow = firstRowIsAHeader.value === true ? 1 : 0;
+  let rowCount = firstRow;
 
-  for (; rowCount < appStore.csvfile.rowCount; rowCount += 1) {
-    const csvRow = appStore.csvfile.rows.at(rowCount);
-    // eslint-disable-next-line no-await-in-loop 
-    const res = await api
-      .addTransaction(
-        csvDateToSql(csvRow.at(selectedDateColumn.value)),
-        csvRow.at(selectedDescriptionColumn.value).slice(0, DESCRIPTION_LENGTH),
-        csvAmountToSql(csvRow.at(selectedAmountColumn.value)),
-        selectedBankName.value.slice(0, BANK_LENGTH),
-      )
-      .catch((err) => {
-        appStore.alertMessage = err.response.statusText;
-      });
-    console.log(`res: ${res}`);
+  try {
+    for (; rowCount < appStore.csvfile.rowCount; rowCount += 1) {
+      const csvRow = appStore.csvfile.rows.at(rowCount);
+      // eslint-disable-next-line no-await-in-loop
+      await api
+        .addTransaction(
+          csvDateToSql(csvRow.at(selectedDateColumn.value)),
+          csvRow.at(selectedDescriptionColumn.value).slice(0, DESCRIPTION_LENGTH),
+          csvAmountToSql(csvRow.at(selectedAmountColumn.value)),
+          selectedBankName.value.slice(0, BANK_LENGTH),
+        )
+        // eslint-disable-next-line no-loop-func
+        .catch((err) => {
+          throw new Error(err.response.statusText);
+        });
+
+      // TODO: Show progress
+    }
+    appStore.alertMessage = $t('importView.importedRows').replace('%d', rowCount - firstRow);
+  } catch (e) {
+    appStore.alertMessage = $t('importView.importError').replace('%d', e.message).replace('%d', rowCount);
   }
 };
 </script>

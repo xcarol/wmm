@@ -26,6 +26,8 @@
     "firstRowIsAHeader": "La primera fila es la cabecera",
     "rowCountLabel": "Este archivo contiene %d filas.",
     "bankLabel": "Nombre del banco",
-    "importButtonLabel": "Importar"
+    "importButtonLabel": "Importar",
+    "importedRows": "Se han importado %d filas.",
+    "importError": "Error: %d en la línea: %d"
   }
 }
