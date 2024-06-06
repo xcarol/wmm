@@ -24,6 +24,7 @@ async function getCategories() {
   try {
     const connection = await getConnection();
     const result = await connection.query(queryCategoryNames);
+    connection.close();
     return result.at(0).map((row) => row.category);
   } catch (err) {
     console.error("Error fetching categories:", err);
@@ -36,6 +37,7 @@ async function getBankNames() {
     const connection = await getConnection();
     const query = queryBankNames;
     const result = await connection.query(query);
+    connection.close();
     return result.at(0).map((row) => row.bank);
   } catch (err) {
     console.error("Error fetching bank names:", err);
@@ -46,6 +48,7 @@ async function getBankNames() {
 async function addTransaction(date, description, amount, bank) {
   try {
     const connection = await getConnection();
+
     const result = await connection.query(
       queryInsertRow
         .replace(":date", date)
@@ -53,6 +56,7 @@ async function addTransaction(date, description, amount, bank) {
         .replace(":amount", amount)
         .replace(":bank", bank)
     );
+    connection.close();
     return result;
   } catch (err) {
     console.error("Error fetching bank names:", err);
