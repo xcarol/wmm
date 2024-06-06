@@ -13,37 +13,45 @@
     <v-btn
       class="align-button-right"
       :disabled="formNotFilled"
-      >{{ $t('importView.importButtonLabel') }}</v-btn
-    >
+      @click.stop="importFile"
+      >{{ $t('importView.importButtonLabel') }}
+    </v-btn>
   </v-container>
 </template>
 
 <script setup>
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useAppStore } from '../stores/app';
+import { useApi } from '../plugins/api';
 import FileInput from '../components/import-view/FileInput.vue';
 import FilePreview from '../components/import-view/FilePreview.vue';
 import ColumnSelection from '../components/import-view/ColumnSelection.vue';
 import BankSelection from '../components/import-view/BankSelection.vue';
 
+dayjs.extend(customParseFormat);
+dayjs.locale('es');
+
 const { t: $t } = useI18n();
 const appStore = useAppStore();
+const api = useApi();
 
 const firstRowIsAHeader = ref(false);
-const selectedDateColumn = ref('');
-const selectedDescriptionColumn = ref('');
-const selectedAmountColumn = ref('');
+const selectedDateColumn = ref(-1);
+const selectedDescriptionColumn = ref(-1);
+const selectedAmountColumn = ref(-1);
 const selectedBankName = ref('');
 
 const rowsToParse = computed(() => appStore.csvfile.rowCount);
 const formNotFilled = computed(() =>
   rowsToParse.value === 0
-    ? false
-    : selectedDateColumn.value.length === 0 ||
-      selectedDescriptionColumn.value.length === 0 ||
-      selectedAmountColumn.value.length === 0 ||
-      selectedBankName.value.length === 0,
+    ? true
+    : selectedDateColumn.value < 0 ||
+      selectedDescriptionColumn.value < 0 ||
+      selectedAmountColumn.value < 0 ||
+      selectedBankName.value === '',
 );
 
 const updateFirstRowState = (value) => {
@@ -63,7 +71,36 @@ const updateSelectedAmountColumn = (value) => {
 };
 
 const selectedBank = (value) => {
-  selectedBankName.value = value;
+  selectedBankName.value = value ?? '';
+};
+
+const BANK_LENGTH = 200;
+const DESCRIPTION_LENGTH = 200;
+
+const csvDateToSql = (date) =>
+  dayjs(date, 'DD/MM/YYYY').toISOString().replace('T', ' ').replace('.000Z', '');
+const csvAmountToSql = (amount) => amount.replace('.', '').replace(',', '.');
+
+const importFile = async () => {
+  let rowCount = firstRowIsAHeader.value === true ? 1 : 0;
+  console.log(`rowCount: ${rowCount}`);
+  console.log(`appStore.csvfile.rowCount: ${appStore.csvfile.rowCount}`);
+
+  for (; rowCount < appStore.csvfile.rowCount; rowCount += 1) {
+    const csvRow = appStore.csvfile.rows.at(rowCount);
+    // eslint-disable-next-line no-await-in-loop 
+    const res = await api
+      .addTransaction(
+        csvDateToSql(csvRow.at(selectedDateColumn.value)),
+        csvRow.at(selectedDescriptionColumn.value).slice(0, DESCRIPTION_LENGTH),
+        csvAmountToSql(csvRow.at(selectedAmountColumn.value)),
+        selectedBankName.value.slice(0, BANK_LENGTH),
+      )
+      .catch((err) => {
+        appStore.alertMessage = err.response.statusText;
+      });
+    console.log(`res: ${res}`);
+  }
 };
 </script>
 
