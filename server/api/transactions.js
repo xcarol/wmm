@@ -5,6 +5,7 @@ module.exports = (app) => {
     try {
       const data = req.body;
       await addTransaction(data.date, data.description, data.amount, data.bank);
+      res.json("OK")
       res.status(401);
     } catch (err) {
       console.error("Error adding a transaction:", err);
