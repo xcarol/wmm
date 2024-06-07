@@ -10,7 +10,8 @@
     "en": "English"
   },
   "global": {
-    "close": "Close"
+    "close": "Close",
+    "cancel": "Cancel"
   },
   "mainDrawer": {
     "import": "Import",
@@ -28,6 +29,10 @@
     "bankLabel": "Bank name",
     "importButtonLabel": "Import",
     "importedRows": "%d rows imported.",
-    "importError": "Error: '%d' at line: %d"
+    "importError": "Error: '%d' at line: %d",
+    "importingRows": "%d lines of %d imported..."
+  },
+  "progress": {
+    "title": "Operation in progress..."
   }
 }

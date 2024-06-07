@@ -85,6 +85,13 @@ const importFile = async () => {
   const firstRow = firstRowIsAHeader.value === true ? 1 : 0;
   let rowCount = firstRow;
 
+  appStore.startProgress({
+    steps: appStore.csvfile.rowCount,
+    description: $t('importView.importingRows')
+      .replace('%d', rowCount)
+      .replace('%d', appStore.csvfile.rowCount),
+  });
+
   try {
     for (; rowCount < appStore.csvfile.rowCount; rowCount += 1) {
       const csvRow = appStore.csvfile.rows.at(rowCount);
@@ -96,17 +103,28 @@ const importFile = async () => {
           csvAmountToSql(csvRow.at(selectedAmountColumn.value)),
           selectedBankName.value.slice(0, BANK_LENGTH),
         )
-        // eslint-disable-next-line no-loop-func
         .catch((err) => {
           throw new Error(err.response.statusText);
         });
 
-      // TODO: Show progress
+      if (appStore.progressIsCancelled) {
+        break;
+      }
+
+      appStore.updateProgress({
+        step: rowCount,
+        description: $t('importView.importingRows')
+          .replace('%d', rowCount)
+          .replace('%d', appStore.csvfile.rowCount),
+      });
     }
     appStore.alertMessage = $t('importView.importedRows').replace('%d', rowCount - firstRow);
   } catch (e) {
-    appStore.alertMessage = $t('importView.importError').replace('%d', e.message).replace('%d', rowCount);
+    appStore.alertMessage = $t('importView.importError')
+      .replace('%d', e.message)
+      .replace('%d', rowCount);
   }
+  appStore.stopProgress();
 };
 </script>
 

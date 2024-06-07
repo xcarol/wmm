@@ -10,7 +10,8 @@
     "en": "English"
   },
   "global": {
-    "close": "Close"
+    "close": "Close",
+    "cancel": "Cancelar"
   },
   "mainDrawer": {
     "import": "Importar",
@@ -28,6 +29,10 @@
     "bankLabel": "Nombre del banco",
     "importButtonLabel": "Importar",
     "importedRows": "Se han importado %d filas.",
-    "importError": "Error: %d en la línea: %d"
+    "importError": "Error: %d en la línea: %d",
+    "importingRows": "Se han importado %d línias de %d..."
+  },
+  "progress": {
+    "title": "Operación en progreso..."
   }
 }
