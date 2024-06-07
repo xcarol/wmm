@@ -15,7 +15,11 @@
   },
   "mainDrawer": {
     "import": "Import",
-    "categorize": "Categorize"
+    "categorize": "Categorize",
+    "sql": "SQL Commands"
+  },
+  "progress": {
+    "title": "Operation in progress..."
   },
   "importView": {
     "title": "Import CSV File",
@@ -32,7 +36,8 @@
     "importError": "Error: '%d' at line: %d",
     "importingRows": "%d lines of %d imported..."
   },
-  "progress": {
-    "title": "Operation in progress..."
+  "sqlView": {
+    "title": "Execute SQL commands",
+    "queryAreaLabel": "Type your SQL query in..."
   }
 }

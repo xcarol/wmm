@@ -15,7 +15,11 @@
   },
   "mainDrawer": {
     "import": "Importar",
-    "categorize": "Categorizar"
+    "categorize": "Categorizar",
+    "sql": "Comandos SQL"
+  },
+  "progress": {
+    "title": "Operación en progreso..."
   },
   "importView": {
     "title": "Importa un archivo CSV",
@@ -32,7 +36,8 @@
     "importError": "Error: %d en la línea: %d",
     "importingRows": "Se han importado %d línias de %d..."
   },
-  "progress": {
-    "title": "Operación en progreso..."
+  "sqlView": {
+    "title": "Ejecuta comandos SQL",
+    "queryAreaLabel": "Introduce el comando SQL a ejecutar..."
   }
 }
