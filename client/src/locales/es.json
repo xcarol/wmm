@@ -38,6 +38,8 @@
   },
   "sqlView": {
     "title": "Ejecuta comandos SQL",
-    "queryAreaLabel": "Introduce el comando SQL a ejecutar..."
+    "queryAreaLabel": "Introduce el comando SQL a ejecutar...",
+    "queryButton": "Ejecuta",
+    "affectedRows": "Filas afectadas: %d. Filas modificadas: %d."
   }
 }

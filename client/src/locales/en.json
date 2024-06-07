@@ -38,6 +38,8 @@
   },
   "sqlView": {
     "title": "Execute SQL commands",
-    "queryAreaLabel": "Type your SQL query in..."
+    "queryAreaLabel": "Type your SQL query in...",
+    "queryButton": "Execute",
+    "affectedRows": "Affected rows: %d. Modified rows: %d."
   }
 }
