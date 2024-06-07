@@ -10,10 +10,29 @@
     "en": "English"
   },
   "global": {
-    "hello": "Hello!"
+    "close": "Close",
+    "cancel": "Cancel"
   },
   "mainDrawer": {
-    "Import": "Import",
-    "Categorize": "Categorize"
+    "import": "Import",
+    "categorize": "Categorize"
+  },
+  "importView": {
+    "title": "Import CSV File",
+    "importFileInputLabel": "Select a CSV file",
+    "dateColumnLabel": "Column with the date",
+    "descriptionColumnLabel": "Column with the description",
+    "amountColumnLabel": "Column with the amount",
+    "invalidFile": "This is not a valid CSV file",
+    "firstRowIsAHeader": "First row is the header",
+    "rowCountLabel": "This file contains %d rows.",
+    "bankLabel": "Bank name",
+    "importButtonLabel": "Import",
+    "importedRows": "%d rows imported.",
+    "importError": "Error: '%d' at line: %d",
+    "importingRows": "%d lines of %d imported..."
+  },
+  "progress": {
+    "title": "Operation in progress..."
   }
 }

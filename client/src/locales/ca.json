@@ -10,10 +10,29 @@
     "en": "English"
   },
   "global": {
-    "hello": "Hola noi!"
+    "close": "Tanca",
+    "cancel": "Cancel·lar"
   },
   "mainDrawer": {
-    "Import": "Importar",
-    "Categorize": "Categoritzar"
+    "import": "Importar",
+    "categorize": "Categoritzar"
+  },
+  "importView": {
+    "title": "Importa un arxiu CSV",
+    "importFileInputLabel": "Selecciona un arxiu CSV",
+    "dateColumnLabel": "Columna de la data",
+    "descriptionColumnLabel": "Columna de la descripció",
+    "amountColumnLabel": "Columna de la quantitat",
+    "invalidFile": "Aquest no és un arxiu CSV vàlid",
+    "firstRowIsAHeader": "La primera fila és la capçalera",
+    "rowCountLabel": "Aquest arxiu conté %d files.",
+    "bankLabel": "Nom del banc",
+    "importButtonLabel": "Importar",
+    "importedRows": "S'han importat %d files.",
+    "importError": "Error: '%d' a la línia: %d",
+    "importingRows": "S'han importat %d linies de %d..."
+  },
+  "progress": {
+    "title": "Operació en progress..."
   }
 }

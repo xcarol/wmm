@@ -1,41 +1,44 @@
 <template>
   <v-app>
+    <top-dialog />
     <v-app-bar :elevation="24">
       <template #prepend>
         <v-app-bar-nav-icon @click.stop="showDrawer = !showDrawer"></v-app-bar-nav-icon>
       </template>
-
-      <v-app-bar-title>Where's My Money</v-app-bar-title>
+      <v-app-bar-title>{{ title }}</v-app-bar-title>
     </v-app-bar>
-    <v-navigation-drawer
-      v-model="showDrawer"
-      :fixed="$vuetify.display.mdAndDown"
-      :bottom="$vuetify.display.xs"
-    >
-      <v-list :items="items"></v-list>
-    </v-navigation-drawer>
-    <v-main>
+    <app-drawer
+      :show="showDrawer"
+      @on-option-selected="optionSelected"
+    />
+    <v-main class="app-backgroud">
       <router-view />
     </v-main>
+    <snack-bar />
   </v-app>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { useI18n } from 'vue-i18n';
+import AppDrawer from './components/AppDrawer.vue';
+import SnackBar from './components/SnackBar.vue';
+import TopDialog from './components/TopDialog.vue';
 
-const { t: $t } = useI18n();
+const showDrawer = ref(false);
+const title = ref("Where's My Money");
 
-const showDrawer = ref(true);
-
-const items = [
-  {
-    title: $t('mainDrawer.Import'),
-    value: 1,
-  },
-  {
-    title: $t('mainDrawer.Categorize'),
-    value: 2,
-  },
-];
+const optionSelected = (optionTitle) => {
+  showDrawer.value = false;
+  title.value = optionTitle;
+};
 </script>
+
+<style scoped>
+.app-backgroud {
+  background-image: url('logo-semi.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh;
+}
+</style>

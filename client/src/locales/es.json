@@ -10,10 +10,29 @@
     "en": "English"
   },
   "global": {
-    "hello": "Hola buenos días!"
+    "close": "Close",
+    "cancel": "Cancelar"
   },
   "mainDrawer": {
-    "Import": "Importar",
-    "Categorize": "Categorizar"
+    "import": "Importar",
+    "categorize": "Categorizar"
+  },
+  "importView": {
+    "title": "Importa un archivo CSV",
+    "importFileInputLabel": "Selecciona un archivo CSV",
+    "dateColumnLabel": "Columna de la fecha",
+    "descriptionColumnLabel": "Columna de la descripción",
+    "amountColumnLabel": "Columna de la cantidad",
+    "invalidFile": "Este no es un archivo CSV válido",
+    "firstRowIsAHeader": "La primera fila es la cabecera",
+    "rowCountLabel": "Este archivo contiene %d filas.",
+    "bankLabel": "Nombre del banco",
+    "importButtonLabel": "Importar",
+    "importedRows": "Se han importado %d filas.",
+    "importError": "Error: %d en la línea: %d",
+    "importingRows": "Se han importado %d línias de %d..."
+  },
+  "progress": {
+    "title": "Operación en progreso..."
   }
 }
