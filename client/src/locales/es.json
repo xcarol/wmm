@@ -40,6 +40,8 @@
     "title": "Ejecuta comandos SQL",
     "queryAreaLabel": "Introduce el comando SQL a ejecutar...",
     "queryButton": "Ejecuta",
-    "affectedRows": "Filas afectadas: %d. Filas modificadas: %d."
+    "affectedRows": "Filas afectadas: %d. Filas modificadas: %d.",
+    "result": "Resultado: %d. Mensaje: %d",
+    "executingQuery": "Ejecutando la query en el servidor..."
   }
 }

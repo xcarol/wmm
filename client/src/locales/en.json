@@ -40,6 +40,8 @@
     "title": "Execute SQL commands",
     "queryAreaLabel": "Type your SQL query in...",
     "queryButton": "Execute",
-    "affectedRows": "Affected rows: %d. Modified rows: %d."
+    "affectedRows": "Affected rows: %d. Modified rows: %d.",
+    "result": "Result: %d. Message: %d",
+    "executingQuery": "Executing query at server..."
   }
 }

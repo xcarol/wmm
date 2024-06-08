@@ -9,7 +9,8 @@
   <v-container v-show="sqlQueryResponse">
     <v-textarea
       v-model="sqlQueryResponse"
-      disabled
+      readonly
+      :rows="responseHeight"
     />
   </v-container>
   <v-container>
@@ -43,17 +44,22 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useApi } from '../plugins/api';
+import { useAppStore } from '../stores/app';
 
 const { t: $t } = useI18n();
+const appStore = useAppStore();
 const api = useApi();
 
 const sqlQueryText = ref('');
 const sqlQueryResponse = ref('');
 const tableHeaders = ref([]);
 const tableItems = ref([]);
+const responseHeight = computed(() =>
+  sqlQueryResponse.value.split('\n').length > 1 ? sqlQueryResponse.value.split('\n').length + 1 : 1,
+);
 
 const executeQuery = async () => {
   sqlQueryResponse.value = '';
@@ -61,21 +67,31 @@ const executeQuery = async () => {
   tableItems.value = [];
 
   try {
-    // TODO: give feedback for long time execute queries
+    appStore.startProgress({steps:0, description: $t("sqlView.executingQuery")});
     const res = await api.executeQuery(sqlQueryText.value);
     const rows = res.data[0];
     const headers = res.data[1];
     if (headers) {
       headers.forEach((header) => {
-        tableHeaders.value.push(header.name);
+        if (header) {
+          const label = header.name.toUpperCase();
+          tableHeaders.value.push(label);
+        }
       });
       rows.forEach((row) => {
         const tablerow = [];
-        tableHeaders.value.forEach((header) => {
-          tablerow.push(row[header]);
+        headers.forEach((header) => {
+          if (header) {
+            tablerow.push(row[header.name]);
+          }
         });
-        tableItems.value.push(tablerow);
+        if (tablerow.length) {
+          tableItems.value.push(tablerow);
+        }
       });
+      sqlQueryResponse.value = $t('sqlView.result')
+        .replace('%d', res.status)
+        .replace('%d', res.statusText);
     } else {
       sqlQueryResponse.value = $t('sqlView.affectedRows')
         .replace('%d', rows.affectedRows)
@@ -84,5 +100,6 @@ const executeQuery = async () => {
   } catch (e) {
     sqlQueryResponse.value = e.response?.data ?? e;
   }
+  appStore.stopProgress();
 };
 </script>
