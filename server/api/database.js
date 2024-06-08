@@ -17,6 +17,7 @@ async function getConnection() {
     user: "root",
     password: "secret",
     database: "wmm",
+    multipleStatements: true,
   });
 }
 
