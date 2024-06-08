@@ -1,4 +1,14 @@
 const mysql = require("mysql2/promise");
+const path = require("path");
+const mysqldump = require("mysqldump");
+
+const connectionSettings = {
+  host: "localhost",
+  user: "root",
+  password: "secret",
+  database: "wmm",
+  multipleStatements: true,
+};
 
 const queryInsertRow =
   'INSERT INTO transactions (bank, date, description, amount) \
@@ -12,13 +22,7 @@ const queryCategoryNames =
   ORDER BY category ASC";
 
 async function getConnection() {
-  return await mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "secret",
-    database: "wmm",
-    multipleStatements: true,
-  });
+  return await mysql.createConnection(connectionSettings);
 }
 
 async function getCategories() {
@@ -77,9 +81,24 @@ async function executeSql(query) {
   }
 }
 
+async function backupDatabase() {
+  try {
+    const filePath = path.join(__dirname, "wmm.sql");
+    await mysqldump({
+      connection: connectionSettings,
+      dumpToFile: filePath,
+    });
+
+    return filePath;
+  } catch (err) {
+    console.error("Error at backup database:", err);
+    throw err;
+  }
+}
 
 module.exports = {
   addTransaction,
+  backupDatabase,
   executeSql,
   getBankNames,
   getCategories,
