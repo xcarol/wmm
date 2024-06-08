@@ -21,7 +21,8 @@
             <v-col cols="12">
               <v-progress-linear
               :model-value="step"
-              :max="maxSteps">
+              :max="maxSteps"
+              :indeterminate="maxSteps===0">
             </v-progress-linear>
             </v-col>
           </v-row>

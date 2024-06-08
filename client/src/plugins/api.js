@@ -4,6 +4,7 @@ class Api {
     categories: 'categories',
     banknames: 'banknames',
     transactions: 'transactions',
+    sql: 'sql',
   };
 
   genericError = 'An error ocurred. Try it again later...';
@@ -43,7 +44,12 @@ class Api {
 
   addTransaction(date, description, amount, bank) {
     const url = Api.endpoint(this.endpoints.transactions);
-    return this.axios.put(url, {date, description, amount, bank});
+    return this.axios.put(url, { date, description, amount, bank });
+  }
+
+  executeQuery(query) {
+    const url = Api.endpoint(this.endpoints.sql);
+    return this.axios.post(url, { query });
   }
 }
 

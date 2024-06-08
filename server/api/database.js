@@ -17,6 +17,7 @@ async function getConnection() {
     user: "root",
     password: "secret",
     database: "wmm",
+    multipleStatements: true,
   });
 }
 
@@ -64,8 +65,22 @@ async function addTransaction(date, description, amount, bank) {
   }
 }
 
+async function executeSql(query) {
+  try {
+    const connection = await getConnection();
+    const result = await connection.query(query);
+    connection.close();
+    return result;
+  } catch (err) {
+    console.error("Error executing query:", err);
+    throw err;
+  }
+}
+
+
 module.exports = {
-  getCategories,
-  getBankNames,
   addTransaction,
+  executeSql,
+  getBankNames,
+  getCategories,
 };

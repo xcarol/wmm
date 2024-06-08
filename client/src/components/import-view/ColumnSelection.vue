@@ -34,7 +34,7 @@
 </template>
 
 <script setup>
-import { ref, computed, defineEmits } from 'vue';
+import { ref, computed } from 'vue';
 import { useAppStore } from '../../stores/app';
 
 const props = defineProps({

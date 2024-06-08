@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import ImportView from '../views/ImportView.vue';
+import SqlView from '../views/SqlView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,6 +15,11 @@ const router = createRouter({
       path: '/import',
       name: 'import',
       component: ImportView,
+    },
+    {
+      path: '/sql',
+      name: 'sql',
+      component: SqlView,
     },
   ],
 });

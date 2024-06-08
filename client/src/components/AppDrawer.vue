@@ -34,6 +34,11 @@ const menuOptions = [
     title: $t('mainDrawer.categorize'),
     value: '/categorize',
   },
+  {
+    title: $t('mainDrawer.sql'),
+    value: '/sql',
+    barTitle: $t('sqlView.title'),
+  },
 ];
 
 const emits = defineEmits(['onOptionSelected']);

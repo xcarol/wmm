@@ -9,9 +9,8 @@
     @selected-amount-column="updateSelectedAmountColumn"
   />
   <bank-selection @selected-bank="selectedBank" />
-  <v-container>
+  <v-container class="text-end">
     <v-btn
-      class="align-button-right"
       :disabled="formNotFilled"
       @click.stop="importFile"
       >{{ $t('importView.importButtonLabel') }}
@@ -127,9 +126,3 @@ const importFile = async () => {
   appStore.stopProgress();
 };
 </script>
-
-<style scoped>
-.align-button-right {
-  float: right;
-}
-</style>
