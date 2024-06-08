@@ -1,46 +1,67 @@
 <template>
-  <v-container class="text-end">
-    <v-textarea
-      v-model="sqlQueryText"
-      :label="$t('sqlView.queryAreaLabel')"
-    />
-    <v-btn @click.stop="executeQuery">{{ $t('sqlView.queryButton') }}</v-btn>
-  </v-container>
-  <v-container v-show="sqlQueryResponse">
-    <v-textarea
-      v-model="sqlQueryResponse"
-      readonly
-      :rows="responseHeight"
-    />
-  </v-container>
-  <v-container>
-    <v-table density="compact">
-      <thead>
-        <tr>
-          <th
-            v-for="header in tableHeaders"
-            :key="header"
+  <v-card class="text-end">
+    <v-card-text>
+      <v-textarea
+        v-model="sqlQueryText"
+        :label="$t('sqlView.queryAreaLabel')"
+      />
+    </v-card-text>
+    <v-card-actions>
+      <v-btn
+        variant="tonal"
+        @click.stop="executeBackup"
+        >{{ $t('sqlView.backupButton') }}</v-btn
+      >
+      <v-btn
+        variant="tonal"
+        @click.stop="executeRestore"
+        >{{ $t('sqlView.restoreButton') }}</v-btn
+      >
+      <v-spacer />
+      <v-btn
+        variant="tonal"
+        @click.stop="executeQuery"
+        >{{ $t('sqlView.queryButton') }}</v-btn
+      >
+    </v-card-actions>
+  </v-card>
+  <v-card v-show="sqlQueryResponse">
+    <v-card-text>
+      <v-textarea
+        v-model="sqlQueryResponse"
+        readonly
+        :rows="responseHeight"
+      />
+    </v-card-text>
+    <v-card-text>
+      <v-table density="compact">
+        <thead>
+          <tr>
+            <th
+              v-for="header in tableHeaders"
+              :key="header"
+            >
+              {{ header }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="item in tableItems"
+            :key="item"
           >
-            {{ header }}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="item in tableItems"
-          :key="item"
-        >
-          <td
-            v-for="cell in item"
-            :key="cell"
-            class="truncate"
-          >
-            {{ cell }}
-          </td>
-        </tr>
-      </tbody>
-    </v-table>
-  </v-container>
+            <td
+              v-for="cell in item"
+              :key="cell"
+              class="truncate"
+            >
+              {{ cell }}
+            </td>
+          </tr>
+        </tbody>
+      </v-table>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script setup>
@@ -61,13 +82,17 @@ const responseHeight = computed(() =>
   sqlQueryResponse.value.split('\n').length > 1 ? sqlQueryResponse.value.split('\n').length + 1 : 1,
 );
 
-const executeQuery = async () => {
+const resetView = () => {
   sqlQueryResponse.value = '';
   tableHeaders.value = [];
   tableItems.value = [];
+};
 
+const executeQuery = async () => {
+  resetView();
+
+  appStore.startProgress({ steps: 0, description: $t('sqlView.executingQuery') });
   try {
-    appStore.startProgress({steps:0, description: $t("sqlView.executingQuery")});
     const res = await api.executeQuery(sqlQueryText.value);
     const rows = res.data[0];
     const headers = res.data[1];
@@ -102,4 +127,33 @@ const executeQuery = async () => {
   }
   appStore.stopProgress();
 };
+
+const executeBackup = async () => {
+  resetView();
+  appStore.startProgress({ steps: 0, description: $t('sqlView.backupProgress') });
+  try {
+    const res = await api.backupDatabase();
+    const { data } = res;
+    const fileBlob = new Blob([data], { type: res.headers['content-type'] });
+    const url = window.URL.createObjectURL(fileBlob);
+    const a = document.createElement('a');
+    const date = new Date();
+
+    const name = `wmm-${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}-${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}.sql`;
+    a.style.display = 'none';
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+
+    appStore.stopProgress();
+    a.click();
+
+    window.URL.revokeObjectURL(url);
+  } catch (e) {
+    sqlQueryResponse.value = e.response?.data ?? e;
+  }
+  appStore.stopProgress();
+};
+
+const executeRestore = () => {};
 </script>

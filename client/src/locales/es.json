@@ -40,8 +40,11 @@
     "title": "Ejecuta comandos SQL",
     "queryAreaLabel": "Introduce el comando SQL a ejecutar...",
     "queryButton": "Ejecuta",
+    "backupButton": "Backup",
+    "restoreButton": "Restore",
     "affectedRows": "Filas afectadas: %d. Filas modificadas: %d.",
     "result": "Resultado: %d. Mensaje: %d",
-    "executingQuery": "Ejecutando la query en el servidor..."
+    "executingQuery": "Ejecutando la query en el servidor...",
+    "backupProgress": "Generando la copia de seguridad..."
   }
 }

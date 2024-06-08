@@ -40,8 +40,11 @@
     "title": "Executa comandes SQL",
     "queryAreaLabel": "Escriu la commanda SQL que vulquis executar...",
     "queryButton": "Executa",
+    "backupButton": "Backup",
+    "restoreButton": "Restore",
     "affectedRows": "Files afectades: %d. Files modificades: %d.",
     "result": "Resultat: %d. Missatge: %d",
-    "executingQuery": "Executant la query al servidor..."
+    "executingQuery": "Executant la query al servidor...",
+    "backupProgress": "Generant la còpia de seguretat..."
   }
 }

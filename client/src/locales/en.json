@@ -40,8 +40,11 @@
     "title": "Execute SQL commands",
     "queryAreaLabel": "Type your SQL query in...",
     "queryButton": "Execute",
+    "backupButton": "Backup",
+    "restoreButton": "Restore",
     "affectedRows": "Affected rows: %d. Modified rows: %d.",
     "result": "Result: %d. Message: %d",
-    "executingQuery": "Executing query at server..."
+    "executingQuery": "Executing query at server...",
+    "backupProgress": "Generating backup..."
   }
 }
