@@ -145,7 +145,10 @@ const executeBackup = async () => {
     const a = document.createElement('a');
     const date = new Date();
 
-    const name = `wmm-${date.toISOString().replace('T', '-').replace(/\.\d+Z$/, '')}.sql`;
+    const name = `wmm-${date
+      .toISOString()
+      .replace('T', '-')
+      .replace(/\.\d+Z$/, '')}.sql`;
     a.style.display = 'none';
     a.href = url;
     a.download = name;
@@ -169,7 +172,9 @@ const readFileContent = (file) => {
     appStore.startProgress({ steps: 0, description: $t('sqlView.executingQuery') });
     try {
       const res = await api.executeQuery(fileContent);
-      console.log(res);
+      sqlQueryResponse.value = $t('sqlView.result')
+        .replace('%d', res.status)
+        .replace('%d', res.statusText);
     } catch (e) {
       sqlQueryResponse.value = e.response?.data ?? e;
     }
