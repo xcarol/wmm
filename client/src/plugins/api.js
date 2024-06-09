@@ -5,6 +5,7 @@ class Api {
     banknames: 'banknames',
     transactions: 'transactions',
     sql: 'sql',
+    backupDatabase: 'sql/backup',
   };
 
   genericError = 'An error ocurred. Try it again later...';
@@ -50,6 +51,11 @@ class Api {
   executeQuery(query) {
     const url = Api.endpoint(this.endpoints.sql);
     return this.axios.post(url, { query });
+  }
+
+  backupDatabase() {
+    const url = Api.endpoint(this.endpoints.backupDatabase);
+    return this.axios.get(url);
   }
 }
 

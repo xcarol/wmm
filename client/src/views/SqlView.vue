@@ -1,46 +1,38 @@
 <template>
-  <v-container class="text-end">
-    <v-textarea
-      v-model="sqlQueryText"
-      :label="$t('sqlView.queryAreaLabel')"
-    />
-    <v-btn @click.stop="executeQuery">{{ $t('sqlView.queryButton') }}</v-btn>
-  </v-container>
-  <v-container v-show="sqlQueryResponse">
-    <v-textarea
-      v-model="sqlQueryResponse"
-      readonly
-      :rows="responseHeight"
-    />
-  </v-container>
-  <v-container>
-    <v-table density="compact">
-      <thead>
-        <tr>
-          <th
-            v-for="header in tableHeaders"
-            :key="header"
-          >
-            {{ header }}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="item in tableItems"
-          :key="item"
-        >
-          <td
-            v-for="cell in item"
-            :key="cell"
-            class="truncate"
-          >
-            {{ cell }}
-          </td>
-        </tr>
-      </tbody>
-    </v-table>
-  </v-container>
+  <v-card class="text-end">
+    <v-card-text>
+      <v-textarea
+        v-model="sqlQueryText"
+        :label="$t('sqlView.queryAreaLabel')"
+      />
+    </v-card-text>
+    <v-card-actions>
+      <backup-response
+        @operation-status="backupResponseStatus"
+      />
+      <v-spacer />
+      <v-btn
+        variant="tonal"
+        @click.stop="executeQuery"
+        >{{ $t('sqlView.queryButton') }}</v-btn
+      >
+    </v-card-actions>
+  </v-card>
+  <v-card v-show="sqlQueryResponse">
+    <v-card-text>
+      <v-textarea
+        v-model="sqlQueryResponse"
+        readonly
+        :rows="responseHeight"
+      />
+    </v-card-text>
+    <v-card-text>
+      <response-table
+        :table-headers="tableHeaders"
+        :table-rows="tableItems"
+      />
+    </v-card-text>
+  </v-card>
 </template>
 
 <script setup>
@@ -48,6 +40,8 @@ import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
+import ResponseTable from '../components/sql-view/ResponseTable.vue';
+import BackupResponse from '../components/sql-view/BackupRestore.vue';
 
 const { t: $t } = useI18n();
 const appStore = useAppStore();
@@ -61,13 +55,23 @@ const responseHeight = computed(() =>
   sqlQueryResponse.value.split('\n').length > 1 ? sqlQueryResponse.value.split('\n').length + 1 : 1,
 );
 
-const executeQuery = async () => {
+const backupResponseStatus = (status) => {
+  tableHeaders.value = [];
+  tableItems.value = [];
+  sqlQueryResponse.value = status;
+};
+
+const resetView = () => {
   sqlQueryResponse.value = '';
   tableHeaders.value = [];
   tableItems.value = [];
+};
 
+const executeQuery = async () => {
+  resetView();
+
+  appStore.startProgress({ steps: 0, description: $t('sqlView.executingQuery') });
   try {
-    appStore.startProgress({steps:0, description: $t("sqlView.executingQuery")});
     const res = await api.executeQuery(sqlQueryText.value);
     const rows = res.data[0];
     const headers = res.data[1];
