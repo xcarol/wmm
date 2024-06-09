@@ -1,6 +1,7 @@
 const mysql = require("mysql2/promise");
 const path = require("path");
 const mysqldump = require("mysqldump");
+const { execSync } = require("child_process");
 
 const connectionSettings = {
   host: "localhost",
@@ -84,10 +85,8 @@ async function executeSql(query) {
 async function backupDatabase() {
   try {
     const filePath = path.join(__dirname, "wmm.sql");
-    await mysqldump({
-      connection: connectionSettings,
-      dumpToFile: filePath,
-    });
+
+    execSync(`/usr/bin/mysqldump --host=127.0.0.1 --user=root --password=secret wmm > ${filePath}`);
 
     return filePath;
   } catch (err) {
