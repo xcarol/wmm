@@ -61,6 +61,12 @@
         </tbody>
       </v-table>
     </v-card-text>
+    <input
+      id="fileInput"
+      type="file"
+      hidden
+      @change="handleFileChange"
+    />
   </v-card>
 </template>
 
@@ -139,7 +145,7 @@ const executeBackup = async () => {
     const a = document.createElement('a');
     const date = new Date();
 
-    const name = `wmm-${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}-${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}.sql`;
+    const name = `wmm-${date.toISOString().replace('T', '-').replace(/\.\d+Z$/, '')}.sql`;
     a.style.display = 'none';
     a.href = url;
     a.download = name;
@@ -155,5 +161,31 @@ const executeBackup = async () => {
   appStore.stopProgress();
 };
 
-const executeRestore = () => {};
+const readFileContent = (file) => {
+  const reader = new FileReader();
+  reader.onload = async (event) => {
+    const fileContent = event.target.result;
+
+    appStore.startProgress({ steps: 0, description: $t('sqlView.executingQuery') });
+    try {
+      const res = await api.executeQuery(fileContent);
+      console.log(res);
+    } catch (e) {
+      sqlQueryResponse.value = e.response?.data ?? e;
+    }
+    appStore.stopProgress();
+  };
+  reader.readAsText(file);
+};
+
+const handleFileChange = (event) => {
+  const selectedFile = event.target.files[0];
+  if (selectedFile) {
+    readFileContent(selectedFile);
+  }
+};
+
+const executeRestore = () => {
+  document.getElementById('fileInput').click();
+};
 </script>
