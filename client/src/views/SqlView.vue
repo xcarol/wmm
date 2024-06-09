@@ -7,16 +7,9 @@
       />
     </v-card-text>
     <v-card-actions>
-      <v-btn
-        variant="tonal"
-        @click.stop="executeBackup"
-        >{{ $t('sqlView.backupButton') }}</v-btn
-      >
-      <v-btn
-        variant="tonal"
-        @click.stop="executeRestore"
-        >{{ $t('sqlView.restoreButton') }}</v-btn
-      >
+      <backup-response
+        @operation-status="backupResponseStatus"
+      />
       <v-spacer />
       <v-btn
         variant="tonal"
@@ -34,39 +27,11 @@
       />
     </v-card-text>
     <v-card-text>
-      <v-table density="compact">
-        <thead>
-          <tr>
-            <th
-              v-for="header in tableHeaders"
-              :key="header"
-            >
-              {{ header }}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="item in tableItems"
-            :key="item"
-          >
-            <td
-              v-for="cell in item"
-              :key="cell"
-              class="truncate"
-            >
-              {{ cell }}
-            </td>
-          </tr>
-        </tbody>
-      </v-table>
+      <response-table
+        :table-headers="tableHeaders"
+        :table-rows="tableItems"
+      />
     </v-card-text>
-    <input
-      id="fileInput"
-      type="file"
-      hidden
-      @change="handleFileChange"
-    />
   </v-card>
 </template>
 
@@ -75,6 +40,8 @@ import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
+import ResponseTable from '../components/sql-view/ResponseTable.vue';
+import BackupResponse from '../components/sql-view/BackupRestore.vue';
 
 const { t: $t } = useI18n();
 const appStore = useAppStore();
@@ -87,6 +54,12 @@ const tableItems = ref([]);
 const responseHeight = computed(() =>
   sqlQueryResponse.value.split('\n').length > 1 ? sqlQueryResponse.value.split('\n').length + 1 : 1,
 );
+
+const backupResponseStatus = (status) => {
+  tableHeaders.value = [];
+  tableItems.value = [];
+  sqlQueryResponse.value = status;
+};
 
 const resetView = () => {
   sqlQueryResponse.value = '';
@@ -132,65 +105,5 @@ const executeQuery = async () => {
     sqlQueryResponse.value = e.response?.data ?? e;
   }
   appStore.stopProgress();
-};
-
-const executeBackup = async () => {
-  resetView();
-  appStore.startProgress({ steps: 0, description: $t('sqlView.backupProgress') });
-  try {
-    const res = await api.backupDatabase();
-    const { data } = res;
-    const fileBlob = new Blob([data], { type: res.headers['content-type'] });
-    const url = window.URL.createObjectURL(fileBlob);
-    const a = document.createElement('a');
-    const date = new Date();
-
-    const name = `wmm-${date
-      .toISOString()
-      .replace('T', '-')
-      .replace(/\.\d+Z$/, '')}.sql`;
-    a.style.display = 'none';
-    a.href = url;
-    a.download = name;
-    document.body.appendChild(a);
-
-    appStore.stopProgress();
-    a.click();
-
-    window.URL.revokeObjectURL(url);
-  } catch (e) {
-    sqlQueryResponse.value = e.response?.data ?? e;
-  }
-  appStore.stopProgress();
-};
-
-const readFileContent = (file) => {
-  const reader = new FileReader();
-  reader.onload = async (event) => {
-    const fileContent = event.target.result;
-
-    appStore.startProgress({ steps: 0, description: $t('sqlView.executingQuery') });
-    try {
-      const res = await api.executeQuery(fileContent);
-      sqlQueryResponse.value = $t('sqlView.result')
-        .replace('%d', res.status)
-        .replace('%d', res.statusText);
-    } catch (e) {
-      sqlQueryResponse.value = e.response?.data ?? e;
-    }
-    appStore.stopProgress();
-  };
-  reader.readAsText(file);
-};
-
-const handleFileChange = (event) => {
-  const selectedFile = event.target.files[0];
-  if (selectedFile) {
-    readFileContent(selectedFile);
-  }
-};
-
-const executeRestore = () => {
-  document.getElementById('fileInput').click();
 };
 </script>
