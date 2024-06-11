@@ -46,5 +46,11 @@
     "result": "Resultat: %d. Missatge: %d",
     "executingQuery": "Executant la query al servidor...",
     "backupProgress": "Generant la còpia de seguretat..."
+  },
+  "categorizeView": {
+    "title": "Categoritza les transaccions",
+    "filterLabel": "Cerca per descripció...",
+    "filterButton": "Cerca",
+    "transactionsFound": "S'han trobat %d transaccions amb el següent criteri: [%d]"
   }
 }

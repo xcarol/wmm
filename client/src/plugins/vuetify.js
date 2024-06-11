@@ -13,6 +13,7 @@ import es from 'vuetify/lib/locale/es.mjs';
 import colors from 'vuetify/lib/util/colors.mjs';
 import {
   mdiHome,
+  mdiMagnify,
 } from '@mdi/js';
 
 const defaultTheme = import.meta.env.VITE_THEME || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
@@ -25,6 +26,7 @@ const vuetify = createVuetify({
     aliases: {
       ...aliases,
       home: mdiHome,
+      search: mdiMagnify,
     },
     sets: {
       mdi,

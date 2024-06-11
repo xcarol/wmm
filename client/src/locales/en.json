@@ -46,5 +46,11 @@
     "result": "Result: %d. Message: %d",
     "executingQuery": "Executing query at server...",
     "backupProgress": "Generating backup..."
+  },
+  "categorizeView": {
+    "title": "Categorize transactions",
+    "filterLabel": "Search by description...",
+    "filterButton": "Search",
+    "transactionsFound": "%d transactions found with this criteria: [%d]"
   }
 }

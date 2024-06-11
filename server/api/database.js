@@ -22,8 +22,31 @@ const queryCategoryNames =
   WHERE (TRIM(category) != '' AND category IS NOT NULL) \
   ORDER BY category ASC";
 
+const queryUncategorizedTransactions =
+  "SELECT id, bank, date, description, category, amount FROM transactions \
+  WHERE (TRIM(category) = '' OR category IS NULL)";
+
+const queryUncategorizedRowsFilter =
+  ' AND description REGEXP \':filter\'';
+
 async function getConnection() {
   return await mysql.createConnection(connectionSettings);
+}
+
+async function getUncategorizedTransactions(filter) {
+  try {
+    const connection = await getConnection();
+    let query = queryUncategorizedTransactions;
+    if (filter?.length) {
+      query += queryUncategorizedRowsFilter.replace(':filter', filter);
+    }
+    const result = await connection.query(query);
+    connection.close();
+    return result.at(0);
+  } catch (err) {
+    console.error("Error fetching categories:", err);
+    throw err;
+  }
 }
 
 async function getCategories() {
@@ -86,7 +109,9 @@ async function backupDatabase() {
   try {
     const filePath = path.join(__dirname, "wmm.sql");
 
-    execSync(`/usr/bin/mysqldump --host=127.0.0.1 --user=root --password=secret wmm > ${filePath}`);
+    execSync(
+      `/usr/bin/mysqldump --host=127.0.0.1 --user=root --password=secret wmm > ${filePath}`
+    );
 
     return filePath;
   } catch (err) {
@@ -101,4 +126,5 @@ module.exports = {
   executeSql,
   getBankNames,
   getCategories,
+  getUncategorizedTransactions,
 };

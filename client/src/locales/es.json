@@ -46,5 +46,11 @@
     "result": "Resultado: %d. Mensaje: %d",
     "executingQuery": "Ejecutando la query en el servidor...",
     "backupProgress": "Generando la copia de seguridad..."
+  },
+  "categorizeView": {
+    "title": "Categoriza las transacciones",
+    "filterLabel": "Busca por la descripción...",
+    "filterButton": "Busca",
+    "transactionsFound": "Se han encontrado %d transacciones ambcon el següiente criterio: [%d]"
   }
 }

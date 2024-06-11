@@ -4,6 +4,7 @@ class Api {
     categories: 'categories',
     banknames: 'banknames',
     transactions: 'transactions',
+    searchUncategorizedTransactions: 'transactions/uncategorized?filter={1}',
     sql: 'sql',
     backupDatabase: 'sql/backup',
   };
@@ -55,6 +56,11 @@ class Api {
 
   backupDatabase() {
     const url = Api.endpoint(this.endpoints.backupDatabase);
+    return this.axios.get(url);
+  }
+
+  searchTransactionsByCategory(filter) {
+    const url = Api.endpoint(this.endpoints.searchUncategorizedTransactions, filter ?? '');
     return this.axios.get(url);
   }
 }

@@ -4,6 +4,7 @@ import { useCsvFile } from '../plugins/csvfile';
 
 export const useAppStore = defineStore('app', {
   state: () => ({
+    categorySearchHistory: ref([]),
     alertMessage: ref(''),
     csvfile: useCsvFile(),
     progress: {
@@ -36,6 +37,11 @@ export const useAppStore = defineStore('app', {
     stopProgress() {
       this.progress.active = false;
       this.progress.cancelled = false;
+    },
+    addSearchToCategoryHistory(search) {
+      if(this.categorySearchHistory.includes(search) === false) {
+        this.categorySearchHistory.push(search);
+      }
     },
   },
 });
