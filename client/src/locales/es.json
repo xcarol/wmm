@@ -51,6 +51,9 @@
     "title": "Categoriza las transacciones",
     "filterLabel": "Busca por la descripción...",
     "filterButton": "Busca",
-    "transactionsFound": "Se han encontrado %d transacciones ambcon el següiente criterio: [%d]"
+    "transactionsFound": "Se han encontrado %d transacciones ambcon el següiente criterio: [%d]",
+    "categoryLabel": "Busca la categoría o añade una nueva...",
+    "applyButton": "Aplica",
+    "createFilterButton": "Crea un filtro"
   }
 }

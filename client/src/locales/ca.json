@@ -51,6 +51,9 @@
     "title": "Categoritza les transaccions",
     "filterLabel": "Cerca per descripció...",
     "filterButton": "Cerca",
-    "transactionsFound": "S'han trobat %d transaccions amb el següent criteri: [%d]"
+    "transactionsFound": "S'han trobat %d transaccions amb el següent criteri: [%d]",
+    "categoryLabel": "Cerca la categoria o afegei-ne una de nova...",
+    "applyButton": "Aplica",
+    "createFilterButton": "Crea un filtre"
   }
 }

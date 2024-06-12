@@ -51,6 +51,9 @@
     "title": "Categorize transactions",
     "filterLabel": "Search by description...",
     "filterButton": "Search",
-    "transactionsFound": "%d transactions found with this criteria: [%d]"
+    "transactionsFound": "%d transactions found with this criteria: [%d]",
+    "categoryLabel": "Search for a category or add a new one...",
+    "applyButton": "Apply",
+    "createFilterButton": "Create new filter"
   }
 }
