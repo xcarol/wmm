@@ -26,7 +26,7 @@
       <v-combobox
         v-model="selectedCategory"
         :label="$t('categorizeView.categoryLabel')"
-        :items="categories"
+        :items="categoryNames"
         clearable
         variant="outlined"
         @click:append="searchTransactions"
@@ -39,7 +39,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, ref, onBeforeMount } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
@@ -54,7 +54,7 @@ const tableItems = ref([]);
 const selectedItems = ref([]);
 const filterMessage = ref('');
 const selectedCategory = ref('');
-const categories = ref(['']);
+const categoryNames = ref(['']);
 
 const canApplyCategory = computed(() => {
   return !!(
@@ -84,4 +84,15 @@ const keyDown = (value) => {
     searchTransactions();
   }
 };
+
+const getCategoriesNames = async () => {
+  try {
+    const dbNames = await api.categoryNames();
+    categoryNames.value = dbNames.data;
+  } catch (e) {
+    appStore.alertMessage = e.response?.data ?? e;
+  }
+};
+
+onBeforeMount(() => getCategoriesNames());
 </script>

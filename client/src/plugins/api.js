@@ -34,7 +34,7 @@ class Api {
     return this.genericError;
   }
 
-  categories() {
+  categoryNames() {
     const url = Api.endpoint(this.endpoints.categories);
     return this.axios.get(url);
   }
