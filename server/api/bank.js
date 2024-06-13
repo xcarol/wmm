@@ -1,7 +1,7 @@
 const { getBankNames } = require("./database");
 
 module.exports = (app) => {
-  app.get("/banknames", async (req, res) => {
+  app.get("/bank/names", async (req, res) => {
     try {
       const banknames = await getBankNames();
       res.json(banknames);

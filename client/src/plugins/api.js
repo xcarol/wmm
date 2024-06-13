@@ -1,10 +1,10 @@
 /* eslint-disable no-param-reassign */
 class Api {
   endpoints = {
-    categories: 'categories',
-    banknames: 'banknames',
-    transactions: 'transactions',
-    searchUncategorizedTransactions: 'transactions/uncategorized?filter={1}',
+    categoryNames: 'category/names',
+    bankNames: 'bank/names',
+    transactions: 'transaction',
+    uncategorizedTransactions: 'transaction/uncategorized?filter={1}',
     sql: 'sql',
     backupDatabase: 'sql/backup',
   };
@@ -35,12 +35,12 @@ class Api {
   }
 
   categoryNames() {
-    const url = Api.endpoint(this.endpoints.categories);
+    const url = Api.endpoint(this.endpoints.categoryNames);
     return this.axios.get(url);
   }
 
   bankNames() {
-    const url = Api.endpoint(this.endpoints.banknames);
+    const url = Api.endpoint(this.endpoints.bankNames);
     return this.axios.get(url);
   }
 
@@ -60,7 +60,7 @@ class Api {
   }
 
   searchTransactionsByCategory(filter) {
-    const url = Api.endpoint(this.endpoints.searchUncategorizedTransactions, filter ?? '');
+    const url = Api.endpoint(this.endpoints.uncategorizedTransactions, filter ?? '');
     return this.axios.get(url);
   }
 }

@@ -1,8 +1,8 @@
 const express = require("express");
 const cors = require("cors");
-const categoriesRouter = require("./categories");
-const banknamesRouter = require("./banknames");
-const transactionsRouter = require("./transactions");
+const categoriesRouter = require("./category");
+const banksRouter = require("./bank");
+const transactionsRouter = require("./transaction");
 const sqlRouter = require("./sqlaccess");
 
 const app = express();
@@ -10,7 +10,7 @@ app.use(express.json({ limit: '5mb' }));
 app.use(cors());
 
 categoriesRouter(app);
-banknamesRouter(app);
+banksRouter(app);
 transactionsRouter(app);
 sqlRouter(app);
 

@@ -1,7 +1,7 @@
 const { addTransaction, getUncategorizedTransactions } = require("./database");
 
 module.exports = (app) => {
-  app.put("/transactions", async (req, res) => {
+  app.put("/transaction", async (req, res) => {
     try {
       const data = req.body;
       await addTransaction(data.date, data.description, data.amount, data.bank);
@@ -12,7 +12,7 @@ module.exports = (app) => {
       res.status(500).send("Error adding transactions");
     }
   });
-  app.get("/transactions/uncategorized", async (req, res) => {
+  app.get("/transaction/uncategorized", async (req, res) => {
     try {
       const data = req.query;
       const transactions = await getUncategorizedTransactions(data["filter"]);
