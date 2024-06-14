@@ -126,7 +126,7 @@ const applyCategory = () => {
   const selectedTransactions = selectedItems.value;
 
   messageStore.showMessage({
-    title: $t('messageDialog.Warning'),
+    title: $t('dialog.Warning'),
     message: $t('categorizeView.applyWarningMessage')
       .replace('%d', selectedTransactions.length)
       .replace('%s', category),

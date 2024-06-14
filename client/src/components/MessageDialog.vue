@@ -13,25 +13,25 @@
         <v-btn
           v-show="showYes"
           @click.stop="yes"
-          >{{ $t('messageDialog.yes') }}</v-btn
+          >{{ $t('dialog.yes') }}</v-btn
         >
         <v-btn
           v-show="showNo"
           @click.stop="no"
         >
-          {{ $t('messageDialog.no') }}</v-btn
+          {{ $t('dialog.no') }}</v-btn
         >
         <v-btn
           v-show="showOk"
           @click.stop="ok"
         >
-          {{ $t('messageDialog.ok') }}</v-btn
+          {{ $t('dialog.ok') }}</v-btn
         >
         <v-btn
           v-show="showCancel"
           @click.stop="cancel"
         >
-          {{ $t('messageDialog.cancel') }}</v-btn
+          {{ $t('dialog.cancel') }}</v-btn
         >
       </v-card-actions>
     </v-card>

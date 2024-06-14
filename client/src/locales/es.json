@@ -58,7 +58,7 @@
     "applyWarningMessage": "Vas a actualizar %d transacciones con la categoría: %s\nEstás seguro?",
     "updateProgress": "Actualizando las transacciones..."
   },
-  "messageDialog": {
+  "dialog": {
     "yes": "Sí",
     "no": "No",
     "ok": "De acuerdo",

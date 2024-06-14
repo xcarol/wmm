@@ -58,7 +58,7 @@
     "applyWarningMessage": "You're about to update %d records with the category: %s\nAre you sure?",
     "updateProgress": "Updating transactions..."
   },
-  "messageDialog": {
+  "dialog": {
     "yes": "Yes",
     "no": "No",
     "ok": "Ok",

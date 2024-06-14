@@ -58,7 +58,7 @@
     "applyWarningMessage": "Et's a punt d'actualitzar %d transaccions amb la categoria: %s\nN'estàs segur?",
     "updateProgress": "Actualitzant les transaccions..."
   },
-  "messageDialog": {
+  "dialog": {
     "Warning": "Avís",
     "yes": "Sí",
     "no": "No",
