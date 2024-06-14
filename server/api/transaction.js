@@ -16,6 +16,7 @@ module.exports = (app) => {
       res.status(500).send("Error adding transactions");
     }
   });
+
   app.post("/transaction/category", async (req, res) => {
     try {
       const data = req.body;
@@ -27,6 +28,19 @@ module.exports = (app) => {
       res.status(500).send("Error updating transactions category");
     }
   });
+  
+  app.post("/transaction/filter", async (req, res) => {
+    try {
+      const data = req.body;
+      await updateTransactionsByFilter(data.filter);
+      res.json("OK");
+      res.status(200);
+    } catch (err) {
+      console.error("Error updating transactions category by filter:", err);
+      res.status(500).send("Error updating transactions category by filter");
+    }
+  });
+  
   app.get("/transaction/uncategorized", async (req, res) => {
     try {
       const data = req.query;

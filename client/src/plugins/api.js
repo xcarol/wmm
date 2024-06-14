@@ -5,6 +5,7 @@ class Api {
     bankNames: 'bank/names',
     transactions: 'transaction',
     updateTransactionsCategory: 'transaction/category',
+    updateTransactionsByFilter: 'transaction/filter',
     uncategorizedTransactions: 'transaction/uncategorized?filter={1}',
     sql: 'sql',
     backupDatabase: 'sql/backup',
@@ -68,6 +69,11 @@ class Api {
   updateTransactionsCategory(transactions, category) {
     const url = Api.endpoint(this.endpoints.updateTransactionsCategory);
     return this.axios.post(url, {transactions, category});
+  }
+
+  updateTransactionsByFilter(filter) {
+    const url = Api.endpoint(this.endpoints.updateTransactionsByFilter);
+    return this.axios.post(url, {filter});
   }
 }
 

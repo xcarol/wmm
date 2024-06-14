@@ -6,6 +6,7 @@
     @on-ok="createNewFilter"
     @on-cancel="hideNewFilterDialog"
   />
+  <message-dialog />
   <v-card>
     <v-card-text>
       <v-combobox
@@ -130,6 +131,21 @@ const updateTransactions = async (transactions, category) => {
   progressStore.stopProgress();
 };
 
+const updateTransactionsByFilter = async (filter) => {
+  progressStore.startProgress({
+    steps: 0,
+    description: $t('categorizeView.updateProgress'),
+  });
+
+  try {
+    await api.updateTransactionsByFilter(filter);
+  } catch (e) {
+    appStore.alertMessage = e.response?.data ?? e;
+  }
+
+  progressStore.stopProgress();
+};
+
 const applyCategory = () => {
   const category = selectedCategory.value;
   const selectedTransactions = selectedItems.value;
@@ -155,10 +171,24 @@ const hideNewFilterDialog = () => {
   showNewFilterDialog.value = false;
 };
 
-const createNewFilter = ({category, filter}) => {
-  console.log(category);
-  console.log(filter);
+const createNewFilter = async ({ category, filter }) => {
   hideNewFilterDialog();
+
+  try {
+    await api.createFilter(category, filter);
+
+    messageStore.showMessage({
+      title: $t('dialog.Warning'),
+      message: $t('categorizeView.updateTransactionsMessage'),
+      yes: async () => {
+        await updateTransactionsByFilter(filter);
+        await searchTransactions();
+      },
+      no: () => {},
+    });
+  } catch (e) {
+    appStore.alertMessage = e.response?.data ?? e;
+  }
 };
 
 onBeforeMount(() => getCategoriesNames());
