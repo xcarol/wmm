@@ -54,6 +54,14 @@
     "transactionsFound": "Se han encontrado %d transacciones ambcon el següiente criterio: [%d]",
     "categoryLabel": "Busca la categoría o añade una nueva...",
     "applyButton": "Aplica",
-    "createFilterButton": "Crea un filtro"
+    "createFilterButton": "Crea un filtro",
+    "applyWarningMessage": "Vas a actualizar %d transacciones con la categoría: %s\nEstás seguro?",
+    "updateProgress": "Actualizando las transacciones..."
+  },
+  "messageDialog": {
+    "yes": "Sí",
+    "no": "No",
+    "ok": "De acuerdo",
+    "cancel": "Cancelar"
   }
 }

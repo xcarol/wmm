@@ -54,6 +54,15 @@
     "transactionsFound": "S'han trobat %d transaccions amb el següent criteri: [%d]",
     "categoryLabel": "Cerca la categoria o afegeix-ne una de nova...",
     "applyButton": "Aplica",
-    "createFilterButton": "Crea un filtre"
+    "createFilterButton": "Crea un filtre",
+    "applyWarningMessage": "Et's a punt d'actualitzar %d transaccions amb la categoria: %s\nN'estàs segur?",
+    "updateProgress": "Actualitzant les transaccions..."
+  },
+  "messageDialog": {
+    "Warning": "Avís",
+    "yes": "Sí",
+    "no": "No",
+    "ok": "D'acord",
+    "cancel": "Cancel·la"
   }
 }

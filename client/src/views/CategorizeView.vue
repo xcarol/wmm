@@ -32,8 +32,16 @@
         @click:append="searchTransactions"
         @keydown="keyDown"
       />
-      <v-btn :disabled="canApplyCategory">{{ $t('categorizeView.applyButton') }}</v-btn>
-      <v-btn>{{ $t('categorizeView.createFilterButton') }}</v-btn>
+      <v-btn
+        :disabled="canApplyCategory"
+        @click.stop="applyCategory"
+        >{{ $t('categorizeView.applyButton') }}</v-btn
+      >
+      <v-btn
+        :disabled="canApplyCategory"
+        @click.stop="createCategory"
+        >{{ $t('categorizeView.createFilterButton') }}</v-btn
+      >
     </v-card-actions>
   </v-card>
 </template>
@@ -43,10 +51,14 @@ import { computed, ref, onBeforeMount } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
+import { useMessageStore } from '../stores/messageDialog';
+import { useProgressStore } from '../stores/progressDialog';
 
 const appStore = useAppStore();
 const api = useApi();
 const { t: $t } = useI18n();
+const messageStore = useMessageStore();
+const progressStore = useProgressStore();
 
 const filters = computed(() => appStore.categorySearchHistory);
 const selectedFilter = ref('');
@@ -93,6 +105,39 @@ const getCategoriesNames = async () => {
     appStore.alertMessage = e.response?.data ?? e;
   }
 };
+
+const updateTransactions = async (transactions, category) => {
+  progressStore.startProgress({
+    steps: 0,
+    description: $t('categorizeView.updateProgress'),
+  });
+
+  try {
+    await api.updateTransactionsCategory(transactions, category);
+  } catch (e) {
+    appStore.alertMessage = e.response?.data ?? e;
+  }
+
+  progressStore.stopProgress();
+};
+
+const applyCategory = () => {
+  const category = selectedCategory.value;
+  const selectedTransactions = selectedItems.value;
+
+  messageStore.showMessage({
+    title: $t('messageDialog.Warning'),
+    message: $t('categorizeView.applyWarningMessage')
+      .replace('%d', selectedTransactions.length)
+      .replace('%s', category),
+    yes: async () => {
+      await updateTransactions(selectedTransactions, category);
+      await searchTransactions();
+    },
+    no: () => {},
+  });
+};
+const createCategory = () => {};
 
 onBeforeMount(() => getCategoriesNames());
 </script>

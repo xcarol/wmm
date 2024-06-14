@@ -54,6 +54,14 @@
     "transactionsFound": "%d transactions found with this criteria: [%d]",
     "categoryLabel": "Search for a category or add a new one...",
     "applyButton": "Apply",
-    "createFilterButton": "Create new filter"
+    "createFilterButton": "Create new filter",
+    "applyWarningMessage": "You're about to update %d records with the category: %s\nAre you sure?",
+    "updateProgress": "Updating transactions..."
+  },
+  "messageDialog": {
+    "yes": "Yes",
+    "no": "No",
+    "ok": "Ok",
+    "cancel": "Cancel"
   }
 }
