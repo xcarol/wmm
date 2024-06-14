@@ -1,0 +1,69 @@
+<template>
+  <v-dialog
+    :model-value="show"
+    max-width="600px"
+    :fullscreen="$vuetify.display.xs"
+    scrollable
+    persistent
+  >
+    <v-card>
+      <v-card-title>{{ $t('dialogNewFilter.title') }}</v-card-title>
+      <v-card-text>
+        <v-text-field
+          v-model="categoryInput"
+          :label="$t('dialogNewFilter.categoryLabel')"
+        ></v-text-field>
+        <v-text-field
+          v-model="filterInput"
+          :label="$t('dialogNewFilter.filterLabel')"
+        ></v-text-field>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn @click.stop="ok">{{ $t('dialog.ok') }}</v-btn>
+        <v-btn @click.stop="cancel"> {{ $t('dialog.cancel') }}</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+</template>
+
+<script setup>
+import { ref,computed, watch } from 'vue';
+
+const emits = defineEmits(['onOk', 'onCancel']);
+
+const props = defineProps({
+  show: {
+    type: Boolean,
+    default: false,
+  },
+  category: {
+    type: String,
+    default: '',
+  },
+  filter: {
+    type: String,
+    default: '',
+  },
+});
+
+const show = computed(() => props.show);
+const categoryInput = ref(props.category);
+const filterInput = ref(props.filter);
+
+watch(show, (newVal, oldVal) => {
+  if (newVal && !oldVal) {
+    categoryInput.value = props.category;
+    filterInput.value = props.filter;
+  }
+});
+
+const ok = () => {
+  emits('onOk', { category: categoryInput.value, filter: filterInput.value });
+  console.log('emits(\'onOk\')');
+};
+
+const cancel = () => {
+  emits('onCancel');
+  console.log('emits(\'onCancel\')');
+};
+</script>

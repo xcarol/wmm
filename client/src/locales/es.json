@@ -58,6 +58,11 @@
     "applyWarningMessage": "Vas a actualizar %d transacciones con la categoría: %s\nEstás seguro?",
     "updateProgress": "Actualizando las transacciones..."
   },
+  "dialogNewFilter": {
+    "title": "Nuevo filtro",
+    "categoryLabel": "Nombre de la categoría",
+    "filterLabel": "Nombre del filtro"
+  },
   "dialog": {
     "yes": "Sí",
     "no": "No",

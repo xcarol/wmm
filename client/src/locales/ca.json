@@ -58,6 +58,11 @@
     "applyWarningMessage": "Et's a punt d'actualitzar %d transaccions amb la categoria: %s\nN'estàs segur?",
     "updateProgress": "Actualitzant les transaccions..."
   },
+  "dialogNewFilter": {
+    "title": "Nou filtre",
+    "categoryLabel": "Nom de la categoria",
+    "filterLabel": "Nom del filtre"
+  },
   "dialog": {
     "Warning": "Avís",
     "yes": "Sí",

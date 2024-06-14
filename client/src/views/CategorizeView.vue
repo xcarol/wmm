@@ -1,4 +1,11 @@
 <template>
+  <new-filter-dialog
+    :show="showNewFilterDialog"
+    category=""
+    filter=""
+    @on-ok="createNewFilter"
+    @on-cancel="hideNewFilterDialog"
+  />
   <v-card>
     <v-card-text>
       <v-combobox
@@ -39,7 +46,7 @@
       >
       <v-btn
         :disabled="canApplyCategory"
-        @click.stop="createCategory"
+        @click.stop="showCreateFilterDialog"
         >{{ $t('categorizeView.createFilterButton') }}</v-btn
       >
     </v-card-actions>
@@ -53,6 +60,7 @@ import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
 import { useMessageStore } from '../stores/messageDialog';
 import { useProgressStore } from '../stores/progressDialog';
+import NewFilterDialog from '../components/categorize-view/NewFilterDialog.vue';
 
 const appStore = useAppStore();
 const api = useApi();
@@ -67,6 +75,7 @@ const selectedItems = ref([]);
 const filterMessage = ref('');
 const selectedCategory = ref('');
 const categoryNames = ref(['']);
+const showNewFilterDialog = ref(false);
 
 const canApplyCategory = computed(() => {
   return !!(
@@ -137,7 +146,20 @@ const applyCategory = () => {
     no: () => {},
   });
 };
-const createCategory = () => {};
+
+const showCreateFilterDialog = () => {
+  showNewFilterDialog.value = true;
+};
+
+const hideNewFilterDialog = () => {
+  showNewFilterDialog.value = false;
+};
+
+const createNewFilter = ({category, filter}) => {
+  console.log(category);
+  console.log(filter);
+  hideNewFilterDialog();
+};
 
 onBeforeMount(() => getCategoriesNames());
 </script>

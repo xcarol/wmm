@@ -58,6 +58,11 @@
     "applyWarningMessage": "You're about to update %d records with the category: %s\nAre you sure?",
     "updateProgress": "Updating transactions..."
   },
+  "dialogNewFilter": {
+    "title": "New Filter",
+    "categoryLabel": "Category name",
+    "filterLabel": "Filter name"
+  },
   "dialog": {
     "yes": "Yes",
     "no": "No",
