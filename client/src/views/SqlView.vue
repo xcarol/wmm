@@ -39,12 +39,12 @@
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useApi } from '../plugins/api';
-import { useAppStore } from '../stores/app';
+import { useProgressStore } from '../stores/progressDialog';
 import ResponseTable from '../components/sql-view/ResponseTable.vue';
 import BackupResponse from '../components/sql-view/BackupRestore.vue';
 
 const { t: $t } = useI18n();
-const appStore = useAppStore();
+const store = useProgressStore();
 const api = useApi();
 
 const sqlQueryText = ref('');
@@ -70,7 +70,7 @@ const resetView = () => {
 const executeQuery = async () => {
   resetView();
 
-  appStore.startProgress({ steps: 0, description: $t('sqlView.executingQuery') });
+  store.startProgress({ steps: 0, description: $t('sqlView.executingQuery') });
   try {
     const res = await api.executeQuery(sqlQueryText.value);
     const rows = res.data[0];
@@ -104,6 +104,6 @@ const executeQuery = async () => {
   } catch (e) {
     sqlQueryResponse.value = e.response?.data ?? e;
   }
-  appStore.stopProgress();
+  store.stopProgress();
 };
 </script>
