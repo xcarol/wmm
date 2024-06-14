@@ -19,15 +19,15 @@ const queryBankNames = "SELECT DISTINCT bank FROM transactions";
 
 const queryCategoryNames =
   "SELECT DISTINCT category FROM transactions \
-  WHERE (TRIM(category) != '' AND category IS NOT NULL) \
-  ORDER BY category ASC";
+  WHERE category != '' ORDER BY category ASC";
 
 const queryUncategorizedTransactions =
-  "SELECT id, bank, date, description, category, amount FROM transactions \
-  WHERE (TRIM(category) = '' OR category IS NULL)";
+  "SELECT id, bank, date, description, category, amount FROM transactions WHERE category = ''";
 
-const queryUncategorizedRowsFilter =
-  ' AND description REGEXP \':filter\'';
+const queryUncategorizedRowsFilter = " AND description REGEXP ':filter'";
+
+const queryUpdateTransactionsCategory =
+  "UPDATE transactions SET category = '%1' WHERE id IN(%2)";
 
 async function getConnection() {
   return await mysql.createConnection(connectionSettings);
@@ -38,7 +38,7 @@ async function getUncategorizedTransactions(filter) {
     const connection = await getConnection();
     let query = queryUncategorizedTransactions;
     if (filter?.length) {
-      query += queryUncategorizedRowsFilter.replace(':filter', filter);
+      query += queryUncategorizedRowsFilter.replace(":filter", filter);
     }
     const result = await connection.query(query);
     connection.close();
@@ -120,6 +120,22 @@ async function backupDatabase() {
   }
 }
 
+async function updateTransactionsCategory(transactions, category) {
+  try {
+    const connection = await getConnection();
+    const result = await connection.query(
+      queryUpdateTransactionsCategory
+        .replace("%1", category)
+        .replace("%2", transactions.toString())
+    );
+    connection.close();
+    return result;
+  } catch (err) {
+    console.error("Error executing query:", err);
+    throw err;
+  }
+}
+
 module.exports = {
   addTransaction,
   backupDatabase,
@@ -127,4 +143,5 @@ module.exports = {
   getBankNames,
   getCategories,
   getUncategorizedTransactions,
+  updateTransactionsCategory,
 };
