@@ -11,27 +11,28 @@
       <v-card-text>{{ message }}</v-card-text>
       <v-card-actions>
         <v-btn
-          v-show="showYes"
-          @click.stop="yes"
-          >{{ $t('dialog.yes') }}</v-btn
-        >
-        <v-btn
           v-show="showNo"
           @click.stop="no"
         >
           {{ $t('dialog.no') }}</v-btn
         >
         <v-btn
-          v-show="showOk"
-          @click.stop="ok"
-        >
-          {{ $t('dialog.ok') }}</v-btn
+          v-show="showYes"
+          @click.stop="yes"
+          >{{ $t('dialog.yes') }}</v-btn
         >
         <v-btn
           v-show="showCancel"
           @click.stop="cancel"
         >
           {{ $t('dialog.cancel') }}</v-btn
+        >
+        <v-btn
+          v-show="showOk"
+          elevation-11
+          @click.stop="ok"
+        >
+          {{ $t('dialog.ok') }}</v-btn
         >
       </v-card-actions>
     </v-card>
