@@ -10,4 +10,15 @@ module.exports = (app) => {
       res.status(500).send("Error retrieving categories");
     }
   });
+
+  app.put("/filter", async (req, res) => {
+    try {
+      const categories = await addFilter();
+      res.json(categories);
+      res.status(201);
+    } catch (err) {
+      console.error("Error inserting category filter:", err);
+      res.status(500).send("Error inserting category filter");
+    }
+  });
 };
