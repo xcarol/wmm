@@ -56,7 +56,8 @@
     "applyButton": "Apply",
     "createFilterButton": "Create new filter",
     "applyWarningMessage": "You're about to update %d records with the category: %s\nAre you sure?",
-    "updateProgress": "Updating transactions..."
+    "updateProgress": "Updating transactions...",
+    "updateTransactionsMessage": "Do you want to apply this new filter now?"
   },
   "dialogNewFilter": {
     "title": "New Filter",

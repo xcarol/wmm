@@ -19,7 +19,7 @@
     "sql": "Comandos SQL"
   },
   "progress": {
-    "title": "Operación en progreso..."
+    "title": "Operación en progreso"
   },
   "importView": {
     "title": "Importa un archivo CSV",
@@ -55,8 +55,9 @@
     "categoryLabel": "Busca la categoría o añade una nueva...",
     "applyButton": "Aplica",
     "createFilterButton": "Crea un filtro",
-    "applyWarningMessage": "Vas a actualizar %d transacciones con la categoría: %s\nEstás seguro?",
-    "updateProgress": "Actualizando las transacciones..."
+    "applyWarningMessage": "Vas a actualizar %d transacciones con la categoría: %s\n¿Estás seguro?",
+    "updateProgress": "Actualizando las transacciones...",
+    "updateTransactionsMessage": "¿Quieres aplicar ahora este nuevo filtro?"
   },
   "dialogNewFilter": {
     "title": "Nuevo filtro",

@@ -1,11 +1,12 @@
 <template>
   <new-filter-dialog
     :show="showNewFilterDialog"
-    category=""
+    :category="selectedCategory"
     filter=""
     @on-ok="createNewFilter"
     @on-cancel="hideNewFilterDialog"
   />
+  <message-dialog />
   <v-card>
     <v-card-text>
       <v-combobox
@@ -61,6 +62,7 @@ import { useAppStore } from '../stores/app';
 import { useMessageStore } from '../stores/messageDialog';
 import { useProgressStore } from '../stores/progressDialog';
 import NewFilterDialog from '../components/categorize-view/NewFilterDialog.vue';
+import MessageDialog from '../components/MessageDialog.vue';
 
 const appStore = useAppStore();
 const api = useApi();
@@ -96,7 +98,7 @@ const searchTransactions = async () => {
       .replace('%d', tableItems.value.length)
       .replace('%d', search ?? '');
   } catch (e) {
-    appStore.alertMessage = e.response?.data ?? e;
+    appStore.alertMessage = api.getErrorMessage(e);
   }
 };
 
@@ -111,7 +113,7 @@ const getCategoriesNames = async () => {
     const dbNames = await api.categoryNames();
     categoryNames.value = dbNames.data;
   } catch (e) {
-    appStore.alertMessage = e.response?.data ?? e;
+    appStore.alertMessage = api.getErrorMessage(e);
   }
 };
 
@@ -124,7 +126,22 @@ const updateTransactions = async (transactions, category) => {
   try {
     await api.updateTransactionsCategory(transactions, category);
   } catch (e) {
-    appStore.alertMessage = e.response?.data ?? e;
+    appStore.alertMessage = api.getErrorMessage(e);
+  }
+
+  progressStore.stopProgress();
+};
+
+const updateTransactionsByFilter = async (filter) => {
+  progressStore.startProgress({
+    steps: 0,
+    description: $t('categorizeView.updateProgress'),
+  });
+
+  try {
+    await api.updateTransactionsByFilter(filter);
+  } catch (e) {
+    appStore.alertMessage = api.getErrorMessage(e);
   }
 
   progressStore.stopProgress();

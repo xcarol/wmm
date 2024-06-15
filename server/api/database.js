@@ -12,14 +12,14 @@ const connectionSettings = {
 };
 
 const queryInsertRow =
-  'INSERT INTO transactions (bank, date, description, amount) \
-  VALUES (":bank", ":date", ":description", ":amount")';
+  "INSERT INTO transactions (bank, date, description, amount) \
+    VALUES (':bank', ':date', ':description', ':amount')";
 
 const queryBankNames = "SELECT DISTINCT bank FROM transactions";
 
 const queryCategoryNames =
   "SELECT DISTINCT category FROM transactions \
-  WHERE category != '' ORDER BY category ASC";
+    WHERE category != '' ORDER BY category ASC";
 
 const queryUncategorizedTransactions =
   "SELECT id, bank, date, description, category, amount FROM transactions WHERE category = ''";
@@ -28,6 +28,12 @@ const queryUncategorizedRowsFilter = " AND description REGEXP ':filter'";
 
 const queryUpdateTransactionsCategory =
   "UPDATE transactions SET category = '%1' WHERE id IN(%2)";
+
+const queryUpdateTransactionsByFilter =
+  "UPDATE transactions as t \
+    JOIN filters as f \
+    SET t.category = f.category \
+    WHERE t.description like '%{1}%' AND f.filter = '{1}'";
 
 async function getConnection() {
   return await mysql.createConnection(connectionSettings);
@@ -136,6 +142,20 @@ async function updateTransactionsCategory(transactions, category) {
   }
 }
 
+async function updateTransactionsByFilter(filter) {
+  try {
+    const connection = await getConnection();
+    const result = await connection.query(
+      queryUpdateTransactionsByFilter.replaceAll("{1}", filter)
+    );
+    connection.close();
+    return result;
+  } catch (err) {
+    console.error("Error executing query:", err);
+    throw err;
+  }
+}
+
 module.exports = {
   addTransaction,
   backupDatabase,
@@ -144,4 +164,5 @@ module.exports = {
   getCategories,
   getUncategorizedTransactions,
   updateTransactionsCategory,
+  updateTransactionsByFilter,
 };
