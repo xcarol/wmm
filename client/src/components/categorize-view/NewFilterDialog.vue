@@ -19,8 +19,8 @@
         ></v-text-field>
       </v-card-text>
       <v-card-actions>
-        <v-btn @click.stop="ok">{{ $t('dialog.ok') }}</v-btn>
         <v-btn @click.stop="cancel"> {{ $t('dialog.cancel') }}</v-btn>
+        <v-btn @click.stop="ok">{{ $t('dialog.ok') }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
