@@ -170,7 +170,7 @@ async function updateTransactionsByFilter(filter) {
   try {
     const connection = await getConnection();
     const result = await connection.query(
-      queryUpdateTransactionsByFilter.replaceAll("{1}", filter)
+      queryUpdateTransactionsByFilter.replaceAll("{1}", strToSql(filter))
     );
     connection.close();
     return result;
