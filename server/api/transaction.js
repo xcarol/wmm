@@ -2,14 +2,14 @@ const {
   addTransaction,
   getUncategorizedTransactions,
   updateTransactionsCategory,
+  updateTransactionsByFilter,
 } = require("./database");
 
 module.exports = (app) => {
   app.put("/transaction", async (req, res) => {
     try {
       const data = req.body;
-      await addTransaction(data.date, data.description, data.amount, data.bank);
-      res.json("OK");
+      res.json(await addTransaction(data.date, data.description, data.amount, data.bank));
       res.status(201);
     } catch (err) {
       console.error("Error adding a transaction:", err);
@@ -20,8 +20,7 @@ module.exports = (app) => {
   app.post("/transaction/category", async (req, res) => {
     try {
       const data = req.body;
-      await updateTransactionsCategory(data.transactions, data.category);
-      res.json("OK");
+      res.json(await updateTransactionsCategory(data.transactions, data.category));
       res.status(200);
     } catch (err) {
       console.error("Error updating transactions category:", err);
@@ -32,8 +31,7 @@ module.exports = (app) => {
   app.post("/transaction/filter", async (req, res) => {
     try {
       const data = req.body;
-      await updateTransactionsByFilter(data.filter);
-      res.json("OK");
+      res.json(await updateTransactionsByFilter(data.filter));
       res.status(200);
     } catch (err) {
       console.error("Error updating transactions category by filter:", err);
@@ -44,8 +42,7 @@ module.exports = (app) => {
   app.get("/transaction/uncategorized", async (req, res) => {
     try {
       const data = req.query;
-      const transactions = await getUncategorizedTransactions(data["filter"]);
-      res.json(transactions);
+      res.json(await getUncategorizedTransactions(data["filter"]));
     } catch (err) {
       console.error("Error getting uncategorized transactions:", err);
       res.status(500).send("Error getting uncategorized transactions");

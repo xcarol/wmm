@@ -1,10 +1,9 @@
-const { getCategories } = require("./database");
+const { getCategories, addFilter } = require("./database");
 
 module.exports = (app) => {
   app.get("/category/names", async (req, res) => {
     try {
-      const categories = await getCategories();
-      res.json(categories);
+      res.json(await getCategories());
     } catch (err) {
       console.error("Error fetching categories:", err);
       res.status(500).send("Error retrieving categories");
@@ -13,8 +12,8 @@ module.exports = (app) => {
 
   app.put("/filter", async (req, res) => {
     try {
-      const categories = await addFilter();
-      res.json(categories);
+      const data = req.body;
+      res.json(await addFilter(data.category, data.filter));
       res.status(201);
     } catch (err) {
       console.error("Error inserting category filter:", err);

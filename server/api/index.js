@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const categoriesRouter = require("./category");
+const categoriesRouter = require("./filter");
 const banksRouter = require("./bank");
 const transactionsRouter = require("./transaction");
 const sqlRouter = require("./sqlaccess");
