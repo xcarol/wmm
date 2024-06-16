@@ -107,6 +107,7 @@ const searchTransactions = async () => {
   try {
     const transactions = await api.searchTransactionsByCategory(search);
     tableItems.value = transactions.data;
+    selectedItems.value = [];
     filterMessage.value = $t('categorizeView.transactionsFound')
       .replace('%d', tableItems.value.length)
       .replace('%d', search ?? '');
