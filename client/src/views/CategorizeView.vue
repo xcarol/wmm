@@ -100,11 +100,21 @@ const canApplyCategory = computed(() => {
   );
 });
 
+const getCategoriesNames = async () => {
+  try {
+    const dbNames = await api.categoryNames();
+    categoryNames.value = dbNames.data;
+  } catch (e) {
+    appStore.alertMessage = api.getErrorMessage(e);
+  }
+};
+
 const searchTransactions = async () => {
   const search = selectedFilter.value;
   appStore.addSearchToCategoryHistory(search);
 
   try {
+    await getCategoriesNames();
     const transactions = await api.searchTransactionsByCategory(search);
     tableItems.value = transactions.data;
     selectedItems.value = [];
@@ -119,15 +129,6 @@ const searchTransactions = async () => {
 const keyDown = (value) => {
   if (value.keyCode === 13) {
     searchTransactions();
-  }
-};
-
-const getCategoriesNames = async () => {
-  try {
-    const dbNames = await api.categoryNames();
-    categoryNames.value = dbNames.data;
-  } catch (e) {
-    appStore.alertMessage = api.getErrorMessage(e);
   }
 };
 
