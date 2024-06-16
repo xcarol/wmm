@@ -1,0 +1,77 @@
+<template>
+  <v-dialog
+    :model-value="show"
+    max-width="600px"
+    :fullscreen="$vuetify.display.xs"
+    scrollable
+    persistent
+  >
+    <v-card>
+      <v-card-title>{{ title }}</v-card-title>
+      <v-card-text>{{ message }}</v-card-text>
+      <v-card-actions>
+        <v-btn
+          v-show="showNo"
+          @click.stop="no"
+        >
+          {{ $t('dialog.no') }}</v-btn
+        >
+        <v-btn
+          v-show="showYes"
+          @click.stop="yes"
+          >{{ $t('dialog.yes') }}</v-btn
+        >
+        <v-btn
+          v-show="showCancel"
+          @click.stop="cancel"
+        >
+          {{ $t('dialog.cancel') }}</v-btn
+        >
+        <v-btn
+          v-show="showOk"
+          elevation-11
+          @click.stop="ok"
+        >
+          {{ $t('dialog.ok') }}</v-btn
+        >
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+</template>
+
+<script setup>
+import { computed } from 'vue';
+import { useMessageStore } from '../stores/messageDialog';
+
+const store = useMessageStore();
+
+const show = computed(() => store.show);
+const title = computed(() => store.title);
+const message = computed(() => store.message);
+
+const showYes = computed(() => typeof store.yes === "function");
+const yes = () => {
+  store.show = false;
+  store.yes();
+};
+
+const showNo = computed(() => typeof store.no === "function");
+const no = () => {
+  store.show = false;
+  store.no();
+};
+
+const showOk = computed(() => typeof store.ok === "function");
+const ok = () => {
+  store.show = false;
+  store.ok();
+};
+
+const showCancel = computed(() => typeof store.cancel === "function");
+const cancel = () => {
+  store.show = false;
+  if (typeof store.cancel === "function") {
+    store.cancel();
+  }
+};
+</script>

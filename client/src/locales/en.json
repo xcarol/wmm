@@ -46,5 +46,31 @@
     "result": "Result: %d. Message: %d",
     "executingQuery": "Executing query at server...",
     "backupProgress": "Generating backup..."
+  },
+  "categorizeView": {
+    "title": "Categorize transactions",
+    "filterLabel": "Search by description...",
+    "filterButton": "Search",
+    "transactionsFound": "%d transactions found with this criteria: [%d]",
+    "categoryLabel": "Search for a category or add a new one...",
+    "applyButton": "Apply",
+    "createFilterButton": "Create new filter",
+    "applyWarningMessage": "You're about to update %d records with the category: %s\nAre you sure?",
+    "updateProgress": "Updating transactions...",
+    "updateTransactionsMessage": "Do you want to apply this new filter now?",
+    "updatedTransactionsMessage": "%d transactions have been updated."
+  },
+  "dialogNewFilter": {
+    "title": "New Filter",
+    "categoryLabel": "Category name",
+    "filterLabel": "Filter name"
+  },
+  "dialog": {
+    "Info": "Information",
+    "Warning": "Warning",
+    "yes": "Yes",
+    "no": "No",
+    "ok": "Ok",
+    "cancel": "Cancel"
   }
 }

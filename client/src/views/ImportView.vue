@@ -24,6 +24,7 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useAppStore } from '../stores/app';
+import { useProgressStore } from '../stores/progressDialog';
 import { useApi } from '../plugins/api';
 import FileInput from '../components/import-view/FileInput.vue';
 import FilePreview from '../components/import-view/FilePreview.vue';
@@ -35,6 +36,7 @@ dayjs.locale('es');
 
 const { t: $t } = useI18n();
 const appStore = useAppStore();
+const progressStore = useProgressStore();
 const api = useApi();
 
 const firstRowIsAHeader = ref(false);
@@ -84,11 +86,11 @@ const importFile = async () => {
   const firstRow = firstRowIsAHeader.value === true ? 1 : 0;
   let rowCount = firstRow;
 
-  appStore.startProgress({
+  progressStore.startProgress({
     steps: appStore.csvfile.rowCount,
     description: $t('importView.importingRows')
       .replace('%d', rowCount)
-      .replace('%d', appStore.csvfile.rowCount),
+      .replace('%d', appStore.csvfile.rowCount - firstRow),
   });
 
   try {
@@ -103,18 +105,18 @@ const importFile = async () => {
           selectedBankName.value.slice(0, BANK_LENGTH),
         )
         .catch((err) => {
-          throw new Error(err.response.statusText);
+          throw new Error(api.getErrorMessage(err));
         });
 
-      if (appStore.progressIsCancelled) {
+      if (progressStore.progressIsCancelled) {
         break;
       }
 
-      appStore.updateProgress({
+      progressStore.updateProgress({
         step: rowCount,
         description: $t('importView.importingRows')
           .replace('%d', rowCount)
-          .replace('%d', appStore.csvfile.rowCount),
+          .replace('%d', appStore.csvfile.rowCount- firstRow),
       });
     }
     appStore.alertMessage = $t('importView.importedRows').replace('%d', rowCount - firstRow);
@@ -123,6 +125,6 @@ const importFile = async () => {
       .replace('%d', e.message)
       .replace('%d', rowCount);
   }
-  appStore.stopProgress();
+  progressStore.stopProgress();
 };
 </script>

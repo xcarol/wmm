@@ -46,5 +46,31 @@
     "result": "Resultat: %d. Missatge: %d",
     "executingQuery": "Executant la query al servidor...",
     "backupProgress": "Generant la còpia de seguretat..."
+  },
+  "categorizeView": {
+    "title": "Categoritza les transaccions",
+    "filterLabel": "Cerca per descripció...",
+    "filterButton": "Cerca",
+    "transactionsFound": "S'han trobat %d transaccions amb el següent criteri: [%d]",
+    "categoryLabel": "Cerca la categoria o afegeix-ne una de nova...",
+    "applyButton": "Aplica",
+    "createFilterButton": "Crea un filtre",
+    "applyWarningMessage": "Et's a punt d'actualitzar %d transaccions amb la categoria: %s\nN'estàs segur?",
+    "updateProgress": "Actualitzant les transaccions...",
+    "updateTransactionsMessage": "Vols aplicar ara aquest nou filtre?",
+    "updatedTransactionsMessage": "S'han actualitzat %d transaccions."
+  },
+  "dialogNewFilter": {
+    "title": "Nou filtre",
+    "categoryLabel": "Nom de la categoria",
+    "filterLabel": "Nom del filtre"
+  },
+  "dialog": {
+    "Info": "Informació",
+    "Warning": "Avís",
+    "yes": "Sí",
+    "no": "No",
+    "ok": "D'acord",
+    "cancel": "Cancel·la"
   }
 }

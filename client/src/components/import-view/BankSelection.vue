@@ -33,8 +33,13 @@ const bankSelected = (value) => {
 };
 
 const getBankNames = async () => {
+  try {
   const dbNames = await api.bankNames();
   bankNames.value = dbNames.data;
+} catch (e) {
+  appStore.alertMessage = api.getErrorMessage(e);
+}
+
 };
 
 onBeforeMount(() => getBankNames());

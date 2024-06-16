@@ -44,16 +44,16 @@
 
 <script setup>
 import { computed } from 'vue';
-import { useAppStore } from '../stores/app';
+import { useProgressStore } from '../stores/progressDialog';
 
-const appStore = useAppStore();
+const store = useProgressStore();
 
-const show = computed(() => appStore.progressIsActive);
-const description = computed(() => appStore.progress.description);
-const maxSteps = computed(() => appStore.progress.maxSteps);
-const step = computed(() => appStore.progress.step);
+const show = computed(() => store.progressIsActive);
+const description = computed(() => store.progress.description);
+const maxSteps = computed(() => store.progress.maxSteps);
+const step = computed(() => store.progress.step);
 
 const cancel = () => {
-  appStore.cancelProgress();
+  store.cancelProgress();
 };
 </script>

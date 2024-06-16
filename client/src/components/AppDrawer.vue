@@ -33,6 +33,7 @@ const menuOptions = [
   {
     title: $t('mainDrawer.categorize'),
     value: '/categorize',
+    barTitle: $t('categorizeView.title'),
   },
   {
     title: $t('mainDrawer.sql'),

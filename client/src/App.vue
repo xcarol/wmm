@@ -1,6 +1,7 @@
 <template>
   <v-app>
-    <top-dialog />
+    <progress-dialog />
+    <message-dialog />
     <v-app-bar :elevation="24">
       <template #prepend>
         <v-app-bar-nav-icon @click.stop="showDrawer = !showDrawer"></v-app-bar-nav-icon>
@@ -22,7 +23,8 @@
 import { ref } from 'vue';
 import AppDrawer from './components/AppDrawer.vue';
 import SnackBar from './components/SnackBar.vue';
-import TopDialog from './components/TopDialog.vue';
+import ProgressDialog from './components/ProgressDialog.vue';
+import MessageDialog from './components/MessageDialog.vue';
 
 const showDrawer = ref(false);
 const title = ref("Where's My Money");

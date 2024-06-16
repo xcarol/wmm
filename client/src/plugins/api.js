@@ -1,14 +1,16 @@
 /* eslint-disable no-param-reassign */
 class Api {
   endpoints = {
-    categories: 'categories',
-    banknames: 'banknames',
-    transactions: 'transactions',
+    categoryNames: 'category/names',
+    bankNames: 'bank/names',
+    transactions: 'transaction',
+    updateTransactionsCategory: 'transaction/category',
+    updateTransactionsByFilter: 'transaction/filter',
+    uncategorizedTransactions: 'transaction/uncategorized?filter={1}',
+    filters: 'filter',
     sql: 'sql',
     backupDatabase: 'sql/backup',
   };
-
-  genericError = 'An error ocurred. Try it again later...';
 
   static endpoint(endpoint, ...args) {
     let count = 0;
@@ -21,25 +23,30 @@ class Api {
     return endpoint;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   getErrorMessage(error) {
     if (error && error.response && error.response.data && error.response.data.message) {
       return error.response.data.message;
+    }
+
+    if (error && error.response && error.response.data) {
+      return error.response.data;
     }
 
     if (error && error.response && error.response.statusText) {
       return error.response.statusText;
     }
 
-    return this.genericError;
+    return error.toString();
   }
 
-  categories() {
-    const url = Api.endpoint(this.endpoints.categories);
+  categoryNames() {
+    const url = Api.endpoint(this.endpoints.categoryNames);
     return this.axios.get(url);
   }
 
   bankNames() {
-    const url = Api.endpoint(this.endpoints.banknames);
+    const url = Api.endpoint(this.endpoints.bankNames);
     return this.axios.get(url);
   }
 
@@ -56,6 +63,26 @@ class Api {
   backupDatabase() {
     const url = Api.endpoint(this.endpoints.backupDatabase);
     return this.axios.get(url);
+  }
+
+  searchTransactionsByCategory(filter) {
+    const url = Api.endpoint(this.endpoints.uncategorizedTransactions, filter ?? '');
+    return this.axios.get(url);
+  }
+
+  updateTransactionsCategory(transactions, category) {
+    const url = Api.endpoint(this.endpoints.updateTransactionsCategory);
+    return this.axios.post(url, {transactions, category});
+  }
+
+  updateTransactionsByFilter(filter) {
+    const url = Api.endpoint(this.endpoints.updateTransactionsByFilter);
+    return this.axios.post(url, {filter});
+  }
+
+  createFilter(category, filter) {
+    const url = Api.endpoint(this.endpoints.filters);
+    return this.axios.put(url, {category, filter});
   }
 }
 

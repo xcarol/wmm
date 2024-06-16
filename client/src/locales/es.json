@@ -19,7 +19,7 @@
     "sql": "Comandos SQL"
   },
   "progress": {
-    "title": "Operación en progreso..."
+    "title": "Operación en progreso"
   },
   "importView": {
     "title": "Importa un archivo CSV",
@@ -46,5 +46,31 @@
     "result": "Resultado: %d. Mensaje: %d",
     "executingQuery": "Ejecutando la query en el servidor...",
     "backupProgress": "Generando la copia de seguridad..."
+  },
+  "categorizeView": {
+    "title": "Categoriza las transacciones",
+    "filterLabel": "Busca por la descripción...",
+    "filterButton": "Busca",
+    "transactionsFound": "Se han encontrado %d transacciones ambcon el següiente criterio: [%d]",
+    "categoryLabel": "Busca la categoría o añade una nueva...",
+    "applyButton": "Aplica",
+    "createFilterButton": "Crea un filtro",
+    "applyWarningMessage": "Vas a actualizar %d transacciones con la categoría: %s\n¿Estás seguro?",
+    "updateProgress": "Actualizando las transacciones...",
+    "updateTransactionsMessage": "¿Quieres aplicar ahora este nuevo filtro?",
+    "updatedTransactionsMessage": "Se han actualizado %d transacciones."
+  },
+  "dialogNewFilter": {
+    "title": "Nuevo filtro",
+    "categoryLabel": "Nombre de la categoría",
+    "filterLabel": "Nombre del filtro"
+  },
+  "dialog": {
+    "Info": "Información",
+    "Warning": "Aviso",
+    "yes": "Sí",
+    "no": "No",
+    "ok": "De acuerdo",
+    "cancel": "Cancelar"
   }
 }

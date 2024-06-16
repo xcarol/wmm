@@ -32,7 +32,7 @@ CREATE TABLE `transactions` (
   `bank` varchar(200) NOT NULL,
   `date` datetime NOT NULL,
   `description` varchar(200) NOT NULL,
-  `category` varchar(200) DEFAULT NULL,
+  `category` varchar(200) DEFAULT '',
   `amount` double NOT NULL,
   PRIMARY KEY (`id`),
   KEY `not_duplicate` (`not_duplicate`),
