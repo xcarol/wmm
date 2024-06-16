@@ -90,7 +90,7 @@ const importFile = async () => {
     steps: appStore.csvfile.rowCount,
     description: $t('importView.importingRows')
       .replace('%d', rowCount)
-      .replace('%d', appStore.csvfile.rowCount),
+      .replace('%d', appStore.csvfile.rowCount - firstRow),
   });
 
   try {
@@ -105,7 +105,7 @@ const importFile = async () => {
           selectedBankName.value.slice(0, BANK_LENGTH),
         )
         .catch((err) => {
-          throw new Error(err.response.statusText);
+          throw new Error(api.getErrorMessage(err));
         });
 
       if (progressStore.progressIsCancelled) {
@@ -116,7 +116,7 @@ const importFile = async () => {
         step: rowCount,
         description: $t('importView.importingRows')
           .replace('%d', rowCount)
-          .replace('%d', appStore.csvfile.rowCount),
+          .replace('%d', appStore.csvfile.rowCount- firstRow),
       });
     }
     appStore.alertMessage = $t('importView.importedRows').replace('%d', rowCount - firstRow);
