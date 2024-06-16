@@ -35,8 +35,28 @@ const queryUpdateTransactionsByFilter =
     SET t.category = f.category \
     WHERE t.description like '%{1}%' AND f.filter = '{1}'";
 
+const queryAddCategoryFilters =
+  "INSERT INTO filters (category, filter) VALUES ('%1', '%2')";
+
 async function getConnection() {
   return await mysql.createConnection(connectionSettings);
+}
+
+async function addFilter(category, filter) {
+  try {
+    const connection = await getConnection();
+
+    const result = await connection.query(
+      queryAddCategoryFilters
+        .replace("%1", category)
+        .replace("%2", filter)
+    );
+    connection.close();
+    return result;
+  } catch (err) {
+    console.error("Error adding filter:", err);
+    throw err;
+  }
 }
 
 async function getUncategorizedTransactions(filter) {
@@ -158,6 +178,7 @@ async function updateTransactionsByFilter(filter) {
 
 module.exports = {
   addTransaction,
+  addFilter,
   backupDatabase,
   executeSql,
   getBankNames,

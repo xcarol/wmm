@@ -57,7 +57,8 @@
     "createFilterButton": "Crea un filtro",
     "applyWarningMessage": "Vas a actualizar %d transacciones con la categoría: %s\n¿Estás seguro?",
     "updateProgress": "Actualizando las transacciones...",
-    "updateTransactionsMessage": "¿Quieres aplicar ahora este nuevo filtro?"
+    "updateTransactionsMessage": "¿Quieres aplicar ahora este nuevo filtro?",
+    "updatedTransactionsMessage": "Se han actualizado %d transacciones."
   },
   "dialogNewFilter": {
     "title": "Nuevo filtro",
@@ -65,6 +66,8 @@
     "filterLabel": "Nombre del filtro"
   },
   "dialog": {
+    "Info": "Información",
+    "Warning": "Aviso",
     "yes": "Sí",
     "no": "No",
     "ok": "De acuerdo",

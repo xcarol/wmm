@@ -57,7 +57,8 @@
     "createFilterButton": "Crea un filtre",
     "applyWarningMessage": "Et's a punt d'actualitzar %d transaccions amb la categoria: %s\nN'estàs segur?",
     "updateProgress": "Actualitzant les transaccions...",
-    "updateTransactionsMessage": "Vols aplicar ara aquest nou filtre?"
+    "updateTransactionsMessage": "Vols aplicar ara aquest nou filtre?",
+    "updatedTransactionsMessage": "S'han actualitzat %d transaccions."
   },
   "dialogNewFilter": {
     "title": "Nou filtre",
@@ -65,6 +66,7 @@
     "filterLabel": "Nom del filtre"
   },
   "dialog": {
+    "Info": "Informació",
     "Warning": "Avís",
     "yes": "Sí",
     "no": "No",

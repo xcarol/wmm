@@ -2,7 +2,7 @@
   <new-filter-dialog
     :show="showNewFilterDialog"
     :category="selectedCategory"
-    filter=""
+    :filter="selectedItemToFilter"
     @on-ok="createNewFilter"
     @on-cancel="hideNewFilterDialog"
   />
@@ -78,6 +78,19 @@ const filterMessage = ref('');
 const selectedCategory = ref('');
 const categoryNames = ref(['']);
 const showNewFilterDialog = ref(false);
+const selectedItemToFilter = computed(() => {
+  if (selectedItems.value.length === 0) {
+    return '';
+  }
+
+  for (let count = 0; count < tableItems.value.length; count += 1) {
+    if (tableItems.value[count].id === selectedItems.value[0]) {
+      return tableItems.value[count].description;
+    }
+  }
+
+  return '';
+});
 
 const canApplyCategory = computed(() => {
   return !!(
@@ -133,18 +146,20 @@ const updateTransactions = async (transactions, category) => {
 };
 
 const updateTransactionsByFilter = async (filter) => {
+  let updatedTransactions = 0;
   progressStore.startProgress({
     steps: 0,
     description: $t('categorizeView.updateProgress'),
   });
 
   try {
-    await api.updateTransactionsByFilter(filter);
+    updatedTransactions = await api.updateTransactionsByFilter(filter);
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }
 
   progressStore.stopProgress();
+  return updatedTransactions;
 };
 
 const applyCategory = () => {
@@ -172,10 +187,33 @@ const hideNewFilterDialog = () => {
   showNewFilterDialog.value = false;
 };
 
-const createNewFilter = ({category, filter}) => {
-  console.log(category);
-  console.log(filter);
+const createNewFilter = async ({ category, filter }) => {
   hideNewFilterDialog();
+
+  try {
+    await api.createFilter(category, filter);
+
+    messageStore.showMessage({
+      title: $t('dialog.Warning'),
+      message: $t('categorizeView.updateTransactionsMessage'),
+      yes: async () => {
+        const result = await updateTransactionsByFilter(filter);
+        const tit = $t('categorizeView.updatedTransactionsMessage').replace(
+          '%d',
+          `${result?.data[0]?.affectedRows ?? 0}`,
+        );
+        messageStore.showMessage({
+          title: $t('dialog.Info'),
+          message: tit,
+          ok: () => {},
+        });
+        await searchTransactions();
+      },
+      no: () => {},
+    });
+  } catch (e) {
+    appStore.alertMessage = api.getErrorMessage(e);
+  }
 };
 
 onBeforeMount(() => getCategoriesNames());
