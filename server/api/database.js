@@ -38,6 +38,10 @@ const queryUpdateTransactionsByFilter =
 const queryAddCategoryFilters =
   "INSERT INTO filters (category, filter) VALUES ('%1', '%2')";
 
+function strToSql(str) {
+  return str.replaceAll("'", "''");
+}
+
 async function getConnection() {
   return await mysql.createConnection(connectionSettings);
 }
@@ -48,8 +52,8 @@ async function addFilter(category, filter) {
 
     const result = await connection.query(
       queryAddCategoryFilters
-        .replace("%1", category)
-        .replace("%2", filter)
+        .replace("%1", strToSql(category))
+        .replace("%2", strToSql(filter))
     );
     connection.close();
     return result;
@@ -107,9 +111,9 @@ async function addTransaction(date, description, amount, bank) {
     const result = await connection.query(
       queryInsertRow
         .replace(":date", date)
-        .replace(":description", description)
+        .replace(":description", strToSql(description))
         .replace(":amount", amount)
-        .replace(":bank", bank)
+        .replace(":bank", strToSql(bank))
     );
     connection.close();
     return result;
@@ -151,7 +155,7 @@ async function updateTransactionsCategory(transactions, category) {
     const connection = await getConnection();
     const result = await connection.query(
       queryUpdateTransactionsCategory
-        .replace("%1", category)
+        .replace("%1", strToSql(category))
         .replace("%2", transactions.toString())
     );
     connection.close();
