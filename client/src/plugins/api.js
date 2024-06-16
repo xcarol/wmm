@@ -79,6 +79,11 @@ class Api {
     const url = Api.endpoint(this.endpoints.updateTransactionsByFilter);
     return this.axios.post(url, {filter});
   }
+
+  createFilter(category, filter) {
+    const url = Api.endpoint(this.endpoints.filters);
+    return this.axios.put(url, {category, filter});
+  }
 }
 
 const api = new Api();
