@@ -20,14 +20,18 @@
       </v-card-text>
       <v-card-actions>
         <v-btn @click.stop="cancel"> {{ $t('dialog.cancel') }}</v-btn>
-        <v-btn @click.stop="ok">{{ $t('dialog.ok') }}</v-btn>
+        <v-btn
+          :disabled="canCreateNewFilter"
+          @click.stop="ok"
+          >{{ $t('dialog.ok') }}</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
 <script setup>
-import { ref,computed, watch } from 'vue';
+import { ref, computed, watch } from 'vue';
 
 const emits = defineEmits(['onOk', 'onCancel']);
 
@@ -64,4 +68,8 @@ const ok = () => {
 const cancel = () => {
   emits('onCancel');
 };
+
+const canCreateNewFilter = computed(() => {
+  return !!(categoryInput.value.length === 0 || filterInput.value.length === 0);
+});
 </script>
