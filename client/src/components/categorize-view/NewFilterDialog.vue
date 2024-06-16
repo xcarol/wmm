@@ -59,11 +59,9 @@ watch(show, (newVal, oldVal) => {
 
 const ok = () => {
   emits('onOk', { category: categoryInput.value, filter: filterInput.value });
-  console.log('emits(\'onOk\')');
 };
 
 const cancel = () => {
   emits('onCancel');
-  console.log('emits(\'onCancel\')');
 };
 </script>
