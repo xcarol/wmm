@@ -16,6 +16,7 @@
   "mainDrawer": {
     "import": "Importar",
     "categorize": "Categoritzar",
+    "duplicates": "Cercar duplicats",
     "sql": "Comandes SQL"
   },
   "progress": {
@@ -35,6 +36,10 @@
     "importedRows": "S'han importat %d files.",
     "importError": "Error: '%d' a la línia: %d",
     "importingRows": "S'han importat %d linies de %d..."
+  },
+  "duplicatesView": {
+    "title": "Cerca de duplicats",
+    "searchButton": "Cerca"
   },
   "sqlView": {
     "title": "Executa comandes SQL",
