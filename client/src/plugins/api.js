@@ -7,6 +7,7 @@ class Api {
     updateTransactionsCategory: 'transaction/category',
     updateTransactionsByFilter: 'transaction/filter',
     uncategorizedTransactions: 'transaction/uncategorized?filter={1}',
+    duplicated: 'transaction/duplicated',
     filters: 'filter',
     sql: 'sql',
     backupDatabase: 'sql/backup',
@@ -83,6 +84,11 @@ class Api {
   createFilter(category, filter) {
     const url = Api.endpoint(this.endpoints.filters);
     return this.axios.put(url, {category, filter});
+  }
+
+  duplicatedTransactions() {
+    const url = Api.endpoint(this.endpoints.duplicated);
+    return this.axios.get(url);
   }
 }
 

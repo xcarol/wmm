@@ -1,5 +1,6 @@
 const {
   addTransaction,
+  getDuplicatedTransactions,
   getUncategorizedTransactions,
   updateTransactionsCategory,
   updateTransactionsByFilter,
@@ -59,6 +60,16 @@ module.exports = (app) => {
     } catch (err) {
       console.error("Error getting uncategorized transactions:", err);
       res.status(500).send("Error getting uncategorized transactions");
+    }
+  });
+
+  app.get("/transaction/duplicated", async (req, res) => {
+    try {
+      const data = req.query;
+      res.json(await getDuplicatedTransactions());
+    } catch (err) {
+      console.error("Error getting duplicated transactions:", err);
+      res.status(500).send("Error getting duplicated transactions");
     }
   });
 };

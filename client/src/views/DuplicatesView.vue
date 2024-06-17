@@ -1,7 +1,10 @@
 <template>
   <v-card>
     <v-card-text>
-      <v-btn>{{ $t('duplicatesView.searchButton') }}</v-btn>
+      <v-btn
+        @click.stop="searchTransactions"
+        >{{ $t('duplicatesView.searchButton') }}</v-btn
+      >
       <v-spacer />
     </v-card-text>
     <v-card-text>
@@ -35,12 +38,9 @@ const selectedItems = ref([]);
 
 const searchTransactions = async () => {
   try {
-    const transactions = await api.searchDuplicateTransactions();
+    const transactions = await api.duplicatedTransactions();
     tableItems.value = transactions.data;
     selectedItems.value = [];
-    filterMessage.value = $t('categorizeView.transactionsFound')
-      .replace('%d', tableItems.value.length)
-      .replace('%d', search ?? '');
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }

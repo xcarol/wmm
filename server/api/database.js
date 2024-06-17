@@ -37,6 +37,21 @@ const queryUpdateTransactionsByFilter =
 const queryAddCategoryFilters =
   "INSERT INTO filters (category, filter) VALUES (?, ?)";
 
+const queryDuplicateRows =
+  "SELECT * FROM transactions t1 \
+    WHERE EXISTS ( \
+        SELECT 1 \
+        FROM transactions t2 \
+        WHERE t1.bank = t2.bank \
+        AND t1.date = t2.date \
+        AND t1.description = t2.description \
+        AND t1.amount = t2.amount \
+        AND t1.id <> t2.id \
+        AND t1.not_duplicate = FALSE \
+        AND t2.not_duplicate = FALSE \
+    ) \
+    ORDER BY bank, date DESC";
+
 async function getConnection() {
   return await mysql.createConnection(connectionSettings);
 }
@@ -57,6 +72,19 @@ async function addFilter(category, filter) {
   }
 }
 
+async function getDuplicatedTransactions() {
+  try {
+    const connection = await getConnection();
+    let query = queryDuplicateRows;
+    const result = await connection.query(query);
+    connection.close();
+    return result.at(0);
+  } catch (err) {
+    console.error("Error fetching duplicated transactions:", err);
+    throw err;
+  }
+}
+
 async function getUncategorizedTransactions(filter) {
   try {
     const connection = await getConnection();
@@ -68,7 +96,7 @@ async function getUncategorizedTransactions(filter) {
     connection.close();
     return result.at(0);
   } catch (err) {
-    console.error("Error fetching categories:", err);
+    console.error("Error fetching uncategorized transactions:", err);
     throw err;
   }
 }
@@ -112,7 +140,7 @@ async function addTransaction(date, description, amount, bank) {
     connection.close();
     return result;
   } catch (err) {
-    console.error("Error fetching bank names:", err);
+    console.error("Error adding a transaction:", err);
     throw err;
   }
 }
@@ -154,7 +182,7 @@ async function updateTransactionsCategory(transactions, category) {
     connection.close();
     return result;
   } catch (err) {
-    console.error("Error executing query:", err);
+    console.error("Error updating transactions category:", err);
     throw err;
   }
 }
@@ -169,7 +197,7 @@ async function updateTransactionsByFilter(filter) {
     connection.close();
     return result;
   } catch (err) {
-    console.error("Error executing query:", err);
+    console.error("Error updating transactions by filter:", err);
     throw err;
   }
 }
@@ -181,6 +209,7 @@ module.exports = {
   executeSql,
   getBankNames,
   getCategories,
+  getDuplicatedTransactions,
   getUncategorizedTransactions,
   updateTransactionsCategory,
   updateTransactionsByFilter,
