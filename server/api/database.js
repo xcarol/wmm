@@ -13,34 +13,29 @@ const connectionSettings = {
 
 const queryInsertRow =
   "INSERT INTO transactions (bank, date, description, amount) \
-    VALUES (':bank', ':date', ':description', ':amount')";
+    VALUES (?, ?, ?, ?)";
 
 const queryBankNames = "SELECT DISTINCT bank FROM transactions";
 
 const queryCategoryNames =
-  "SELECT DISTINCT category FROM transactions \
-    WHERE category != '' ORDER BY category ASC";
+  "SELECT DISTINCT category FROM transactions WHERE category != '' ORDER BY category ASC";
 
 const queryUncategorizedTransactions =
   "SELECT id, bank, date, description, category, amount FROM transactions WHERE category = ''";
 
-const queryUncategorizedRowsFilter = " AND description REGEXP ':filter'";
+const queryUncategorizedRowsFilter = " AND description REGEXP ?";
 
 const queryUpdateTransactionsCategory =
-  "UPDATE transactions SET category = '%1' WHERE id IN(%2)";
+  "UPDATE transactions SET category = ? WHERE id IN(?)";
 
 const queryUpdateTransactionsByFilter =
   "UPDATE transactions as t \
     JOIN filters as f \
     SET t.category = f.category \
-    WHERE t.description like '%{1}%' AND f.filter = '{1}'";
+    WHERE t.description like ? AND f.filter = ?";
 
 const queryAddCategoryFilters =
-  "INSERT INTO filters (category, filter) VALUES ('%1', '%2')";
-
-function strToSql(str) {
-  return str.replaceAll("'", "''");
-}
+  "INSERT INTO filters (category, filter) VALUES (?, ?)";
 
 async function getConnection() {
   return await mysql.createConnection(connectionSettings);
@@ -50,11 +45,10 @@ async function addFilter(category, filter) {
   try {
     const connection = await getConnection();
 
-    const result = await connection.query(
-      queryAddCategoryFilters
-        .replace("%1", strToSql(category))
-        .replace("%2", strToSql(filter))
-    );
+    const result = await connection.query(queryAddCategoryFilters, [
+      category,
+      filter,
+    ]);
     connection.close();
     return result;
   } catch (err) {
@@ -68,9 +62,9 @@ async function getUncategorizedTransactions(filter) {
     const connection = await getConnection();
     let query = queryUncategorizedTransactions;
     if (filter?.length) {
-      query += queryUncategorizedRowsFilter.replace(":filter", filter);
+      query += queryUncategorizedRowsFilter;
     }
-    const result = await connection.query(query);
+    const result = await connection.query(query, [filter]);
     connection.close();
     return result.at(0);
   } catch (err) {
@@ -108,13 +102,13 @@ async function addTransaction(date, description, amount, bank) {
   try {
     const connection = await getConnection();
 
-    const result = await connection.query(
-      queryInsertRow
-        .replace(":date", date)
-        .replace(":description", strToSql(description))
-        .replace(":amount", amount)
-        .replace(":bank", strToSql(bank))
-    );
+    const result = await connection.query(queryInsertRow, [
+      bank,
+      date,
+      description,
+      amount,
+    ]);
+
     connection.close();
     return result;
   } catch (err) {
@@ -153,11 +147,10 @@ async function backupDatabase() {
 async function updateTransactionsCategory(transactions, category) {
   try {
     const connection = await getConnection();
-    const result = await connection.query(
-      queryUpdateTransactionsCategory
-        .replace("%1", strToSql(category))
-        .replace("%2", transactions.toString())
-    );
+    const result = await connection.query(queryUpdateTransactionsCategory, [
+      category,
+      transactions,
+    ]);
     connection.close();
     return result;
   } catch (err) {
@@ -169,9 +162,10 @@ async function updateTransactionsCategory(transactions, category) {
 async function updateTransactionsByFilter(filter) {
   try {
     const connection = await getConnection();
-    const result = await connection.query(
-      queryUpdateTransactionsByFilter.replaceAll("{1}", strToSql(filter))
-    );
+    const result = await connection.query(queryUpdateTransactionsByFilter, [
+      `%${filter}%`,
+      filter,
+    ]);
     connection.close();
     return result;
   } catch (err) {
