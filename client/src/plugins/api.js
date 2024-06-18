@@ -73,22 +73,27 @@ class Api {
 
   updateTransactionsCategory(transactions, category) {
     const url = Api.endpoint(this.endpoints.updateTransactionsCategory);
-    return this.axios.post(url, {transactions, category});
+    return this.axios.post(url, { transactions, category });
   }
 
   updateTransactionsByFilter(filter) {
     const url = Api.endpoint(this.endpoints.updateTransactionsByFilter);
-    return this.axios.post(url, {filter});
+    return this.axios.post(url, { filter });
   }
 
   createFilter(category, filter) {
     const url = Api.endpoint(this.endpoints.filters);
-    return this.axios.put(url, {category, filter});
+    return this.axios.put(url, { category, filter });
   }
 
   duplicatedTransactions() {
     const url = Api.endpoint(this.endpoints.duplicated);
     return this.axios.get(url);
+  }
+
+  markTransactionsAsNotDuplicated(transactions) {
+    const url = Api.endpoint(this.endpoints.duplicated);
+    return this.axios.post(url, { transactions });
   }
 }
 

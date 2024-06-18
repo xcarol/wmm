@@ -20,7 +20,9 @@
     "sql": "Comandes SQL"
   },
   "progress": {
-    "title": "Operació en progress..."
+    "title": "Operació en progress",
+    "updateProgress": "Actualitzant les transaccions...",
+    "updatedTransactionsMessage": "S'han actualitzat %d transaccions."
   },
   "importView": {
     "title": "Importa un arxiu CSV",
@@ -39,7 +41,9 @@
   },
   "duplicatesView": {
     "title": "Cerca de duplicats",
-    "searchButton": "Cerca"
+    "searchButton": "Cerca",
+    "markButton": "Marca com a NO duplicats",
+    "deleteButton": "Elimina les transaccions"
   },
   "sqlView": {
     "title": "Executa comandes SQL",
@@ -61,9 +65,7 @@
     "applyButton": "Aplica",
     "createFilterButton": "Crea un filtre",
     "applyWarningMessage": "Et's a punt d'actualitzar %d transaccions amb la categoria: %s\nN'estàs segur?",
-    "updateProgress": "Actualitzant les transaccions...",
-    "updateTransactionsMessage": "Vols aplicar ara aquest nou filtre?",
-    "updatedTransactionsMessage": "S'han actualitzat %d transaccions."
+    "updateTransactionsMessage": "Vols aplicar ara aquest nou filtre?"
   },
   "dialogNewFilter": {
     "title": "Nou filtre",

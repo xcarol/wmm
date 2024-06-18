@@ -135,7 +135,7 @@ const keyDown = (value) => {
 const updateTransactions = async (transactions, category) => {
   progressStore.startProgress({
     steps: 0,
-    description: $t('categorizeView.updateProgress'),
+    description: $t('progress.updateProgress'),
   });
 
   try {
@@ -151,7 +151,7 @@ const updateTransactionsByFilter = async (filter) => {
   let updatedTransactions = 0;
   progressStore.startProgress({
     steps: 0,
-    description: $t('categorizeView.updateProgress'),
+    description: $t('progress.updateProgress'),
   });
 
   try {

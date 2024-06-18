@@ -1,10 +1,7 @@
 <template>
   <v-card>
     <v-card-text>
-      <v-btn
-        @click.stop="searchTransactions"
-        >{{ $t('duplicatesView.searchButton') }}</v-btn
-      >
+      <v-btn @click.stop="searchTransactions">{{ $t('duplicatesView.searchButton') }}</v-btn>
       <v-spacer />
     </v-card-text>
     <v-card-text>
@@ -16,11 +13,24 @@
         item-key="name"
       ></v-data-table>
     </v-card-text>
+    <v-card-actions>
+      <v-spacer />
+      <v-btn
+        :disabled="noTransactionSelected"
+        @click.stop="markAsNotDuplicates"
+        >{{ $t('duplicatesView.markButton') }}</v-btn
+      >
+      <v-btn
+        :disabled="noTransactionSelected"
+        @click.stop="deleteTransactions"
+        >{{ $t('duplicatesView.deleteButton') }}</v-btn
+      >
+    </v-card-actions>
   </v-card>
 </template>
 
 <script setup>
-import { computed, ref, onBeforeMount } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
@@ -36,6 +46,10 @@ const progressStore = useProgressStore();
 const tableItems = ref([]);
 const selectedItems = ref([]);
 
+const noTransactionSelected = computed(() => {
+  return !!(selectedItems.value.length === 0);
+});
+
 const searchTransactions = async () => {
   try {
     const transactions = await api.duplicatedTransactions();
@@ -45,4 +59,21 @@ const searchTransactions = async () => {
     appStore.alertMessage = api.getErrorMessage(e);
   }
 };
+
+const markAsNotDuplicates = async () => {
+  progressStore.startProgress({
+    steps: 0,
+    description: $t('progress.updateProgress'),
+  });
+
+  try {
+    await api.markTransactionsAsNotDuplicated(selectedItems.value);
+  } catch (e) {
+    appStore.alertMessage = api.getErrorMessage(e);
+  }
+
+  progressStore.stopProgress();
+};
+
+const deleteTransactions = async () => {};
 </script>

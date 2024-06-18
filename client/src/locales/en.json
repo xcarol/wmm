@@ -20,7 +20,9 @@
     "sql": "SQL Commands"
   },
   "progress": {
-    "title": "Operation in progress..."
+    "title": "Operation in progress...",
+    "updateProgress": "Updating transactions...",
+    "updatedTransactionsMessage": "%d transactions have been updated."
   },
   "importView": {
     "title": "Import CSV File",
@@ -39,7 +41,9 @@
   },
   "duplicatesView": {
     "title": "Find duplicates",
-    "searchButton": "Search"
+    "searchButton": "Search",
+    "markButton": "Mark as NOT duplicates",
+    "deleteButton": "Delete the transactions"
   },
  "sqlView": {
     "title": "Execute SQL commands",
@@ -61,9 +65,7 @@
     "applyButton": "Apply",
     "createFilterButton": "Create new filter",
     "applyWarningMessage": "You're about to update %d records with the category: %s\nAre you sure?",
-    "updateProgress": "Updating transactions...",
-    "updateTransactionsMessage": "Do you want to apply this new filter now?",
-    "updatedTransactionsMessage": "%d transactions have been updated."
+    "updateTransactionsMessage": "Do you want to apply this new filter now?"
   },
   "dialogNewFilter": {
     "title": "New Filter",

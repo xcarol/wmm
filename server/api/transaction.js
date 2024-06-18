@@ -4,6 +4,7 @@ const {
   getUncategorizedTransactions,
   updateTransactionsCategory,
   updateTransactionsByFilter,
+  updateTransactionsAsNotDuplicated,
 } = require("./database");
 
 module.exports = (app) => {
@@ -70,6 +71,17 @@ module.exports = (app) => {
     } catch (err) {
       console.error("Error getting duplicated transactions:", err);
       res.status(500).send("Error getting duplicated transactions");
+    }
+  });
+
+  app.post("/transaction/duplicated", async (req, res) => {
+    try {
+      const data = req.body;
+      res.json(await updateTransactionsAsNotDuplicated(data.transactions));
+      res.status(200);
+    } catch (err) {
+      console.error("Error updating transactions as NOT duplicated:", err);
+      res.status(500).send("Error updating transactions as NOT duplicated");
     }
   });
 };

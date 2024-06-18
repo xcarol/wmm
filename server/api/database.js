@@ -38,7 +38,7 @@ const queryAddCategoryFilters =
   "INSERT INTO filters (category, filter) VALUES (?, ?)";
 
 const queryDuplicateRows =
-  "SELECT * FROM transactions t1 \
+  "SELECT id, bank, date, description, category, amount FROM transactions t1 \
     WHERE EXISTS ( \
         SELECT 1 \
         FROM transactions t2 \
@@ -51,6 +51,9 @@ const queryDuplicateRows =
         AND t2.not_duplicate = FALSE \
     ) \
     ORDER BY bank, date DESC";
+
+const queryMarkNotDuplicateRows =
+  "UPDATE transactions SET not_duplicate = TRUE WHERE id IN (?)";
 
 async function getConnection() {
   return await mysql.createConnection(connectionSettings);
@@ -202,6 +205,20 @@ async function updateTransactionsByFilter(filter) {
   }
 }
 
+async function updateTransactionsAsNotDuplicated(transactions) {
+  try {
+    const connection = await getConnection();
+    const result = await connection.query(queryMarkNotDuplicateRows, [
+      transactions,
+    ]);
+    connection.close();
+    return result;
+  } catch (err) {
+    console.error("Error updating transactions as duplicated:", err);
+    throw err;
+  }
+}
+
 module.exports = {
   addTransaction,
   addFilter,
@@ -213,4 +230,5 @@ module.exports = {
   getUncategorizedTransactions,
   updateTransactionsCategory,
   updateTransactionsByFilter,
+  updateTransactionsAsNotDuplicated,
 };
