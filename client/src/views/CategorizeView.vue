@@ -200,7 +200,7 @@ const createNewFilter = async ({ category, filter }) => {
       message: $t('categorizeView.updateTransactionsMessage'),
       yes: async () => {
         const result = await updateTransactionsByFilter(filter);
-        const tit = $t('categorizeView.updatedTransactionsMessage').replace(
+        const tit = $t('progress.updatedTransactionsMessage').replace(
           '%d',
           `${result?.data[0]?.affectedRows ?? 0}`,
         );
