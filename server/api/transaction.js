@@ -1,8 +1,11 @@
 const {
   addTransaction,
+  deleteTransactions,
+  getDuplicatedTransactions,
   getUncategorizedTransactions,
   updateTransactionsCategory,
   updateTransactionsByFilter,
+  updateTransactionsAsNotDuplicated,
 } = require("./database");
 
 module.exports = (app) => {
@@ -18,6 +21,21 @@ module.exports = (app) => {
         )
       );
       res.status(201);
+    } catch (err) {
+      console.error("Error adding a transaction:", err);
+      let code = 500;
+      if (err.sqlState) {
+        code = 400;
+      }
+      res.status(code).send(`Error adding transactions: ${err}`);
+    }
+  });
+
+  app.post("/transaction/delete", async (req, res) => {
+    try {
+      const data = req.body;
+      res.json(await deleteTransactions(data.transactions));
+      res.status(200);
     } catch (err) {
       console.error("Error adding a transaction:", err);
       let code = 500;
@@ -59,6 +77,27 @@ module.exports = (app) => {
     } catch (err) {
       console.error("Error getting uncategorized transactions:", err);
       res.status(500).send("Error getting uncategorized transactions");
+    }
+  });
+
+  app.get("/transaction/duplicated", async (req, res) => {
+    try {
+      const data = req.query;
+      res.json(await getDuplicatedTransactions());
+    } catch (err) {
+      console.error("Error getting duplicated transactions:", err);
+      res.status(500).send("Error getting duplicated transactions");
+    }
+  });
+
+  app.post("/transaction/duplicated", async (req, res) => {
+    try {
+      const data = req.body;
+      res.json(await updateTransactionsAsNotDuplicated(data.transactions));
+      res.status(200);
+    } catch (err) {
+      console.error("Error updating transactions as NOT duplicated:", err);
+      res.status(500).send("Error updating transactions as NOT duplicated");
     }
   });
 };

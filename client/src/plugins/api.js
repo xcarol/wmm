@@ -4,9 +4,11 @@ class Api {
     categoryNames: 'category/names',
     bankNames: 'bank/names',
     transactions: 'transaction',
+    deleteTransactions: 'transaction/delete',
     updateTransactionsCategory: 'transaction/category',
     updateTransactionsByFilter: 'transaction/filter',
     uncategorizedTransactions: 'transaction/uncategorized?filter={1}',
+    duplicated: 'transaction/duplicated',
     filters: 'filter',
     sql: 'sql',
     backupDatabase: 'sql/backup',
@@ -72,17 +74,32 @@ class Api {
 
   updateTransactionsCategory(transactions, category) {
     const url = Api.endpoint(this.endpoints.updateTransactionsCategory);
-    return this.axios.post(url, {transactions, category});
+    return this.axios.post(url, { transactions, category });
   }
 
   updateTransactionsByFilter(filter) {
     const url = Api.endpoint(this.endpoints.updateTransactionsByFilter);
-    return this.axios.post(url, {filter});
+    return this.axios.post(url, { filter });
   }
 
   createFilter(category, filter) {
     const url = Api.endpoint(this.endpoints.filters);
-    return this.axios.put(url, {category, filter});
+    return this.axios.put(url, { category, filter });
+  }
+
+  duplicatedTransactions() {
+    const url = Api.endpoint(this.endpoints.duplicated);
+    return this.axios.get(url);
+  }
+
+  markTransactionsAsNotDuplicated(transactions) {
+    const url = Api.endpoint(this.endpoints.duplicated);
+    return this.axios.post(url, { transactions });
+  }
+
+  deleteTransactions(transactions) {
+    const url = Api.endpoint(this.endpoints.deleteTransactions);
+    return this.axios.post(url, { transactions });
   }
 }
 

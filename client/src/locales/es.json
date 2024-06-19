@@ -16,10 +16,14 @@
   "mainDrawer": {
     "import": "Importar",
     "categorize": "Categorizar",
+    "duplicates": "Buscar duplicados",
     "sql": "Comandos SQL"
   },
   "progress": {
-    "title": "Operación en progreso"
+    "title": "Operación en progreso",
+    "updateProgress": "Actualizando las transacciones...",
+    "updatedTransactionsMessage": "Se han actualizado %d transacciones.",
+    "deletedTransactionsMessage": "Se han eliminado %d transacciones."
   },
   "importView": {
     "title": "Importa un archivo CSV",
@@ -35,6 +39,12 @@
     "importedRows": "Se han importado %d filas.",
     "importError": "Error: %d en la línea: %d",
     "importingRows": "Se han importado %d línias de %d..."
+  },
+  "duplicatesView": {
+    "title": "Busqueda de duplicados",
+    "searchButton": "Busca",
+    "markButton": "Marca como NO duplicados",
+    "deleteButton": "Elimina las transacciones"
   },
   "sqlView": {
     "title": "Ejecuta comandos SQL",
@@ -56,9 +66,7 @@
     "applyButton": "Aplica",
     "createFilterButton": "Crea un filtro",
     "applyWarningMessage": "Vas a actualizar %d transacciones con la categoría: %s\n¿Estás seguro?",
-    "updateProgress": "Actualizando las transacciones...",
-    "updateTransactionsMessage": "¿Quieres aplicar ahora este nuevo filtro?",
-    "updatedTransactionsMessage": "Se han actualizado %d transacciones."
+    "updateTransactionsMessage": "¿Quieres aplicar ahora este nuevo filtro?"
   },
   "dialogNewFilter": {
     "title": "Nuevo filtro",

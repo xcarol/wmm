@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import ImportView from '../views/ImportView.vue';
 import CategorizeView from '../views/CategorizeView.vue';
+import DuplicatesView from '../views/DuplicatesView.vue';
 import SqlView from '../views/SqlView.vue';
 
 const router = createRouter({
@@ -21,6 +22,11 @@ const router = createRouter({
       path: '/categorize',
       name: 'categorize',
       component: CategorizeView,
+    },
+    {
+      path: '/duplicates',
+      name: 'duplicates',
+      component: DuplicatesView,
     },
     {
       path: '/sql',

@@ -16,10 +16,14 @@
   "mainDrawer": {
     "import": "Importar",
     "categorize": "Categoritzar",
+    "duplicates": "Cercar duplicats",
     "sql": "Comandes SQL"
   },
   "progress": {
-    "title": "Operació en progress..."
+    "title": "Operació en progress",
+    "updateProgress": "Actualitzant les transaccions...",
+    "updatedTransactionsMessage": "S'han actualitzat %d transaccions.",
+    "deletedTransactionsMessage": "S'han eliminat %d transaccions."
   },
   "importView": {
     "title": "Importa un arxiu CSV",
@@ -35,6 +39,12 @@
     "importedRows": "S'han importat %d files.",
     "importError": "Error: '%d' a la línia: %d",
     "importingRows": "S'han importat %d linies de %d..."
+  },
+  "duplicatesView": {
+    "title": "Cerca de duplicats",
+    "searchButton": "Cerca",
+    "markButton": "Marca com a NO duplicats",
+    "deleteButton": "Elimina les transaccions"
   },
   "sqlView": {
     "title": "Executa comandes SQL",
@@ -56,9 +66,7 @@
     "applyButton": "Aplica",
     "createFilterButton": "Crea un filtre",
     "applyWarningMessage": "Et's a punt d'actualitzar %d transaccions amb la categoria: %s\nN'estàs segur?",
-    "updateProgress": "Actualitzant les transaccions...",
-    "updateTransactionsMessage": "Vols aplicar ara aquest nou filtre?",
-    "updatedTransactionsMessage": "S'han actualitzat %d transaccions."
+    "updateTransactionsMessage": "Vols aplicar ara aquest nou filtre?"
   },
   "dialogNewFilter": {
     "title": "Nou filtre",
