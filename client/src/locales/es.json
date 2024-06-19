@@ -44,7 +44,9 @@
     "title": "Busqueda de duplicados",
     "searchButton": "Busca",
     "markButton": "Marca como NO duplicados",
-    "deleteButton": "Elimina las transacciones"
+    "deleteButton": "Elimina las transacciones",
+    "markWarningMessage": "Estás a punto de marcar %d transacciones como NO duplicadas\nEsatás seguro?",
+    "deleteWarningMessage": "Estás a punto de borrar %d transacciones\nEsatás seguro?"
   },
   "sqlView": {
     "title": "Ejecuta comandos SQL",

@@ -61,24 +61,31 @@ const searchTransactions = async () => {
 };
 
 const markAsNotDuplicates = async () => {
-  progressStore.startProgress({
-    steps: 0,
-    description: $t('progress.updateProgress'),
-  });
-
   try {
-    const result = await api.markTransactionsAsNotDuplicated(selectedItems.value);
-
     messageStore.showMessage({
-      title: $t('dialog.Info'),
-      message: $t('progress.updatedTransactionsMessage').replace(
-      '%d',
-      `${result?.data[0]?.affectedRows ?? 0}`,
-    ),
-      ok: () => {},
-    });
+      title: $t('dialog.Warning'),
+      message: $t('duplicatesView.markWarningMessage').replace('%d', selectedItems.value.length),
+      yes: async () => {
+        progressStore.startProgress({
+          steps: 0,
+          description: $t('progress.updateProgress'),
+        });
 
-    await searchTransactions();
+        const result = await api.markTransactionsAsNotDuplicated(selectedItems.value);
+
+        messageStore.showMessage({
+          title: $t('dialog.Info'),
+          message: $t('progress.updatedTransactionsMessage').replace(
+            '%d',
+            `${result?.data[0]?.affectedRows ?? 0}`,
+          ),
+          ok: () => {},
+        });
+
+        await searchTransactions();
+      },
+      no: () => {},
+    });
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }
@@ -87,24 +94,31 @@ const markAsNotDuplicates = async () => {
 };
 
 const deleteTransactions = async () => {
-  progressStore.startProgress({
-    steps: 0,
-    description: $t('progress.updateProgress'),
-  });
-
   try {
-    const result = await api.deleteTransactions(selectedItems.value);
-
     messageStore.showMessage({
-      title: $t('dialog.Info'),
-      message: $t('progress.deletedTransactionsMessage').replace(
-      '%d',
-      `${result?.data[0]?.affectedRows ?? 0}`,
-    ),
-      ok: () => {},
-    });
+      title: $t('dialog.Warning'),
+      message: $t('duplicatesView.deleteWarningMessage').replace('%d', selectedItems.value.length),
+      yes: async () => {
+        progressStore.startProgress({
+          steps: 0,
+          description: $t('progress.updateProgress'),
+        });
 
-    await searchTransactions();
+        const result = await api.deleteTransactions(selectedItems.value);
+
+        messageStore.showMessage({
+          title: $t('dialog.Info'),
+          message: $t('progress.deletedTransactionsMessage').replace(
+            '%d',
+            `${result?.data[0]?.affectedRows ?? 0}`,
+          ),
+          ok: () => {},
+        });
+
+        await searchTransactions();
+      },
+      no: () => {},
+    });
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }
