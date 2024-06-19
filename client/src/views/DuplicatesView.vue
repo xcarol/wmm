@@ -67,7 +67,18 @@ const markAsNotDuplicates = async () => {
   });
 
   try {
-    await api.markTransactionsAsNotDuplicated(selectedItems.value);
+    const result = await api.markTransactionsAsNotDuplicated(selectedItems.value);
+
+    messageStore.showMessage({
+      title: $t('dialog.Info'),
+      message: $t('progress.updatedTransactionsMessage').replace(
+      '%d',
+      `${result?.data[0]?.affectedRows ?? 0}`,
+    ),
+      ok: () => {},
+    });
+
+    await searchTransactions();
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }
