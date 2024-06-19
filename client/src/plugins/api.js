@@ -4,6 +4,7 @@ class Api {
     categoryNames: 'category/names',
     bankNames: 'bank/names',
     transactions: 'transaction',
+    deleteTransactions: 'transaction/delete',
     updateTransactionsCategory: 'transaction/category',
     updateTransactionsByFilter: 'transaction/filter',
     uncategorizedTransactions: 'transaction/uncategorized?filter={1}',
@@ -93,6 +94,11 @@ class Api {
 
   markTransactionsAsNotDuplicated(transactions) {
     const url = Api.endpoint(this.endpoints.duplicated);
+    return this.axios.post(url, { transactions });
+  }
+
+  deleteTransactions(transactions) {
+    const url = Api.endpoint(this.endpoints.deleteTransactions);
     return this.axios.post(url, { transactions });
   }
 }

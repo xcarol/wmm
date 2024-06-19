@@ -86,5 +86,29 @@ const markAsNotDuplicates = async () => {
   progressStore.stopProgress();
 };
 
-const deleteTransactions = async () => {};
+const deleteTransactions = async () => {
+  progressStore.startProgress({
+    steps: 0,
+    description: $t('progress.updateProgress'),
+  });
+
+  try {
+    const result = await api.deleteTransactions(selectedItems.value);
+
+    messageStore.showMessage({
+      title: $t('dialog.Info'),
+      message: $t('progress.deletedTransactionsMessage').replace(
+      '%d',
+      `${result?.data[0]?.affectedRows ?? 0}`,
+    ),
+      ok: () => {},
+    });
+
+    await searchTransactions();
+  } catch (e) {
+    appStore.alertMessage = api.getErrorMessage(e);
+  }
+
+  progressStore.stopProgress();
+};
 </script>

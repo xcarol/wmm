@@ -55,6 +55,8 @@ const queryDuplicateRows =
 const queryMarkNotDuplicateRows =
   "UPDATE transactions SET not_duplicate = TRUE WHERE id IN (?)";
 
+const queryDeleteRows = "DELETE FROM transactions WHERE id IN (?)";
+
 async function getConnection() {
   return await mysql.createConnection(connectionSettings);
 }
@@ -148,6 +150,18 @@ async function addTransaction(date, description, amount, bank) {
   }
 }
 
+async function deleteTransactions(transactions) {
+  try {
+    const connection = await getConnection();
+    const result = await connection.query(queryDeleteRows, [transactions]);
+    connection.close();
+    return result;
+  } catch (err) {
+    console.error("Error updating transactions as duplicated:", err);
+    throw err;
+  }
+}
+
 async function executeSql(query) {
   try {
     const connection = await getConnection();
@@ -223,6 +237,7 @@ module.exports = {
   addTransaction,
   addFilter,
   backupDatabase,
+  deleteTransactions,
   executeSql,
   getBankNames,
   getCategories,

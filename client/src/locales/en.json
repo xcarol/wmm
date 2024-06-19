@@ -22,7 +22,8 @@
   "progress": {
     "title": "Operation in progress...",
     "updateProgress": "Updating transactions...",
-    "updatedTransactionsMessage": "%d transactions have been updated."
+    "updatedTransactionsMessage": "%d transactions have been updated.",
+    "deletedTransactionsMessage": "%d transaccions deleted."
   },
   "importView": {
     "title": "Import CSV File",
