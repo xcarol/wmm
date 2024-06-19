@@ -17,7 +17,8 @@
     "import": "Importar",
     "categorize": "Categorizar",
     "duplicates": "Buscar duplicados",
-    "sql": "Comandos SQL"
+    "sql": "Comandos SQL",
+    "filters": "Filtros"
   },
   "progress": {
     "title": "Operación en progreso",
@@ -67,6 +68,17 @@
     "createFilterButton": "Crea un filtro",
     "applyWarningMessage": "Vas a actualizar %d transacciones con la categoría: %s\n¿Estás seguro?",
     "updateTransactionsMessage": "¿Quieres aplicar ahora este nuevo filtro?"
+  },
+  "filtersView": {
+    "title": "Gestión de los filtros",
+    "categoriesLabel": "Categorías",
+    "filtersLabel": "Filtros",
+    "renameCategoryButton": "Renombra...",
+    "deleteCategoryButton": "Elimina",
+    "applyCategoryButton": "Aplica",
+    "newFilterButton": "Nuevo...",
+    "deleteFilterButton": "Elimina",
+    "applyFilterButton": "Aplica"
   },
   "dialogNewFilter": {
     "title": "Nuevo filtro",

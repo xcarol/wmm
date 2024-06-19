@@ -17,7 +17,8 @@
     "import": "Importar",
     "categorize": "Categoritzar",
     "duplicates": "Cercar duplicats",
-    "sql": "Comandes SQL"
+    "sql": "Comandes SQL",
+    "filters": "Filtres"
   },
   "progress": {
     "title": "Operació en progress",
@@ -67,6 +68,17 @@
     "createFilterButton": "Crea un filtre",
     "applyWarningMessage": "Et's a punt d'actualitzar %d transaccions amb la categoria: %s\nN'estàs segur?",
     "updateTransactionsMessage": "Vols aplicar ara aquest nou filtre?"
+  },
+  "filtersView": {
+    "title": "Gestió dels filtres",
+    "categoriesLabel": "Categories",
+    "filtersLabel": "Filtres",
+    "renameCategoryButton": "Reanomena...",
+    "deleteCategoryButton": "Elimina",
+    "applyCategoryButton": "Aplica",
+    "newFilterButton": "Nou...",
+    "deleteFilterButton": "Elimina",
+    "applyFilterButton": "Aplica"
   },
   "dialogNewFilter": {
     "title": "Nou filtre",

@@ -17,7 +17,8 @@
     "import": "Import",
     "categorize": "Categorize",
     "duplicates": "Find duplicates",
-    "sql": "SQL Commands"
+    "sql": "SQL Commands",
+    "filters": "Filters"
   },
   "progress": {
     "title": "Operation in progress...",
@@ -67,6 +68,17 @@
     "createFilterButton": "Create new filter",
     "applyWarningMessage": "You're about to update %d records with the category: %s\nAre you sure?",
     "updateTransactionsMessage": "Do you want to apply this new filter now?"
+  },
+  "filtersView": {
+    "title": "Filter management",
+    "categoriesLabel": "Categories",
+    "filtersLabel": "Filters",
+    "renameCategoryButton": "Rename...",
+    "deleteCategoryButton": "Delete",
+    "applyCategoryButton": "Apply",
+    "newFilterButton": "New...",
+    "deleteFilterButton": "Delete",
+    "applyFilterButton": "Apply"
   },
   "dialogNewFilter": {
     "title": "New Filter",
