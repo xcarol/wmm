@@ -63,11 +63,17 @@
 
 <script setup>
 import { computed, onBeforeMount, onBeforeUpdate, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
+import { useMessageStore } from '../stores/messageDialog';
+import { useProgressStore } from '../stores/progressDialog';
 
 const api = useApi();
+const { t: $t } = useI18n();
 const appStore = useAppStore();
+const messageStore = useMessageStore();
+const progressStore = useProgressStore();
 
 const selectedCategories = ref([]);
 const tableCategories = ref([]);
@@ -94,17 +100,51 @@ const getCategories = async () => {
   try {
     const dbNames = await api.categoryNames();
     tableCategories.value = listToTable(dbNames.data);
+    selectedCategories.value = [];
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }
 };
 
-const renameCategory = () => {
-
+const renameCategory = async () => {
 };
 
-const deleteCategories = () => {
+const deleteCategories = async () => {
+  try {
+    messageStore.showMessage({
+      title: $t('dialog.Warning'),
+      message: $t('filtersView.deleteCategoriesWarningMessage').replace('%d', selectedCategories.value.length),
+      yes: async () => {
+        progressStore.startProgress({
+          steps: 0,
+          description: $t('progress.updateProgress'),
+        });
 
+        const deleteResult = await api.deleteCategories(selectedCategories.value);
+        const resetResult = await api.resetCategoryFromTransactions(selectedCategories.value);
+
+        progressStore.stopProgress();
+        messageStore.showMessage({
+          title: $t('dialog.Info'),
+          message: $t('progress.deletedCategoriesMessage').replace(
+            '%d',
+            `${deleteResult?.data[0]?.affectedRows ?? 0}`,
+          ).replace(
+            '%d',
+            `${resetResult?.data[0]?.affectedRows ?? 0}`,
+          ),
+          ok: () => {},
+        });
+
+        await getCategories();
+      },
+      no: () => {},
+    });
+  } catch (e) {
+    appStore.alertMessage = api.getErrorMessage(e);
+  }
+
+  progressStore.stopProgress();
 };
 
 const applyCategories = () => {

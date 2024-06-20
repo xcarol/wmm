@@ -57,6 +57,10 @@ const queryMarkNotDuplicateRows =
 
 const queryDeleteRows = "DELETE FROM transactions WHERE id IN (?)";
 
+const queryDeleteCategories = "DELETE FROM filters WHERE category IN(?)";
+
+const queryResetRowsCategories = "UPDATE transactions SET category = '' WHERE category in (?)";
+
 async function getConnection() {
   return await mysql.createConnection(connectionSettings);
 }
@@ -150,6 +154,18 @@ async function addTransaction(date, description, amount, bank) {
   }
 }
 
+async function deleteCategories(categories) {
+  try {
+    const connection = await getConnection();
+    const result = await connection.query(queryDeleteCategories, [categories]);
+    connection.close();
+    return result;
+  } catch (err) {
+    console.error("Error deleting categories:", err);
+    throw err;
+  }
+}
+
 async function deleteTransactions(transactions) {
   try {
     const connection = await getConnection();
@@ -204,6 +220,20 @@ async function updateTransactionsCategory(transactions, category) {
   }
 }
 
+async function resetTransactionsCategories(categories) {
+  try {
+    const connection = await getConnection();
+    const result = await connection.query(queryResetRowsCategories, [
+      categories,
+    ]);
+    connection.close();
+    return result;
+  } catch (err) {
+    console.error("Error reseting transactions category:", err);
+    throw err;
+  }
+}
+
 async function updateTransactionsByFilter(filter) {
   try {
     const connection = await getConnection();
@@ -237,12 +267,14 @@ module.exports = {
   addTransaction,
   addFilter,
   backupDatabase,
+  deleteCategories,
   deleteTransactions,
   executeSql,
   getBankNames,
   getCategories,
   getDuplicatedTransactions,
   getUncategorizedTransactions,
+  resetTransactionsCategories,
   updateTransactionsCategory,
   updateTransactionsByFilter,
   updateTransactionsAsNotDuplicated,

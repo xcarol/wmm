@@ -24,7 +24,8 @@
     "title": "Operación en progreso",
     "updateProgress": "Actualizando las transacciones...",
     "updatedTransactionsMessage": "Se han actualizado %d transacciones.",
-    "deletedTransactionsMessage": "Se han eliminado %d transacciones."
+    "deletedTransactionsMessage": "Se han eliminado %d transacciones.",
+    "deletedCategoriesMessage": "Se han eliminado %d filtros y se han actualizado % transacciones."
   },
   "importView": {
     "title": "Importa un archivo CSV",
@@ -80,7 +81,8 @@
     "applyCategoryButton": "Aplica",
     "newFilterButton": "Nuevo...",
     "deleteFilterButton": "Elimina",
-    "applyFilterButton": "Aplica"
+    "applyFilterButton": "Aplica",
+    "deleteCategoriesWarningMessage": "Vas borrar %d categorías\nEsto también borrará la categoria de las transacciones corresponendientes\n¿Estàs seguro?"
   },
   "dialogNewFilter": {
     "title": "Nuevo filtro",

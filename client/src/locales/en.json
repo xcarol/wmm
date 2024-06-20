@@ -24,7 +24,8 @@
     "title": "Operation in progress...",
     "updateProgress": "Updating transactions...",
     "updatedTransactionsMessage": "%d transactions have been updated.",
-    "deletedTransactionsMessage": "%d transaccions deleted."
+    "deletedTransactionsMessage": "%d transaccions deleted.",
+    "deletedCategoriesMessage": "%d filters deleted and %d transactions have been reset."
   },
   "importView": {
     "title": "Import CSV File",
@@ -80,7 +81,8 @@
     "applyCategoryButton": "Apply",
     "newFilterButton": "New...",
     "deleteFilterButton": "Delete",
-    "applyFilterButton": "Apply"
+    "applyFilterButton": "Apply",
+    "deleteCategoriesWarningMessage": "You're about to delete %d categories\nIt will also reset the category of the corresponding transactions\nAre you sure?"
   },
   "dialogNewFilter": {
     "title": "New Filter",

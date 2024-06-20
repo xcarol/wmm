@@ -1,4 +1,4 @@
-const { getCategories, addFilter } = require("./database");
+const { getCategories, addFilter, deleteCategories } = require("./database");
 
 module.exports = (app) => {
   app.get("/category/names", async (req, res) => {
@@ -20,6 +20,18 @@ module.exports = (app) => {
     } catch (err) {
       console.error("Error inserting category filter:", err);
       res.status(500).send("Error inserting category filter");
+    }
+  });
+
+  app.post("/filter/delete/category", async (req, res) => {
+    try {
+      const data = req.body;
+      const result = await deleteCategories(data.categories);
+      res.json(result);
+      res.status(201);
+    } catch (err) {
+      console.error("Error deleting category:", err);
+      res.status(500).send("Error deleting category");
     }
   });
 };

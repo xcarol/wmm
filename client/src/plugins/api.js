@@ -9,7 +9,9 @@ class Api {
     updateTransactionsByFilter: 'transaction/filter',
     uncategorizedTransactions: 'transaction/uncategorized?filter={1}',
     duplicated: 'transaction/duplicated',
+    resetCategoryFromTransactions: 'transaction/category/reset',
     filters: 'filter',
+    deleteCategories: 'filter/delete/category',
     sql: 'sql',
     backupDatabase: 'sql/backup',
   };
@@ -100,6 +102,16 @@ class Api {
   deleteTransactions(transactions) {
     const url = Api.endpoint(this.endpoints.deleteTransactions);
     return this.axios.post(url, { transactions });
+  }
+
+  deleteCategories(categories) {
+    const url = Api.endpoint(this.endpoints.deleteCategories);
+    return this.axios.post(url, { categories });
+  }
+
+  resetCategoryFromTransactions(categories) {
+    const url = Api.endpoint(this.endpoints.resetCategoryFromTransactions);
+    return this.axios.post(url, { categories });
   }
 }
 

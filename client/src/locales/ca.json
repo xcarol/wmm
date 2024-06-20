@@ -24,7 +24,8 @@
     "title": "Operació en progress",
     "updateProgress": "Actualitzant les transaccions...",
     "updatedTransactionsMessage": "S'han actualitzat %d transaccions.",
-    "deletedTransactionsMessage": "S'han eliminat %d transaccions."
+    "deletedTransactionsMessage": "S'han eliminat %d transaccions.",
+    "deletedCategoriesMessage": "S'han eliminat %d filtres i s'han actualitzat %d transaccions."
   },
   "importView": {
     "title": "Importa un arxiu CSV",
@@ -80,7 +81,8 @@
     "applyCategoryButton": "Aplica",
     "newFilterButton": "Nou...",
     "deleteFilterButton": "Elimina",
-    "applyFilterButton": "Aplica"
+    "applyFilterButton": "Aplica",
+    "deleteCategoriesWarningMessage": "Et's a punt d'esborrar %d categories\nAixò també esborrarà la categoria de les transaccions corresponents\nN'estàs segur?"
   },
   "dialogNewFilter": {
     "title": "Nou filtre",

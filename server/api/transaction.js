@@ -3,6 +3,7 @@ const {
   deleteTransactions,
   getDuplicatedTransactions,
   getUncategorizedTransactions,
+  resetTransactionsCategories,
   updateTransactionsCategory,
   updateTransactionsByFilter,
   updateTransactionsAsNotDuplicated,
@@ -56,6 +57,17 @@ module.exports = (app) => {
     } catch (err) {
       console.error("Error updating transactions category:", err);
       res.status(500).send("Error updating transactions category");
+    }
+  });
+
+  app.post("/transaction/category/reset", async (req, res) => {
+    try {
+      const data = req.body;
+      res.json(await resetTransactionsCategories(data.categories));
+      res.status(200);
+    } catch (err) {
+      console.error("Error reseting transactions category:", err);
+      res.status(500).send("Error reseting transactions category");
     }
   });
 
