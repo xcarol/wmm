@@ -82,7 +82,8 @@
     "newFilterButton": "Nou...",
     "deleteFilterButton": "Elimina",
     "applyFilterButton": "Aplica",
-    "deleteCategoriesWarningMessage": "Et's a punt d'esborrar %d categories\nAixò també esborrarà la categoria de les transaccions corresponents\nN'estàs segur?"
+    "deleteCategoriesWarningMessage": "Et's a punt d'esborrar %d categories\nAixò també esborrarà la categoria de les transaccions corresponents\nN'estàs segur?",
+    "updateCategoryWarningMessage": "Et's a punt d'actualitzar totes les transaccions que coincideixin amb els filtres de la categoria %s\nN'estàs segur?"
   },
   "dialogNewFilter": {
     "title": "Nou filtre",

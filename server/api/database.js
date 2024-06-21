@@ -59,7 +59,15 @@ const queryDeleteRows = "DELETE FROM transactions WHERE id IN (?)";
 
 const queryDeleteCategories = "DELETE FROM filters WHERE category IN(?)";
 
-const queryResetRowsCategories = "UPDATE transactions SET category = '' WHERE category in (?)";
+const queryResetRowsCategories =
+  "UPDATE transactions SET category = '' WHERE category in (?)";
+
+const queryUpdateRowsCategoryWithAllFilters =
+  "UPDATE transactions AS t \
+    JOIN filters AS f ON t.description LIKE CONCAT('%',  \
+    REPLACE(f.filter, '%', '\\%'), '%') \
+    SET t.category = f.category \
+    WHERE f.category = ? AND t.category = ''";
 
 async function getConnection() {
   return await mysql.createConnection(connectionSettings);
@@ -77,6 +85,19 @@ async function addFilter(category, filter) {
     return result;
   } catch (err) {
     console.error("Error adding filter:", err);
+    throw err;
+  }
+}
+
+async function applyCategory(category) {
+  try {
+    const connection = await getConnection();
+
+    const result = await connection.query(queryUpdateRowsCategoryWithAllFilters, category);
+    connection.close();
+    return result;
+  } catch (err) {
+    console.error("Error applying category:", err);
     throw err;
   }
 }
@@ -266,6 +287,7 @@ async function updateTransactionsAsNotDuplicated(transactions) {
 module.exports = {
   addTransaction,
   addFilter,
+  applyCategory,
   backupDatabase,
   deleteCategories,
   deleteTransactions,

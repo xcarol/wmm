@@ -12,6 +12,7 @@ class Api {
     resetCategoryFromTransactions: 'transaction/category/reset',
     filters: 'filter',
     deleteCategories: 'filter/delete/category',
+    applyCategoryToTransactions: 'filter/apply/category',
     sql: 'sql',
     backupDatabase: 'sql/backup',
   };
@@ -112,6 +113,11 @@ class Api {
   resetCategoryFromTransactions(categories) {
     const url = Api.endpoint(this.endpoints.resetCategoryFromTransactions);
     return this.axios.post(url, { categories });
+  }
+
+  applyCategoryToTransactions(category) {
+    const url = Api.endpoint(this.endpoints.applyCategoryToTransactions);
+    return this.axios.post(url, { category });
   }
 }
 

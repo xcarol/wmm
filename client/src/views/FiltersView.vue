@@ -29,8 +29,8 @@
                 >{{ $t('filtersView.deleteCategoryButton') }}</v-btn
               >
               <v-btn
-                :disabled="noneSelected"
-                @click.stop="applyCategories"
+                :disabled="manySelected"
+                @click.stop="applyCategory"
                 >{{ $t('filtersView.applyCategoryButton') }}</v-btn
               >
             </v-card-actions>
@@ -113,7 +113,10 @@ const deleteCategories = async () => {
   try {
     messageStore.showMessage({
       title: $t('dialog.Warning'),
-      message: $t('filtersView.deleteCategoriesWarningMessage').replace('%d', selectedCategories.value.length),
+      message: $t('filtersView.deleteCategoriesWarningMessage').replace(
+        '%d',
+        selectedCategories.value.length,
+      ),
       yes: async () => {
         progressStore.startProgress({
           steps: 0,
@@ -126,13 +129,9 @@ const deleteCategories = async () => {
         progressStore.stopProgress();
         messageStore.showMessage({
           title: $t('dialog.Info'),
-          message: $t('progress.deletedCategoriesMessage').replace(
-            '%d',
-            `${deleteResult?.data[0]?.affectedRows ?? 0}`,
-          ).replace(
-            '%d',
-            `${resetResult?.data[0]?.affectedRows ?? 0}`,
-          ),
+          message: $t('progress.deletedCategoriesMessage')
+            .replace('%d', `${deleteResult?.data[0]?.affectedRows ?? 0}`)
+            .replace('%d', `${resetResult?.data[0]?.affectedRows ?? 0}`),
           ok: () => {},
         });
 
@@ -147,8 +146,41 @@ const deleteCategories = async () => {
   progressStore.stopProgress();
 };
 
-const applyCategories = () => {
+const applyCategory = () => {
+  try {
+    messageStore.showMessage({
+      title: $t('dialog.Warning'),
+      message: $t('filtersView.updateCategoryWarningMessage').replace(
+        '%s',
+        selectedCategories.value[0],
+      ),
+      yes: async () => {
+        progressStore.startProgress({
+          steps: 0,
+          description: $t('progress.updateProgress'),
+        });
 
+        const applyResult = await api.applyCategoryToTransactions(selectedCategories.value[0]);
+
+        progressStore.stopProgress();
+        messageStore.showMessage({
+          title: $t('dialog.Info'),
+          message: $t('progress.updatedTransactionsMessage').replace(
+            '%d',
+            `${applyResult?.data[0]?.affectedRows ?? 0}`,
+          ),
+          ok: () => {},
+        });
+
+        await getCategories();
+      },
+      no: () => {},
+    });
+  } catch (e) {
+    appStore.alertMessage = api.getErrorMessage(e);
+  }
+
+  progressStore.stopProgress();
 };
 
 onBeforeUpdate(() => getCategories());

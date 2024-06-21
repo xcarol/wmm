@@ -1,4 +1,4 @@
-const { getCategories, addFilter, deleteCategories } = require("./database");
+const { getCategories, addFilter, deleteCategories, applyCategory } = require("./database");
 
 module.exports = (app) => {
   app.get("/category/names", async (req, res) => {
@@ -32,6 +32,18 @@ module.exports = (app) => {
     } catch (err) {
       console.error("Error deleting category:", err);
       res.status(500).send("Error deleting category");
+    }
+  });
+
+  app.post("/filter/apply/category", async (req, res) => {
+    try {
+      const data = req.body;
+      const result = await applyCategory(data.category);
+      res.json(result);
+      res.status(201);
+    } catch (err) {
+      console.error("Error applying categories:", err);
+      res.status(500).send("Error applying categories");
     }
   });
 };
