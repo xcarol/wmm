@@ -12,7 +12,7 @@
                 show-select
                 class="elevation-1"
                 item-key="name"
-                @update:model-value="onUpdateModelValue"
+                @update:model-value="onUpdateCategoryModelValue"
               >
                 <template #[`header.data-table-select`]></template>
               </v-data-table>
@@ -20,17 +20,17 @@
             <v-card-actions>
               <v-spacer />
               <v-btn
-                :disabled="noneSelected"
+                :disabled="noCategorySelected"
                 @click.stop="showRenameCategoryDialog"
                 >{{ $t('filtersView.renameCategoryButton') }}</v-btn
               >
               <v-btn
-                :disabled="noneSelected"
+                :disabled="noCategorySelected"
                 @click.stop="deleteCategories"
                 >{{ $t('filtersView.deleteCategoryButton') }}</v-btn
               >
               <v-btn
-                :disabled="noneSelected"
+                :disabled="noCategorySelected"
                 @click.stop="applyCategory"
                 >{{ $t('filtersView.applyCategoryButton') }}</v-btn
               >
@@ -47,13 +47,28 @@
                 show-select
                 class="elevation-1"
                 item-key="name"
-              ></v-data-table>
+                @update:model-value="onUpdateFilterModelValue"
+              >
+                <template #[`header.data-table-select`]></template>
+              </v-data-table>
             </v-card-text>
             <v-card-actions>
               <v-spacer />
-              <v-btn>{{ $t('filtersView.newFilterButton') }}</v-btn>
-              <v-btn>{{ $t('filtersView.deleteFilterButton') }}</v-btn>
-              <v-btn>{{ $t('filtersView.applyFilterButton') }}</v-btn>
+              <v-btn
+                :disabled="noFilterSelected"
+                @click.stop="newFilter"
+                >{{ $t('filtersView.newFilterButton') }}</v-btn
+              >
+              <v-btn
+                :disabled="noFilterSelected"
+                @click.stop="deleteFilter"
+                >{{ $t('filtersView.deleteFilterButton') }}</v-btn
+              >
+              <v-btn
+                :disabled="noFilterSelected"
+                @click.stop="applyFilter"
+                >{{ $t('filtersView.applyFilterButton') }}</v-btn
+              >
             </v-card-actions>
           </v-card>
         </v-col>
@@ -90,8 +105,12 @@ const tableFilters = ref([]);
 const showRenameCategory = ref(false);
 const renameCategoryName = ref('');
 
-const noneSelected = computed(() => {
+const noCategorySelected = computed(() => {
   return selectedCategories.value.length === 0;
+});
+
+const noFilterSelected = computed(() => {
+  return selectedFilters.value.length === 0;
 });
 
 const listToTable = (list) => {
@@ -102,29 +121,84 @@ const listToTable = (list) => {
   return table;
 };
 
-// Disable multi-selection
-const onUpdateModelValue = async (updateSelectedCategories) => {
-  const category = updateSelectedCategories.pop();
-  if (category) {
-    selectedCategories.value = [category];
-    const res = await api.getFilters(category);
-    tableFilters.value = res.data;
+const getFilters = async () => {
+  try {
+    const filters = await api.getFilters(selectedCategories.value);
+    tableFilters.value = listToTable(filters.data);
+    selectedFilters.value = [];
+  } catch (e) {
+    appStore.alertMessage = api.getErrorMessage(e);
   }
 };
 
 const getCategories = async () => {
   try {
-    const dbNames = await api.categoryNames();
-    tableCategories.value = listToTable(dbNames.data);
+    const categories = await api.categoryNames();
+    tableCategories.value = listToTable(categories.data);
     selectedCategories.value = [];
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }
 };
 
+// Disable multi-selection
+const onUpdateFilterModelValue = async (updateSelectedFilters) => {
+  const filter = updateSelectedFilters.pop();
+  if (filter) {
+    selectedFilters.value = [filter];
+  }
+};
+
+const onUpdateCategoryModelValue = async (updateSelectedCategories) => {
+  const category = updateSelectedCategories.pop();
+  if (category) {
+    selectedCategories.value = [category];
+    selectedFilters.value = [];
+    getFilters();
+  }
+};
+
 const showRenameCategoryDialog = async () => {
   showRenameCategory.value = true;
   [renameCategoryName.value] = selectedCategories.value;
+};
+
+const renameCategory = (value) => {
+  showRenameCategory.value = false;
+
+  messageStore.showMessage({
+    title: $t('dialog.Warning'),
+    message: $t('filtersView.renameCategoryMessage')
+      .replace('%s', renameCategoryName.value)
+      .replace('%s', value.category),
+    yes: async () => {
+      progressStore.startProgress({
+        steps: 0,
+        description: $t('progress.updateProgress'),
+      });
+
+      try {
+        const result = await api.renameCategory(renameCategoryName.value, value.category);
+
+        progressStore.stopProgress();
+        messageStore.showMessage({
+          title: $t('dialog.Info'),
+          message: $t('progress.updatedTransactionsMessage').replace(
+            '%d',
+            `${result?.data[0]?.affectedRows ?? 0}`,
+          ),
+          ok: () => {},
+        });
+
+        await getCategories();
+      } catch (e) {
+        appStore.alertMessage = api.getErrorMessage(e);
+      }
+
+      progressStore.stopProgress();
+    },
+    no: () => {},
+  });
 };
 
 const deleteCategories = async () => {
@@ -201,14 +275,11 @@ const applyCategory = () => {
   });
 };
 
-const renameCategory = (value) => {
-  showRenameCategory.value = false;
-
+const newFilter = () => {};
+const deleteFilter = () => {
   messageStore.showMessage({
     title: $t('dialog.Warning'),
-    message: $t('filtersView.renameCategoryMessage')
-      .replace('%s', renameCategoryName.value)
-      .replace('%s', value.category),
+    message: $t('filtersView.deleteFilterWarningMessage').replace('%s', selectedFilters.value),
     yes: async () => {
       progressStore.startProgress({
         steps: 0,
@@ -216,19 +287,10 @@ const renameCategory = (value) => {
       });
 
       try {
-        const result = await api.renameCategory(renameCategoryName.value, value.category);
-
+        await api.deleteFilter(selectedFilters.value);
         progressStore.stopProgress();
-        messageStore.showMessage({
-          title: $t('dialog.Info'),
-          message: $t('progress.updatedTransactionsMessage').replace(
-            '%d',
-            `${result?.data[0]?.affectedRows ?? 0}`,
-          ),
-          ok: () => {},
-        });
 
-        await getCategories();
+        getFilters();
       } catch (e) {
         appStore.alertMessage = api.getErrorMessage(e);
       }
@@ -238,6 +300,8 @@ const renameCategory = (value) => {
     no: () => {},
   });
 };
+
+const applyFilter = () => {};
 
 onBeforeUpdate(() => getCategories());
 onBeforeMount(() => getCategories());

@@ -77,6 +77,8 @@ const queryRenameCategoryFilters =
 
 const queryFilterNames = "SELECT DISTINCT filter FROM filters WHERE category=? ORDER BY filter ASC";
 
+const queryDeleteFilters = "DELETE FROM filters WHERE filter IN(?)";
+
 async function getConnection() {
   return await mysql.createConnection(connectionSettings);
 }
@@ -175,7 +177,7 @@ async function getCategoryFilters(category) {
     const connection = await getConnection();
     const result = await connection.query(queryFilterNames, [category]);
     connection.close();
-    return result.at(0);
+    return result.at(0).map((row) => row.filter);
   } catch (err) {
     console.error("Error fetching categories:", err);
     throw err;
@@ -222,6 +224,18 @@ async function deleteCategories(categories) {
     return result;
   } catch (err) {
     console.error("Error deleting categories:", err);
+    throw err;
+  }
+}
+
+async function deleteFilters(filters) {
+  try {
+    const connection = await getConnection();
+    const result = await connection.query(queryDeleteFilters, [filters]);
+    connection.close();
+    return result;
+  } catch (err) {
+    console.error("Error deleting filters:", err);
     throw err;
   }
 }
@@ -330,6 +344,7 @@ module.exports = {
   renameCategory,
   backupDatabase,
   deleteCategories,
+  deleteFilters,
   deleteTransactions,
   executeSql,
   getBankNames,

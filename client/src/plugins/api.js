@@ -11,10 +11,11 @@ class Api {
     duplicated: 'transaction/duplicated',
     resetCategoryFromTransactions: 'transaction/category/reset',
     filters: 'filter',
+    deleteFilters: 'filter/delete',
     categoryFilters: 'filter?category={1}',
-    renameCategory: 'filter/rename/category',
-    deleteCategories: 'filter/delete/category',
-    applyCategoryToTransactions: 'filter/apply/category',
+    renameCategory: 'filter/category/rename',
+    deleteCategories: 'filter/category/delete',
+    applyCategoryToTransactions: 'filter/category/apply',
     sql: 'sql',
     backupDatabase: 'sql/backup',
   };
@@ -125,11 +126,16 @@ class Api {
   renameCategory(oldName, newName) {
     const url = Api.endpoint(this.endpoints.renameCategory);
     return this.axios.post(url, { oldName, newName });
-  };
+  }
 
   getFilters(category) {
     const url = Api.endpoint(this.endpoints.categoryFilters, category);
     return this.axios.get(url);
+  }
+
+  deleteFilter(filters) {
+    const url = Api.endpoint(this.endpoints.deleteFilters);
+    return this.axios.post(url, { filters });
   }
 }
 
