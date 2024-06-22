@@ -83,7 +83,8 @@
     "deleteFilterButton": "Elimina",
     "applyFilterButton": "Aplica",
     "deleteCategoriesWarningMessage": "Vas borrar %d categorías\nEsto también borrará la categoria de las transacciones corresponendientes\n¿Estàs seguro?",
-    "updateCategoryWarningMessage": "Vas a actualizar todas las transacciones que coincidan con los filtros de la categoría %s\n¿Estàs seguro?"
+    "updateCategoryWarningMessage": "Vas a actualizar todas las transacciones que coincidan con los filtros de la categoría %s\n¿Estàs seguro?",
+    "renameCategoryMessage": "Vas a renombrar la categoría %s a %s\n¿Estàs seguro?"
   },
   "dialogNewFilter": {
     "title": "Nuevo filtro",

@@ -197,6 +197,44 @@ const applyCategory = () => {
   });
 };
 
+const renameCategory = (value) => {
+  showRenameCategory.value = false;
+
+  messageStore.showMessage({
+    title: $t('dialog.Warning'),
+    message: $t('filtersView.renameCategoryMessage')
+      .replace('%s', renameCategoryName.value)
+      .replace('%s', value.category),
+    yes: async () => {
+      progressStore.startProgress({
+        steps: 0,
+        description: $t('progress.updateProgress'),
+      });
+
+      try {
+        const result = await api.renameCategory(renameCategoryName.value, value.category);
+
+        progressStore.stopProgress();
+        messageStore.showMessage({
+          title: $t('dialog.Info'),
+          message: $t('progress.updatedTransactionsMessage').replace(
+            '%d',
+            `${result?.data[0]?.affectedRows ?? 0}`,
+          ),
+          ok: () => {},
+        });
+
+        await getCategories();
+      } catch (e) {
+        appStore.alertMessage = api.getErrorMessage(e);
+      }
+
+      progressStore.stopProgress();
+    },
+    no: () => {},
+  });
+};
+
 onBeforeUpdate(() => getCategories());
 onBeforeMount(() => getCategories());
 </script>

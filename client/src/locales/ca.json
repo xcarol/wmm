@@ -83,12 +83,18 @@
     "deleteFilterButton": "Elimina",
     "applyFilterButton": "Aplica",
     "deleteCategoriesWarningMessage": "Et's a punt d'esborrar %d categories\nAixò també esborrarà la categoria de les transaccions corresponents\nN'estàs segur?",
-    "updateCategoryWarningMessage": "Et's a punt d'actualitzar totes les transaccions que coincideixin amb els filtres de la categoria %s\nN'estàs segur?"
+    "updateCategoryWarningMessage": "Et's a punt d'actualitzar totes les transaccions que coincideixin amb els filtres de la categoria %s\nN'estàs segur?",
+    "renameCategoryMessage": "Et's a punt de renombrar la categoria %s a %s\nN'estàs segur?"
   },
   "dialogNewFilter": {
     "title": "Nou filtre",
     "categoryLabel": "Nom de la categoria",
     "filterLabel": "Nom del filtre"
+  },
+  "dialogRenameCategory": {
+    "title": "Renombra la categoria",
+    "categoryLabel": "Nom actual de la categoria",
+    "newCategoryLabel": "Nou nom de la categoria  "
   },
   "dialog": {
     "Info": "Informació",

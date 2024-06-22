@@ -1,4 +1,10 @@
-const { getCategories, addFilter, deleteCategories, applyCategory } = require("./database");
+const {
+  addFilter,
+  applyCategory,
+  deleteCategories,
+  getCategories,
+  renameCategory,
+} = require("./database");
 
 module.exports = (app) => {
   app.get("/category/names", async (req, res) => {
@@ -44,6 +50,18 @@ module.exports = (app) => {
     } catch (err) {
       console.error("Error applying categories:", err);
       res.status(500).send("Error applying categories");
+    }
+  });
+
+  app.post("/filter/rename/category", async (req, res) => {
+    try {
+      const data = req.body;
+      const result = await renameCategory(data.oldName, data.newName);
+      res.json(result);
+      res.status(200);
+    } catch (err) {
+      console.error("Error renaming categories:", err);
+      res.status(500).send("Error renaming categories");
     }
   });
 };

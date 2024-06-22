@@ -11,6 +11,7 @@ class Api {
     duplicated: 'transaction/duplicated',
     resetCategoryFromTransactions: 'transaction/category/reset',
     filters: 'filter',
+    renameCategory: 'filter/rename/category',
     deleteCategories: 'filter/delete/category',
     applyCategoryToTransactions: 'filter/apply/category',
     sql: 'sql',
@@ -119,6 +120,11 @@ class Api {
     const url = Api.endpoint(this.endpoints.applyCategoryToTransactions);
     return this.axios.post(url, { category });
   }
+
+  renameCategory(oldName, newName) {
+    const url = Api.endpoint(this.endpoints.renameCategory);
+    return this.axios.post(url, { oldName, newName });
+  };
 }
 
 const api = new Api();

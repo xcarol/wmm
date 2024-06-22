@@ -69,6 +69,12 @@ const queryUpdateRowsCategoryWithAllFilters =
     SET t.category = f.category \
     WHERE f.category = ? AND t.category = ''";
 
+const queryRenameRowsCategory =
+  "UPDATE transactions SET category = ? WHERE category = ?";
+
+const queryRenameCategoryFilters =
+  "UPDATE filters SET category = ? WHERE category = ?";
+
 async function getConnection() {
   return await mysql.createConnection(connectionSettings);
 }
@@ -93,11 +99,30 @@ async function applyCategory(category) {
   try {
     const connection = await getConnection();
 
-    const result = await connection.query(queryUpdateRowsCategoryWithAllFilters, category);
+    const result = await connection.query(
+      queryUpdateRowsCategoryWithAllFilters,
+      category
+    );
     connection.close();
     return result;
   } catch (err) {
     console.error("Error applying category:", err);
+    throw err;
+  }
+}
+
+async function renameCategory(oldName, newName) {
+  try {
+    const connection = await getConnection();
+
+    const result = await connection.query(queryRenameRowsCategory, [newName, oldName]);
+    await connection.query(queryRenameCategoryFilters, [newName, oldName]);
+
+    connection.close();
+
+    return result;
+  } catch (err) {
+    console.error("Error renaming category:", err);
     throw err;
   }
 }
@@ -288,6 +313,7 @@ module.exports = {
   addTransaction,
   addFilter,
   applyCategory,
+  renameCategory,
   backupDatabase,
   deleteCategories,
   deleteTransactions,

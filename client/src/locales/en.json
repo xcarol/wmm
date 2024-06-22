@@ -83,7 +83,8 @@
     "deleteFilterButton": "Delete",
     "applyFilterButton": "Apply",
     "deleteCategoriesWarningMessage": "You're about to delete %d categories\nIt will also reset the category of the corresponding transactions\nAre you sure?",
-    "updateCategoryWarningMessage": "You're about to update all transactions that match the category %s filters.\nAre you sure?"
+    "updateCategoryWarningMessage": "You're about to update all transactions that match the category %s filters.\nAre you sure?",
+    "renameCategoryMessage": "You're about to rename category %s to %s\nAre you sure?"
   },
   "dialogNewFilter": {
     "title": "New Filter",
