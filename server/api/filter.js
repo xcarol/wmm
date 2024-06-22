@@ -3,6 +3,7 @@ const {
   applyCategory,
   deleteCategories,
   getCategories,
+  getCategoryFilters,
   renameCategory,
 } = require("./database");
 
@@ -14,6 +15,16 @@ module.exports = (app) => {
     } catch (err) {
       console.error("Error fetching categories:", err);
       res.status(500).send("Error retrieving categories");
+    }
+  });
+
+  app.get("/filter", async (req, res) => {
+    try {
+      const data = req.query;
+      res.json(await getCategoryFilters(data["category"]));
+    } catch (err) {
+      console.error("Error retrieving filters:", err);
+      res.status(500).send("Error retrieving filters");
     }
   });
 

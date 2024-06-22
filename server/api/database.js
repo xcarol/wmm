@@ -75,6 +75,8 @@ const queryRenameRowsCategory =
 const queryRenameCategoryFilters =
   "UPDATE filters SET category = ? WHERE category = ?";
 
+const queryFilterNames = "SELECT DISTINCT filter FROM filters WHERE category=? ORDER BY filter ASC";
+
 async function getConnection() {
   return await mysql.createConnection(connectionSettings);
 }
@@ -162,6 +164,18 @@ async function getCategories() {
     const result = await connection.query(queryCategoryNames);
     connection.close();
     return result.at(0).map((row) => row.category);
+  } catch (err) {
+    console.error("Error fetching categories:", err);
+    throw err;
+  }
+}
+
+async function getCategoryFilters(category) {
+  try {
+    const connection = await getConnection();
+    const result = await connection.query(queryFilterNames, [category]);
+    connection.close();
+    return result.at(0);
   } catch (err) {
     console.error("Error fetching categories:", err);
     throw err;
@@ -320,6 +334,7 @@ module.exports = {
   executeSql,
   getBankNames,
   getCategories,
+  getCategoryFilters,
   getDuplicatedTransactions,
   getUncategorizedTransactions,
   resetTransactionsCategories,

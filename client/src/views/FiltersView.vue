@@ -94,18 +94,22 @@ const noneSelected = computed(() => {
   return selectedCategories.value.length === 0;
 });
 
-// Disable multi-selection
-const onUpdateModelValue = (updateSelectedCategories) => {
-  const category = updateSelectedCategories.pop();
-  selectedCategories.value = [category];
-};
-
 const listToTable = (list) => {
   const table = [];
   list.forEach((category) => {
     table.push({ id: category });
   });
   return table;
+};
+
+// Disable multi-selection
+const onUpdateModelValue = async (updateSelectedCategories) => {
+  const category = updateSelectedCategories.pop();
+  if (category) {
+    selectedCategories.value = [category];
+    const res = await api.getFilters(category);
+    tableFilters.value = res.data;
+  }
 };
 
 const getCategories = async () => {
