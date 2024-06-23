@@ -75,9 +75,16 @@ const queryRenameRowsCategory =
 const queryRenameCategoryFilters =
   "UPDATE filters SET category = ? WHERE category = ?";
 
-const queryFilterNames = "SELECT DISTINCT filter FROM filters WHERE category=? ORDER BY filter ASC";
+const queryFilterNames =
+  "SELECT DISTINCT filter FROM filters WHERE category=? ORDER BY filter ASC";
 
 const queryDeleteFilters = "DELETE FROM filters WHERE filter IN(?)";
+
+const queryUpdateRowsCategoryWithDescriptionLikeFilter =
+  "UPDATE transactions t \
+    INNER JOIN filters f ON f.filter = ? \
+    SET t.category = f.category \
+    WHERE t.description LIKE ? AND t.category = ''";
 
 async function getConnection() {
   return await mysql.createConnection(connectionSettings);
@@ -95,6 +102,23 @@ async function addFilter(category, filter) {
     return result;
   } catch (err) {
     console.error("Error adding filter:", err);
+    throw err;
+  }
+}
+
+async function applyFilter(filter) {
+  try {
+    const connection = await getConnection();
+
+    const result = await connection.query(
+      queryUpdateRowsCategoryWithDescriptionLikeFilter, [
+      filter,
+      `%${filter}%`
+    ]);
+    connection.close();
+    return result;
+  } catch (err) {
+    console.error("Error applying filter:", err);
     throw err;
   }
 }
@@ -119,7 +143,10 @@ async function renameCategory(oldName, newName) {
   try {
     const connection = await getConnection();
 
-    const result = await connection.query(queryRenameRowsCategory, [newName, oldName]);
+    const result = await connection.query(queryRenameRowsCategory, [
+      newName,
+      oldName,
+    ]);
     await connection.query(queryRenameCategoryFilters, [newName, oldName]);
 
     connection.close();
@@ -340,6 +367,7 @@ async function updateTransactionsAsNotDuplicated(transactions) {
 module.exports = {
   addTransaction,
   addFilter,
+  applyFilter,
   applyCategory,
   renameCategory,
   backupDatabase,

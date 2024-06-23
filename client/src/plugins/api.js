@@ -11,6 +11,7 @@ class Api {
     duplicated: 'transaction/duplicated',
     resetCategoryFromTransactions: 'transaction/category/reset',
     filters: 'filter',
+    applyFilter: 'filter/apply',
     deleteFilters: 'filter/delete',
     categoryFilters: 'filter?category={1}',
     renameCategory: 'filter/category/rename',
@@ -133,9 +134,14 @@ class Api {
     return this.axios.get(url);
   }
 
-  deleteFilter(filters) {
+  deleteFilters(filters) {
     const url = Api.endpoint(this.endpoints.deleteFilters);
     return this.axios.post(url, { filters });
+  }
+
+  applyFilter(filter) {
+    const url = Api.endpoint(this.endpoints.applyFilter);
+    return this.axios.post(url, { filter });
   }
 }
 

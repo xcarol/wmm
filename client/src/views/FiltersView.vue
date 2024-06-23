@@ -141,19 +141,19 @@ const getCategories = async () => {
   }
 };
 
-// Disable multi-selection
 const onUpdateFilterModelValue = async (updateSelectedFilters) => {
   const filter = updateSelectedFilters.pop();
   if (filter) {
-    selectedFilters.value = [filter];
+    selectedFilters.value = [filter]; // Disable multi-selection
   }
 };
 
 const onUpdateCategoryModelValue = async (updateSelectedCategories) => {
+  tableFilters.value = [];
+  selectedFilters.value = [];
   const category = updateSelectedCategories.pop();
   if (category) {
-    selectedCategories.value = [category];
-    selectedFilters.value = [];
+    selectedCategories.value = [category]; // Disable multi-selection
     getFilters();
   }
 };
@@ -287,7 +287,7 @@ const deleteFilter = () => {
       });
 
       try {
-        await api.deleteFilter(selectedFilters.value);
+        await api.deleteFilters(selectedFilters.value);
         progressStore.stopProgress();
 
         getFilters();
@@ -301,7 +301,36 @@ const deleteFilter = () => {
   });
 };
 
-const applyFilter = () => {};
+const applyFilter = () => {
+  messageStore.showMessage({
+    title: $t('dialog.Warning'),
+    message: $t('filtersView.applyFilterWarningMessage').replace('%s', selectedFilters.value),
+    yes: async () => {
+      progressStore.startProgress({
+        steps: 0,
+        description: $t('progress.updateProgress'),
+      });
+
+      try {
+        const applyResult = await api.applyFilter(selectedFilters.value[0]);
+        progressStore.stopProgress();
+        messageStore.showMessage({
+          title: $t('dialog.Info'),
+          message: $t('progress.updatedTransactionsMessage').replace(
+            '%d',
+            `${applyResult?.data[0]?.affectedRows ?? 0}`,
+          ),
+          ok: () => {},
+        });
+      } catch (e) {
+        appStore.alertMessage = api.getErrorMessage(e);
+      }
+
+      progressStore.stopProgress();
+    },
+    no: () => {},
+  });
+};
 
 onBeforeUpdate(() => getCategories());
 onBeforeMount(() => getCategories());

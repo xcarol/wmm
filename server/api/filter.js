@@ -1,6 +1,7 @@
 const {
   addFilter,
   applyCategory,
+  applyFilter,
   deleteCategories,
   getCategories,
   getCategoryFilters,
@@ -38,6 +39,18 @@ module.exports = (app) => {
     } catch (err) {
       console.error("Error inserting category filter:", err);
       res.status(500).send("Error inserting category filter");
+    }
+  });
+
+  app.post("/filter/apply", async (req, res) => {
+    try {
+      const data = req.body;
+      const result = await applyFilter(data.filter);
+      res.json(result);
+      res.status(200);
+    } catch (err) {
+      console.error("Error apply filter:", err);
+      res.status(500).send("Error apply filter");
     }
   });
 
