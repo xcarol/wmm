@@ -28,10 +28,12 @@ export const useProgressStore = defineStore('progressDialog', {
     cancelProgress() {
       this.progress.active = false;
       this.progress.cancelled = true;
+      this.progress.step = 0;
     },
     stopProgress() {
       this.progress.active = false;
       this.progress.cancelled = false;
+      this.progress.step = 0;
     },
   },
 });

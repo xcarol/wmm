@@ -57,6 +57,32 @@ const queryMarkNotDuplicateRows =
 
 const queryDeleteRows = "DELETE FROM transactions WHERE id IN (?)";
 
+const queryDeleteCategories = "DELETE FROM filters WHERE category IN(?)";
+
+const queryResetRowsCategories =
+  "UPDATE transactions SET category = '' WHERE category in (?)";
+
+const queryUpdateRowsCategoryWithAllFilters =
+  "UPDATE transactions AS t \
+    JOIN filters AS f ON t.description LIKE CONCAT('%',  \
+    REPLACE(f.filter, '%', '\\%'), '%') \
+    SET t.category = f.category \
+    WHERE f.category = ? AND t.category = ''";
+
+const queryRenameRowsCategory =
+  "UPDATE transactions SET category = ? WHERE category = ?";
+
+const queryRenameCategoryFilters =
+  "UPDATE filters SET category = ? WHERE category = ?";
+
+const queryFilterNames =
+  "SELECT DISTINCT filter FROM filters WHERE category=? ORDER BY filter ASC";
+
+const queryDeleteFilters = "DELETE FROM filters WHERE filter IN(?)";
+
+const queryUpdateRowsCategoryWithDescriptionLikeFilter =
+  "UPDATE transactions SET category = ? WHERE description LIKE ? AND category = ''";
+
 async function getConnection() {
   return await mysql.createConnection(connectionSettings);
 }
@@ -73,6 +99,57 @@ async function addFilter(category, filter) {
     return result;
   } catch (err) {
     console.error("Error adding filter:", err);
+    throw err;
+  }
+}
+
+async function applyFilter(category, filter) {
+  try {
+    const connection = await getConnection();
+
+    const result = await connection.query(
+      queryUpdateRowsCategoryWithDescriptionLikeFilter,
+      [category, `%${filter}%`]
+    );
+    connection.close();
+    return result;
+  } catch (err) {
+    console.error("Error applying filter:", err);
+    throw err;
+  }
+}
+
+async function applyCategory(category) {
+  try {
+    const connection = await getConnection();
+
+    const result = await connection.query(
+      queryUpdateRowsCategoryWithAllFilters,
+      category
+    );
+    connection.close();
+    return result;
+  } catch (err) {
+    console.error("Error applying category:", err);
+    throw err;
+  }
+}
+
+async function renameCategory(oldName, newName) {
+  try {
+    const connection = await getConnection();
+
+    const result = await connection.query(queryRenameRowsCategory, [
+      newName,
+      oldName,
+    ]);
+    await connection.query(queryRenameCategoryFilters, [newName, oldName]);
+
+    connection.close();
+
+    return result;
+  } catch (err) {
+    console.error("Error renaming category:", err);
     throw err;
   }
 }
@@ -118,6 +195,18 @@ async function getCategories() {
   }
 }
 
+async function getCategoryFilters(category) {
+  try {
+    const connection = await getConnection();
+    const result = await connection.query(queryFilterNames, [category]);
+    connection.close();
+    return result.at(0).map((row) => row.filter);
+  } catch (err) {
+    console.error("Error fetching categories:", err);
+    throw err;
+  }
+}
+
 async function getBankNames() {
   try {
     const connection = await getConnection();
@@ -146,6 +235,30 @@ async function addTransaction(date, description, amount, bank) {
     return result;
   } catch (err) {
     console.error("Error adding a transaction:", err);
+    throw err;
+  }
+}
+
+async function deleteCategories(categories) {
+  try {
+    const connection = await getConnection();
+    const result = await connection.query(queryDeleteCategories, [categories]);
+    connection.close();
+    return result;
+  } catch (err) {
+    console.error("Error deleting categories:", err);
+    throw err;
+  }
+}
+
+async function deleteFilters(filters) {
+  try {
+    const connection = await getConnection();
+    const result = await connection.query(queryDeleteFilters, [filters]);
+    connection.close();
+    return result;
+  } catch (err) {
+    console.error("Error deleting filters:", err);
     throw err;
   }
 }
@@ -204,6 +317,20 @@ async function updateTransactionsCategory(transactions, category) {
   }
 }
 
+async function resetTransactionsCategories(categories) {
+  try {
+    const connection = await getConnection();
+    const result = await connection.query(queryResetRowsCategories, [
+      categories,
+    ]);
+    connection.close();
+    return result;
+  } catch (err) {
+    console.error("Error reseting transactions category:", err);
+    throw err;
+  }
+}
+
 async function updateTransactionsByFilter(filter) {
   try {
     const connection = await getConnection();
@@ -236,13 +363,20 @@ async function updateTransactionsAsNotDuplicated(transactions) {
 module.exports = {
   addTransaction,
   addFilter,
+  applyFilter,
+  applyCategory,
+  renameCategory,
   backupDatabase,
+  deleteCategories,
+  deleteFilters,
   deleteTransactions,
   executeSql,
   getBankNames,
   getCategories,
+  getCategoryFilters,
   getDuplicatedTransactions,
   getUncategorizedTransactions,
+  resetTransactionsCategories,
   updateTransactionsCategory,
   updateTransactionsByFilter,
   updateTransactionsAsNotDuplicated,

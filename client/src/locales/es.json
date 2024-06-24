@@ -17,13 +17,15 @@
     "import": "Importar",
     "categorize": "Categorizar",
     "duplicates": "Buscar duplicados",
-    "sql": "Comandos SQL"
+    "sql": "Comandos SQL",
+    "filters": "Filtros"
   },
   "progress": {
     "title": "Operación en progreso",
     "updateProgress": "Actualizando las transacciones...",
     "updatedTransactionsMessage": "Se han actualizado %d transacciones.",
-    "deletedTransactionsMessage": "Se han eliminado %d transacciones."
+    "deletedTransactionsMessage": "Se han eliminado %d transacciones.",
+    "deletedCategoriesMessage": "Se han eliminado %d filtros y se han actualizado % transacciones."
   },
   "importView": {
     "title": "Importa un archivo CSV",
@@ -69,6 +71,23 @@
     "createFilterButton": "Crea un filtro",
     "applyWarningMessage": "Vas a actualizar %d transacciones con la categoría: %s\n¿Estás seguro?",
     "updateTransactionsMessage": "¿Quieres aplicar ahora este nuevo filtro?"
+  },
+  "filtersView": {
+    "title": "Gestión de los filtros",
+    "categoriesLabel": "Categorías",
+    "filtersLabel": "Filtros",
+    "renameCategoryButton": "Renombra...",
+    "deleteCategoryButton": "Elimina",
+    "applyCategoryButton": "Aplica",
+    "newFilterButton": "Nuevo...",
+    "deleteFilterButton": "Elimina",
+    "applyFilterButton": "Aplica",
+    "deleteCategoriesWarningMessage": "Vas borrar %d categorías\nEsto también borrará la categoria de las transacciones corresponendientes\n¿Estàs seguro?",
+    "updateCategoryWarningMessage": "Vas a actualizar todas las transacciones que coincidan con los filtros de la categoría %s\n¿Estàs seguro?",
+    "renameCategoryMessage": "Vas a renombrar la categoría %s a %s\n¿Estàs seguro?",
+    "deleteFilterWarningMessage": "Vas a borrar el filtro %s\n¿Estás seguro?",
+    "applyFilterWarningMessage": "Vas a aplicar el filtro %s\n¿Estás seguro?",
+    "applyNewFilterWarningMessage": "Al crear el filtro %s se actulitzarán las transacciones coincidentes.\n¿Estás seguro?"
   },
   "dialogNewFilter": {
     "title": "Nuevo filtro",

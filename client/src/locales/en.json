@@ -17,13 +17,15 @@
     "import": "Import",
     "categorize": "Categorize",
     "duplicates": "Find duplicates",
-    "sql": "SQL Commands"
+    "sql": "SQL Commands",
+    "filters": "Filters"
   },
   "progress": {
     "title": "Operation in progress...",
     "updateProgress": "Updating transactions...",
     "updatedTransactionsMessage": "%d transactions have been updated.",
-    "deletedTransactionsMessage": "%d transaccions deleted."
+    "deletedTransactionsMessage": "%d transaccions deleted.",
+    "deletedCategoriesMessage": "%d filters deleted and %d transactions have been reset."
   },
   "importView": {
     "title": "Import CSV File",
@@ -69,6 +71,23 @@
     "createFilterButton": "Create new filter",
     "applyWarningMessage": "You're about to update %d records with the category: %s\nAre you sure?",
     "updateTransactionsMessage": "Do you want to apply this new filter now?"
+  },
+  "filtersView": {
+    "title": "Filter management",
+    "categoriesLabel": "Categories",
+    "filtersLabel": "Filters",
+    "renameCategoryButton": "Rename...",
+    "deleteCategoryButton": "Delete",
+    "applyCategoryButton": "Apply",
+    "newFilterButton": "New...",
+    "deleteFilterButton": "Delete",
+    "applyFilterButton": "Apply",
+    "deleteCategoriesWarningMessage": "You're about to delete %d categories\nIt will also reset the category of the corresponding transactions\nAre you sure?",
+    "updateCategoryWarningMessage": "You're about to update all transactions that match the category %s filters.\nAre you sure?",
+    "renameCategoryMessage": "You're about to rename category %s to %s\nAre you sure?",
+    "deleteFilterWarningMessage": "You're about to delete the filter %s\nAre you sure?",
+    "applyFilterWarningMessage": "You're about to apply the filter %s\nAre you sure?",
+    "applyNewFilterWarningMessage": "Creating the %s filter, all coincident transactions will be updated.\nAre you sure?"
   },
   "dialogNewFilter": {
     "title": "New Filter",

@@ -9,7 +9,14 @@ class Api {
     updateTransactionsByFilter: 'transaction/filter',
     uncategorizedTransactions: 'transaction/uncategorized?filter={1}',
     duplicated: 'transaction/duplicated',
+    resetCategoryFromTransactions: 'transaction/category/reset',
     filters: 'filter',
+    applyFilter: 'filter/apply',
+    deleteFilters: 'filter/delete',
+    categoryFilters: 'filter?category={1}',
+    renameCategory: 'filter/category/rename',
+    deleteCategories: 'filter/category/delete',
+    applyCategoryToTransactions: 'filter/category/apply',
     sql: 'sql',
     backupDatabase: 'sql/backup',
   };
@@ -100,6 +107,41 @@ class Api {
   deleteTransactions(transactions) {
     const url = Api.endpoint(this.endpoints.deleteTransactions);
     return this.axios.post(url, { transactions });
+  }
+
+  deleteCategories(categories) {
+    const url = Api.endpoint(this.endpoints.deleteCategories);
+    return this.axios.post(url, { categories });
+  }
+
+  resetCategoryFromTransactions(categories) {
+    const url = Api.endpoint(this.endpoints.resetCategoryFromTransactions);
+    return this.axios.post(url, { categories });
+  }
+
+  applyCategoryToTransactions(category) {
+    const url = Api.endpoint(this.endpoints.applyCategoryToTransactions);
+    return this.axios.post(url, { category });
+  }
+
+  renameCategory(oldName, newName) {
+    const url = Api.endpoint(this.endpoints.renameCategory);
+    return this.axios.post(url, { oldName, newName });
+  }
+
+  getFilters(category) {
+    const url = Api.endpoint(this.endpoints.categoryFilters, category);
+    return this.axios.get(url);
+  }
+
+  deleteFilters(filters) {
+    const url = Api.endpoint(this.endpoints.deleteFilters);
+    return this.axios.post(url, { filters });
+  }
+
+  applyFilter(category, filter) {
+    const url = Api.endpoint(this.endpoints.applyFilter);
+    return this.axios.post(url, { category, filter });
   }
 }
 

@@ -4,6 +4,7 @@ import ImportView from '../views/ImportView.vue';
 import CategorizeView from '../views/CategorizeView.vue';
 import DuplicatesView from '../views/DuplicatesView.vue';
 import SqlView from '../views/SqlView.vue';
+import FiltersView from '../views/FiltersView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,6 +33,11 @@ const router = createRouter({
       path: '/sql',
       name: 'sql',
       component: SqlView,
+    },
+    {
+      path: '/filters',
+      name: 'filters',
+      component: FiltersView,
     },
   ],
 });

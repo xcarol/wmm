@@ -20,16 +20,16 @@
 <script setup>
 import { useI18n } from 'vue-i18n';
 import { useApi } from '../../plugins/api';
-import { useAppStore } from '../../stores/app';
+import { useProgressStore } from '../../stores/progressDialog';
 
 const { t: $t } = useI18n();
-const appStore = useAppStore();
+const progressStore = useProgressStore();
 const api = useApi();
 
 const emits = defineEmits(['operationStatus']);
 
 const executeBackup = async () => {
-  appStore.startProgress({ steps: 0, description: $t('sqlView.backupProgress') });
+  progressStore.startProgress({ steps: 0, description: $t('sqlView.backupProgress') });
   try {
     const res = await api.backupDatabase();
     const { data } = res;
@@ -47,7 +47,7 @@ const executeBackup = async () => {
     a.download = name;
     document.body.appendChild(a);
 
-    appStore.stopProgress();
+    progressStore.stopProgress();
     a.click();
 
     window.URL.revokeObjectURL(url);
@@ -59,7 +59,7 @@ const executeBackup = async () => {
   } catch (e) {
     emits('operationStatus', e.response?.data ?? e);
   }
-  appStore.stopProgress();
+  progressStore.stopProgress();
 };
 
 const readFileContent = (file) => {
@@ -67,7 +67,7 @@ const readFileContent = (file) => {
   reader.onload = async (event) => {
     const fileContent = event.target.result;
 
-    appStore.startProgress({ steps: 0, description: $t('sqlView.executingQuery') });
+    progressStore.startProgress({ steps: 0, description: $t('sqlView.executingQuery') });
     try {
       const res = await api.executeQuery(fileContent);
       emits(
@@ -77,7 +77,7 @@ const readFileContent = (file) => {
     } catch (e) {
       emits('operationStatus', e.response?.data ?? e);
     }
-    appStore.stopProgress();
+    progressStore.stopProgress();
   };
   reader.readAsText(file);
 };

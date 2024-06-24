@@ -17,13 +17,15 @@
     "import": "Importar",
     "categorize": "Categoritzar",
     "duplicates": "Cercar duplicats",
-    "sql": "Comandes SQL"
+    "sql": "Comandes SQL",
+    "filters": "Filtres"
   },
   "progress": {
     "title": "Operació en progress",
     "updateProgress": "Actualitzant les transaccions...",
     "updatedTransactionsMessage": "S'han actualitzat %d transaccions.",
-    "deletedTransactionsMessage": "S'han eliminat %d transaccions."
+    "deletedTransactionsMessage": "S'han eliminat %d transaccions.",
+    "deletedCategoriesMessage": "S'han eliminat %d filtres i s'han actualitzat %d transaccions."
   },
   "importView": {
     "title": "Importa un arxiu CSV",
@@ -70,10 +72,32 @@
     "applyWarningMessage": "Et's a punt d'actualitzar %d transaccions amb la categoria: %s\nN'estàs segur?",
     "updateTransactionsMessage": "Vols aplicar ara aquest nou filtre?"
   },
+  "filtersView": {
+    "title": "Gestió dels filtres",
+    "categoriesLabel": "Categories",
+    "filtersLabel": "Filtres",
+    "renameCategoryButton": "Reanomena...",
+    "deleteCategoryButton": "Elimina",
+    "applyCategoryButton": "Aplica",
+    "newFilterButton": "Nou...",
+    "deleteFilterButton": "Elimina",
+    "applyFilterButton": "Aplica",
+    "deleteCategoriesWarningMessage": "Et's a punt d'esborrar %d categories\nAixò també esborrarà la categoria de les transaccions corresponents\nN'estàs segur?",
+    "updateCategoryWarningMessage": "Et's a punt d'actualitzar totes les transaccions que coincideixin amb els filtres de la categoria %s\nN'estàs segur?",
+    "renameCategoryMessage": "Et's a punt de reanomenar la categoria %s a %s\nN'estàs segur?",
+    "deleteFilterWarningMessage": "Et's a punt d'esborrar el filtre %s\nN'estàs segur?",
+    "applyFilterWarningMessage": "Et's a punt d'aplicar el filtre %s\nN'estàs segur?",
+    "applyNewFilterWarningMessage": "En crear el filtre %s s'actulitzaran les transaccions coincidents.\nN'estàs segur?"
+  },
   "dialogNewFilter": {
     "title": "Nou filtre",
     "categoryLabel": "Nom de la categoria",
     "filterLabel": "Nom del filtre"
+  },
+  "dialogRenameCategory": {
+    "title": "Reanomenar la categoria",
+    "categoryLabel": "Nom actual de la categoria",
+    "newCategoryLabel": "Nou nom de la categoria  "
   },
   "dialog": {
     "Info": "Informació",
