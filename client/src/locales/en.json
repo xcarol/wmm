@@ -86,7 +86,8 @@
     "updateCategoryWarningMessage": "You're about to update all transactions that match the category %s filters.\nAre you sure?",
     "renameCategoryMessage": "You're about to rename category %s to %s\nAre you sure?",
     "deleteFilterWarningMessage": "You're about to delete the filter %s\nAre you sure?",
-    "applyFilterWarningMessage": "You're about to apply the filter %s\nAre you sure?"
+    "applyFilterWarningMessage": "You're about to apply the filter %s\nAre you sure?",
+    "applyNewFilterWarningMessage": "Creating the %s filter, all coincident transactions will be updated.\nAre you sure?"
   },
   "dialogNewFilter": {
     "title": "New Filter",

@@ -81,10 +81,7 @@ const queryFilterNames =
 const queryDeleteFilters = "DELETE FROM filters WHERE filter IN(?)";
 
 const queryUpdateRowsCategoryWithDescriptionLikeFilter =
-  "UPDATE transactions t \
-    INNER JOIN filters f ON f.filter = ? \
-    SET t.category = f.category \
-    WHERE t.description LIKE ? AND t.category = ''";
+  "UPDATE transactions SET category = ? WHERE description LIKE ? AND category = ''";
 
 async function getConnection() {
   return await mysql.createConnection(connectionSettings);
@@ -106,15 +103,14 @@ async function addFilter(category, filter) {
   }
 }
 
-async function applyFilter(filter) {
+async function applyFilter(category, filter) {
   try {
     const connection = await getConnection();
 
     const result = await connection.query(
-      queryUpdateRowsCategoryWithDescriptionLikeFilter, [
-      filter,
-      `%${filter}%`
-    ]);
+      queryUpdateRowsCategoryWithDescriptionLikeFilter,
+      [category, `%${filter}%`]
+    );
     connection.close();
     return result;
   } catch (err) {

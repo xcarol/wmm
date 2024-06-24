@@ -139,9 +139,9 @@ class Api {
     return this.axios.post(url, { filters });
   }
 
-  applyFilter(filter) {
+  applyFilter(category, filter) {
     const url = Api.endpoint(this.endpoints.applyFilter);
-    return this.axios.post(url, { filter });
+    return this.axios.post(url, { category, filter });
   }
 }
 

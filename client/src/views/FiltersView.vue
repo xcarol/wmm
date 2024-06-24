@@ -55,8 +55,8 @@
             <v-card-actions>
               <v-spacer />
               <v-btn
-                :disabled="noFilterSelected"
-                @click.stop="newFilter"
+                :disabled="noCategorySelected"
+                @click.stop="showNewFilterDialog"
                 >{{ $t('filtersView.newFilterButton') }}</v-btn
               >
               <v-btn
@@ -81,6 +81,12 @@
     @on-ok="renameCategory"
     @on-cancel="showRenameCategory = !showRenameCategory"
   />
+  <new-filter-dialog
+    :show="showNewFilter"
+    :category="newFilterCategoryName"
+    @on-ok="newFilter"
+    @on-cancel="showNewFilter = !showNewFilter"
+  />
 </template>
 
 <script setup>
@@ -91,6 +97,7 @@ import { useAppStore } from '../stores/app';
 import { useMessageStore } from '../stores/messageDialog';
 import { useProgressStore } from '../stores/progressDialog';
 import RenameCategoryDialog from '../components/filters-view/RenameCategoryDialog.vue';
+import NewFilterDialog from '../components/categorize-view/NewFilterDialog.vue';
 
 const api = useApi();
 const { t: $t } = useI18n();
@@ -104,6 +111,8 @@ const selectedFilters = ref([]);
 const tableFilters = ref([]);
 const showRenameCategory = ref(false);
 const renameCategoryName = ref('');
+const showNewFilter = ref(false);
+const newFilterCategoryName = ref('');
 
 const noCategorySelected = computed(() => {
   return selectedCategories.value.length === 0;
@@ -159,8 +168,13 @@ const onUpdateCategoryModelValue = async (updateSelectedCategories) => {
 };
 
 const showRenameCategoryDialog = async () => {
-  showRenameCategory.value = true;
   [renameCategoryName.value] = selectedCategories.value;
+  showRenameCategory.value = true;
+};
+
+const showNewFilterDialog = async () => {
+  [newFilterCategoryName.value] = selectedCategories.value;
+  showNewFilter.value = true;
 };
 
 const renameCategory = (value) => {
@@ -275,7 +289,42 @@ const applyCategory = () => {
   });
 };
 
-const newFilter = () => {};
+const newFilter = async (value) => {
+  showNewFilter.value = false;
+
+
+  messageStore.showMessage({
+    title: $t('dialog.Warning'),
+    message: $t('filtersView.applyNewFilterWarningMessage').replace('%s', value.filter),
+    yes: async () => {
+      progressStore.startProgress({
+        steps: 0,
+        description: $t('progress.updateProgress'),
+      });
+
+      try {
+        await api.createFilter(newFilterCategoryName.value, value.filter);
+        const applyResult = await api.applyFilter(value.category,value.filter);
+        await getFilters();
+        progressStore.stopProgress();
+        messageStore.showMessage({
+          title: $t('dialog.Info'),
+          message: $t('progress.updatedTransactionsMessage').replace(
+            '%d',
+            `${applyResult?.data[0]?.affectedRows ?? 0}`,
+          ),
+          ok: () => {},
+        });
+      } catch (e) {
+        appStore.alertMessage = api.getErrorMessage(e);
+      }
+
+      progressStore.stopProgress();
+    },
+    no: () => {},
+  });
+};
+
 const deleteFilter = () => {
   messageStore.showMessage({
     title: $t('dialog.Warning'),
