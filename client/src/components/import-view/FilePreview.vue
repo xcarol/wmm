@@ -1,32 +1,34 @@
 <template>
-  <v-container>
-    <v-table density="compact">
-      <thead>
-        <tr>
-          <th
-            v-for="header in tableHeaders"
-            :key="header"
+  <v-card>
+    <v-card-text>
+      <v-table density="compact">
+        <thead>
+          <tr>
+            <th
+              v-for="header in tableHeaders"
+              :key="header"
+            >
+              {{ header }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="item in tableItems"
+            :key="item"
           >
-            {{ header }}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="item in tableItems"
-          :key="item"
-        >
-          <td
-            v-for="cell in item"
-            :key="cell"
-            class="truncate"
-          >
-            {{ cell }}
-          </td>
-        </tr>
-      </tbody>
-    </v-table>
-  </v-container>
+            <td
+              v-for="cell in item"
+              :key="cell"
+              class="truncate"
+            >
+              {{ cell }}
+            </td>
+          </tr>
+        </tbody>
+      </v-table>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script setup>

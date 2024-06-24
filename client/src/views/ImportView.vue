@@ -9,13 +9,16 @@
     @selected-amount-column="updateSelectedAmountColumn"
   />
   <bank-selection @selected-bank="selectedBank" />
-  <v-container class="text-end">
-    <v-btn
-      :disabled="formNotFilled"
-      @click.stop="importFile"
-      >{{ $t('importView.importButtonLabel') }}
-    </v-btn>
-  </v-container>
+  <v-card>
+    <v-card-actions>
+      <v-spacer />
+      <v-btn
+        :disabled="formNotFilled"
+        @click.stop="importFile"
+        >{{ $t('importView.importButtonLabel') }}
+      </v-btn>
+    </v-card-actions>
+  </v-card>
 </template>
 
 <script setup>
@@ -116,7 +119,7 @@ const importFile = async () => {
         step: rowCount,
         description: $t('importView.importingRows')
           .replace('%d', rowCount)
-          .replace('%d', appStore.csvfile.rowCount- firstRow),
+          .replace('%d', appStore.csvfile.rowCount - firstRow),
       });
     }
     appStore.alertMessage = $t('importView.importedRows').replace('%d', rowCount - firstRow);
