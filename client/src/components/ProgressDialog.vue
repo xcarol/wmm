@@ -31,8 +31,6 @@
       <v-card-actions>
         <v-spacer />
         <v-btn
-          color="blue darken-1"
-          text
           @click.stop="cancel"
         >
           {{ $t('global.cancel') }}

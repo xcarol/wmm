@@ -7,7 +7,6 @@
 
     <template #actions>
       <v-btn
-        color="red"
         @click="hideSnackBar"
       >
         {{ $t('global.close') }}
