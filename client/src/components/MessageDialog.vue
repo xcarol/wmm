@@ -18,6 +18,7 @@
         >
         <v-btn
           v-show="showYes"
+          variant="flat"
           @click.stop="yes"
           >{{ $t('dialog.yes') }}</v-btn
         >
@@ -29,7 +30,7 @@
         >
         <v-btn
           v-show="showOk"
-          elevation-11
+          variant="flat"
           @click.stop="ok"
         >
           {{ $t('dialog.ok') }}</v-btn

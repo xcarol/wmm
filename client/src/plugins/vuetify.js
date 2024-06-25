@@ -20,11 +20,15 @@ const defaultTheme =
 const defaults = {
   VCardActions: {
     VBtn: {
+      ripple: false,
       variant: 'tonal',
+      color: 'primary',
     },
   },
   VBtn: {
+    ripple: false,
     variant: 'tonal',
+    color: 'primary',
   },
   VSelect: {
     variant: 'outlined',
@@ -60,13 +64,11 @@ const vuetify = createVuetify({
       light: {
         colors: {
           primary: colors.grey.darken3,
-          secondary: colors.grey.base,
         },
       },
       dark: {
         colors: {
-          primary: colors.grey.darken3,
-          secondary: colors.grey.base,
+          primary: colors.grey.base,
         },
       },
     },

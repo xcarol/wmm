@@ -22,6 +22,7 @@
         <v-btn @click.stop="cancel"> {{ $t('dialog.cancel') }}</v-btn>
         <v-btn
           :disabled="canCreateNewFilter"
+          variant="flat"
           @click.stop="ok"
           >{{ $t('dialog.ok') }}</v-btn
         >

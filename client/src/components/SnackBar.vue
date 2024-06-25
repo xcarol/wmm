@@ -7,6 +7,7 @@
 
     <template #actions>
       <v-btn
+        variant="flat"
         @click="hideSnackBar"
       >
         {{ $t('global.close') }}
