@@ -361,7 +361,7 @@ const applyFilter = () => {
       });
 
       try {
-        const applyResult = await api.applyFilter(selectedFilters.value[0]);
+        const applyResult = await api.applyFilter(selectedCategories.value[0], selectedFilters.value[0]);
         progressStore.stopProgress();
         messageStore.showMessage({
           title: $t('dialog.Info'),
