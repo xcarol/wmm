@@ -45,8 +45,7 @@ module.exports = (app) => {
   app.post("/filter/apply", async (req, res) => {
     try {
       const data = req.body;
-      const result = await applyFilter(data.category, data.filter);
-      res.json(result);
+      res.json(await applyFilter(data.category, data.filter));
       res.status(200);
     } catch (err) {
       console.error("Error apply filter:", err);
