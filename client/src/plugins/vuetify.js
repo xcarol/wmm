@@ -42,6 +42,10 @@ const defaults = {
     variant: 'outlined',
     density: 'compact',
   },
+  VTextField: {
+    variant: 'outlined',
+    density: 'compact',
+  },
 };
 
 const vuetify = createVuetify({
