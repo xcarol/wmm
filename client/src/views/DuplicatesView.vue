@@ -17,13 +17,13 @@
       <v-spacer />
       <v-btn
         :disabled="noTransactionSelected"
-        @click.stop="markAsNotDuplicates"
-        >{{ $t('duplicatesView.markButton') }}</v-btn
+        @click.stop="deleteTransactions"
+        >{{ $t('duplicatesView.deleteButton') }}</v-btn
       >
       <v-btn
         :disabled="noTransactionSelected"
-        @click.stop="deleteTransactions"
-        >{{ $t('duplicatesView.deleteButton') }}</v-btn
+        @click.stop="markAsNotDuplicates"
+        >{{ $t('duplicatesView.markButton') }}</v-btn
       >
     </v-card-actions>
   </v-card>
