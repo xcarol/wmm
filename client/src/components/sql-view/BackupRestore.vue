@@ -1,11 +1,9 @@
 <template>
   <v-btn
-    variant="tonal"
     @click.stop="executeBackup"
     >{{ $t('sqlView.backupButton') }}</v-btn
   >
   <v-btn
-    variant="tonal"
     @click.stop="executeRestore"
     >{{ $t('sqlView.restoreButton') }}</v-btn
   >

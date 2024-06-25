@@ -12,7 +12,6 @@
       />
       <v-spacer />
       <v-btn
-        variant="tonal"
         @click.stop="executeQuery"
         >{{ $t('sqlView.queryButton') }}</v-btn
       >

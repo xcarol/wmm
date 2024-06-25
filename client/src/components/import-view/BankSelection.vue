@@ -6,7 +6,6 @@
         :label="$t('importView.bankLabel')"
         :items="bankNames"
         :disabled="noFileLoaded"
-        variant="outlined"
         @update:model-value="bankSelected"
       />
     </v-card-text>

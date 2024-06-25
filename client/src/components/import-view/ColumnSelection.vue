@@ -16,7 +16,6 @@
             :label="$t('importView.dateColumnLabel')"
             :items="dateItems"
             :disabled="noFileLoaded"
-            variant="outlined"
             @update:model-value="notifyDateColumnSelected"
           />
         </v-row>
@@ -26,7 +25,6 @@
             :label="$t('importView.descriptionColumnLabel')"
             :items="descriptionItems"
             :disabled="noFileLoaded"
-            variant="outlined"
             @update:model-value="notifyDescriptionColumnSelected"
           />
         </v-row>
@@ -36,7 +34,6 @@
             :label="$t('importView.amountColumnLabel')"
             :items="amountItems"
             :disabled="noFileLoaded"
-            variant="outlined"
             @update:model-value="notifyAmountColumnSelected"
           />
         </v-row>

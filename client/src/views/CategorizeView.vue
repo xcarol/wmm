@@ -15,7 +15,6 @@
         :items="filters"
         append-icon="$search"
         clearable
-        variant="outlined"
         @click:append="searchTransactions"
         @keydown="keyDown"
       />
@@ -36,7 +35,6 @@
         :label="$t('categorizeView.categoryLabel')"
         :items="categoryNames"
         clearable
-        variant="outlined"
         @click:append="searchTransactions"
         @keydown="keyDown"
       />

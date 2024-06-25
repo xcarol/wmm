@@ -11,12 +11,34 @@ import ca from 'vuetify/lib/locale/ca.mjs';
 import en from 'vuetify/lib/locale/en.mjs';
 import es from 'vuetify/lib/locale/es.mjs';
 import colors from 'vuetify/lib/util/colors.mjs';
-import {
-  mdiHome,
-  mdiMagnify,
-} from '@mdi/js';
+import { mdiHome, mdiMagnify } from '@mdi/js';
 
-const defaultTheme = import.meta.env.VITE_THEME || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+const defaultTheme =
+  import.meta.env.VITE_THEME ||
+  (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+
+const defaults = {
+  VCardActions: {
+    VBtn: {
+      variant: 'tonal',
+    },
+  },
+  VBtn: {
+    variant: 'tonal',
+  },
+  VSelect: {
+    variant: 'outlined',
+    density: 'compact',
+  },
+  VCombobox: {
+    variant: 'outlined',
+    density: 'compact',
+  },
+  VFileInput: {
+    variant: 'outlined',
+    density: 'compact',
+  },
+};
 
 const vuetify = createVuetify({
   components,
@@ -53,6 +75,7 @@ const vuetify = createVuetify({
     locales: { ca, en, es },
     current: 'ca',
   },
+  defaults,
 });
 
 export default vuetify;

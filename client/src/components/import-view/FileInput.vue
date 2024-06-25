@@ -5,7 +5,6 @@
         v-model="fileName"
         :label="fileNameLabel"
         accept="text/csv"
-        variant="outlined"
         clearable
         @click:clear="resetView"
         @change="handleFileChange"
