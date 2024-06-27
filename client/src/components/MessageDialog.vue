@@ -42,9 +42,9 @@
 
 <script setup>
 import { computed } from 'vue';
-import { useMessageStore } from '../stores/messageDialog';
+import { useMessageDialogStore } from '../stores/messageDialog';
 
-const store = useMessageStore();
+const store = useMessageDialogStore();
 
 const show = computed(() => store.show);
 const title = computed(() => store.title);

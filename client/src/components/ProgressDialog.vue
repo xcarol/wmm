@@ -42,9 +42,9 @@
 
 <script setup>
 import { computed } from 'vue';
-import { useProgressStore } from '../stores/progressDialog';
+import { useProgressDialogStore } from '../stores/progressDialog';
 
-const store = useProgressStore();
+const store = useProgressDialogStore();
 
 const show = computed(() => store.progressIsActive);
 const description = computed(() => store.progress.description);

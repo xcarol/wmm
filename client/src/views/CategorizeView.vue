@@ -57,16 +57,16 @@ import { computed, ref, onBeforeMount } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
-import { useMessageStore } from '../stores/messageDialog';
-import { useProgressStore } from '../stores/progressDialog';
+import { useMessageDialogStore } from '../stores/messageDialog';
+import { useProgressDialogStore } from '../stores/progressDialog';
 import NewFilterDialog from '../components/categorize-view/NewFilterDialog.vue';
 import MessageDialog from '../components/MessageDialog.vue';
 
 const appStore = useAppStore();
 const api = useApi();
 const { t: $t } = useI18n();
-const messageStore = useMessageStore();
-const progressStore = useProgressStore();
+const messageDialog = useMessageDialogStore();
+const progressDialog = useProgressDialogStore();
 
 const filters = computed(() => appStore.categorySearchHistory);
 const selectedFilter = ref('');
@@ -131,7 +131,7 @@ const keyDown = (value) => {
 };
 
 const updateTransactions = async (transactions, category) => {
-  progressStore.startProgress({
+  progressDialog.startProgress({
     steps: 0,
     description: $t('progress.updateProgress'),
   });
@@ -142,12 +142,12 @@ const updateTransactions = async (transactions, category) => {
     appStore.alertMessage = api.getErrorMessage(e);
   }
 
-  progressStore.stopProgress();
+  progressDialog.stopProgress();
 };
 
 const updateTransactionsByFilter = async (filter) => {
   let updatedTransactions = 0;
-  progressStore.startProgress({
+  progressDialog.startProgress({
     steps: 0,
     description: $t('progress.updateProgress'),
   });
@@ -158,7 +158,7 @@ const updateTransactionsByFilter = async (filter) => {
     appStore.alertMessage = api.getErrorMessage(e);
   }
 
-  progressStore.stopProgress();
+  progressDialog.stopProgress();
   return updatedTransactions;
 };
 
@@ -166,7 +166,7 @@ const applyCategory = () => {
   const category = selectedCategory.value;
   const selectedTransactions = selectedItems.value;
 
-  messageStore.showMessage({
+  messageDialog.showMessage({
     title: $t('dialog.Warning'),
     message: $t('categorizeView.applyWarningMessage')
       .replace('%d', selectedTransactions.length)
@@ -193,7 +193,7 @@ const createNewFilter = async ({ category, filter }) => {
   try {
     await api.createFilter(category, filter);
 
-    messageStore.showMessage({
+    messageDialog.showMessage({
       title: $t('dialog.Warning'),
       message: $t('categorizeView.updateTransactionsMessage'),
       yes: async () => {
@@ -202,7 +202,7 @@ const createNewFilter = async ({ category, filter }) => {
           '%d',
           `${result?.data[0]?.affectedRows ?? 0}`,
         );
-        messageStore.showMessage({
+        messageDialog.showMessage({
           title: $t('dialog.Info'),
           message: tit,
           ok: () => {},

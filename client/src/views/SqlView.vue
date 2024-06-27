@@ -38,12 +38,12 @@
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useApi } from '../plugins/api';
-import { useProgressStore } from '../stores/progressDialog';
+import { useProgressDialogStore } from '../stores/progressDialog';
 import ResponseTable from '../components/sql-view/ResponseTable.vue';
 import BackupResponse from '../components/sql-view/BackupRestore.vue';
 
 const { t: $t } = useI18n();
-const store = useProgressStore();
+const store = useProgressDialogStore();
 const api = useApi();
 
 const sqlQueryText = ref('');

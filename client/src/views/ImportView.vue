@@ -27,7 +27,7 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useAppStore } from '../stores/app';
-import { useProgressStore } from '../stores/progressDialog';
+import { useProgressDialogStore } from '../stores/progressDialog';
 import { useApi } from '../plugins/api';
 import FileInput from '../components/import-view/FileInput.vue';
 import FilePreview from '../components/import-view/FilePreview.vue';
@@ -39,7 +39,7 @@ dayjs.locale('es');
 
 const { t: $t } = useI18n();
 const appStore = useAppStore();
-const progressStore = useProgressStore();
+const progressDialog = useProgressDialogStore();
 const api = useApi();
 
 const firstRowIsAHeader = ref(false);
@@ -89,7 +89,7 @@ const importFile = async () => {
   const firstRow = firstRowIsAHeader.value === true ? 1 : 0;
   let rowCount = firstRow;
 
-  progressStore.startProgress({
+  progressDialog.startProgress({
     steps: appStore.csvfile.rowCount,
     description: $t('importView.importingRows')
       .replace('%d', rowCount)
@@ -111,11 +111,11 @@ const importFile = async () => {
           throw new Error(api.getErrorMessage(err));
         });
 
-      if (progressStore.progressIsCancelled) {
+      if (progressDialog.progressIsCancelled) {
         break;
       }
 
-      progressStore.updateProgress({
+      progressDialog.updateProgress({
         step: rowCount,
         description: $t('importView.importingRows')
           .replace('%d', rowCount)
@@ -128,6 +128,6 @@ const importFile = async () => {
       .replace('%d', e.message)
       .replace('%d', rowCount);
   }
-  progressStore.stopProgress();
+  progressDialog.stopProgress();
 };
 </script>

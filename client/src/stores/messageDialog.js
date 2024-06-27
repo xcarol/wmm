@@ -1,7 +1,7 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
 
-export const useMessageStore = defineStore('messageDialog', {
+export const useMessageDialogStore = defineStore('messageDialog', {
   state: () => ({
     show: ref(false),
     title: ref(''),
@@ -29,4 +29,4 @@ export const useMessageStore = defineStore('messageDialog', {
   },
 });
 
-export default useMessageStore;
+export default useMessageDialogStore;

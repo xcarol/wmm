@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 
-export const useProgressStore = defineStore('progressDialog', {
+export const useProgressDialogStore = defineStore('progressDialog', {
   state: () => ({
     progress: {
       description: '',
@@ -38,4 +38,4 @@ export const useProgressStore = defineStore('progressDialog', {
   },
 });
 
-export default useProgressStore;
+export default useProgressDialogStore;

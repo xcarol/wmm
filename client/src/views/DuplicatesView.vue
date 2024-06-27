@@ -34,14 +34,14 @@ import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
-import { useMessageStore } from '../stores/messageDialog';
-import { useProgressStore } from '../stores/progressDialog';
+import { useMessageDialogStore } from '../stores/messageDialog';
+import { useProgressDialogStore } from '../stores/progressDialog';
 
 const appStore = useAppStore();
 const api = useApi();
 const { t: $t } = useI18n();
-const messageStore = useMessageStore();
-const progressStore = useProgressStore();
+const messageDialog = useMessageDialogStore();
+const progressDialog = useProgressDialogStore();
 
 const tableItems = ref([]);
 const selectedItems = ref([]);
@@ -62,18 +62,18 @@ const searchTransactions = async () => {
 
 const markAsNotDuplicates = async () => {
   try {
-    messageStore.showMessage({
+    messageDialog.showMessage({
       title: $t('dialog.Warning'),
       message: $t('duplicatesView.markWarningMessage').replace('%d', selectedItems.value.length),
       yes: async () => {
-        progressStore.startProgress({
+        progressDialog.startProgress({
           steps: 0,
           description: $t('progress.updateProgress'),
         });
 
         const result = await api.markTransactionsAsNotDuplicated(selectedItems.value);
 
-        messageStore.showMessage({
+        messageDialog.showMessage({
           title: $t('dialog.Info'),
           message: $t('progress.updatedTransactionsMessage').replace(
             '%d',
@@ -90,23 +90,23 @@ const markAsNotDuplicates = async () => {
     appStore.alertMessage = api.getErrorMessage(e);
   }
 
-  progressStore.stopProgress();
+  progressDialog.stopProgress();
 };
 
 const deleteTransactions = async () => {
   try {
-    messageStore.showMessage({
+    messageDialog.showMessage({
       title: $t('dialog.Warning'),
       message: $t('duplicatesView.deleteWarningMessage').replace('%d', selectedItems.value.length),
       yes: async () => {
-        progressStore.startProgress({
+        progressDialog.startProgress({
           steps: 0,
           description: $t('progress.updateProgress'),
         });
 
         const result = await api.deleteTransactions(selectedItems.value);
 
-        messageStore.showMessage({
+        messageDialog.showMessage({
           title: $t('dialog.Info'),
           message: $t('progress.deletedTransactionsMessage').replace(
             '%d',
@@ -123,6 +123,6 @@ const deleteTransactions = async () => {
     appStore.alertMessage = api.getErrorMessage(e);
   }
 
-  progressStore.stopProgress();
+  progressDialog.stopProgress();
 };
 </script>
