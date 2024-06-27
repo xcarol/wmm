@@ -8,7 +8,13 @@
   >
     <v-card>
       <v-card-title>{{ title }}</v-card-title>
-      <v-card-text>{{ message }}</v-card-text>
+      <v-card-text>
+        <v-textarea
+          v-model="message"
+          readonly
+          no-resize
+        />
+      </v-card-text>
       <v-card-actions>
         <v-btn
           v-show="showNo"
@@ -50,28 +56,28 @@ const show = computed(() => store.show);
 const title = computed(() => store.title);
 const message = computed(() => store.message);
 
-const showYes = computed(() => typeof store.yes === "function");
+const showYes = computed(() => typeof store.yes === 'function');
 const yes = () => {
   store.show = false;
   store.yes();
 };
 
-const showNo = computed(() => typeof store.no === "function");
+const showNo = computed(() => typeof store.no === 'function');
 const no = () => {
   store.show = false;
   store.no();
 };
 
-const showOk = computed(() => typeof store.ok === "function");
+const showOk = computed(() => typeof store.ok === 'function');
 const ok = () => {
   store.show = false;
   store.ok();
 };
 
-const showCancel = computed(() => typeof store.cancel === "function");
+const showCancel = computed(() => typeof store.cancel === 'function');
 const cancel = () => {
   store.show = false;
-  if (typeof store.cancel === "function") {
+  if (typeof store.cancel === 'function') {
     store.cancel();
   }
 };

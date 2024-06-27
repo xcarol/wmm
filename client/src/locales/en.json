@@ -69,7 +69,7 @@
     "categoryLabel": "Search for a category or add a new one...",
     "applyButton": "Apply",
     "createFilterButton": "Create new filter",
-    "applyWarningMessage": "You're about to update %d records with the category: %s\nAre you sure?",
+    "applyWarningMessage": "You're about to update %d records with the category:\n  - %s\nAre you sure?",
     "updateTransactionsMessage": "Do you want to apply this new filter now?"
   },
   "filtersView": {
@@ -82,12 +82,12 @@
     "newFilterButton": "New...",
     "deleteFilterButton": "Delete",
     "applyFilterButton": "Apply",
-    "deleteCategoriesWarningMessage": "You're about to delete %d categories\nIt will also reset the category of the corresponding transactions\nAre you sure?",
-    "updateCategoryWarningMessage": "You're about to update all transactions that match the category %s filters.\nAre you sure?",
-    "renameCategoryMessage": "You're about to rename category %s to %s\nAre you sure?",
-    "deleteFilterWarningMessage": "You're about to delete the filter %s\nAre you sure?",
-    "applyFilterWarningMessage": "You're about to apply the filter %s\nAre you sure?",
-    "applyNewFilterWarningMessage": "Creating the %s filter, all coincident transactions will be updated.\nAre you sure?"
+    "deleteCategoriesWarningMessage": "You're about to delete %d categories.\nIt will also reset the category of the corresponding transactions.\nAre you sure?",
+    "updateCategoryWarningMessage": "You're about to update all transactions that match the filters of the category:\n  - %s\nAre you sure?",
+    "renameCategoryMessage": "You're about to rename category [%s] to [%s]\nAre you sure?",
+    "deleteFilterWarningMessage": "You're about to delete the filter:\n  - %s\nAre you sure?",
+    "applyFilterWarningMessage": "You're about to apply the filter:\n  - %s\nAre you sure?",
+    "applyNewFilterWarningMessage": "Creating the [%s] filter, all coincident transactions will be updated.\nAre you sure?"
   },
   "dialogNewFilter": {
     "title": "New Filter",
