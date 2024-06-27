@@ -46,7 +46,6 @@ module.exports = (app) => {
     try {
       const data = req.body;
       res.json(await applyFilter(data.category, data.filter));
-      res.status(200);
     } catch (err) {
       console.error("Error apply filter:", err);
       res.status(500).send("Error apply filter");
@@ -58,7 +57,6 @@ module.exports = (app) => {
       const data = req.body;
       const result = await deleteFilters(data.filters);
       res.json(result);
-      res.status(200);
     } catch (err) {
       console.error("Error deleting filter:", err);
       res.status(500).send("Error deleting filter");
@@ -70,7 +68,6 @@ module.exports = (app) => {
       const data = req.body;
       const result = await deleteCategories(data.categories);
       res.json(result);
-      res.status(200);
     } catch (err) {
       console.error("Error deleting category:", err);
       res.status(500).send("Error deleting category");
@@ -82,7 +79,6 @@ module.exports = (app) => {
       const data = req.body;
       const result = await applyCategory(data.category);
       res.json(result);
-      res.status(200);
     } catch (err) {
       console.error("Error applying categories:", err);
       res.status(500).send("Error applying categories");
@@ -94,7 +90,6 @@ module.exports = (app) => {
       const data = req.body;
       const result = await renameCategory(data.oldName, data.newName);
       res.json(result);
-      res.status(200);
     } catch (err) {
       console.error("Error renaming categories:", err);
       res.status(500).send("Error renaming categories");

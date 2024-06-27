@@ -36,7 +36,6 @@ module.exports = (app) => {
     try {
       const data = req.body;
       res.json(await deleteTransactions(data.transactions));
-      res.status(200);
     } catch (err) {
       console.error("Error adding a transaction:", err);
       let code = 500;
@@ -53,7 +52,6 @@ module.exports = (app) => {
       res.json(
         await updateTransactionsCategory(data.transactions, data.category)
       );
-      res.status(200);
     } catch (err) {
       console.error("Error updating transactions category:", err);
       res.status(500).send("Error updating transactions category");
@@ -64,7 +62,6 @@ module.exports = (app) => {
     try {
       const data = req.body;
       res.json(await resetTransactionsCategories(data.categories));
-      res.status(200);
     } catch (err) {
       console.error("Error reseting transactions category:", err);
       res.status(500).send("Error reseting transactions category");
@@ -75,7 +72,6 @@ module.exports = (app) => {
     try {
       const data = req.body;
       res.json(await updateTransactionsByFilter(data.filter));
-      res.status(200);
     } catch (err) {
       console.error("Error updating transactions category by filter:", err);
       res.status(500).send("Error updating transactions category by filter");
@@ -106,7 +102,6 @@ module.exports = (app) => {
     try {
       const data = req.body;
       res.json(await updateTransactionsAsNotDuplicated(data.transactions));
-      res.status(200);
     } catch (err) {
       console.error("Error updating transactions as NOT duplicated:", err);
       res.status(500).send("Error updating transactions as NOT duplicated");

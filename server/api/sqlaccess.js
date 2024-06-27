@@ -7,7 +7,6 @@ module.exports = (app) => {
     try {
       const queryResult = await executeSql(data.query);
       res.json(queryResult);
-      res.status(200);
     } catch (err) {
       console.error("Error executing sql command:", err);
       res
