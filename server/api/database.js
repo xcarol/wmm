@@ -98,8 +98,9 @@ async function addFilter(category, filter) {
     connection.close();
     return result;
   } catch (err) {
-    console.error("Error adding filter:", err);
-    throw err;
+    const error = `Error [${err}] adding filter ${filter} to category ${category}.`;
+    console.error(error);
+    throw error;
   }
 }
 
@@ -114,8 +115,9 @@ async function applyFilter(category, filter) {
     connection.close();
     return result;
   } catch (err) {
-    console.error("Error applying filter:", err);
-    throw err;
+    const error = `Error [${err}] applying filter [${filter}] from category [${category}].`;
+    console.error(error);
+    throw error;
   }
 }
 
@@ -130,8 +132,9 @@ async function applyCategory(category) {
     connection.close();
     return result;
   } catch (err) {
-    console.error("Error applying category:", err);
-    throw err;
+    const error = `Error [${err}] applying category [${category}].`;
+    console.error(error);
+    throw error;
   }
 }
 
@@ -149,8 +152,9 @@ async function renameCategory(oldName, newName) {
 
     return result;
   } catch (err) {
-    console.error("Error renaming category:", err);
-    throw err;
+    const error = `Error [${err}] renaming category [${oldName}] to new name [${newName}].`;
+    console.error(error);
+    throw error;
   }
 }
 
@@ -162,8 +166,9 @@ async function getDuplicatedTransactions() {
     connection.close();
     return result.at(0);
   } catch (err) {
-    console.error("Error fetching duplicated transactions:", err);
-    throw err;
+    const error = `Error [${err}] retrieving duplicated transactions.`;
+    console.error(error);
+    throw error;
   }
 }
 
@@ -178,8 +183,9 @@ async function getUncategorizedTransactions(filter) {
     connection.close();
     return result.at(0);
   } catch (err) {
-    console.error("Error fetching uncategorized transactions:", err);
-    throw err;
+    const error = `Error [${err}] retrieving uncategorized transactions.`;
+    console.error(error);
+    throw error;
   }
 }
 
@@ -190,8 +196,9 @@ async function getCategories() {
     connection.close();
     return result.at(0).map((row) => row.category);
   } catch (err) {
-    console.error("Error fetching categories:", err);
-    throw err;
+    const error = `Error [${err}] retrieving categories.`;
+    console.error(error);
+    throw error;
   }
 }
 
@@ -202,8 +209,9 @@ async function getCategoryFilters(category) {
     connection.close();
     return result.at(0).map((row) => row.filter);
   } catch (err) {
-    console.error("Error fetching categories:", err);
-    throw err;
+    const error = `Error [${err}] retrieving filters for the category [${category}].`;
+    console.error(error);
+    throw error;
   }
 }
 
@@ -215,8 +223,9 @@ async function getBankNames() {
     connection.close();
     return result.at(0).map((row) => row.bank);
   } catch (err) {
-    console.error("Error fetching bank names:", err);
-    throw err;
+    const error = `Error [${err}] retrieving banks names.`;
+    console.error(error);
+    throw error;
   }
 }
 
@@ -234,8 +243,9 @@ async function addTransaction(date, description, amount, bank) {
     connection.close();
     return result;
   } catch (err) {
-    console.error("Error adding a transaction:", err);
-    throw err;
+    const error = `Error [${err}] adding a new transaction with date:[${date}] description:[${description}] amount:[${amount}] bank [${bank}].`;
+    console.error(error);
+    throw error;
   }
 }
 
@@ -246,8 +256,9 @@ async function deleteCategories(categories) {
     connection.close();
     return result;
   } catch (err) {
-    console.error("Error deleting categories:", err);
-    throw err;
+    const error = `Error [${err}] deleting the following categories [${categories}].`;
+    console.error(error);
+    throw error;
   }
 }
 
@@ -258,8 +269,9 @@ async function deleteFilters(filters) {
     connection.close();
     return result;
   } catch (err) {
-    console.error("Error deleting filters:", err);
-    throw err;
+    const error = `Error [${err}] deleting the following filters [${filters}].`;
+    console.error(error);
+    throw error;
   }
 }
 
@@ -270,8 +282,9 @@ async function deleteTransactions(transactions) {
     connection.close();
     return result;
   } catch (err) {
-    console.error("Error updating transactions as duplicated:", err);
-    throw err;
+    const error = `Error [${err}] deleting the following transactions [${transactions}].`;
+    console.error(error);
+    throw error;
   }
 }
 
@@ -282,8 +295,9 @@ async function executeSql(query) {
     connection.close();
     return result;
   } catch (err) {
-    console.error("Error executing query:", err);
-    throw err;
+    const error = `Error [${err}] executing the following query [${categories}].`;
+    console.error(error);
+    throw error;
   }
 }
 
@@ -297,8 +311,9 @@ async function backupDatabase() {
 
     return filePath;
   } catch (err) {
-    console.error("Error at backup database:", err);
-    throw err;
+    const error = `Error [${err}] creating a backup to the file [${filePath}].`;
+    console.error(error);
+    throw error;
   }
 }
 
@@ -312,8 +327,9 @@ async function updateTransactionsCategory(transactions, category) {
     connection.close();
     return result;
   } catch (err) {
-    console.error("Error updating transactions category:", err);
-    throw err;
+    const error = `Error [${err}] updating the transactions [${transactions}] to the category [${category}].`;
+    console.error(error);
+    throw error;
   }
 }
 
@@ -326,8 +342,9 @@ async function resetTransactionsCategories(categories) {
     connection.close();
     return result;
   } catch (err) {
-    console.error("Error reseting transactions category:", err);
-    throw err;
+    const error = `Error [${err}] reseting the category of the transactions that have the following categories [${categories}].`;
+    console.error(error);
+    throw error;
   }
 }
 
@@ -341,8 +358,9 @@ async function updateTransactionsByFilter(filter) {
     connection.close();
     return result;
   } catch (err) {
-    console.error("Error updating transactions by filter:", err);
-    throw err;
+    const error = `Error [${err}] updating the category of transactions whose description matches filter [${filter}].`;
+    console.error(error);
+    throw error;
   }
 }
 
@@ -355,6 +373,9 @@ async function updateTransactionsAsNotDuplicated(transactions) {
     connection.close();
     return result;
   } catch (err) {
+    const error = `Error [${err}] updating the following transactions as not duplicated [${transactions}].`;
+    console.error(error);
+    throw error;
     console.error("Error updating transactions as duplicated:", err);
     throw err;
   }
