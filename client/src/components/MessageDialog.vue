@@ -13,6 +13,7 @@
           v-model="message"
           readonly
           no-resize
+          variant="outlined"
         />
       </v-card-text>
       <v-card-actions>
