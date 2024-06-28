@@ -15,84 +15,112 @@ module.exports = (app) => {
       const result = await getCategories();
       res.json(result);
     } catch (err) {
-      console.error("Error fetching categories:", err);
-      res.status(500).send("Error retrieving categories");
+      const error = `Error [${err}] retrieving categories names.`;
+      console.error(error);
+      res.status(500).send(error);
     }
   });
 
   app.get("/filter", async (req, res) => {
+    let category = '';
+
     try {
-      const data = req.query;
-      res.json(await getCategoryFilters(data["category"]));
+      category = req.query.data.category;
+      res.json(await getCategoryFilters(category));
     } catch (err) {
-      console.error("Error retrieving filters:", err);
-      res.status(500).send("Error retrieving filters");
+      const error = `Error [${err}] retrieving filter names for category [${category}].`;
+      console.error(error);
+      res.status(500).send(error);
     }
   });
 
   app.put("/filter", async (req, res) => {
+    let category = '';
+    let filter = '';
+
     try {
-      const data = req.body;
-      const result = await addFilter(data.category, data.filter);
+      category = req.body.data.category;
+      filter = req.body.data.filter;
+      const result = await addFilter(category, filter);
       res.json(result);
       res.status(201);
     } catch (err) {
-      console.error("Error inserting category filter:", err);
-      res.status(500).send("Error inserting category filter");
+      const error = `Error [${err}] adding filter [${filter}] to category [${category}].`;
+      console.error(error);
+      res.status(500).send(error);
     }
   });
 
   app.post("/filter/apply", async (req, res) => {
+    let category = '';
+    let filter = '';
+
     try {
-      const data = req.body;
-      res.json(await applyFilter(data.category, data.filter));
+      category = req.body.data.category;
+      filter = req.body.data.filter;
+      res.json(await applyFilter(category, filter));
     } catch (err) {
-      console.error("Error apply filter:", err);
-      res.status(500).send("Error apply filter");
+      const error = `Error [${err}] apply filter [${filter}] of category [${category}].`;
+      console.error(error);
+      res.status(500).send(error);
     }
   });
 
   app.post("/filter/delete", async (req, res) => {
+    let filters = '';
+
     try {
-      const data = req.body;
-      const result = await deleteFilters(data.filters);
+      filters = req.body.data.filters;
+      const result = await deleteFilters(filters);
       res.json(result);
     } catch (err) {
-      console.error("Error deleting filter:", err);
-      res.status(500).send("Error deleting filter");
+      const error = `Error [${err}] deleting filters [${filters}].`;
+      console.error(error);
+      res.status(500).send(error);
     }
   });
 
   app.post("/filter/category/delete", async (req, res) => {
+    let categories = [];
+
     try {
-      const data = req.body;
-      const result = await deleteCategories(data.categories);
+      categories = req.body.data.categories;
+      const result = await deleteCategories(categories);
       res.json(result);
     } catch (err) {
-      console.error("Error deleting category:", err);
-      res.status(500).send("Error deleting category");
+      const error = `Error [${err}] deleting categories [${categories}].`;
+      console.error(error);
+      res.status(500).send(error);
     }
   });
 
   app.post("/filter/category/apply", async (req, res) => {
+    let category = '';
+
     try {
-      const data = req.body;
-      const result = await applyCategory(data.category);
+      category = req.body.data.category;
+      const result = await applyCategory(category);
       res.json(result);
     } catch (err) {
-      console.error("Error applying categories:", err);
-      res.status(500).send("Error applying categories");
+      const error = `Error [${err}] applying category [${category}].`;
+      console.error(error);
+      res.status(500).send(error);
     }
   });
 
   app.post("/filter/category/rename", async (req, res) => {
+    let newName = '';
+    let oldName = '';
+
     try {
-      const data = req.body;
-      const result = await renameCategory(data.oldName, data.newName);
+      newName = req.body.data.newName;
+      oldName = req.body.data.oldName
+      const result = await renameCategory(oldName, newName);
       res.json(result);
     } catch (err) {
-      console.error("Error renaming categories:", err);
-      res.status(500).send("Error renaming categories");
+      const error = `Error [${err}] renaming category [${oldName}] to [${newName}].`;
+      console.error(error);
+      res.status(500).send(error);
     }
   });
 };
