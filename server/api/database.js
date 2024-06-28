@@ -1,6 +1,5 @@
 const mysql = require("mysql2/promise");
 const path = require("path");
-const mysqldump = require("mysqldump");
 const { execSync } = require("child_process");
 
 const connectionSettings = {
