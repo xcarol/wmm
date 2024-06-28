@@ -3,28 +3,27 @@ const path = require("path");
 
 module.exports = (app) => {
   app.post("/sql", async (req, res) => {
-    const data = req.body;
+    let query = '';
+
     try {
-      const queryResult = await executeSql(data.query);
+      query = req.body.data.query;
+      const queryResult = await executeSql(query);
       res.json(queryResult);
     } catch (err) {
-      console.error("Error executing sql command:", err);
-      res
-        .status(400)
-        .send(`Error '${err}' executing sql command: '${data.query}'`);
+      const error = `Error '${err}' executing sql command: '${data.query}'`;
+      console.error(error);
+      res.status(400).send(error);
     }
   });
 
   app.get("/sql/backup", async (req, res) => {
-    const data = req.body;
     try {
       res.sendFile(await backupDatabase());
       res.status(201);
     } catch (err) {
-      console.error("Error creating database backup:", err);
-      res
-        .status(400)
-        .send(`Error '${err}' creating database backup`);
+      const error = `Error [${err}] creating database backup.`;
+      console.error(error);
+      res.status(400).send(error);
     }
   });
 };
