@@ -376,8 +376,6 @@ async function updateTransactionsAsNotDuplicated(transactions) {
     const error = `Error [${err}] updating the following transactions as not duplicated [${transactions}].`;
     console.error(error);
     throw error;
-    console.error("Error updating transactions as duplicated:", err);
-    throw err;
   }
 }
 
