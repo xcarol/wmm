@@ -11,100 +11,118 @@ const {
 
 module.exports = (app) => {
   app.put("/transaction", async (req, res) => {
+    let date, description, amount, bank = '';
+
     try {
-      const data = req.body;
+      date = req.body.data.date;
+      description = req.body.data.description;
+      amount = req.body.data.amount;
+      bank = req.body.data.bank;
+
       res.json(
         await addTransaction(
-          data.date,
-          data.description,
-          data.amount,
-          data.bank
+          date,
+          description,
+          amount,
+          bank
         )
       );
       res.status(201);
     } catch (err) {
-      console.error("Error adding a transaction:", err);
-      let code = 500;
-      if (err.sqlState) {
-        code = 400;
-      }
-      res.status(code).send(`Error adding transactions: ${err}`);
+      const error = `Error [${err}] adding transaction with date:[${date}] description:[${description}] amount:[${amount}] bank:[${bank}].`;
+      console.error(error);
+      res.status(err.sqlState ? 400 : 500).send(error);
     }
   });
 
   app.post("/transaction/delete", async (req, res) => {
+    let transactions;
+
     try {
-      const data = req.body;
-      res.json(await deleteTransactions(data.transactions));
+      transactions = req.body.data.transactions;
+      res.json(await deleteTransactions(transactions));
     } catch (err) {
-      console.error("Error adding a transaction:", err);
-      let code = 500;
-      if (err.sqlState) {
-        code = 400;
-      }
-      res.status(code).send(`Error adding transactions: ${err}`);
+      const error = `Error [${err}] deleting transactions [${transactions}].`;
+      console.error(error);
+      res.status(err.sqlState ? 400 : 500).send(error);
     }
   });
 
   app.post("/transaction/category", async (req, res) => {
+    let category, transactions;
+
     try {
-      const data = req.body;
+      category = req.body.data.category;
+      transactions = req.body.data.transactions;
       res.json(
-        await updateTransactionsCategory(data.transactions, data.category)
+        await updateTransactionsCategory(transactions, category)
       );
     } catch (err) {
-      console.error("Error updating transactions category:", err);
-      res.status(500).send("Error updating transactions category");
+      const error = `Error [${err}] updating transactions [${transactions}] with category [${category}].`;
+      console.error(error);
+      res.status(500).send(error);
     }
   });
 
   app.post("/transaction/category/reset", async (req, res) => {
+    let categories;
+
     try {
-      const data = req.body;
-      res.json(await resetTransactionsCategories(data.categories));
+      categories = req.body.data.categories;
+      res.json(await resetTransactionsCategories(categories));
     } catch (err) {
-      console.error("Error reseting transactions category:", err);
-      res.status(500).send("Error reseting transactions category");
+      const error = `Error [${err}] reseting transactions with categories [${categories}].`;
+      console.error(error);
+      res.status(500).send(error);
     }
   });
 
   app.post("/transaction/filter", async (req, res) => {
+    let filter;
+
     try {
-      const data = req.body;
-      res.json(await updateTransactionsByFilter(data.filter));
+      filter = req.body.data.filter;
+      res.json(await updateTransactionsByFilter(filter));
     } catch (err) {
-      console.error("Error updating transactions category by filter:", err);
-      res.status(500).send("Error updating transactions category by filter");
+      const error = `Error [${err}] updating transactions that match filter [${filter}].`;
+      console.error(error);
+      res.status(500).send(error);
     }
   });
 
   app.get("/transaction/uncategorized", async (req, res) => {
+    let filter;
+
     try {
-      const data = req.query;
-      res.json(await getUncategorizedTransactions(data["filter"]));
+      filter = req.query.data.filter;
+      res.json(await getUncategorizedTransactions(filter));
     } catch (err) {
-      console.error("Error getting uncategorized transactions:", err);
-      res.status(500).send("Error getting uncategorized transactions");
+      const error = `Error [${err}] retrieving uncategorized transactions that match filter [${filter}].`;
+      console.error(error);
+      res.status(500).send(error);
     }
   });
 
   app.get("/transaction/duplicated", async (req, res) => {
     try {
-      const data = req.query;
       res.json(await getDuplicatedTransactions());
     } catch (err) {
-      console.error("Error getting duplicated transactions:", err);
-      res.status(500).send("Error getting duplicated transactions");
+      const error = `Error [${err}] retrieving duplicated transactions.`;
+      console.error(error);
+      res.status(500).send(error);
     }
   });
 
   app.post("/transaction/duplicated", async (req, res) => {
+    let transactions;
+
     try {
-      const data = req.body;
-      res.json(await updateTransactionsAsNotDuplicated(data.transactions));
+      transactions = req.body.data.transactions;
+      res.json(await updateTransactionsAsNotDuplicated(transactions));
     } catch (err) {
-      console.error("Error updating transactions as NOT duplicated:", err);
-      res.status(500).send("Error updating transactions as NOT duplicated");
+      const error = `Error [${err}] updating as NOT duplicated the transactions [${transactions}].`;
+      console.error(error);
+      res.status(500).send(error);
     }
   });
 };
