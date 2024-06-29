@@ -8,7 +8,7 @@
 import axios from 'axios';
 
 // Full config:  https://github.com/axios/axios#request-config
-axios.defaults.baseURL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:3000/';
+axios.defaults.baseURL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:3000';
 
 const _axios = axios.create();
 
