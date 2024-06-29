@@ -13,9 +13,7 @@ module.exports = (app) => {
     try {
       res.json(await getCategories());
     } catch (err) {
-      const error = `Error [${err}] retrieving categories names.`;
-      console.error(error);
-      res.status(500).send(error);
+      res.status(err.sqlState ? 400 : 500).send(err);
     }
   });
 
@@ -26,9 +24,7 @@ module.exports = (app) => {
       category = req.query.category;
       res.json(await getCategoryFilters(category));
     } catch (err) {
-      const error = `Error [${err}] retrieving filter names for category [${category}].`;
-      console.error(error);
-      res.status(500).send(error);
+      res.status(err.sqlState ? 400 : 500).send(err);
     }
   });
 
@@ -42,9 +38,7 @@ module.exports = (app) => {
       res.json(await addFilter(category, filter));
       res.status(201);
     } catch (err) {
-      const error = `Error [${err}] adding filter [${filter}] to category [${category}].`;
-      console.error(error);
-      res.status(500).send(error);
+      res.status(err.sqlState ? 400 : 500).send(err);
     }
   });
 
@@ -57,9 +51,7 @@ module.exports = (app) => {
       filter = req.body.filter;
       res.json(await applyFilter(category, filter));
     } catch (err) {
-      const error = `Error [${err}] apply filter [${filter}] of category [${category}].`;
-      console.error(error);
-      res.status(500).send(error);
+      res.status(err.sqlState ? 400 : 500).send(err);
     }
   });
 
@@ -70,9 +62,7 @@ module.exports = (app) => {
       filters = req.body.filters;
       res.json(await deleteFilters(filters));
     } catch (err) {
-      const error = `Error [${err}] deleting filters [${filters}].`;
-      console.error(error);
-      res.status(500).send(error);
+      res.status(err.sqlState ? 400 : 500).send(err);
     }
   });
 
@@ -83,9 +73,7 @@ module.exports = (app) => {
       categories = req.body.categories;
       res.json(await deleteCategories(categories));
     } catch (err) {
-      const error = `Error [${err}] deleting categories [${categories}].`;
-      console.error(error);
-      res.status(500).send(error);
+      res.status(err.sqlState ? 400 : 500).send(err);
     }
   });
 
@@ -98,9 +86,7 @@ module.exports = (app) => {
       oldName = req.body.oldName
       res.json(await renameCategory(oldName, newName));
     } catch (err) {
-      const error = `Error [${err}] renaming category [${oldName}] to [${newName}].`;
-      console.error(error);
-      res.status(500).send(error);
+      res.status(err.sqlState ? 400 : 500).send(err);
     }
   });
 };

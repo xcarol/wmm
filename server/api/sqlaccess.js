@@ -10,9 +10,7 @@ module.exports = (app) => {
       const queryResult = await executeSql(query);
       res.json(queryResult);
     } catch (err) {
-      const error = `Error '${err}' executing sql command: '${query}'`;
-      console.error(error);
-      res.status(400).send(error);
+      res.status(err.sqlState ? 400 : 500).send(err);
     }
   });
 
@@ -21,9 +19,7 @@ module.exports = (app) => {
       res.sendFile(await backupDatabase());
       res.status(201);
     } catch (err) {
-      const error = `Error [${err}] creating database backup.`;
-      console.error(error);
-      res.status(400).send(error);
+      res.status(err.sqlState ? 400 : 500).send(err);
     }
   });
 };

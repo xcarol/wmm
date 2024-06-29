@@ -5,9 +5,7 @@ module.exports = (app) => {
     try {
       res.json(await getBankNames());
     } catch (err) {
-      const error = `Error [${err}] retrieving banknames.`;
-      console.error(error);
-      res.status(500).send(error);
+      res.status(err.sqlState ? 400 : 500).send(error);
     }
   });
 };
