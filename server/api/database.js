@@ -21,22 +21,43 @@ const queryBankNames = "SELECT DISTINCT bank FROM transactions";
 const queryCategoryNames =
   "SELECT DISTINCT category FROM transactions WHERE category != '' ORDER BY category ASC";
 
+// QString queryFilter = "SELECT category FROM filters WHERE filter = '%1'";
+
+const queryFilterNames =
+  "SELECT DISTINCT filter FROM filters WHERE category=? ORDER BY filter ASC";
+
+// QString queryDescriptions = "SELECT DISTINCT description FROM transactions "
+// "WHERE category='%1' ORDER BY description ASC";
+
 const queryUncategorizedTransactions =
   "SELECT id, bank, date, description, category, amount FROM transactions WHERE category = ''";
 
 const queryUncategorizedRowsFilter = " AND description LIKE ?";
 
+// QString queryColumnNames = QString("SELECT * FROM transactions LIMIT 1");
+
+const queryUpdateRowsCategoryWithAllFilters =
+  "UPDATE transactions AS t \
+    JOIN filters AS f ON t.description LIKE CONCAT('%',  \
+    REPLACE(f.filter, '%', '\\%'), '%') \
+    SET t.category = f.category \
+    WHERE f.category = ? AND t.category = ''";
+
+const queryUpdateRowsCategoryWithDescriptionLikeFilter =
+  "UPDATE transactions SET category = ? WHERE description LIKE ? AND category = ''";
+
 const queryUpdateTransactionsCategory =
   "UPDATE transactions SET category = ? WHERE id IN(?)";
 
-const queryUpdateTransactionsByFilter =
-  "UPDATE transactions as t \
-    JOIN filters as f \
-    SET t.category = f.category \
-    WHERE t.description like ? AND f.filter = ?";
+//   QString queryBankBalances =
+//   QString("SELECT SUM(amount) as balance, MAX(date) AS latest_date from "
+//           "transactions WHERE bank = '%1' AND "
+//           "date >= '%2' AND date <= '%3'");
 
-const queryAddCategoryFilters =
-  "INSERT INTO filters (category, filter) VALUES (?, ?)";
+// QString queryCategoryBalances =
+//   QString("SELECT SUM(amount) as balance from transactions WHERE category "
+//           "= '%1' AND "
+//           "date >= '%2' AND date <= '%3'");
 
 const queryDuplicateRows =
   "SELECT id, bank, date, description, category, amount FROM transactions t1 \
@@ -53,36 +74,40 @@ const queryDuplicateRows =
     ) \
     ORDER BY bank, date DESC";
 
+const queryDeleteRows = "DELETE FROM transactions WHERE id IN (?)";
+
 const queryMarkNotDuplicateRows =
   "UPDATE transactions SET not_duplicate = TRUE WHERE id IN (?)";
 
-const queryDeleteRows = "DELETE FROM transactions WHERE id IN (?)";
+// QString queryYears = QString("SELECT DISTINCT YEAR(date) FROM transactions");
 
-const queryDeleteCategories = "DELETE FROM filters WHERE category IN(?)";
+const queryAddCategoryFilters =
+  "INSERT INTO filters (category, filter) VALUES (?, ?)";
+
+// QString queryDeleteCategoryFilters =
+// QString("DELETE FROM filters WHERE category = '%1'");
+
+const queryDeleteCategories = "DELETE FROM filters WHERE category IN (?)";
+
+const queryDeleteFilters = "DELETE FROM filters WHERE filter IN(?)";
 
 const queryResetRowsCategories =
-  "UPDATE transactions SET category = '' WHERE category in (?)";
+  "UPDATE transactions SET category = '' WHERE category IN (?)";
 
-const queryUpdateRowsCategoryWithAllFilters =
-  "UPDATE transactions AS t \
-    JOIN filters AS f ON t.description LIKE CONCAT('%',  \
-    REPLACE(f.filter, '%', '\\%'), '%') \
-    SET t.category = f.category \
-    WHERE f.category = ? AND t.category = ''";
+// QString queryAddFilter =
+// QString("INSERT INTO filters (category, filter) VALUES ('%1', '%2')");
 
 const queryRenameRowsCategory =
   "UPDATE transactions SET category = ? WHERE category = ?";
 
+const queryUpdateTransactionsByFilter =
+  "UPDATE transactions as t \
+    JOIN filters as f \
+    SET t.category = f.category \
+    WHERE t.description like ? AND f.filter = ?";
+
 const queryRenameCategoryFilters =
   "UPDATE filters SET category = ? WHERE category = ?";
-
-const queryFilterNames =
-  "SELECT DISTINCT filter FROM filters WHERE category=? ORDER BY filter ASC";
-
-const queryDeleteFilters = "DELETE FROM filters WHERE filter IN(?)";
-
-const queryUpdateRowsCategoryWithDescriptionLikeFilter =
-  "UPDATE transactions SET category = ? WHERE description LIKE ? AND category = ''";
 
 async function getConnection() {
   return await mysql.createConnection(connectionSettings);
@@ -99,9 +124,9 @@ async function addFilter(category, filter) {
     connection.close();
     return result;
   } catch (err) {
-    const error = `Error [${err}] adding filter ${filter} to category ${category}.`;
-    console.error(error);
-    throw error;
+    err.message = `Error [${err}] adding filter ${filter} to category ${category}.`;
+    console.error(err);
+    throw err;
   }
 }
 
@@ -116,9 +141,9 @@ async function applyFilter(category, filter) {
     connection.close();
     return result;
   } catch (err) {
-    const error = `Error [${err}] applying filter [${filter}] from category [${category}].`;
-    console.error(error);
-    throw error;
+    err.message = `Error [${err}] applying filter [${filter}] from category [${category}].`;
+    console.error(err);
+    throw err;
   }
 }
 
@@ -133,9 +158,9 @@ async function applyCategory(category) {
     connection.close();
     return result;
   } catch (err) {
-    const error = `Error [${err}] applying category [${category}].`;
-    console.error(error);
-    throw error;
+    err.message = `Error [${err}] applying category [${category}].`;
+    console.error(err);
+    throw err;
   }
 }
 
@@ -153,9 +178,9 @@ async function renameCategory(oldName, newName) {
 
     return result;
   } catch (err) {
-    const error = `Error [${err}] renaming category [${oldName}] to new name [${newName}].`;
-    console.error(error);
-    throw error;
+    err.message = `Error [${err}] renaming category [${oldName}] to new name [${newName}].`;
+    console.error(err);
+    throw err;
   }
 }
 
@@ -166,9 +191,9 @@ async function getDuplicatedTransactions() {
     connection.close();
     return result.at(0);
   } catch (err) {
-    const error = `Error [${err}] retrieving duplicated transactions.`;
-    console.error(error);
-    throw error;
+    err.message = `Error [${err}] retrieving duplicated transactions.`;
+    console.error(err);
+    throw err;
   }
 }
 
@@ -183,9 +208,9 @@ async function getUncategorizedTransactions(filter) {
     connection.close();
     return result.at(0);
   } catch (err) {
-    const error = `Error [${err}] retrieving uncategorized transactions.`;
-    console.error(error);
-    throw error;
+    err.message = `Error [${err}] retrieving uncategorized transactions.`;
+    console.error(err);
+    throw err;
   }
 }
 
@@ -196,9 +221,9 @@ async function getCategories() {
     connection.close();
     return result.at(0).map((row) => row.category);
   } catch (err) {
-    const error = `Error [${err}] retrieving categories.`;
-    console.error(error);
-    throw error;
+    err.message = `Error [${err}] retrieving categories.`;
+    console.error(err);
+    throw err;
   }
 }
 
@@ -209,9 +234,9 @@ async function getCategoryFilters(category) {
     connection.close();
     return result.at(0).map((row) => row.filter);
   } catch (err) {
-    const error = `Error [${err}] retrieving filters for the category [${category}].`;
-    console.error(error);
-    throw error;
+    err.message = `Error [${err}] retrieving filters for the category [${category}].`;
+    console.error(err);
+    throw err;
   }
 }
 
@@ -223,9 +248,9 @@ async function getBankNames() {
     connection.close();
     return result.at(0).map((row) => row.bank);
   } catch (err) {
-    const error = `Error [${err}] retrieving banks names.`;
-    console.error(error);
-    throw error;
+    err.message = `Error [${err}] retrieving banks names.`;
+    console.error(err);
+    throw err;
   }
 }
 
@@ -243,9 +268,9 @@ async function addTransaction(date, description, amount, bank) {
     connection.close();
     return result;
   } catch (err) {
-    const error = `Error [${err}] adding a new transaction with date:[${date}] description:[${description}] amount:[${amount}] bank [${bank}].`;
-    console.error(error);
-    throw error;
+    err.message = `Error [${err}] adding a new transaction with date:[${date}] description:[${description}] amount:[${amount}] bank [${bank}].`;
+    console.error(err);
+    throw err;
   }
 }
 
@@ -256,9 +281,9 @@ async function deleteCategories(categories) {
     connection.close();
     return result;
   } catch (err) {
-    const error = `Error [${err}] deleting the following categories [${categories}].`;
-    console.error(error);
-    throw error;
+    err.message = `Error [${err}] deleting the following categories [${categories}].`;
+    console.error(err);
+    throw err;
   }
 }
 
@@ -269,9 +294,9 @@ async function deleteFilters(filters) {
     connection.close();
     return result;
   } catch (err) {
-    const error = `Error [${err}] deleting the following filters [${filters}].`;
-    console.error(error);
-    throw error;
+    err.message = `Error [${err}] deleting the following filters [${filters}].`;
+    console.error(err);
+    throw err;
   }
 }
 
@@ -282,9 +307,9 @@ async function deleteTransactions(transactions) {
     connection.close();
     return result;
   } catch (err) {
-    const error = `Error [${err}] deleting the following transactions [${transactions}].`;
-    console.error(error);
-    throw error;
+    err.message = `Error [${err}] deleting the following transactions [${transactions}].`;
+    console.error(err);
+    throw err;
   }
 }
 
@@ -295,9 +320,9 @@ async function executeSql(query) {
     connection.close();
     return result;
   } catch (err) {
-    const error = `Error [${err}] executing the following query [${categories}].`;
-    console.error(error);
-    throw error;
+    err.message = `Error [${err}] executing the following query [${categories}].`;
+    console.error(err);
+    throw err;
   }
 }
 
@@ -311,9 +336,9 @@ async function backupDatabase() {
 
     return filePath;
   } catch (err) {
-    const error = `Error [${err}] creating a backup to the file [${filePath}].`;
-    console.error(error);
-    throw error;
+    err.message = `Error [${err}] creating a backup to the file [${filePath}].`;
+    console.error(err);
+    throw err;
   }
 }
 
@@ -327,9 +352,9 @@ async function updateTransactionsCategory(transactions, category) {
     connection.close();
     return result;
   } catch (err) {
-    const error = `Error [${err}] updating the transactions [${transactions}] to the category [${category}].`;
-    console.error(error);
-    throw error;
+    err.message = `Error [${err}] updating the transactions [${transactions}] to the category [${category}].`;
+    console.error(err);
+    throw err;
   }
 }
 
@@ -342,9 +367,9 @@ async function resetTransactionsCategories(categories) {
     connection.close();
     return result;
   } catch (err) {
-    const error = `Error [${err}] reseting the category of the transactions that have the following categories [${categories}].`;
-    console.error(error);
-    throw error;
+    err.message = `Error [${err}] reseting the category of the transactions that have the following categories [${categories}].`;
+    console.error(err);
+    throw err;
   }
 }
 
@@ -358,9 +383,9 @@ async function updateTransactionsByFilter(filter) {
     connection.close();
     return result;
   } catch (err) {
-    const error = `Error [${err}] updating the category of transactions whose description matches filter [${filter}].`;
-    console.error(error);
-    throw error;
+    err.message = `Error [${err}] updating the category of transactions whose description matches filter [${filter}].`;
+    console.error(err);
+    throw err;
   }
 }
 
@@ -373,9 +398,9 @@ async function updateTransactionsAsNotDuplicated(transactions) {
     connection.close();
     return result;
   } catch (err) {
-    const error = `Error [${err}] updating the following transactions as not duplicated [${transactions}].`;
-    console.error(error);
-    throw error;
+    err.message = `Error [${err}] updating the following transactions as not duplicated [${transactions}].`;
+    console.error(err);
+    throw err;
   }
 }
 
