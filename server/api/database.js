@@ -2,6 +2,8 @@ const mysql = require("mysql2/promise");
 const path = require("path");
 const { execSync } = require("child_process");
 
+const MAX_LEN = 200;
+
 const connectionSettings = {
   host: "localhost",
   user: "root",
@@ -91,8 +93,8 @@ async function addFilter(category, filter) {
     const connection = await getConnection();
 
     const result = await connection.query(queryAddCategoryFilters, [
-      category,
-      filter,
+      category.slice(0, MAX_LEN),
+      filter.slice(0, MAX_LEN),
     ]);
     connection.close();
     return result;
@@ -109,7 +111,7 @@ async function applyFilter(category, filter) {
 
     const result = await connection.query(
       queryUpdateRowsCategoryWithDescriptionLikeFilter,
-      [category, `%${filter}%`]
+      [category.slice(0, MAX_LEN), `%${filter}%`]
     );
     connection.close();
     return result;
@@ -142,7 +144,7 @@ async function renameCategory(oldName, newName) {
     const connection = await getConnection();
 
     const result = await connection.query(queryRenameRowsCategory, [
-      newName,
+      newName.slice(0, MAX_LEN),
       oldName,
     ]);
     await connection.query(queryRenameCategoryFilters, [newName, oldName]);
@@ -160,8 +162,7 @@ async function renameCategory(oldName, newName) {
 async function getDuplicatedTransactions() {
   try {
     const connection = await getConnection();
-    let query = queryDuplicateRows;
-    const result = await connection.query(query);
+    const result = await connection.query(queryDuplicateRows);
     connection.close();
     return result.at(0);
   } catch (err) {
@@ -233,9 +234,9 @@ async function addTransaction(date, description, amount, bank) {
     const connection = await getConnection();
 
     const result = await connection.query(queryInsertRow, [
-      bank,
+      bank.slice(0, MAX_LEN),
       date,
-      description,
+      description.slice(0, MAX_LEN),
       amount,
     ]);
 
@@ -320,7 +321,7 @@ async function updateTransactionsCategory(transactions, category) {
   try {
     const connection = await getConnection();
     const result = await connection.query(queryUpdateTransactionsCategory, [
-      category,
+      category.slice(0, MAX_LEN),
       transactions,
     ]);
     connection.close();
