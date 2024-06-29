@@ -24,7 +24,7 @@ const queryCategoryNames =
 const queryUncategorizedTransactions =
   "SELECT id, bank, date, description, category, amount FROM transactions WHERE category = ''";
 
-const queryUncategorizedRowsFilter = " AND description REGEXP ?";
+const queryUncategorizedRowsFilter = " AND description LIKE ?";
 
 const queryUpdateTransactionsCategory =
   "UPDATE transactions SET category = ? WHERE id IN(?)";
@@ -179,7 +179,7 @@ async function getUncategorizedTransactions(filter) {
     if (filter?.length) {
       query += queryUncategorizedRowsFilter;
     }
-    const result = await connection.query(query, [filter]);
+    const result = await connection.query(query, `%${filter}%`);
     connection.close();
     return result.at(0);
   } catch (err) {
