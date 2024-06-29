@@ -100,7 +100,7 @@ const canApplyCategory = computed(() => {
 
 const getCategoriesNames = async () => {
   try {
-    const dbNames = await api.categoryNames();
+    const dbNames = await api.categoriesNames();
     categoryNames.value = dbNames.data;
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);

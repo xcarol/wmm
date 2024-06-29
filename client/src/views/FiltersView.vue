@@ -132,7 +132,7 @@ const listToTable = (list) => {
 
 const getFilters = async () => {
   try {
-    const filters = await api.getFilters(selectedCategories.value);
+    const filters = await api.filtersNames(selectedCategories.value);
     tableFilters.value = listToTable(filters.data);
     selectedFilters.value = [];
   } catch (e) {
@@ -142,7 +142,7 @@ const getFilters = async () => {
 
 const getCategories = async () => {
   try {
-    const categories = await api.categoryNames();
+    const categories = await api.categoriesNames();
     tableCategories.value = listToTable(categories.data);
     selectedCategories.value = [];
   } catch (e) {
