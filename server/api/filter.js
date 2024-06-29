@@ -1,6 +1,5 @@
 const {
   addFilter,
-  applyCategory,
   applyFilter,
   deleteCategories,
   getCategories,
@@ -10,10 +9,9 @@ const {
 } = require("./database");
 
 module.exports = (app) => {
-  app.get("/category/names", async (req, res) => {
+  app.get("/categories/names", async (req, res) => {
     try {
-      const result = await getCategories();
-      res.json(result);
+      res.json(await getCategories());
     } catch (err) {
       const error = `Error [${err}] retrieving categories names.`;
       console.error(error);
@@ -21,11 +19,11 @@ module.exports = (app) => {
     }
   });
 
-  app.get("/filter", async (req, res) => {
+  app.get("/categories", async (req, res) => {
     let category = '';
 
     try {
-      category = req.query.data.category;
+      category = req.query.category;
       res.json(await getCategoryFilters(category));
     } catch (err) {
       const error = `Error [${err}] retrieving filter names for category [${category}].`;
@@ -34,15 +32,14 @@ module.exports = (app) => {
     }
   });
 
-  app.put("/filter", async (req, res) => {
+  app.post("/categories/filter", async (req, res) => {
     let category = '';
     let filter = '';
 
     try {
-      category = req.body.data.category;
-      filter = req.body.data.filter;
-      const result = await addFilter(category, filter);
-      res.json(result);
+      category = req.body.category;
+      filter = req.body.filter;
+      res.json(await addFilter(category, filter));
       res.status(201);
     } catch (err) {
       const error = `Error [${err}] adding filter [${filter}] to category [${category}].`;
@@ -51,13 +48,13 @@ module.exports = (app) => {
     }
   });
 
-  app.post("/filter/apply", async (req, res) => {
+  app.put("/categories/filter", async (req, res) => {
     let category = '';
     let filter = '';
 
     try {
-      category = req.body.data.category;
-      filter = req.body.data.filter;
+      category = req.body.category;
+      filter = req.body.filter;
       res.json(await applyFilter(category, filter));
     } catch (err) {
       const error = `Error [${err}] apply filter [${filter}] of category [${category}].`;
@@ -66,13 +63,12 @@ module.exports = (app) => {
     }
   });
 
-  app.post("/filter/delete", async (req, res) => {
+  app.put("/categories/filters", async (req, res) => {
     let filters = '';
 
     try {
-      filters = req.body.data.filters;
-      const result = await deleteFilters(filters);
-      res.json(result);
+      filters = req.body.filters;
+      res.json(await deleteFilters(filters));
     } catch (err) {
       const error = `Error [${err}] deleting filters [${filters}].`;
       console.error(error);
@@ -80,13 +76,12 @@ module.exports = (app) => {
     }
   });
 
-  app.post("/filter/category/delete", async (req, res) => {
+  app.put("/categories", async (req, res) => {
     let categories = [];
 
     try {
-      categories = req.body.data.categories;
-      const result = await deleteCategories(categories);
-      res.json(result);
+      categories = req.body.categories;
+      res.json(await deleteCategories(categories));
     } catch (err) {
       const error = `Error [${err}] deleting categories [${categories}].`;
       console.error(error);
@@ -94,29 +89,14 @@ module.exports = (app) => {
     }
   });
 
-  app.post("/filter/category/apply", async (req, res) => {
-    let category = '';
-
-    try {
-      category = req.body.data.category;
-      const result = await applyCategory(category);
-      res.json(result);
-    } catch (err) {
-      const error = `Error [${err}] applying category [${category}].`;
-      console.error(error);
-      res.status(500).send(error);
-    }
-  });
-
-  app.post("/filter/category/rename", async (req, res) => {
+  app.post("/categories/rename", async (req, res) => {
     let newName = '';
     let oldName = '';
 
     try {
-      newName = req.body.data.newName;
-      oldName = req.body.data.oldName
-      const result = await renameCategory(oldName, newName);
-      res.json(result);
+      newName = req.body.newName;
+      oldName = req.body.oldName
+      res.json(await renameCategory(oldName, newName));
     } catch (err) {
       const error = `Error [${err}] renaming category [${oldName}] to [${newName}].`;
       console.error(error);

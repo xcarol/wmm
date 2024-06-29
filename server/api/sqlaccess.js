@@ -6,11 +6,11 @@ module.exports = (app) => {
     let query = '';
 
     try {
-      query = req.body.data.query;
+      query = req.body.query;
       const queryResult = await executeSql(query);
       res.json(queryResult);
     } catch (err) {
-      const error = `Error '${err}' executing sql command: '${data.query}'`;
+      const error = `Error '${err}' executing sql command: '${query}'`;
       console.error(error);
       res.status(400).send(error);
     }
