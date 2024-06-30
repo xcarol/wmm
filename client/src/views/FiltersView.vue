@@ -1,21 +1,22 @@
 <template>
   <v-card>
     <v-container>
-      <v-row>
+      <v-row v-resize="onResize">
         <v-col cols="6">
           <v-card>
             <v-card-title>{{ $t('filtersView.categoriesLabel') }}</v-card-title>
             <v-card-text>
-              <v-data-table
+              <v-data-table-virtual
                 v-model="selectedCategories"
                 :items="tableCategories"
                 show-select
                 class="elevation-1"
                 item-key="name"
+                :height="adjustedHeight"
                 @update:model-value="onUpdateCategoryModelValue"
               >
                 <template #[`header.data-table-select`]></template>
-              </v-data-table>
+              </v-data-table-virtual>
             </v-card-text>
             <v-card-actions>
               <v-spacer />
@@ -41,16 +42,17 @@
           <v-card>
             <v-card-title>{{ $t('filtersView.filtersLabel') }}</v-card-title>
             <v-card-text>
-              <v-data-table
+              <v-data-table-virtual
                 v-model="selectedFilters"
                 :items="tableFilters"
                 show-select
                 class="elevation-1"
                 item-key="name"
+                :height="adjustedHeight"
                 @update:model-value="onUpdateFilterModelValue"
               >
                 <template #[`header.data-table-select`]></template>
-              </v-data-table>
+              </v-data-table-virtual>
             </v-card-text>
             <v-card-actions>
               <v-spacer />
@@ -90,7 +92,7 @@
 </template>
 
 <script setup>
-import { computed, onBeforeMount, onBeforeUpdate, ref } from 'vue';
+import { computed, onBeforeMount, onBeforeUpdate, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
@@ -113,6 +115,11 @@ const showRenameCategory = ref(false);
 const renameCategoryName = ref('');
 const showNewFilter = ref(false);
 const newFilterCategoryName = ref('');
+const innerHeight = ref(0);
+
+const adjustedHeight = computed(() => {
+  return innerHeight.value - 220;
+});
 
 const noCategorySelected = computed(() => {
   return selectedCategories.value.length === 0;
@@ -381,6 +388,11 @@ const applyFilter = () => {
   });
 };
 
+const onResize = () => {
+  innerHeight.value = window.innerHeight;
+};
+
 onBeforeUpdate(() => getCategories());
 onBeforeMount(() => getCategories());
+onMounted(() => onResize());
 </script>

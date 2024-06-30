@@ -20,14 +20,15 @@
       />
       {{ filterMessage }}
     </v-card-text>
-    <v-card-text>
-      <v-data-table
+    <v-card-text v-resize="onResize">
+      <v-data-table-virtual
         v-model="selectedItems"
         :items="tableItems"
         show-select
         class="elevation-1"
         item-key="name"
-      ></v-data-table>
+        :height="adjustedHeight"
+        ></v-data-table-virtual>
     </v-card-text>
     <v-card-actions>
       <v-combobox
@@ -53,7 +54,7 @@
 </template>
 
 <script setup>
-import { computed, ref, onBeforeMount } from 'vue';
+import { computed, ref, onBeforeMount, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
@@ -76,6 +77,12 @@ const filterMessage = ref('');
 const selectedCategory = ref('');
 const categoryNames = ref(['']);
 const showNewFilterDialog = ref(false);
+const innerHeight = ref(0);
+
+const adjustedHeight = computed(() => {
+  return innerHeight.value - 290;
+});
+
 const selectedItemToFilter = computed(() => {
   if (selectedItems.value.length === 0) {
     return '';
@@ -216,5 +223,10 @@ const createNewFilter = async ({ category, filter }) => {
   }
 };
 
+const onResize = () => {
+  innerHeight.value = window.innerHeight;
+};
+
 onBeforeMount(() => getCategoriesNames());
+onMounted(() => onResize());
 </script>
