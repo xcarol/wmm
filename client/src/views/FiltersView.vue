@@ -4,7 +4,6 @@
       <v-row v-resize="onResize">
         <v-col cols="6">
           <v-card>
-            <v-card-title>{{ $t('filtersView.categoriesLabel') }}</v-card-title>
             <v-card-text>
               <v-data-table-virtual
                 v-model="selectedCategories"
@@ -12,11 +11,13 @@
                 show-select
                 class="elevation-1"
                 item-key="name"
+                fixed-header
+                :headers="headerCategories"
                 :height="adjustedHeight"
                 @update:model-value="onUpdateCategoryModelValue"
               >
-                <template #[`header.data-table-select`]></template>
-              </v-data-table-virtual>
+              <template #[`header.data-table-select`]></template>
+            </v-data-table-virtual>
             </v-card-text>
             <v-card-actions>
               <v-spacer />
@@ -40,7 +41,6 @@
         </v-col>
         <v-col cols="6">
           <v-card>
-            <v-card-title>{{ $t('filtersView.filtersLabel') }}</v-card-title>
             <v-card-text>
               <v-data-table-virtual
                 v-model="selectedFilters"
@@ -48,6 +48,8 @@
                 show-select
                 class="elevation-1"
                 item-key="name"
+                hidden-header
+                :headers="headerFilters"
                 :height="adjustedHeight"
                 @update:model-value="onUpdateFilterModelValue"
               >
@@ -129,10 +131,13 @@ const noFilterSelected = computed(() => {
   return selectedFilters.value.length === 0;
 });
 
+const headerCategories = [{ title: $t('filtersView.categoriesLabel'), value: 'id' }];
+const headerFilters = [{ title: $t('filtersView.filtersLabel'), value: 'id' }];
+
 const listToTable = (list) => {
   const table = [];
-  list.forEach((category) => {
-    table.push({ id: category });
+  list.forEach((item) => {
+    table.push({ id: item });
   });
   return table;
 };
