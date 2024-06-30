@@ -27,10 +27,11 @@
         show-select
         class="elevation-1"
         item-key="name"
+        fixed-header
         :height="adjustedHeight"
-        ></v-data-table-virtual>
+      ></v-data-table-virtual>
     </v-card-text>
-    <v-card-actions>
+    <v-card-actions class="align-start">
       <v-combobox
         v-model="selectedCategory"
         :label="$t('categorizeView.categoryLabel')"
@@ -40,6 +41,7 @@
         @keydown="keyDown"
       />
       <v-btn
+        class="ml-2"
         :disabled="canApplyCategory"
         @click.stop="applyCategory"
         >{{ $t('categorizeView.applyButton') }}</v-btn
