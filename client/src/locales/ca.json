@@ -18,7 +18,8 @@
     "categorize": "Categoritzar",
     "duplicates": "Cercar duplicats",
     "sql": "Comandes SQL",
-    "filters": "Filtres"
+    "filters": "Filtres",
+    "browse": "Explorar"
   },
   "progress": {
     "title": "Operació en progress",
@@ -88,6 +89,10 @@
     "deleteFilterWarningMessage": "Et's a punt d'esborrar el filtre:\n  - %s\nN'estàs segur?",
     "applyFilterWarningMessage": "Et's a punt d'aplicar el filtre:\n  - %s\nN'estàs segur?",
     "applyNewFilterWarningMessage": "En crear el filtre [%s] s'actulitzaran les transaccions coincidents.\nN'estàs segur?"
+  },
+  "browseView": {
+    "title": "Exploració de dades",
+    "bankOverview": "Resum bancari"
   },
   "dialogNewFilter": {
     "title": "Nou filtre",

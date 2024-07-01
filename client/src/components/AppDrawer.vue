@@ -50,6 +50,11 @@ const menuOptions = [
     value: '/filters',
     barTitle: $t('filtersView.title'),
   },
+  {
+    title: $t('mainDrawer.browse'),
+    value: '/browse',
+    barTitle: $t('browseView.title'),
+  },
 ];
 
 const emits = defineEmits(['onOptionSelected']);

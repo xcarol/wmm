@@ -18,7 +18,8 @@
     "categorize": "Categorizar",
     "duplicates": "Buscar duplicados",
     "sql": "Comandos SQL",
-    "filters": "Filtros"
+    "filters": "Filtros",
+    "browse": "Explorar"
   },
   "progress": {
     "title": "Operación en progreso",
@@ -88,6 +89,10 @@
     "deleteFilterWarningMessage": "Vas a borrar el filtro:\n  - %s\n¿Estás seguro?",
     "applyFilterWarningMessage": "Vas a aplicar el filtro:\n  - %s\n¿Estás seguro?",
     "applyNewFilterWarningMessage": "Al crear el filtro [%s] se actulitzarán las transacciones coincidentes.\n¿Estás seguro?"
+  },
+  "browseView": {
+    "title": "Exploración de datos",
+    "bankOverview": "Resumen bancario"
   },
   "dialogNewFilter": {
     "title": "Nuevo filtro",
