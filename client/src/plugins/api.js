@@ -1,24 +1,23 @@
 /* eslint-disable no-param-reassign */
 class Api {
   endpoints = {
-    categoryNames: 'category/names',
-    bankNames: 'bank/names',
-    transactions: 'transaction',
-    deleteTransactions: 'transaction/delete',
-    updateTransactionsCategory: 'transaction/category',
-    updateTransactionsByFilter: 'transaction/filter',
-    uncategorizedTransactions: 'transaction/uncategorized?filter={1}',
-    duplicated: 'transaction/duplicated',
-    resetCategoryFromTransactions: 'transaction/category/reset',
-    filters: 'filter',
-    applyFilter: 'filter/apply',
-    deleteFilters: 'filter/delete',
-    categoryFilters: 'filter?category={1}',
-    renameCategory: 'filter/category/rename',
-    deleteCategories: 'filter/category/delete',
-    applyCategoryToTransactions: 'filter/category/apply',
-    sql: 'sql',
-    backupDatabase: 'sql/backup',
+    banksNames: '/banks/names',
+    categoriesNames: '/categories/names',
+    filtersNames: '/categories?category={1}',
+    createFilter: '/categories/filter',
+    applyFilter: '/categories/filter',
+    deleteFilters: '/categories/filters',
+    deleteCategories: '/categories',
+    renameCategory: '/categories/rename',
+    transactions: '/transactions',
+    transactionsApplyCategory: '/transactions/category',
+    transactionsCategorize: '/transactions/category',
+    resetCategoryFromTransactions: '/transactions/category',
+    updateTransactionsByFilter: '/transactions/filter',
+    uncategorizedTransactions: '/transactions/uncategorized?filter={1}',
+    duplicated: '/transactions/duplicated',
+    sql: '/sql',
+    backupDatabase: '/sql/backup',
   };
 
   static endpoint(endpoint, ...args) {
@@ -49,19 +48,89 @@ class Api {
     return error.toString();
   }
 
-  categoryNames() {
-    const url = Api.endpoint(this.endpoints.categoryNames);
+  banksNames() {
+    const url = Api.endpoint(this.endpoints.banksNames);
     return this.axios.get(url);
   }
 
-  bankNames() {
-    const url = Api.endpoint(this.endpoints.bankNames);
+  categoriesNames() {
+    const url = Api.endpoint(this.endpoints.categoriesNames);
     return this.axios.get(url);
+  }
+
+  filtersNames(category) {
+    const url = Api.endpoint(this.endpoints.filtersNames, category);
+    return this.axios.get(url);
+  }
+
+  createFilter(category, filter) {
+    const url = Api.endpoint(this.endpoints.createFilter);
+    return this.axios.post(url, { category, filter });
+  }
+
+  applyFilter(category, filter) {
+    const url = Api.endpoint(this.endpoints.applyFilter);
+    return this.axios.put(url, { category, filter });
+  }
+
+  deleteFilters(filters) {
+    const url = Api.endpoint(this.endpoints.deleteFilters);
+    return this.axios.put(url, { filters });
+  }
+
+  deleteCategories(categories) {
+    const url = Api.endpoint(this.endpoints.deleteCategories);
+    return this.axios.put(url, { categories });
+  }
+
+  renameCategory(oldName, newName) {
+    const url = Api.endpoint(this.endpoints.renameCategory);
+    return this.axios.post(url, { oldName, newName });
   }
 
   addTransaction(date, description, amount, bank) {
     const url = Api.endpoint(this.endpoints.transactions);
-    return this.axios.put(url, { date, description, amount, bank });
+    return this.axios.post(url, { date, description, amount, bank });
+  }
+
+  deleteTransactions(transactions) {
+    const url = Api.endpoint(this.endpoints.transactions);
+    return this.axios.put(url, { transactions });
+  }
+
+  updateTransactionsCategory(transactions, category) {
+    const url = Api.endpoint(this.endpoints.transactionsApplyCategory);
+    return this.axios.put(url, { operation: 'apply', transactions, category });
+  }
+
+  applyCategoryToTransactions(category) {
+    const url = Api.endpoint(this.endpoints.transactionsCategorize);
+    return this.axios.put(url, { operation: 'categorize', category });
+  }
+
+  resetCategoryFromTransactions(categories) {
+    const url = Api.endpoint(this.endpoints.resetCategoryFromTransactions);
+    return this.axios.put(url, { operation: 'reset', categories });
+  }
+
+  updateTransactionsByFilter(filter) {
+    const url = Api.endpoint(this.endpoints.updateTransactionsByFilter);
+    return this.axios.put(url, { filter });
+  }
+
+  searchTransactionsByCategory(filter) {
+    const url = Api.endpoint(this.endpoints.uncategorizedTransactions, filter ?? '');
+    return this.axios.get(url);
+  }
+
+  duplicatedTransactions() {
+    const url = Api.endpoint(this.endpoints.duplicated);
+    return this.axios.get(url);
+  }
+
+  markTransactionsAsNotDuplicated(transactions) {
+    const url = Api.endpoint(this.endpoints.duplicated);
+    return this.axios.put(url, { transactions });
   }
 
   executeQuery(query) {
@@ -72,76 +141,6 @@ class Api {
   backupDatabase() {
     const url = Api.endpoint(this.endpoints.backupDatabase);
     return this.axios.get(url);
-  }
-
-  searchTransactionsByCategory(filter) {
-    const url = Api.endpoint(this.endpoints.uncategorizedTransactions, filter ?? '');
-    return this.axios.get(url);
-  }
-
-  updateTransactionsCategory(transactions, category) {
-    const url = Api.endpoint(this.endpoints.updateTransactionsCategory);
-    return this.axios.post(url, { transactions, category });
-  }
-
-  updateTransactionsByFilter(filter) {
-    const url = Api.endpoint(this.endpoints.updateTransactionsByFilter);
-    return this.axios.post(url, { filter });
-  }
-
-  createFilter(category, filter) {
-    const url = Api.endpoint(this.endpoints.filters);
-    return this.axios.put(url, { category, filter });
-  }
-
-  duplicatedTransactions() {
-    const url = Api.endpoint(this.endpoints.duplicated);
-    return this.axios.get(url);
-  }
-
-  markTransactionsAsNotDuplicated(transactions) {
-    const url = Api.endpoint(this.endpoints.duplicated);
-    return this.axios.post(url, { transactions });
-  }
-
-  deleteTransactions(transactions) {
-    const url = Api.endpoint(this.endpoints.deleteTransactions);
-    return this.axios.post(url, { transactions });
-  }
-
-  deleteCategories(categories) {
-    const url = Api.endpoint(this.endpoints.deleteCategories);
-    return this.axios.post(url, { categories });
-  }
-
-  resetCategoryFromTransactions(categories) {
-    const url = Api.endpoint(this.endpoints.resetCategoryFromTransactions);
-    return this.axios.post(url, { categories });
-  }
-
-  applyCategoryToTransactions(category) {
-    const url = Api.endpoint(this.endpoints.applyCategoryToTransactions);
-    return this.axios.post(url, { category });
-  }
-
-  renameCategory(oldName, newName) {
-    const url = Api.endpoint(this.endpoints.renameCategory);
-    return this.axios.post(url, { oldName, newName });
-  }
-
-  getFilters(category) {
-    const url = Api.endpoint(this.endpoints.categoryFilters, category);
-    return this.axios.get(url);
-  }
-
-  deleteFilters(filters) {
-    const url = Api.endpoint(this.endpoints.deleteFilters);
-    return this.axios.post(url, { filters });
-  }
-
-  applyFilter(category, filter) {
-    const url = Api.endpoint(this.endpoints.applyFilter);
-    return this.axios.post(url, { category, filter });
   }
 }
 

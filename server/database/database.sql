@@ -28,19 +28,19 @@ DROP TABLE IF EXISTS `transactions`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `transactions` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `not_duplicate` BOOL DEFAULT FALSE,
   `bank` varchar(200) NOT NULL,
   `date` datetime NOT NULL,
   `description` varchar(200) NOT NULL,
   `category` varchar(200) DEFAULT '',
   `amount` double NOT NULL,
+  `not_duplicate` BOOL DEFAULT FALSE,
   PRIMARY KEY (`id`),
-  KEY `not_duplicate` (`not_duplicate`),
   KEY `bank` (`bank`),
   KEY `description` (`description`),
   KEY `category` (`category`),
-  KEY `amount` (`amount`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `amount` (`amount`),
+  KEY `not_duplicate_idx` (`not_duplicate`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 DROP TABLE IF EXISTS `filters`;
@@ -51,9 +51,9 @@ CREATE TABLE `filters` (
   `category` varchar(200) NOT NULL,
   `filter` varchar(200) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `filter` (`category`,`filter`),
+  UNIQUE KEY `filter` (`filter`),
   KEY `category` (`category`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

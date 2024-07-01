@@ -6,7 +6,6 @@
     @on-ok="createNewFilter"
     @on-cancel="hideNewFilterDialog"
   />
-  <message-dialog />
   <v-card>
     <v-card-text>
       <v-combobox
@@ -15,32 +14,33 @@
         :items="filters"
         append-icon="$search"
         clearable
-        variant="outlined"
         @click:append="searchTransactions"
         @keydown="keyDown"
       />
       {{ filterMessage }}
     </v-card-text>
-    <v-card-text>
-      <v-data-table
+    <v-card-text v-resize="onResize">
+      <v-data-table-virtual
         v-model="selectedItems"
         :items="tableItems"
         show-select
         class="elevation-1"
         item-key="name"
-      ></v-data-table>
+        fixed-header
+        :height="adjustedHeight"
+      ></v-data-table-virtual>
     </v-card-text>
-    <v-card-actions>
+    <v-card-actions class="align-start">
       <v-combobox
         v-model="selectedCategory"
         :label="$t('categorizeView.categoryLabel')"
         :items="categoryNames"
         clearable
-        variant="outlined"
         @click:append="searchTransactions"
         @keydown="keyDown"
       />
       <v-btn
+        class="ml-2"
         :disabled="canApplyCategory"
         @click.stop="applyCategory"
         >{{ $t('categorizeView.applyButton') }}</v-btn
@@ -55,20 +55,19 @@
 </template>
 
 <script setup>
-import { computed, ref, onBeforeMount } from 'vue';
+import { computed, ref, onBeforeMount, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
-import { useMessageStore } from '../stores/messageDialog';
-import { useProgressStore } from '../stores/progressDialog';
+import { useMessageDialogStore } from '../stores/messageDialog';
+import { useProgressDialogStore } from '../stores/progressDialog';
 import NewFilterDialog from '../components/categorize-view/NewFilterDialog.vue';
-import MessageDialog from '../components/MessageDialog.vue';
 
 const appStore = useAppStore();
 const api = useApi();
 const { t: $t } = useI18n();
-const messageStore = useMessageStore();
-const progressStore = useProgressStore();
+const messageDialog = useMessageDialogStore();
+const progressDialog = useProgressDialogStore();
 
 const filters = computed(() => appStore.categorySearchHistory);
 const selectedFilter = ref('');
@@ -78,6 +77,12 @@ const filterMessage = ref('');
 const selectedCategory = ref('');
 const categoryNames = ref(['']);
 const showNewFilterDialog = ref(false);
+const innerHeight = ref(0);
+
+const adjustedHeight = computed(() => {
+  return innerHeight.value - 290;
+});
+
 const selectedItemToFilter = computed(() => {
   if (selectedItems.value.length === 0) {
     return '';
@@ -102,7 +107,7 @@ const canApplyCategory = computed(() => {
 
 const getCategoriesNames = async () => {
   try {
-    const dbNames = await api.categoryNames();
+    const dbNames = await api.categoriesNames();
     categoryNames.value = dbNames.data;
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
@@ -133,7 +138,7 @@ const keyDown = (value) => {
 };
 
 const updateTransactions = async (transactions, category) => {
-  progressStore.startProgress({
+  progressDialog.startProgress({
     steps: 0,
     description: $t('progress.updateProgress'),
   });
@@ -144,12 +149,12 @@ const updateTransactions = async (transactions, category) => {
     appStore.alertMessage = api.getErrorMessage(e);
   }
 
-  progressStore.stopProgress();
+  progressDialog.stopProgress();
 };
 
 const updateTransactionsByFilter = async (filter) => {
   let updatedTransactions = 0;
-  progressStore.startProgress({
+  progressDialog.startProgress({
     steps: 0,
     description: $t('progress.updateProgress'),
   });
@@ -160,7 +165,7 @@ const updateTransactionsByFilter = async (filter) => {
     appStore.alertMessage = api.getErrorMessage(e);
   }
 
-  progressStore.stopProgress();
+  progressDialog.stopProgress();
   return updatedTransactions;
 };
 
@@ -168,7 +173,7 @@ const applyCategory = () => {
   const category = selectedCategory.value;
   const selectedTransactions = selectedItems.value;
 
-  messageStore.showMessage({
+  messageDialog.showMessage({
     title: $t('dialog.Warning'),
     message: $t('categorizeView.applyWarningMessage')
       .replace('%d', selectedTransactions.length)
@@ -195,7 +200,7 @@ const createNewFilter = async ({ category, filter }) => {
   try {
     await api.createFilter(category, filter);
 
-    messageStore.showMessage({
+    messageDialog.showMessage({
       title: $t('dialog.Warning'),
       message: $t('categorizeView.updateTransactionsMessage'),
       yes: async () => {
@@ -204,7 +209,7 @@ const createNewFilter = async ({ category, filter }) => {
           '%d',
           `${result?.data[0]?.affectedRows ?? 0}`,
         );
-        messageStore.showMessage({
+        messageDialog.showMessage({
           title: $t('dialog.Info'),
           message: tit,
           ok: () => {},
@@ -218,5 +223,10 @@ const createNewFilter = async ({ category, filter }) => {
   }
 };
 
+const onResize = () => {
+  innerHeight.value = window.innerHeight;
+};
+
 onBeforeMount(() => getCategoriesNames());
+onMounted(() => onResize());
 </script>

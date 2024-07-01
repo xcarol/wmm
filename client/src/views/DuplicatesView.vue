@@ -4,47 +4,54 @@
       <v-btn @click.stop="searchTransactions">{{ $t('duplicatesView.searchButton') }}</v-btn>
       <v-spacer />
     </v-card-text>
-    <v-card-text>
-      <v-data-table
+    <v-card-text v-resize="onResize">
+      <v-data-table-virtual
         v-model="selectedItems"
         :items="tableItems"
         show-select
         class="elevation-1"
         item-key="name"
-      ></v-data-table>
+        fixed-header
+        :height="adjustedHeight"
+        ></v-data-table-virtual>
     </v-card-text>
     <v-card-actions>
       <v-spacer />
       <v-btn
         :disabled="noTransactionSelected"
-        @click.stop="markAsNotDuplicates"
-        >{{ $t('duplicatesView.markButton') }}</v-btn
+        @click.stop="deleteTransactions"
+        >{{ $t('duplicatesView.deleteButton') }}</v-btn
       >
       <v-btn
         :disabled="noTransactionSelected"
-        @click.stop="deleteTransactions"
-        >{{ $t('duplicatesView.deleteButton') }}</v-btn
+        @click.stop="markAsNotDuplicates"
+        >{{ $t('duplicatesView.markButton') }}</v-btn
       >
     </v-card-actions>
   </v-card>
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
-import { useMessageStore } from '../stores/messageDialog';
-import { useProgressStore } from '../stores/progressDialog';
+import { useMessageDialogStore } from '../stores/messageDialog';
+import { useProgressDialogStore } from '../stores/progressDialog';
 
 const appStore = useAppStore();
 const api = useApi();
 const { t: $t } = useI18n();
-const messageStore = useMessageStore();
-const progressStore = useProgressStore();
+const messageDialog = useMessageDialogStore();
+const progressDialog = useProgressDialogStore();
 
 const tableItems = ref([]);
 const selectedItems = ref([]);
+const innerHeight = ref(0);
+
+const adjustedHeight = computed(() => {
+  return innerHeight.value - 220;
+});
 
 const noTransactionSelected = computed(() => {
   return !!(selectedItems.value.length === 0);
@@ -62,18 +69,20 @@ const searchTransactions = async () => {
 
 const markAsNotDuplicates = async () => {
   try {
-    messageStore.showMessage({
+    messageDialog.showMessage({
       title: $t('dialog.Warning'),
       message: $t('duplicatesView.markWarningMessage').replace('%d', selectedItems.value.length),
       yes: async () => {
-        progressStore.startProgress({
+        progressDialog.startProgress({
           steps: 0,
           description: $t('progress.updateProgress'),
         });
 
         const result = await api.markTransactionsAsNotDuplicated(selectedItems.value);
 
-        messageStore.showMessage({
+        progressDialog.stopProgress();
+
+        messageDialog.showMessage({
           title: $t('dialog.Info'),
           message: $t('progress.updatedTransactionsMessage').replace(
             '%d',
@@ -89,24 +98,24 @@ const markAsNotDuplicates = async () => {
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }
-
-  progressStore.stopProgress();
 };
 
 const deleteTransactions = async () => {
   try {
-    messageStore.showMessage({
+    messageDialog.showMessage({
       title: $t('dialog.Warning'),
       message: $t('duplicatesView.deleteWarningMessage').replace('%d', selectedItems.value.length),
       yes: async () => {
-        progressStore.startProgress({
+        progressDialog.startProgress({
           steps: 0,
           description: $t('progress.updateProgress'),
         });
 
         const result = await api.deleteTransactions(selectedItems.value);
 
-        messageStore.showMessage({
+        progressDialog.stopProgress();
+
+        messageDialog.showMessage({
           title: $t('dialog.Info'),
           message: $t('progress.deletedTransactionsMessage').replace(
             '%d',
@@ -122,7 +131,11 @@ const deleteTransactions = async () => {
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }
-
-  progressStore.stopProgress();
 };
+
+const onResize = () => {
+  innerHeight.value = window.innerHeight;
+};
+
+onMounted(() => onResize());
 </script>

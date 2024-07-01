@@ -1,6 +1,5 @@
 const {
   addFilter,
-  applyCategory,
   applyFilter,
   deleteCategories,
   getCategories,
@@ -10,95 +9,84 @@ const {
 } = require("./database");
 
 module.exports = (app) => {
-  app.get("/category/names", async (req, res) => {
+  app.get("/categories/names", async (req, res) => {
     try {
-      const result = await getCategories();
-      res.json(result);
+      res.json(await getCategories());
     } catch (err) {
-      console.error("Error fetching categories:", err);
-      res.status(500).send("Error retrieving categories");
+      res.status(err.sqlState ? 400 : 500).send(err);
     }
   });
 
-  app.get("/filter", async (req, res) => {
+  app.get("/categories", async (req, res) => {
+    let category = '';
+
     try {
-      const data = req.query;
-      res.json(await getCategoryFilters(data["category"]));
+      category = req.query.category;
+      res.json(await getCategoryFilters(category));
     } catch (err) {
-      console.error("Error retrieving filters:", err);
-      res.status(500).send("Error retrieving filters");
+      res.status(err.sqlState ? 400 : 500).send(err);
     }
   });
 
-  app.put("/filter", async (req, res) => {
+  app.post("/categories/filter", async (req, res) => {
+    let category = '';
+    let filter = '';
+
     try {
-      const data = req.body;
-      const result = await addFilter(data.category, data.filter);
-      res.json(result);
+      category = req.body.category;
+      filter = req.body.filter;
+      res.json(await addFilter(category, filter));
       res.status(201);
     } catch (err) {
-      console.error("Error inserting category filter:", err);
-      res.status(500).send("Error inserting category filter");
+      res.status(err.sqlState ? 400 : 500).send(err);
     }
   });
 
-  app.post("/filter/apply", async (req, res) => {
+  app.put("/categories/filter", async (req, res) => {
+    let category = '';
+    let filter = '';
+
     try {
-      const data = req.body;
-      const result = await applyFilter(data.category, data.filter);
-      res.json(result);
-      res.status(200);
+      category = req.body.category;
+      filter = req.body.filter;
+      res.json(await applyFilter(category, filter));
     } catch (err) {
-      console.error("Error apply filter:", err);
-      res.status(500).send("Error apply filter");
+      res.status(err.sqlState ? 400 : 500).send(err);
     }
   });
 
-  app.post("/filter/delete", async (req, res) => {
+  app.put("/categories/filters", async (req, res) => {
+    let filters = '';
+
     try {
-      const data = req.body;
-      const result = await deleteFilters(data.filters);
-      res.json(result);
-      res.status(200);
+      filters = req.body.filters;
+      res.json(await deleteFilters(filters));
     } catch (err) {
-      console.error("Error deleting filter:", err);
-      res.status(500).send("Error deleting filter");
+      res.status(err.sqlState ? 400 : 500).send(err);
     }
   });
 
-  app.post("/filter/category/delete", async (req, res) => {
+  app.put("/categories", async (req, res) => {
+    let categories = [];
+
     try {
-      const data = req.body;
-      const result = await deleteCategories(data.categories);
-      res.json(result);
-      res.status(200);
+      categories = req.body.categories;
+      res.json(await deleteCategories(categories));
     } catch (err) {
-      console.error("Error deleting category:", err);
-      res.status(500).send("Error deleting category");
+      res.status(err.sqlState ? 400 : 500).send(err);
     }
   });
 
-  app.post("/filter/category/apply", async (req, res) => {
-    try {
-      const data = req.body;
-      const result = await applyCategory(data.category);
-      res.json(result);
-      res.status(200);
-    } catch (err) {
-      console.error("Error applying categories:", err);
-      res.status(500).send("Error applying categories");
-    }
-  });
+  app.post("/categories/rename", async (req, res) => {
+    let newName = '';
+    let oldName = '';
 
-  app.post("/filter/category/rename", async (req, res) => {
     try {
-      const data = req.body;
-      const result = await renameCategory(data.oldName, data.newName);
-      res.json(result);
-      res.status(200);
+      newName = req.body.newName;
+      oldName = req.body.oldName
+      res.json(await renameCategory(oldName, newName));
     } catch (err) {
-      console.error("Error renaming categories:", err);
-      res.status(500).send("Error renaming categories");
+      res.status(err.sqlState ? 400 : 500).send(err);
     }
   });
 };

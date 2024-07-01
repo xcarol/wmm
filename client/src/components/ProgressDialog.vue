@@ -31,8 +31,6 @@
       <v-card-actions>
         <v-spacer />
         <v-btn
-          color="blue darken-1"
-          text
           @click.stop="cancel"
         >
           {{ $t('global.cancel') }}
@@ -44,9 +42,9 @@
 
 <script setup>
 import { computed } from 'vue';
-import { useProgressStore } from '../stores/progressDialog';
+import { useProgressDialogStore } from '../stores/progressDialog';
 
-const store = useProgressStore();
+const store = useProgressDialogStore();
 
 const show = computed(() => store.progressIsActive);
 const description = computed(() => store.progress.description);

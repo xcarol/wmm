@@ -11,12 +11,42 @@ import ca from 'vuetify/lib/locale/ca.mjs';
 import en from 'vuetify/lib/locale/en.mjs';
 import es from 'vuetify/lib/locale/es.mjs';
 import colors from 'vuetify/lib/util/colors.mjs';
-import {
-  mdiHome,
-  mdiMagnify,
-} from '@mdi/js';
+import { mdiHome, mdiMagnify } from '@mdi/js';
 
-const defaultTheme = import.meta.env.VITE_THEME || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+const defaultTheme =
+  import.meta.env.VITE_THEME ||
+  (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+
+const defaults = {
+  VCardActions: {
+    VBtn: {
+      ripple: false,
+      variant: 'tonal',
+      color: 'primary',
+    },
+  },
+  VBtn: {
+    ripple: false,
+    variant: 'tonal',
+    color: 'primary',
+  },
+  VSelect: {
+    variant: 'outlined',
+    density: 'compact',
+  },
+  VCombobox: {
+    variant: 'outlined',
+    density: 'compact',
+  },
+  VFileInput: {
+    variant: 'outlined',
+    density: 'compact',
+  },
+  VTextField: {
+    variant: 'outlined',
+    density: 'compact',
+  },
+};
 
 const vuetify = createVuetify({
   components,
@@ -38,13 +68,11 @@ const vuetify = createVuetify({
       light: {
         colors: {
           primary: colors.grey.darken3,
-          secondary: colors.grey.base,
         },
       },
       dark: {
         colors: {
-          primary: colors.grey.darken3,
-          secondary: colors.grey.base,
+          primary: colors.grey.base,
         },
       },
     },
@@ -53,6 +81,7 @@ const vuetify = createVuetify({
     locales: { ca, en, es },
     current: 'ca',
   },
+  defaults,
 });
 
 export default vuetify;

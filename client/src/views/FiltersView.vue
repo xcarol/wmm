@@ -1,21 +1,23 @@
 <template>
   <v-card>
     <v-container>
-      <v-row>
+      <v-row v-resize="onResize">
         <v-col cols="6">
           <v-card>
-            <v-card-title>{{ $t('filtersView.categoriesLabel') }}</v-card-title>
             <v-card-text>
-              <v-data-table
+              <v-data-table-virtual
                 v-model="selectedCategories"
                 :items="tableCategories"
                 show-select
                 class="elevation-1"
                 item-key="name"
+                fixed-header
+                :headers="headerCategories"
+                :height="adjustedHeight"
                 @update:model-value="onUpdateCategoryModelValue"
               >
-                <template #[`header.data-table-select`]></template>
-              </v-data-table>
+              <template #[`header.data-table-select`]></template>
+            </v-data-table-virtual>
             </v-card-text>
             <v-card-actions>
               <v-spacer />
@@ -39,18 +41,20 @@
         </v-col>
         <v-col cols="6">
           <v-card>
-            <v-card-title>{{ $t('filtersView.filtersLabel') }}</v-card-title>
             <v-card-text>
-              <v-data-table
+              <v-data-table-virtual
                 v-model="selectedFilters"
                 :items="tableFilters"
                 show-select
                 class="elevation-1"
                 item-key="name"
+                hidden-header
+                :headers="headerFilters"
+                :height="adjustedHeight"
                 @update:model-value="onUpdateFilterModelValue"
               >
                 <template #[`header.data-table-select`]></template>
-              </v-data-table>
+              </v-data-table-virtual>
             </v-card-text>
             <v-card-actions>
               <v-spacer />
@@ -90,20 +94,20 @@
 </template>
 
 <script setup>
-import { computed, onBeforeMount, onBeforeUpdate, ref } from 'vue';
+import { computed, onBeforeMount, onBeforeUpdate, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
-import { useMessageStore } from '../stores/messageDialog';
-import { useProgressStore } from '../stores/progressDialog';
+import { useMessageDialogStore } from '../stores/messageDialog';
+import { useProgressDialogStore } from '../stores/progressDialog';
 import RenameCategoryDialog from '../components/filters-view/RenameCategoryDialog.vue';
 import NewFilterDialog from '../components/categorize-view/NewFilterDialog.vue';
 
 const api = useApi();
 const { t: $t } = useI18n();
 const appStore = useAppStore();
-const messageStore = useMessageStore();
-const progressStore = useProgressStore();
+const messageDialog = useMessageDialogStore();
+const progressDialog = useProgressDialogStore();
 
 const selectedCategories = ref([]);
 const tableCategories = ref([]);
@@ -113,6 +117,11 @@ const showRenameCategory = ref(false);
 const renameCategoryName = ref('');
 const showNewFilter = ref(false);
 const newFilterCategoryName = ref('');
+const innerHeight = ref(0);
+
+const adjustedHeight = computed(() => {
+  return innerHeight.value - 220;
+});
 
 const noCategorySelected = computed(() => {
   return selectedCategories.value.length === 0;
@@ -122,17 +131,20 @@ const noFilterSelected = computed(() => {
   return selectedFilters.value.length === 0;
 });
 
+const headerCategories = [{ title: $t('filtersView.categoriesLabel'), value: 'id' }];
+const headerFilters = [{ title: $t('filtersView.filtersLabel'), value: 'id' }];
+
 const listToTable = (list) => {
   const table = [];
-  list.forEach((category) => {
-    table.push({ id: category });
+  list.forEach((item) => {
+    table.push({ id: item });
   });
   return table;
 };
 
 const getFilters = async () => {
   try {
-    const filters = await api.getFilters(selectedCategories.value);
+    const filters = await api.filtersNames(selectedCategories.value);
     tableFilters.value = listToTable(filters.data);
     selectedFilters.value = [];
   } catch (e) {
@@ -142,7 +154,7 @@ const getFilters = async () => {
 
 const getCategories = async () => {
   try {
-    const categories = await api.categoryNames();
+    const categories = await api.categoriesNames();
     tableCategories.value = listToTable(categories.data);
     selectedCategories.value = [];
   } catch (e) {
@@ -180,13 +192,13 @@ const showNewFilterDialog = async () => {
 const renameCategory = (value) => {
   showRenameCategory.value = false;
 
-  messageStore.showMessage({
+  messageDialog.showMessage({
     title: $t('dialog.Warning'),
     message: $t('filtersView.renameCategoryMessage')
       .replace('%s', renameCategoryName.value)
       .replace('%s', value.category),
     yes: async () => {
-      progressStore.startProgress({
+      progressDialog.startProgress({
         steps: 0,
         description: $t('progress.updateProgress'),
       });
@@ -194,8 +206,8 @@ const renameCategory = (value) => {
       try {
         const result = await api.renameCategory(renameCategoryName.value, value.category);
 
-        progressStore.stopProgress();
-        messageStore.showMessage({
+        progressDialog.stopProgress();
+        messageDialog.showMessage({
           title: $t('dialog.Info'),
           message: $t('progress.updatedTransactionsMessage').replace(
             '%d',
@@ -209,21 +221,21 @@ const renameCategory = (value) => {
         appStore.alertMessage = api.getErrorMessage(e);
       }
 
-      progressStore.stopProgress();
+      progressDialog.stopProgress();
     },
     no: () => {},
   });
 };
 
 const deleteCategories = async () => {
-  messageStore.showMessage({
+  messageDialog.showMessage({
     title: $t('dialog.Warning'),
     message: $t('filtersView.deleteCategoriesWarningMessage').replace(
       '%d',
       selectedCategories.value.length,
     ),
     yes: async () => {
-      progressStore.startProgress({
+      progressDialog.startProgress({
         steps: 0,
         description: $t('progress.updateProgress'),
       });
@@ -232,8 +244,8 @@ const deleteCategories = async () => {
         const deleteResult = await api.deleteCategories(selectedCategories.value);
         const resetResult = await api.resetCategoryFromTransactions(selectedCategories.value);
 
-        progressStore.stopProgress();
-        messageStore.showMessage({
+        progressDialog.stopProgress();
+        messageDialog.showMessage({
           title: $t('dialog.Info'),
           message: $t('progress.deletedCategoriesMessage')
             .replace('%d', `${deleteResult?.data[0]?.affectedRows ?? 0}`)
@@ -246,21 +258,21 @@ const deleteCategories = async () => {
         appStore.alertMessage = api.getErrorMessage(e);
       }
 
-      progressStore.stopProgress();
+      progressDialog.stopProgress();
     },
     no: () => {},
   });
 };
 
 const applyCategory = () => {
-  messageStore.showMessage({
+  messageDialog.showMessage({
     title: $t('dialog.Warning'),
     message: $t('filtersView.updateCategoryWarningMessage').replace(
       '%s',
       selectedCategories.value[0],
     ),
     yes: async () => {
-      progressStore.startProgress({
+      progressDialog.startProgress({
         steps: 0,
         description: $t('progress.updateProgress'),
       });
@@ -268,8 +280,8 @@ const applyCategory = () => {
       try {
         const applyResult = await api.applyCategoryToTransactions(selectedCategories.value[0]);
 
-        progressStore.stopProgress();
-        messageStore.showMessage({
+        progressDialog.stopProgress();
+        messageDialog.showMessage({
           title: $t('dialog.Info'),
           message: $t('progress.updatedTransactionsMessage').replace(
             '%d',
@@ -283,7 +295,7 @@ const applyCategory = () => {
         appStore.alertMessage = api.getErrorMessage(e);
       }
 
-      progressStore.stopProgress();
+      progressDialog.stopProgress();
     },
     no: () => {},
   });
@@ -293,11 +305,11 @@ const newFilter = async (value) => {
   showNewFilter.value = false;
 
 
-  messageStore.showMessage({
+  messageDialog.showMessage({
     title: $t('dialog.Warning'),
     message: $t('filtersView.applyNewFilterWarningMessage').replace('%s', value.filter),
     yes: async () => {
-      progressStore.startProgress({
+      progressDialog.startProgress({
         steps: 0,
         description: $t('progress.updateProgress'),
       });
@@ -306,8 +318,8 @@ const newFilter = async (value) => {
         await api.createFilter(newFilterCategoryName.value, value.filter);
         const applyResult = await api.applyFilter(value.category,value.filter);
         await getFilters();
-        progressStore.stopProgress();
-        messageStore.showMessage({
+        progressDialog.stopProgress();
+        messageDialog.showMessage({
           title: $t('dialog.Info'),
           message: $t('progress.updatedTransactionsMessage').replace(
             '%d',
@@ -319,51 +331,51 @@ const newFilter = async (value) => {
         appStore.alertMessage = api.getErrorMessage(e);
       }
 
-      progressStore.stopProgress();
+      progressDialog.stopProgress();
     },
     no: () => {},
   });
 };
 
 const deleteFilter = () => {
-  messageStore.showMessage({
+  messageDialog.showMessage({
     title: $t('dialog.Warning'),
     message: $t('filtersView.deleteFilterWarningMessage').replace('%s', selectedFilters.value),
     yes: async () => {
-      progressStore.startProgress({
+      progressDialog.startProgress({
         steps: 0,
         description: $t('progress.updateProgress'),
       });
 
       try {
         await api.deleteFilters(selectedFilters.value);
-        progressStore.stopProgress();
+        progressDialog.stopProgress();
 
         getFilters();
       } catch (e) {
         appStore.alertMessage = api.getErrorMessage(e);
       }
 
-      progressStore.stopProgress();
+      progressDialog.stopProgress();
     },
     no: () => {},
   });
 };
 
 const applyFilter = () => {
-  messageStore.showMessage({
+  messageDialog.showMessage({
     title: $t('dialog.Warning'),
     message: $t('filtersView.applyFilterWarningMessage').replace('%s', selectedFilters.value),
     yes: async () => {
-      progressStore.startProgress({
+      progressDialog.startProgress({
         steps: 0,
         description: $t('progress.updateProgress'),
       });
 
       try {
-        const applyResult = await api.applyFilter(selectedFilters.value[0]);
-        progressStore.stopProgress();
-        messageStore.showMessage({
+        const applyResult = await api.applyFilter(selectedCategories.value[0], selectedFilters.value[0]);
+        progressDialog.stopProgress();
+        messageDialog.showMessage({
           title: $t('dialog.Info'),
           message: $t('progress.updatedTransactionsMessage').replace(
             '%d',
@@ -375,12 +387,17 @@ const applyFilter = () => {
         appStore.alertMessage = api.getErrorMessage(e);
       }
 
-      progressStore.stopProgress();
+      progressDialog.stopProgress();
     },
     no: () => {},
   });
 };
 
+const onResize = () => {
+  innerHeight.value = window.innerHeight;
+};
+
 onBeforeUpdate(() => getCategories());
 onBeforeMount(() => getCategories());
+onMounted(() => onResize());
 </script>

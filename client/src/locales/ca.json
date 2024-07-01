@@ -69,7 +69,7 @@
     "categoryLabel": "Cerca la categoria o afegeix-ne una de nova...",
     "applyButton": "Aplica",
     "createFilterButton": "Crea un filtre",
-    "applyWarningMessage": "Et's a punt d'actualitzar %d transaccions amb la categoria: %s\nN'estàs segur?",
+    "applyWarningMessage": "Et's a punt d'actualitzar %d transaccions amb la categoria:\n  - %s\nN'estàs segur?",
     "updateTransactionsMessage": "Vols aplicar ara aquest nou filtre?"
   },
   "filtersView": {
@@ -82,12 +82,12 @@
     "newFilterButton": "Nou...",
     "deleteFilterButton": "Elimina",
     "applyFilterButton": "Aplica",
-    "deleteCategoriesWarningMessage": "Et's a punt d'esborrar %d categories\nAixò també esborrarà la categoria de les transaccions corresponents\nN'estàs segur?",
-    "updateCategoryWarningMessage": "Et's a punt d'actualitzar totes les transaccions que coincideixin amb els filtres de la categoria %s\nN'estàs segur?",
-    "renameCategoryMessage": "Et's a punt de reanomenar la categoria %s a %s\nN'estàs segur?",
-    "deleteFilterWarningMessage": "Et's a punt d'esborrar el filtre %s\nN'estàs segur?",
-    "applyFilterWarningMessage": "Et's a punt d'aplicar el filtre %s\nN'estàs segur?",
-    "applyNewFilterWarningMessage": "En crear el filtre %s s'actulitzaran les transaccions coincidents.\nN'estàs segur?"
+    "deleteCategoriesWarningMessage": "Et's a punt d'esborrar %d categories.\nAixò també esborrarà la categoria de les transaccions corresponents.\nN'estàs segur?",
+    "updateCategoryWarningMessage": "Et's a punt d'actualitzar totes les transaccions que coincideixin amb els filtres de la categoria:\n  - %s\nN'estàs segur?",
+    "renameCategoryMessage": "Et's a punt de reanomenar la categoria [%s] a [%s]\nN'estàs segur?",
+    "deleteFilterWarningMessage": "Et's a punt d'esborrar el filtre:\n  - %s\nN'estàs segur?",
+    "applyFilterWarningMessage": "Et's a punt d'aplicar el filtre:\n  - %s\nN'estàs segur?",
+    "applyNewFilterWarningMessage": "En crear el filtre [%s] s'actulitzaran les transaccions coincidents.\nN'estàs segur?"
   },
   "dialogNewFilter": {
     "title": "Nou filtre",

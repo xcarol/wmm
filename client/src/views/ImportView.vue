@@ -9,13 +9,16 @@
     @selected-amount-column="updateSelectedAmountColumn"
   />
   <bank-selection @selected-bank="selectedBank" />
-  <v-container class="text-end">
-    <v-btn
-      :disabled="formNotFilled"
-      @click.stop="importFile"
-      >{{ $t('importView.importButtonLabel') }}
-    </v-btn>
-  </v-container>
+  <v-card>
+    <v-card-actions>
+      <v-spacer />
+      <v-btn
+        :disabled="formNotFilled"
+        @click.stop="importFile"
+        >{{ $t('importView.importButtonLabel') }}
+      </v-btn>
+    </v-card-actions>
+  </v-card>
 </template>
 
 <script setup>
@@ -24,7 +27,7 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useAppStore } from '../stores/app';
-import { useProgressStore } from '../stores/progressDialog';
+import { useProgressDialogStore } from '../stores/progressDialog';
 import { useApi } from '../plugins/api';
 import FileInput from '../components/import-view/FileInput.vue';
 import FilePreview from '../components/import-view/FilePreview.vue';
@@ -36,7 +39,7 @@ dayjs.locale('es');
 
 const { t: $t } = useI18n();
 const appStore = useAppStore();
-const progressStore = useProgressStore();
+const progressDialog = useProgressDialogStore();
 const api = useApi();
 
 const firstRowIsAHeader = ref(false);
@@ -86,7 +89,7 @@ const importFile = async () => {
   const firstRow = firstRowIsAHeader.value === true ? 1 : 0;
   let rowCount = firstRow;
 
-  progressStore.startProgress({
+  progressDialog.startProgress({
     steps: appStore.csvfile.rowCount,
     description: $t('importView.importingRows')
       .replace('%d', rowCount)
@@ -108,15 +111,15 @@ const importFile = async () => {
           throw new Error(api.getErrorMessage(err));
         });
 
-      if (progressStore.progressIsCancelled) {
+      if (progressDialog.progressIsCancelled) {
         break;
       }
 
-      progressStore.updateProgress({
+      progressDialog.updateProgress({
         step: rowCount,
         description: $t('importView.importingRows')
           .replace('%d', rowCount)
-          .replace('%d', appStore.csvfile.rowCount- firstRow),
+          .replace('%d', appStore.csvfile.rowCount - firstRow),
       });
     }
     appStore.alertMessage = $t('importView.importedRows').replace('%d', rowCount - firstRow);
@@ -125,6 +128,6 @@ const importFile = async () => {
       .replace('%d', e.message)
       .replace('%d', rowCount);
   }
-  progressStore.stopProgress();
+  progressDialog.stopProgress();
 };
 </script>
