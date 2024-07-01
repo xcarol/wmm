@@ -6,7 +6,6 @@
     @on-ok="createNewFilter"
     @on-cancel="hideNewFilterDialog"
   />
-  <message-dialog />
   <v-card>
     <v-card-text>
       <v-combobox
@@ -63,7 +62,6 @@ import { useAppStore } from '../stores/app';
 import { useMessageDialogStore } from '../stores/messageDialog';
 import { useProgressDialogStore } from '../stores/progressDialog';
 import NewFilterDialog from '../components/categorize-view/NewFilterDialog.vue';
-import MessageDialog from '../components/MessageDialog.vue';
 
 const appStore = useAppStore();
 const api = useApi();
