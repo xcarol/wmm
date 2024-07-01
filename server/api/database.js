@@ -49,10 +49,9 @@ const queryUpdateRowsCategoryWithDescriptionLikeFilter =
 const queryUpdateTransactionsCategory =
   "UPDATE transactions SET category = ? WHERE id IN(?)";
 
-//   QString queryBankBalances =
-//   QString("SELECT SUM(amount) as balance, MAX(date) AS latest_date from "
-//           "transactions WHERE bank = '%1' AND "
-//           "date >= '%2' AND date <= '%3'");
+const queryBankBalances =
+  "SELECT bank, SUM(amount) as balance, MAX(date) AS latest_date from \
+    transactions WHERE bank = ? AND date >= ? AND date <= ?";
 
 // QString queryCategoryBalances =
 //   QString("SELECT SUM(amount) as balance from transactions WHERE category "
@@ -209,6 +208,23 @@ async function getUncategorizedTransactions(filter) {
     return result.at(0);
   } catch (err) {
     err.message = `Error [${err}] retrieving uncategorized transactions.`;
+    console.error(err);
+    throw err;
+  }
+}
+
+async function getBankBalance(bank, start, end) {
+  try {
+    const connection = await getConnection();
+    const result = await connection.query(queryBankBalances, [
+      bank,
+      start,
+      end,
+    ]);
+    connection.close();
+    return result.at(0).at(0);
+  } catch (err) {
+    err.message = `Error [${err}] retrieving bank balance.`;
     console.error(err);
     throw err;
   }
@@ -416,6 +432,7 @@ module.exports = {
   deleteTransactions,
   executeSql,
   getBankNames,
+  getBankBalance,
   getCategories,
   getCategoryFilters,
   getDuplicatedTransactions,

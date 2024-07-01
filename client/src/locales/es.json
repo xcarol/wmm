@@ -92,7 +92,11 @@
   },
   "browseView": {
     "title": "Exploración de datos",
-    "bankOverview": "Resumen bancario"
+    "bankOverview": "Resumen bancario",
+    "totalAmount": "Cantidad total",
+    "bankNameLabel": "Banco",
+    "amountLabel": "Cantidad",
+    "dateLabel": "Fecha"
   },
   "dialogNewFilter": {
     "title": "Nuevo filtro",

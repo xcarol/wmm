@@ -2,6 +2,7 @@
 class Api {
   endpoints = {
     banksNames: '/banks/names',
+    banksBalance: '/banks/balance?bank={1}&start={2}&end={3}',
     categoriesNames: '/categories/names',
     filtersNames: '/categories?category={1}',
     createFilter: '/categories/filter',
@@ -140,6 +141,11 @@ class Api {
 
   backupDatabase() {
     const url = Api.endpoint(this.endpoints.backupDatabase);
+    return this.axios.get(url);
+  }
+
+  bankBalance(bank, start, end) {
+    const url = Api.endpoint(this.endpoints.banksBalance, bank, start, end);
     return this.axios.get(url);
   }
 }

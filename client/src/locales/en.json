@@ -92,7 +92,11 @@
   },
   "browseView": {
     "title": "Browse data",
-    "bankOverview": "Bank overview"
+    "bankOverview": "Bank overview",
+    "totalAmount": "Total amount",
+    "bankNameLabel": "Bank",
+    "amountLabel": "Amoun",
+    "dateLabel": "Date"
   },
   "dialogNewFilter": {
     "title": "New Filter",

@@ -92,7 +92,11 @@
   },
   "browseView": {
     "title": "Exploració de dades",
-    "bankOverview": "Resum bancari"
+    "bankOverview": "Resum bancari",
+    "totalAmount": "Quantitat total",
+    "bankNameLabel": "Banc",
+    "amountLabel": "Quantitat",
+    "dateLabel": "Data"
   },
   "dialogNewFilter": {
     "title": "Nou filtre",
