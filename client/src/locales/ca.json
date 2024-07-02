@@ -26,7 +26,8 @@
     "updateProgress": "Actualitzant les transaccions...",
     "updatedTransactionsMessage": "S'han actualitzat %d transaccions.",
     "deletedTransactionsMessage": "S'han eliminat %d transaccions.",
-    "deletedCategoriesMessage": "S'han eliminat %d filtres i s'han actualitzat %d transaccions."
+    "deletedCategoriesMessage": "S'han eliminat %d filtres i s'han actualitzat %d transaccions.",
+    "retrievingTransactions": "Obtenint les transaccions..."
   },
   "importView": {
     "title": "Importa un arxiu CSV",
@@ -93,10 +94,13 @@
   "browseView": {
     "title": "Exploració de dades",
     "bankOverview": "Resum bancari",
+    "bankDetail": "Transaccions del banc",
     "totalAmount": "Quantitat total",
     "bankNameLabel": "Banc",
     "amountLabel": "Quantitat",
-    "dateLabel": "Data"
+    "dateLabel": "Data",
+    "descriptionLabel": "Descripció",
+    "categoryLabel": "Categoria"
   },
   "dialogNewFilter": {
     "title": "Nou filtre",

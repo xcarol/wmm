@@ -11,6 +11,7 @@ class Api {
     deleteCategories: '/categories',
     renameCategory: '/categories/rename',
     transactions: '/transactions',
+    transactionsOfBank: '/transactions?bank={1}',
     transactionsApplyCategory: '/transactions/category',
     transactionsCategorize: '/transactions/category',
     resetCategoryFromTransactions: '/transactions/category',
@@ -146,6 +147,11 @@ class Api {
 
   bankBalance(bank, start, end) {
     const url = Api.endpoint(this.endpoints.banksBalance, bank, start, end);
+    return this.axios.get(url);
+  }
+
+  bankTransactions(bank) {
+    const url = Api.endpoint(this.endpoints.transactionsOfBank, bank);
     return this.axios.get(url);
   }
 }
