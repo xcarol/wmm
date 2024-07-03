@@ -10,7 +10,6 @@
                 :items="tableCategories"
                 show-select
                 class="elevation-1"
-                item-key="name"
                 fixed-header
                 :headers="headerCategories"
                 :height="adjustedHeight"
@@ -47,7 +46,6 @@
                 :items="tableFilters"
                 show-select
                 class="elevation-1"
-                item-key="name"
                 hidden-header
                 :headers="headerFilters"
                 :height="adjustedHeight"

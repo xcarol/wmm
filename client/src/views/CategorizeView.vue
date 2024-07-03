@@ -25,7 +25,6 @@
         :items="tableItems"
         show-select
         class="elevation-1"
-        item-key="name"
         fixed-header
         :height="adjustedHeight"
       ></v-data-table-virtual>
