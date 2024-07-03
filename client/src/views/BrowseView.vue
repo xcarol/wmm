@@ -67,6 +67,11 @@ const headerDetails = [
 const getBanksBrief = async () => {
   totalAmount = 0.0;
 
+  progressDialog.startProgress({
+    steps: 0,
+    description: $t('progress.retrievingTransactions'),
+  });
+
   try {
     const { data } = await api.banksNames();
 
@@ -99,6 +104,8 @@ const getBanksBrief = async () => {
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }
+
+  progressDialog.stopProgress();
 };
 
 const onBankSelected = async (bankName) => {
