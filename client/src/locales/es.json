@@ -26,7 +26,8 @@
     "updateProgress": "Actualizando las transacciones...",
     "updatedTransactionsMessage": "Se han actualizado %d transacciones.",
     "deletedTransactionsMessage": "Se han eliminado %d transacciones.",
-    "deletedCategoriesMessage": "Se han eliminado %d filtros y se han actualizado % transacciones."
+    "deletedCategoriesMessage": "Se han eliminado %d filtros y se han actualizado % transacciones.",
+    "retrievingTransactions": "Obteniendo las transacciones..."
   },
   "importView": {
     "title": "Importa un archivo CSV",
@@ -93,10 +94,13 @@
   "browseView": {
     "title": "Exploración de datos",
     "bankOverview": "Resumen bancario",
+    "bankDetail": "Transacciones del banco",
     "totalAmount": "Cantidad total",
     "bankNameLabel": "Banco",
     "amountLabel": "Cantidad",
-    "dateLabel": "Fecha"
+    "dateLabel": "Fecha",
+    "descriptionLabel": "Descripción",
+    "categoryLabel": "Categoría"
   },
   "dialogNewFilter": {
     "title": "Nuevo filtro",

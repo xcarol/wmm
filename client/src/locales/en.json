@@ -26,7 +26,8 @@
     "updateProgress": "Updating transactions...",
     "updatedTransactionsMessage": "%d transactions have been updated.",
     "deletedTransactionsMessage": "%d transaccions deleted.",
-    "deletedCategoriesMessage": "%d filters deleted and %d transactions have been reset."
+    "deletedCategoriesMessage": "%d filters deleted and %d transactions have been reset.",
+    "retrievingTransactions": "Retrieving transaccions..."
   },
   "importView": {
     "title": "Import CSV File",
@@ -93,10 +94,13 @@
   "browseView": {
     "title": "Browse data",
     "bankOverview": "Bank overview",
+    "bankDetail": "Bank transactions",
     "totalAmount": "Total amount",
     "bankNameLabel": "Bank",
     "amountLabel": "Amoun",
-    "dateLabel": "Date"
+    "dateLabel": "Date",
+    "descriptionLabel": "Description",
+    "categoryLabel": "Category"
   },
   "dialogNewFilter": {
     "title": "New Filter",
