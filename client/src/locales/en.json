@@ -18,14 +18,16 @@
     "categorize": "Categorize",
     "duplicates": "Find duplicates",
     "sql": "SQL Commands",
-    "filters": "Filters"
+    "filters": "Filters",
+    "browser": "Browse"
   },
   "progress": {
     "title": "Operation in progress...",
     "updateProgress": "Updating transactions...",
     "updatedTransactionsMessage": "%d transactions have been updated.",
     "deletedTransactionsMessage": "%d transaccions deleted.",
-    "deletedCategoriesMessage": "%d filters deleted and %d transactions have been reset."
+    "deletedCategoriesMessage": "%d filters deleted and %d transactions have been reset.",
+    "retrievingTransactions": "Retrieving transaccions..."
   },
   "importView": {
     "title": "Import CSV File",
@@ -88,6 +90,17 @@
     "deleteFilterWarningMessage": "You're about to delete the filter:\n  - %s\nAre you sure?",
     "applyFilterWarningMessage": "You're about to apply the filter:\n  - %s\nAre you sure?",
     "applyNewFilterWarningMessage": "Creating the [%s] filter, all coincident transactions will be updated.\nAre you sure?"
+  },
+  "browseView": {
+    "title": "Browse data",
+    "bankOverview": "Bank overview",
+    "bankDetail": "Bank transactions",
+    "totalAmount": "Total amount",
+    "bankNameLabel": "Bank",
+    "amountLabel": "Amoun",
+    "dateLabel": "Date",
+    "descriptionLabel": "Description",
+    "categoryLabel": "Category"
   },
   "dialogNewFilter": {
     "title": "New Filter",

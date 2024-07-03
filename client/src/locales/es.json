@@ -18,14 +18,16 @@
     "categorize": "Categorizar",
     "duplicates": "Buscar duplicados",
     "sql": "Comandos SQL",
-    "filters": "Filtros"
+    "filters": "Filtros",
+    "browse": "Explorar"
   },
   "progress": {
     "title": "Operación en progreso",
     "updateProgress": "Actualizando las transacciones...",
     "updatedTransactionsMessage": "Se han actualizado %d transacciones.",
     "deletedTransactionsMessage": "Se han eliminado %d transacciones.",
-    "deletedCategoriesMessage": "Se han eliminado %d filtros y se han actualizado % transacciones."
+    "deletedCategoriesMessage": "Se han eliminado %d filtros y se han actualizado % transacciones.",
+    "retrievingTransactions": "Obteniendo las transacciones..."
   },
   "importView": {
     "title": "Importa un archivo CSV",
@@ -88,6 +90,17 @@
     "deleteFilterWarningMessage": "Vas a borrar el filtro:\n  - %s\n¿Estás seguro?",
     "applyFilterWarningMessage": "Vas a aplicar el filtro:\n  - %s\n¿Estás seguro?",
     "applyNewFilterWarningMessage": "Al crear el filtro [%s] se actulitzarán las transacciones coincidentes.\n¿Estás seguro?"
+  },
+  "browseView": {
+    "title": "Exploración de datos",
+    "bankOverview": "Resumen bancario",
+    "bankDetail": "Transacciones del banco",
+    "totalAmount": "Cantidad total",
+    "bankNameLabel": "Banco",
+    "amountLabel": "Cantidad",
+    "dateLabel": "Fecha",
+    "descriptionLabel": "Descripción",
+    "categoryLabel": "Categoría"
   },
   "dialogNewFilter": {
     "title": "Nuevo filtro",

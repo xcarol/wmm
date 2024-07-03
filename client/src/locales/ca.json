@@ -18,14 +18,16 @@
     "categorize": "Categoritzar",
     "duplicates": "Cercar duplicats",
     "sql": "Comandes SQL",
-    "filters": "Filtres"
+    "filters": "Filtres",
+    "browse": "Explorar"
   },
   "progress": {
     "title": "Operació en progress",
     "updateProgress": "Actualitzant les transaccions...",
     "updatedTransactionsMessage": "S'han actualitzat %d transaccions.",
     "deletedTransactionsMessage": "S'han eliminat %d transaccions.",
-    "deletedCategoriesMessage": "S'han eliminat %d filtres i s'han actualitzat %d transaccions."
+    "deletedCategoriesMessage": "S'han eliminat %d filtres i s'han actualitzat %d transaccions.",
+    "retrievingTransactions": "Obtenint les transaccions..."
   },
   "importView": {
     "title": "Importa un arxiu CSV",
@@ -88,6 +90,17 @@
     "deleteFilterWarningMessage": "Et's a punt d'esborrar el filtre:\n  - %s\nN'estàs segur?",
     "applyFilterWarningMessage": "Et's a punt d'aplicar el filtre:\n  - %s\nN'estàs segur?",
     "applyNewFilterWarningMessage": "En crear el filtre [%s] s'actulitzaran les transaccions coincidents.\nN'estàs segur?"
+  },
+  "browseView": {
+    "title": "Exploració de dades",
+    "bankOverview": "Resum bancari",
+    "bankDetail": "Transaccions del banc",
+    "totalAmount": "Quantitat total",
+    "bankNameLabel": "Banc",
+    "amountLabel": "Quantitat",
+    "dateLabel": "Data",
+    "descriptionLabel": "Descripció",
+    "categoryLabel": "Categoria"
   },
   "dialogNewFilter": {
     "title": "Nou filtre",

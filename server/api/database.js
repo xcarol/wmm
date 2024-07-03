@@ -21,20 +21,16 @@ const queryBankNames = "SELECT DISTINCT bank FROM transactions";
 const queryCategoryNames =
   "SELECT DISTINCT category FROM transactions WHERE category != '' ORDER BY category ASC";
 
-// QString queryFilter = "SELECT category FROM filters WHERE filter = '%1'";
-
 const queryFilterNames =
   "SELECT DISTINCT filter FROM filters WHERE category=? ORDER BY filter ASC";
-
-// QString queryDescriptions = "SELECT DISTINCT description FROM transactions "
-// "WHERE category='%1' ORDER BY description ASC";
 
 const queryUncategorizedTransactions =
   "SELECT id, bank, date, description, category, amount FROM transactions WHERE category = ''";
 
-const queryUncategorizedRowsFilter = " AND description LIKE ?";
+const queryBankTransactions =
+  "SELECT id, bank, date, description, category, amount FROM transactions WHERE bank = ?";
 
-// QString queryColumnNames = QString("SELECT * FROM transactions LIMIT 1");
+const queryUncategorizedRowsFilter = " AND description LIKE ?";
 
 const queryUpdateRowsCategoryWithAllFilters =
   "UPDATE transactions AS t \
@@ -49,10 +45,9 @@ const queryUpdateRowsCategoryWithDescriptionLikeFilter =
 const queryUpdateTransactionsCategory =
   "UPDATE transactions SET category = ? WHERE id IN(?)";
 
-//   QString queryBankBalances =
-//   QString("SELECT SUM(amount) as balance, MAX(date) AS latest_date from "
-//           "transactions WHERE bank = '%1' AND "
-//           "date >= '%2' AND date <= '%3'");
+const queryBankBalances =
+  "SELECT bank, SUM(amount) as balance, MAX(date) AS latest_date from \
+    transactions WHERE bank = ? AND date >= ? AND date <= ?";
 
 // QString queryCategoryBalances =
 //   QString("SELECT SUM(amount) as balance from transactions WHERE category "
@@ -84,18 +79,12 @@ const queryMarkNotDuplicateRows =
 const queryAddCategoryFilters =
   "INSERT INTO filters (category, filter) VALUES (?, ?)";
 
-// QString queryDeleteCategoryFilters =
-// QString("DELETE FROM filters WHERE category = '%1'");
-
 const queryDeleteCategories = "DELETE FROM filters WHERE category IN (?)";
 
 const queryDeleteFilters = "DELETE FROM filters WHERE filter IN(?)";
 
 const queryResetRowsCategories =
   "UPDATE transactions SET category = '' WHERE category IN (?)";
-
-// QString queryAddFilter =
-// QString("INSERT INTO filters (category, filter) VALUES ('%1', '%2')");
 
 const queryRenameRowsCategory =
   "UPDATE transactions SET category = ? WHERE category = ?";
@@ -184,6 +173,19 @@ async function renameCategory(oldName, newName) {
   }
 }
 
+async function getBankTransactions(bankName) {
+  try {
+    const connection = await getConnection();
+    const result = await connection.query(queryBankTransactions, bankName);
+    connection.close();
+    return result.at(0);
+  } catch (err) {
+    err.message = `Error [${err}] retrieving transactions.`;
+    console.error(err);
+    throw err;
+  }
+}
+
 async function getDuplicatedTransactions() {
   try {
     const connection = await getConnection();
@@ -209,6 +211,23 @@ async function getUncategorizedTransactions(filter) {
     return result.at(0);
   } catch (err) {
     err.message = `Error [${err}] retrieving uncategorized transactions.`;
+    console.error(err);
+    throw err;
+  }
+}
+
+async function getBankBalance(bank, start, end) {
+  try {
+    const connection = await getConnection();
+    const result = await connection.query(queryBankBalances, [
+      bank,
+      start,
+      end,
+    ]);
+    connection.close();
+    return result.at(0).at(0);
+  } catch (err) {
+    err.message = `Error [${err}] retrieving bank balance.`;
     console.error(err);
     throw err;
   }
@@ -416,8 +435,10 @@ module.exports = {
   deleteTransactions,
   executeSql,
   getBankNames,
+  getBankBalance,
   getCategories,
   getCategoryFilters,
+  getBankTransactions,
   getDuplicatedTransactions,
   getUncategorizedTransactions,
   resetTransactionsCategories,

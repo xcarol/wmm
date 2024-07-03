@@ -2,6 +2,7 @@ const {
   addTransaction,
   applyCategory,
   deleteTransactions,
+  getBankTransactions,
   getDuplicatedTransactions,
   getUncategorizedTransactions,
   resetTransactionsCategories,
@@ -100,6 +101,17 @@ module.exports = (app) => {
     try {
       transactions = req.body.transactions;
       res.json(await updateTransactionsAsNotDuplicated(transactions));
+    } catch (err) {
+      res.status(err.sqlState ? 400 : 500).send(err);
+    }
+  });
+
+  app.get("/transactions", async (req, res) => {
+    let bank;
+
+    try {
+      bank = req.query.bank;
+      res.json(await getBankTransactions(bank));
     } catch (err) {
       res.status(err.sqlState ? 400 : 500).send(err);
     }
