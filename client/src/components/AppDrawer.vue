@@ -4,15 +4,37 @@
     :fixed="$vuetify.display.mdAndDown"
     :bottom="$vuetify.display.xs"
   >
-    <v-list :items="menuOptions">
-      <v-list-item
-        v-for="(item, index) in menuOptions"
-        :key="index"
-        @click="selectItem(item)"
-      >
-        {{ item.title }}
-      </v-list-item>
-    </v-list>
+    <div :items="menuOptions">
+      <v-list>
+        <div
+          v-for="(item, index) in menuOptions"
+          :key="index"
+        >
+          <div v-if="item.value !== undefined">
+            <v-list-item @click="selectItem(item)">
+              {{ item.title }}
+            </v-list-item>
+          </div>
+          <div v-else-if="item.children !== undefined">
+            <v-list-group>
+              <template #activator="{ props: subprops }">
+                <v-list-item
+                  v-bind="subprops"
+                  :title="item.title"
+                ></v-list-item>
+              </template>
+              <v-list-item
+                v-for="(subitem, subindex) in item.children"
+                :key="subindex"
+                @click="selectItem(subitem)"
+              >
+                {{ subitem.title }}
+              </v-list-item>
+            </v-list-group>
+          </div>
+        </div>
+      </v-list>
+    </div>
   </v-navigation-drawer>
 </template>
 
@@ -52,8 +74,18 @@ const menuOptions = [
   },
   {
     title: $t('mainDrawer.browse'),
-    value: '/browse',
-    barTitle: $t('browseView.title'),
+    children: [
+      {
+        title: $t('mainDrawer.browseTransactions'),
+        value: '/browse/transactions',
+        barTitle: $t('browseTransactionsView.title'),
+      },
+      {
+        title: $t('mainDrawer.browseCategories'),
+        value: '/browse/categories',
+        barTitle: $t('browseCategoriesView.title'),
+      },
+    ],
   },
 ];
 
