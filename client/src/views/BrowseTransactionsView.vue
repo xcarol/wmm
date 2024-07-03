@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-card-title>{{ $t('browseView.bankOverview') }}</v-card-title>
+    <v-card-title>{{ $t('browseTransactionsView.bankOverview') }}</v-card-title>
     <v-card-text>
       <v-data-table
         :items="banksBalances"
@@ -11,7 +11,7 @@
         hide-default-footer
       />
     </v-card-text>
-    <v-card-title>{{ $t('browseView.bankDetail') }}</v-card-title>
+    <v-card-title>{{ $t('browseTransactionsView.bankDetail') }}</v-card-title>
     <v-card-actions>
       <v-select
         :items="banksNames"
@@ -50,18 +50,18 @@ const bankDetails = ref([]);
 let totalAmount = 0.0;
 
 const headerBanks = [
-  { title: $t('browseView.bankNameLabel'), key: 'bank' },
-  { title: $t('browseView.amountLabel'), key: 'balance' },
-  { title: $t('browseView.dateLabel'), key: 'date' },
+  { title: $t('browseTransactionsView.bankNameLabel'), key: 'bank' },
+  { title: $t('browseTransactionsView.amountLabel'), key: 'balance' },
+  { title: $t('browseTransactionsView.dateLabel'), key: 'date' },
 ];
 
 const headerDetails = [
-  { title: $t('browseView.bankNameLabel'), key: 'id' },
-  { title: $t('browseView.bankNameLabel'), key: 'bank' },
-  { title: $t('browseView.dateLabel'), key: 'date' },
-  { title: $t('browseView.descriptionLabel'), key: 'description' },
-  { title: $t('browseView.categoryLabel'), key: 'category' },
-  { title: $t('browseView.amountLabel'), key: 'amount', align: 'end' },
+  { title: $t('browseTransactionsView.bankNameLabel'), key: 'id' },
+  { title: $t('browseTransactionsView.bankNameLabel'), key: 'bank' },
+  { title: $t('browseTransactionsView.dateLabel'), key: 'date' },
+  { title: $t('browseTransactionsView.descriptionLabel'), key: 'description' },
+  { title: $t('browseTransactionsView.categoryLabel'), key: 'category' },
+  { title: $t('browseTransactionsView.amountLabel'), key: 'amount', align: 'end' },
 ];
 
 const getBanksBrief = async () => {
@@ -98,7 +98,7 @@ const getBanksBrief = async () => {
     });
 
     banksBalances.value.push({
-      bank: $t('browseView.totalAmount'),
+      bank: $t('browseTransactionsView.totalAmount'),
       balance: totalAmount.toFixed(2),
     });
   } catch (e) {

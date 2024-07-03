@@ -5,7 +5,7 @@ import CategorizeView from '../views/CategorizeView.vue';
 import DuplicatesView from '../views/DuplicatesView.vue';
 import SqlView from '../views/SqlView.vue';
 import FiltersView from '../views/FiltersView.vue';
-import BrowseView from '../views/BrowseView.vue';
+import BrowseTransactionsView from '../views/BrowseTransactionsView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -41,9 +41,9 @@ const router = createRouter({
       component: FiltersView,
     },
     {
-      path: '/browse',
-      name: 'browse',
-      component: BrowseView,
+      path: '/browse/transactions',
+      name: 'browse/transactions',
+      component: BrowseTransactionsView,
     },
   ],
 });
