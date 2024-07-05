@@ -19,7 +19,9 @@
     "duplicates": "Buscar duplicados",
     "sql": "Comandos SQL",
     "filters": "Filtros",
-    "browse": "Explorar"
+    "browse": "Explorar",
+    "browseTransactions": "Transacciones",
+    "browseCategories": "Categorías"
   },
   "progress": {
     "title": "Operación en progreso",
@@ -91,7 +93,7 @@
     "applyFilterWarningMessage": "Vas a aplicar el filtro:\n  - %s\n¿Estás seguro?",
     "applyNewFilterWarningMessage": "Al crear el filtro [%s] se actulitzarán las transacciones coincidentes.\n¿Estás seguro?"
   },
-  "browseView": {
+  "browseTransactionsView": {
     "title": "Exploración de datos",
     "bankOverview": "Resumen bancario",
     "bankDetail": "Transacciones del banco",
@@ -101,6 +103,9 @@
     "dateLabel": "Fecha",
     "descriptionLabel": "Descripción",
     "categoryLabel": "Categoría"
+  },
+  "browseCategoriesView": {
+    "title": "Explocación de categorías"
   },
   "dialogNewFilter": {
     "title": "Nuevo filtro",

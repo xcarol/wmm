@@ -19,7 +19,9 @@
     "duplicates": "Find duplicates",
     "sql": "SQL Commands",
     "filters": "Filters",
-    "browser": "Browse"
+    "browser": "Browse",
+    "browseTransactions": "Transactions",
+    "browseCategories": "Categories"
   },
   "progress": {
     "title": "Operation in progress...",
@@ -91,8 +93,8 @@
     "applyFilterWarningMessage": "You're about to apply the filter:\n  - %s\nAre you sure?",
     "applyNewFilterWarningMessage": "Creating the [%s] filter, all coincident transactions will be updated.\nAre you sure?"
   },
-  "browseView": {
-    "title": "Browse data",
+  "browseTransactionsView": {
+    "title": "Browse transactions",
     "bankOverview": "Bank overview",
     "bankDetail": "Bank transactions",
     "totalAmount": "Total amount",
@@ -101,6 +103,9 @@
     "dateLabel": "Date",
     "descriptionLabel": "Description",
     "categoryLabel": "Category"
+  },
+  "browseCategoriesView": {
+    "title": "Browse categories"
   },
   "dialogNewFilter": {
     "title": "New Filter",
