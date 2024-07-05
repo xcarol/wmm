@@ -18,6 +18,7 @@ class Api {
     updateTransactionsByFilter: '/transactions/filter',
     uncategorizedTransactions: '/transactions/uncategorized?filter={1}',
     duplicated: '/transactions/duplicated',
+    years: '/transactions/years',
     sql: '/sql',
     backupDatabase: '/sql/backup',
   };
@@ -152,6 +153,11 @@ class Api {
 
   bankTransactions(bank) {
     const url = Api.endpoint(this.endpoints.transactionsOfBank, bank);
+    return this.axios.get(url);
+  }
+
+  getYears() {
+    const url = Api.endpoint(this.endpoints.years);
     return this.axios.get(url);
   }
 }

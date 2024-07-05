@@ -74,7 +74,7 @@ const queryDeleteRows = "DELETE FROM transactions WHERE id IN (?)";
 const queryMarkNotDuplicateRows =
   "UPDATE transactions SET not_duplicate = TRUE WHERE id IN (?)";
 
-// QString queryYears = QString("SELECT DISTINCT YEAR(date) FROM transactions");
+const queryYears = "SELECT DISTINCT YEAR(date) as year FROM transactions";
 
 const queryAddCategoryFilters =
   "INSERT INTO filters (category, filter) VALUES (?, ?)";
@@ -211,6 +211,19 @@ async function getUncategorizedTransactions(filter) {
     return result.at(0);
   } catch (err) {
     err.message = `Error [${err}] retrieving uncategorized transactions.`;
+    console.error(err);
+    throw err;
+  }
+}
+
+async function getYears() {
+  try {
+    const connection = await getConnection();
+    const result = await connection.query(queryYears);
+    connection.close();
+    return result.at(0).map((row) => row.year);
+  } catch (err) {
+    err.message = `Error [${err}] retrieving years from transactions.`;
     console.error(err);
     throw err;
   }
@@ -441,6 +454,7 @@ module.exports = {
   getBankTransactions,
   getDuplicatedTransactions,
   getUncategorizedTransactions,
+  getYears,
   resetTransactionsCategories,
   updateTransactionsCategory,
   updateTransactionsByFilter,

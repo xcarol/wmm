@@ -105,7 +105,8 @@
     "categoryLabel": "Categoria"
   },
   "browseCategoriesView": {
-    "title": "Exploració de categories"
+    "title": "Exploració de categories",
+    "yearLabel": "Sel·lecciona l'any"
   },
   "dialogNewFilter": {
     "title": "Nou filtre",

@@ -5,6 +5,7 @@ const {
   getBankTransactions,
   getDuplicatedTransactions,
   getUncategorizedTransactions,
+  getYears,
   resetTransactionsCategories,
   updateTransactionsCategory,
   updateTransactionsByFilter,
@@ -112,6 +113,14 @@ module.exports = (app) => {
     try {
       bank = req.query.bank;
       res.json(await getBankTransactions(bank));
+    } catch (err) {
+      res.status(err.sqlState ? 400 : 500).send(err);
+    }
+  });
+
+  app.get("/transactions/years", async (req, res) => {
+    try {
+      res.json(await getYears());
     } catch (err) {
       res.status(err.sqlState ? 400 : 500).send(err);
     }

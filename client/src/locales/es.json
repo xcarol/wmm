@@ -105,7 +105,8 @@
     "categoryLabel": "Categoría"
   },
   "browseCategoriesView": {
-    "title": "Explocación de categorías"
+    "title": "Explocación de categorías",
+    "yearLabel": "Selecciona el año"
   },
   "dialogNewFilter": {
     "title": "Nuevo filtro",
