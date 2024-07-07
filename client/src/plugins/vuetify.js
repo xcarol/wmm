@@ -67,12 +67,26 @@ const vuetify = createVuetify({
     themes: {
       light: {
         colors: {
-          primary: colors.grey.darken3,
+          background: colors.blueGrey.lighten3,
+          surface: colors.blueGrey.lighten3,
+          primary: colors.teal.lighten1,
+          secondary: colors.green.base,
+          success: colors.green.base,
+          warning: colors.yellow.base,
+          error: colors.red.base,
+          info: colors.blue.base,
         },
       },
       dark: {
         colors: {
-          primary: colors.grey.base,
+          background: colors.blueGrey.darken3,
+          surface: colors.blueGrey.darken3,
+          primary: colors.teal.darken1,
+          secondary: colors.green.base,
+          success: colors.green.base,
+          warning: colors.yellow.base,
+          error: colors.red.base,
+          info: colors.blue.base,
         },
       },
     },
