@@ -62,6 +62,7 @@ const adjustedHeight = computed(() => {
 });
 
 const chartData = computed(() => {
+  const selected = selectedCategories.value;
   const categories = tableCategories.value;
 
   const labels = [];
@@ -69,11 +70,12 @@ const chartData = computed(() => {
   const data = [];
 
   for (let count = 0; count < categories.length; count += 1) {
-    labels.push(categories.at(count).category);
-    const c = `#${((Math.random() % 0xff) * 100).toFixed(0)}${((Math.random() % 0xff) * 100).toFixed(0)}${((Math.random() % 0xff) * 100).toFixed(0)}`;
-    console.log(c);
-    backgroundColor.push(c);
-    data.push(categories.at(count).balance);
+    const category = categories.at(count);
+    if (selected.includes(category.category) === false) {
+      labels.push(category.category);
+      backgroundColor.push(`#${((Math.random() % 0xff) * 100).toFixed(0)}${((Math.random() % 0xff) * 100).toFixed(0)}${((Math.random() % 0xff) * 100).toFixed(0)}`);
+      data.push(category.balance);
+    }
   }
 
   return { labels, datasets: [{ backgroundColor, data }] };
