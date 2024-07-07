@@ -21,13 +21,13 @@ const defaults = {
   VCardActions: {
     VBtn: {
       ripple: false,
-      variant: 'tonal',
+      variant: 'elevated',
       color: 'primary',
     },
   },
   VBtn: {
     ripple: false,
-    variant: 'tonal',
+    variant: 'elevated',
     color: 'primary',
   },
   VSelect: {

@@ -35,7 +35,7 @@ const optionSelected = (optionTitle) => {
 };
 </script>
 
-<style scoped>
+<style>
 .app-backgroud {
   background-image: url('logo-semi.png');
   background-size: cover;
@@ -43,4 +43,9 @@ const optionSelected = (optionTitle) => {
   background-repeat: no-repeat;
   height: 100vh;
 }
+
+.v-btn--disabled {
+  opacity: 0.5 !important;
+}
+
 </style>
