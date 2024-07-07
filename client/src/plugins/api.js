@@ -14,6 +14,7 @@ class Api {
     transactionsOfBank: '/transactions?bank={1}',
     transactionsApplyCategory: '/transactions/category',
     transactionsCategorize: '/transactions/category',
+    transactionsCategoryBalance: '/transactions/category?category={1}&start={2}&end={3}',
     resetCategoryFromTransactions: '/transactions/category',
     updateTransactionsByFilter: '/transactions/filter',
     uncategorizedTransactions: '/transactions/uncategorized?filter={1}',
@@ -158,6 +159,11 @@ class Api {
 
   getYears() {
     const url = Api.endpoint(this.endpoints.years);
+    return this.axios.get(url);
+  }
+
+  categoryBalance(category, start, end) {
+    const url = Api.endpoint(this.endpoints.transactionsCategoryBalance, category, start, end);
     return this.axios.get(url);
   }
 }

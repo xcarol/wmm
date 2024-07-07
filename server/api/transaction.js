@@ -2,6 +2,7 @@ const {
   addTransaction,
   applyCategory,
   deleteTransactions,
+  getCategoryBalance,
   getBankTransactions,
   getDuplicatedTransactions,
   getUncategorizedTransactions,
@@ -121,6 +122,18 @@ module.exports = (app) => {
   app.get("/transactions/years", async (req, res) => {
     try {
       res.json(await getYears());
+    } catch (err) {
+      res.status(err.sqlState ? 400 : 500).send(err);
+    }
+  });
+
+  app.get("/transactions/category", async (req, res) => {
+    try {
+      const category = req.query.category;
+      const start = req.query.start;
+      const end = req.query.end;
+
+      res.json(await getCategoryBalance(category, start, end));
     } catch (err) {
       res.status(err.sqlState ? 400 : 500).send(err);
     }

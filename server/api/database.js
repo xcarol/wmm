@@ -49,10 +49,8 @@ const queryBankBalances =
   "SELECT bank, SUM(amount) as balance, MAX(date) AS latest_date from \
     transactions WHERE bank = ? AND date >= ? AND date <= ?";
 
-// QString queryCategoryBalances =
-//   QString("SELECT SUM(amount) as balance from transactions WHERE category "
-//           "= '%1' AND "
-//           "date >= '%2' AND date <= '%3'");
+const queryCategoryBalance =
+  "SELECT category, SUM(amount) as balance from transactions WHERE category = ? AND date >= ? AND date <= ?";
 
 const queryDuplicateRows =
   "SELECT id, bank, date, description, category, amount FROM transactions t1 \
@@ -259,6 +257,23 @@ async function getCategories() {
   }
 }
 
+async function getCategoryBalance(category, start, end) {
+  try {
+    const connection = await getConnection();
+    const result = await connection.query(queryCategoryBalance, [
+      category,
+      start,
+      end,
+    ]);
+    connection.close();
+    return result.at(0).at(0);
+  } catch (err) {
+    err.message = `Error [${err}] retrieving category balance.`;
+    console.error(err);
+    throw err;
+  }
+}
+
 async function getCategoryFilters(category) {
   try {
     const connection = await getConnection();
@@ -450,6 +465,7 @@ module.exports = {
   getBankNames,
   getBankBalance,
   getCategories,
+  getCategoryBalance,
   getCategoryFilters,
   getBankTransactions,
   getDuplicatedTransactions,
