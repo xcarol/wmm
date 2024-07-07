@@ -8,19 +8,29 @@
         @update:model-value="yearSelected"
       />
     </v-card-text>
-    <v-card-text v-resize="onResize">
-      <v-data-table-virtual
-        v-model="selectedCategories"
-        :items="tableCategories"
-        item-value="category"
-        show-select
-        class="elevation-1"
-        fixed-header
-        :height="adjustedHeight"
-        @update:model-value="updateModelValue"
-      >
-        <template #[`header.data-table-select`]></template>
-      </v-data-table-virtual>
+    <v-card-text
+      v-show="selectedYear"
+      v-resize="onResize"
+    >
+      <v-row>
+        <v-col cols="6">
+          <v-data-table-virtual
+            v-model="selectedCategories"
+            :items="tableCategories"
+            item-value="category"
+            show-select
+            class="elevation-1"
+            fixed-header
+            :height="adjustedHeight"
+            @update:model-value="updateModelValue"
+          >
+            <template #[`header.data-table-select`]></template>
+          </v-data-table-virtual>
+        </v-col>
+        <v-col cols="6">
+          <pie :data="chartData" />
+        </v-col>
+      </v-row>
     </v-card-text>
   </v-card>
 </template>
@@ -28,9 +38,13 @@
 <script setup>
 import { ref, onBeforeMount, onMounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Pie } from 'vue-chartjs';
 import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
 import { useProgressDialogStore } from '../stores/progressDialog';
+
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 const api = useApi();
 const { t: $t } = useI18n();
@@ -45,6 +59,24 @@ const innerHeight = ref(0);
 
 const adjustedHeight = computed(() => {
   return innerHeight.value - 290;
+});
+
+const chartData = computed(() => {
+  const categories = tableCategories.value;
+
+  const labels = [];
+  const backgroundColor = [];
+  const data = [];
+
+  for (let count = 0; count < categories.length; count += 1) {
+    labels.push(categories.at(count).category);
+    const c = `#${((Math.random() % 0xff) * 100).toFixed(0)}${((Math.random() % 0xff) * 100).toFixed(0)}${((Math.random() % 0xff) * 100).toFixed(0)}`;
+    console.log(c);
+    backgroundColor.push(c);
+    data.push(categories.at(count).balance);
+  }
+
+  return { labels, datasets: [{ backgroundColor, data }] };
 });
 
 const yearSelected = async () => {
@@ -85,7 +117,7 @@ const yearSelected = async () => {
         tableCategories.value.push({
           category: categoryResult.category,
           balance: categoryResult.balance.toFixed(2),
-          percent: (categoryResult.balance * 100.0 / totalAmount).toFixed(2),
+          percent: ((categoryResult.balance * 100.0) / totalAmount).toFixed(2),
         });
       }
     });
@@ -108,7 +140,7 @@ const onResize = () => {
 const updatePercetages = () => {
   let totalAmount = 0.0;
 
-  for (let count = 0 ; count < tableCategories.value.length ; count += 1) {
+  for (let count = 0; count < tableCategories.value.length; count += 1) {
     const category = tableCategories.value.at(count);
     if (selectedCategories.value.includes(category.category) === false) {
       totalAmount += parseFloat(category.balance);
@@ -117,10 +149,12 @@ const updatePercetages = () => {
     }
   }
 
-  for (let count = 0 ; count < tableCategories.value.length ; count += 1) {
+  for (let count = 0; count < tableCategories.value.length; count += 1) {
     const category = tableCategories.value.at(count);
     if (selectedCategories.value.includes(category.category) === false) {
-      tableCategories.value.at(count).percent = (category.balance * 100.0 / totalAmount).toFixed(2); 
+      tableCategories.value.at(count).percent = ((category.balance * 100.0) / totalAmount).toFixed(
+        2,
+      );
     }
   }
 };
