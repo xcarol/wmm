@@ -29,7 +29,8 @@
     "updatedTransactionsMessage": "%d transactions have been updated.",
     "deletedTransactionsMessage": "%d transaccions deleted.",
     "deletedCategoriesMessage": "%d filters deleted and %d transactions have been reset.",
-    "retrievingTransactions": "Retrieving transaccions..."
+    "retrievingTransactions": "Retrieving transaccions...",
+    "retrievingCategories": "Retrieving categories..."
   },
   "importView": {
     "title": "Import CSV File",

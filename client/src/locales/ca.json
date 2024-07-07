@@ -29,7 +29,8 @@
     "updatedTransactionsMessage": "S'han actualitzat %d transaccions.",
     "deletedTransactionsMessage": "S'han eliminat %d transaccions.",
     "deletedCategoriesMessage": "S'han eliminat %d filtres i s'han actualitzat %d transaccions.",
-    "retrievingTransactions": "Obtenint les transaccions..."
+    "retrievingTransactions": "Obtenint les transaccions...",
+    "retrievingCategories": "Obtenint les categories..."
   },
   "importView": {
     "title": "Importa un arxiu CSV",
