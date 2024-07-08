@@ -10,7 +10,6 @@
     </v-card-text>
     <v-card-text
       v-show="selectedYear"
-      v-resize="onResize"
     >
       <v-row>
         <v-col cols="6">
@@ -21,7 +20,6 @@
             show-select
             class="elevation-1"
             fixed-header
-            :height="adjustedHeight"
             @update:model-value="updateModelValue"
           >
             <template #[`header.data-table-select`]></template>
@@ -36,7 +34,7 @@
 </template>
 
 <script setup>
-import { ref, onBeforeMount, onMounted, computed } from 'vue';
+import { ref, onBeforeMount, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Chart as ChartJS, ArcElement, Tooltip } from 'chart.js';
 import { Pie } from 'vue-chartjs';
@@ -55,11 +53,11 @@ const yearItems = ref([]);
 const selectedYear = ref('');
 const selectedCategories = ref([]);
 const tableCategories = ref([]);
-const innerHeight = ref(0);
 
-const adjustedHeight = computed(() => {
-  return innerHeight.value - 290;
-});
+let totalIncomeAmount = 0.0;
+let totalExpenseAmount = 0.0;
+let expenseCategories = [];
+let incomeCategories = [];
 
 const chartData = computed(() => {
   const selected = selectedCategories.value;
@@ -73,7 +71,9 @@ const chartData = computed(() => {
     const category = categories.at(count);
     if (selected.includes(category.category) === false) {
       labels.push(category.category);
-      backgroundColor.push(`#${((Math.random() % 0xff) * 100).toFixed(0)}${((Math.random() % 0xff) * 100).toFixed(0)}${((Math.random() % 0xff) * 100).toFixed(0)}`);
+      backgroundColor.push(
+        `#${((Math.random() % 0xff) * 100).toFixed(0)}${((Math.random() % 0xff) * 100).toFixed(0)}${((Math.random() % 0xff) * 100).toFixed(0)}`,
+      );
       data.push(category.balance);
     }
   }
@@ -81,69 +81,24 @@ const chartData = computed(() => {
   return { labels, datasets: [{ backgroundColor, data }] };
 });
 
-const yearSelected = async () => {
+const resetData = () => {
   selectedCategories.value = [];
   tableCategories.value = [];
-  let totalAmount = 0.0;
+  incomeCategories = [];
+  expenseCategories = [];
+  totalExpenseAmount = 0.0;
+  totalIncomeAmount = 0.0;
+};
 
-  progressDialog.startProgress({
-    steps: 0,
-    description: $t('progress.retrievingCategories'),
+const addTransaction = (category, transaction, totalAmount) => {
+  category.value.push({
+    category: transaction.category,
+    balance: transaction.balance.toFixed(2),
+    percent: ((transaction.balance * 100.0) / totalAmount.value).toFixed(2),
   });
-
-  try {
-    const { data } = await api.categoriesNames();
-
-    const categories = data;
-
-    const allBalancePromises = [];
-    for (let categoryCount = 0; categoryCount < categories.length; categoryCount += 1) {
-      allBalancePromises.push(
-        api.categoryBalance(
-          categories.at(categoryCount),
-          `${selectedYear.value}/01/01`,
-          `${selectedYear.value}/12/31`,
-        ),
-      );
-    }
-
-    const results = await Promise.all(allBalancePromises);
-
-    results.forEach(async (result) => {
-      totalAmount += result.data.balance;
-    });
-
-    results.forEach(async (result) => {
-      const { data: categoryResult } = result;
-      if (categoryResult.category) {
-        tableCategories.value.push({
-          category: categoryResult.category,
-          balance: categoryResult.balance.toFixed(2),
-          percent: ((categoryResult.balance * 100.0) / totalAmount).toFixed(2),
-        });
-      }
-    });
-  } catch (e) {
-    appStore.alertMessage = api.getErrorMessage(e);
-  }
-
-  progressDialog.stopProgress();
 };
 
-const updateYears = async () => {
-  try {
-    const result = await api.getYears();
-    yearItems.value = result.data;
-  } catch (e) {
-    appStore.alertMessage = api.getErrorMessage(e);
-  }
-};
-
-const onResize = () => {
-  innerHeight.value = window.innerHeight;
-};
-
-const updatePercetages = () => {
+const updateView = () => {
   let totalAmount = 0.0;
 
   for (let count = 0; count < tableCategories.value.length; count += 1) {
@@ -165,10 +120,80 @@ const updatePercetages = () => {
   }
 };
 
-const updateModelValue = () => {
-  updatePercetages();
+const computeAmounts = (balances) => {
+  balances.forEach(({ data: { balance } }) => {
+    if (balance >= 0) {
+      totalIncomeAmount.value += balance;
+    } else {
+      totalExpenseAmount.value += balance;
+    }
+  });
 };
 
-onMounted(() => onResize());
+const addTransactions = (transactions) => {
+  transactions.forEach(async (result) => {
+    const { data: transaction } = result;
+    if (transaction.category) {
+      if (transaction.balance >= 0) {
+        addTransaction(incomeCategories, transaction, totalIncomeAmount);
+      } else {
+        addTransaction(expenseCategories, transaction, totalExpenseAmount);
+      }
+    }
+  });
+};
+
+const resquestBalances = async (year) => {
+  const { data } = await api.categoriesNames();
+
+  const categories = data;
+  const allBalancePromises = [];
+  for (let categoryCount = 0; categoryCount < categories.length; categoryCount += 1) {
+    allBalancePromises.push(
+      api.categoryBalance(categories.at(categoryCount), `${year}/01/01`, `${year}/12/31`),
+    );
+  }
+
+  return Promise.all(allBalancePromises);
+};
+
+const yearSelected = async () => {
+  resetData();
+
+  progressDialog.startProgress({
+    steps: 0,
+    description: $t('progress.retrievingCategories'),
+  });
+
+  try {
+    const balances = await resquestBalances(selectedYear.value);
+
+    computeAmounts(balances);
+    addTransactions(balances);
+  } catch (e) {
+    appStore.alertMessage = api.getErrorMessage(e);
+  }
+
+  progressDialog.stopProgress();
+
+  // TODO: depend on current view exepnse/income
+  tableCategories.value = expenseCategories.value;
+
+  updateView();
+};
+
+const updateYears = async () => {
+  try {
+    const result = await api.getYears();
+    yearItems.value = result.data;
+  } catch (e) {
+    appStore.alertMessage = api.getErrorMessage(e);
+  }
+};
+
+const updateModelValue = () => {
+  updateView();
+};
+
 onBeforeMount(() => updateYears());
 </script>
