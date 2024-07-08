@@ -38,13 +38,13 @@
 <script setup>
 import { ref, onBeforeMount, onMounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { Chart as ChartJS, ArcElement, Tooltip } from 'chart.js';
 import { Pie } from 'vue-chartjs';
 import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
 import { useProgressDialogStore } from '../stores/progressDialog';
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(ArcElement, Tooltip);
 
 const api = useApi();
 const { t: $t } = useI18n();
@@ -131,8 +131,12 @@ const yearSelected = async () => {
 };
 
 const updateYears = async () => {
-  const result = await api.getYears();
-  yearItems.value = result.data;
+  try {
+    const result = await api.getYears();
+    yearItems.value = result.data;
+  } catch (e) {
+    appStore.alertMessage = api.getErrorMessage(e);
+  }
 };
 
 const onResize = () => {

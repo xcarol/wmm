@@ -6,7 +6,7 @@ import DuplicatesView from '../views/DuplicatesView.vue';
 import SqlView from '../views/SqlView.vue';
 import FiltersView from '../views/FiltersView.vue';
 import BrowseTransactionsView from '../views/BrowseTransactionsView.vue';
-import BrowseCategoriesView from '../views/BrowserCategoiresView.vue';
+import BrowseCategoriesView from '../views/BrowserCategoriesView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
