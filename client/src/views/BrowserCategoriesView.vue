@@ -91,10 +91,10 @@ const resetData = () => {
 };
 
 const addTransaction = (category, transaction, totalAmount) => {
-  category.value.push({
+  category.push({
     category: transaction.category,
     balance: transaction.balance.toFixed(2),
-    percent: ((transaction.balance * 100.0) / totalAmount.value).toFixed(2),
+    percent: ((transaction.balance * 100.0) / totalAmount).toFixed(2),
   });
 };
 
@@ -123,9 +123,9 @@ const updateView = () => {
 const computeAmounts = (balances) => {
   balances.forEach(({ data: { balance } }) => {
     if (balance >= 0) {
-      totalIncomeAmount.value += balance;
+      totalIncomeAmount += balance;
     } else {
-      totalExpenseAmount.value += balance;
+      totalExpenseAmount += balance;
     }
   });
 };
@@ -177,7 +177,7 @@ const yearSelected = async () => {
   progressDialog.stopProgress();
 
   // TODO: depend on current view exepnse/income
-  tableCategories.value = expenseCategories.value;
+  tableCategories.value = expenseCategories;
 
   updateView();
 };
