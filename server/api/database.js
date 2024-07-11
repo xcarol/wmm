@@ -19,7 +19,8 @@ const queryInsertRow =
 const queryBankNames = "SELECT DISTINCT bank FROM transactions";
 
 const queryCategoryNames =
-  "SELECT DISTINCT category FROM transactions WHERE category != '' ORDER BY category ASC";
+  "SELECT DISTINCT category FROM transactions WHERE category != '' UNION SELECT DISTINCT category \
+    FROM filters ORDER BY category ASC";
 
 const queryFilterNames =
   "SELECT DISTINCT filter FROM filters WHERE category=? ORDER BY filter ASC";
