@@ -50,7 +50,26 @@ const queryBankBalances =
     transactions WHERE bank = ? AND date >= ? AND date <= ?";
 
 const queryCategoryBalance =
-  "SELECT category, SUM(amount) as balance from transactions WHERE category = ? AND date >= ? AND date <= ?";
+"WITH category_transactions AS ( \
+  SELECT \
+    category, \
+    YEAR(date) AS year, \
+    MONTH(date) AS month, \
+    SUM(amount) AS total_amount, \
+    COUNT(*) AS transaction_count \
+  FROM transactions \
+WHERE category = ? \
+  AND date >= ? \
+  AND date <= ? \
+  GROUP BY category, YEAR(date), MONTH(date) \
+) \
+SELECT \
+  category, \
+  SUM(total_amount) AS balance, \
+  AVG(total_amount) AS avg_monthly_balance, \
+  AVG(transaction_count) AS avg_monthly_transactions \
+FROM category_transactions \
+GROUP BY category";
 
 const queryDuplicateRows =
   "SELECT id, bank, date, description, category, amount FROM transactions t1 \
@@ -367,7 +386,7 @@ async function executeSql(query) {
     connection.close();
     return result;
   } catch (err) {
-    err.message = `Error [${err}] executing the following query [${categories}].`;
+    err.message = `Error [${err}] executing the following query [${query}].`;
     console.error(err);
     throw err;
   }
