@@ -95,6 +95,7 @@ const addTransaction = (category, transaction, totalAmount) => {
     category: transaction.category,
     balance: transaction.balance.toFixed(2),
     percent: ((transaction.balance * 100.0) / totalAmount).toFixed(2),
+    month_average: transaction.avg_monthly_balance,
   });
 };
 
