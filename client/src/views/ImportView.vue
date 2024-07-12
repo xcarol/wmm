@@ -103,7 +103,7 @@ const csvDateToSql = (date) => {
 
 const csvAmountToSql = (amount) => amount.replace('.', '').replace(',', '.');
 
-const importFile = async () => {
+const importFileToDatabase = async () => {
   const firstRow = firstRowIsAHeader.value === true ? 1 : 0;
   let rowCount = firstRow;
 
@@ -140,12 +140,48 @@ const importFile = async () => {
           .replace('%d', appStore.csvfile.rowCount - firstRow),
       });
     }
-    appStore.alertMessage = $t('importView.importedRows').replace('%d', rowCount - firstRow);
   } catch (e) {
     appStore.alertMessage = $t('importView.importError')
       .replace('%d', e.message)
       .replace('%d', rowCount);
   }
   progressDialog.stopProgress();
+
+  return rowCount - firstRow;
+};
+
+const applyFilters = async () => {
+  progressDialog.startProgress({
+    steps: appStore.csvfile.rowCount,
+    description: $t('importView.applyingCategory').replace('%s', ''),
+  });
+  try {
+    const { data: categories } = await api.categoriesNames();
+
+    for (let count = 0; count < categories.length; count += 1) {
+      const category = categories.at(count);
+      progressDialog.updateProgress({
+        description: $t('importView.applyingCategory').replace('%s', category),
+      });
+
+      // eslint-disable-next-line no-await-in-loop
+      await api.applyCategoryToTransactions(category);
+
+      // This is just to make user aware
+      // eslint-disable-next-line no-await-in-loop
+      await new Promise((r) => {
+        setTimeout(r, 250);
+      });
+    }
+  } catch (e) {
+    appStore.alertMessage = api.getErrorMessage(e);
+  }
+  progressDialog.stopProgress();
+};
+
+const importFile = async () => {
+  const importedRows = await importFileToDatabase();
+  await applyFilters();
+  appStore.alertMessage = $t('importView.importedRows').replace('%d', importedRows);
 };
 </script>

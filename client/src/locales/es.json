@@ -45,7 +45,8 @@
     "importButtonLabel": "Importar",
     "importedRows": "Se han importado %d filas.",
     "importError": "Error: %d en la línea: %d",
-    "importingRows": "Se han importado %d línias de %d..."
+    "importingRows": "Se han importado %d línias de %d...",
+    "applyingCategory": "Aplicando la categoría [%s]"
   },
   "duplicatesView": {
     "title": "Busqueda de duplicados",
