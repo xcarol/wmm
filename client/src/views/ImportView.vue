@@ -23,6 +23,7 @@
 
 <script setup>
 import dayjs from 'dayjs';
+import 'dayjs/locale/es';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -35,7 +36,6 @@ import ColumnSelection from '../components/import-view/ColumnSelection.vue';
 import BankSelection from '../components/import-view/BankSelection.vue';
 
 dayjs.extend(customParseFormat);
-dayjs.locale('es');
 
 const { t: $t } = useI18n();
 const appStore = useAppStore();
@@ -81,8 +81,26 @@ const selectedBank = (value) => {
 const BANK_LENGTH = 200;
 const DESCRIPTION_LENGTH = 200;
 
-const csvDateToSql = (date) =>
-  dayjs(date, 'DD/MM/YYYY').toISOString().replace('T', ' ').replace('.000Z', '');
+const csvDateToSql = (date) => {
+  let datejs = dayjs(date, 'DD/MM/YYYY', 'es').isValid() ? dayjs(date, 'DD/MM/YYYY', 'es') : null;
+
+  if (datejs === null) {
+    datejs = dayjs(date, 'DD-MM-YYYY').isValid() ? dayjs(date, 'DD-MM-YYYY') : null;
+  }
+  if (datejs === null) {
+    datejs = dayjs(date, 'YYYY/MM/DD').isValid() ? dayjs(date, 'YYYY/MM/DD') : null;
+  }
+  if (datejs === null) {
+    datejs = dayjs(date, 'YYYY-MM-DD').isValid() ? dayjs(date, 'YYYY-MM-DD') : null;
+  }
+
+  if (datejs === null) {
+    datejs = dayjs(date);
+  }
+
+  return datejs.toISOString().replace('T', ' ').replace('.000Z', '');
+};
+
 const csvAmountToSql = (amount) => amount.replace('.', '').replace(',', '.');
 
 const importFile = async () => {
