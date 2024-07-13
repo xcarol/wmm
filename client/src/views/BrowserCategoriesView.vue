@@ -7,10 +7,28 @@
         :items="yearItems"
         @update:model-value="yearSelected"
       />
+      <v-radio-group v-model="categoryView">
+        <v-row>
+          <v-col>
+            <v-radio
+              value="incomes"
+              label="Incomes"
+              :disabled="selectedYear === ''"
+              @click.stop="showIncomes"
+            />
+          </v-col>
+          <v-col
+            ><v-radio
+              value="expenses"
+              label="Expenses"
+              :disabled="selectedYear === ''"
+              @click.stop="showExpenses"
+            />
+          </v-col>
+        </v-row>
+      </v-radio-group>
     </v-card-text>
-    <v-card-text
-      v-show="selectedYear"
-    >
+    <v-card-text v-show="selectedYear">
       <v-row>
         <v-col cols="6">
           <v-data-table-virtual
@@ -27,7 +45,10 @@
           </v-data-table-virtual>
         </v-col>
         <v-col cols="6">
-          <pie :data="chartData" />
+          <pie
+            :data="chartData"
+            :options="chartOptions"
+          />
         </v-col>
       </v-row>
     </v-card-text>
@@ -54,6 +75,7 @@ const yearItems = ref([]);
 const selectedYear = ref('');
 const selectedCategories = ref([]);
 const tableCategories = ref([]);
+const categoryView = ref('');
 
 let totalIncomeAmount = 0.0;
 let totalExpenseAmount = 0.0;
@@ -68,10 +90,10 @@ const headerDetails = [
 ];
 
 const randomColor = () => {
-  const red = (((Math.random() % 0xdd) * 100) + 0x22).toString(16).toUpperCase().slice(0,2);
-  const green = (((Math.random() % 0xdd) * 100) + 0x22).toString(16).toUpperCase().slice(0,2);
-  const blue = (((Math.random() % 0xdd) * 100) + 0x22).toString(16).toUpperCase().slice(0,2);
-  
+  const red = ((Math.random() % 0xdd) * 100 + 0x22).toString(16).toUpperCase().slice(0, 2);
+  const green = ((Math.random() % 0xdd) * 100 + 0x22).toString(16).toUpperCase().slice(0, 2);
+  const blue = ((Math.random() % 0xdd) * 100 + 0x22).toString(16).toUpperCase().slice(0, 2);
+
   return `#${red}${green}${blue}`;
 };
 
@@ -94,6 +116,14 @@ const chartData = computed(() => {
 
   return { labels, datasets: [{ backgroundColor, data }] };
 });
+
+const showIncomes = () => {
+  tableCategories.value = incomeCategories;
+};
+
+const showExpenses = () => {
+  tableCategories.value = expenseCategories;
+};
 
 const resetData = () => {
   selectedCategories.value = [];
@@ -192,7 +222,7 @@ const yearSelected = async () => {
 
   progressDialog.stopProgress();
 
-  // TODO: depend on current view exepnse/income
+  categoryView.value = 'expenses';
   tableCategories.value = expenseCategories;
 
   updateView();
