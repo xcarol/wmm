@@ -16,6 +16,7 @@
           <v-data-table-virtual
             v-model="selectedCategories"
             :items="tableCategories"
+            :headers="headerDetails"
             item-value="category"
             show-select
             class="elevation-1"
@@ -58,6 +59,13 @@ let totalIncomeAmount = 0.0;
 let totalExpenseAmount = 0.0;
 let expenseCategories = [];
 let incomeCategories = [];
+
+const headerDetails = [
+  { title: $t('browseCategoriesView.categoryNameLabel'), key: 'category' },
+  { title: $t('browseCategoriesView.balanceLabel'), key: 'balance', align: 'end' },
+  { title: $t('browseCategoriesView.percentLabel'), key: 'percent', align: 'end' },
+  { title: $t('browseCategoriesView.monthAverageLabel'), key: 'month_average', align: 'end' },
+];
 
 const chartData = computed(() => {
   const selected = selectedCategories.value;

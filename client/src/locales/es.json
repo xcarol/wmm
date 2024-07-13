@@ -108,7 +108,11 @@
   },
   "browseCategoriesView": {
     "title": "Explocación de categorías",
-    "yearLabel": "Selecciona el año"
+    "yearLabel": "Selecciona el año",
+    "categoryNameLabel": "Categoría",
+    "balanceLabel": "Balance",
+    "percentLabel": "Tanto por ciento",
+    "monthAverageLabel": "Media mensual"
   },
   "dialogNewFilter": {
     "title": "Nuevo filtro",

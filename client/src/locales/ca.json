@@ -108,7 +108,11 @@
   },
   "browseCategoriesView": {
     "title": "Exploració de categories",
-    "yearLabel": "Sel·lecciona l'any"
+    "yearLabel": "Sel·lecciona l'any",
+    "categoryNameLabel": "Categoria",
+    "balanceLabel": "Balanç",
+    "percentLabel": "Tant per cent",
+    "monthAverageLabel": "Mitjana mensual"
   },
   "dialogNewFilter": {
     "title": "Nou filtre",
