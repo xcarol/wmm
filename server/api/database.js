@@ -19,7 +19,8 @@ const queryInsertRow =
 const queryBankNames = "SELECT DISTINCT bank FROM transactions";
 
 const queryCategoryNames =
-  "SELECT DISTINCT category FROM transactions WHERE category != '' ORDER BY category ASC";
+  "SELECT DISTINCT category FROM transactions WHERE category != '' UNION SELECT DISTINCT category \
+    FROM filters ORDER BY category ASC";
 
 const queryFilterNames =
   "SELECT DISTINCT filter FROM filters WHERE category=? ORDER BY filter ASC";
@@ -49,10 +50,27 @@ const queryBankBalances =
   "SELECT bank, SUM(amount) as balance, MAX(date) AS latest_date from \
     transactions WHERE bank = ? AND date >= ? AND date <= ?";
 
-// QString queryCategoryBalances =
-//   QString("SELECT SUM(amount) as balance from transactions WHERE category "
-//           "= '%1' AND "
-//           "date >= '%2' AND date <= '%3'");
+const queryCategoryBalance =
+"WITH category_transactions AS ( \
+  SELECT \
+    category, \
+    YEAR(date) AS year, \
+    MONTH(date) AS month, \
+    SUM(amount) AS total_amount, \
+    COUNT(*) AS transaction_count \
+  FROM transactions \
+WHERE category = ? \
+  AND date >= ? \
+  AND date <= ? \
+  GROUP BY category, YEAR(date), MONTH(date) \
+) \
+SELECT \
+  category, \
+  SUM(total_amount) AS balance, \
+  AVG(total_amount) AS avg_monthly_balance, \
+  AVG(transaction_count) AS avg_monthly_transactions \
+FROM category_transactions \
+GROUP BY category";
 
 const queryDuplicateRows =
   "SELECT id, bank, date, description, category, amount FROM transactions t1 \
@@ -74,7 +92,7 @@ const queryDeleteRows = "DELETE FROM transactions WHERE id IN (?)";
 const queryMarkNotDuplicateRows =
   "UPDATE transactions SET not_duplicate = TRUE WHERE id IN (?)";
 
-// QString queryYears = QString("SELECT DISTINCT YEAR(date) FROM transactions");
+const queryYears = "SELECT DISTINCT YEAR(date) as year FROM transactions";
 
 const queryAddCategoryFilters =
   "INSERT INTO filters (category, filter) VALUES (?, ?)";
@@ -216,6 +234,19 @@ async function getUncategorizedTransactions(filter) {
   }
 }
 
+async function getYears() {
+  try {
+    const connection = await getConnection();
+    const result = await connection.query(queryYears);
+    connection.close();
+    return result.at(0).map((row) => row.year);
+  } catch (err) {
+    err.message = `Error [${err}] retrieving years from transactions.`;
+    console.error(err);
+    throw err;
+  }
+}
+
 async function getBankBalance(bank, start, end) {
   try {
     const connection = await getConnection();
@@ -241,6 +272,23 @@ async function getCategories() {
     return result.at(0).map((row) => row.category);
   } catch (err) {
     err.message = `Error [${err}] retrieving categories.`;
+    console.error(err);
+    throw err;
+  }
+}
+
+async function getCategoryBalance(category, start, end) {
+  try {
+    const connection = await getConnection();
+    const result = await connection.query(queryCategoryBalance, [
+      category,
+      start,
+      end,
+    ]);
+    connection.close();
+    return result.at(0).at(0);
+  } catch (err) {
+    err.message = `Error [${err}] retrieving category balance.`;
     console.error(err);
     throw err;
   }
@@ -339,7 +387,7 @@ async function executeSql(query) {
     connection.close();
     return result;
   } catch (err) {
-    err.message = `Error [${err}] executing the following query [${categories}].`;
+    err.message = `Error [${err}] executing the following query [${query}].`;
     console.error(err);
     throw err;
   }
@@ -437,10 +485,12 @@ module.exports = {
   getBankNames,
   getBankBalance,
   getCategories,
+  getCategoryBalance,
   getCategoryFilters,
   getBankTransactions,
   getDuplicatedTransactions,
   getUncategorizedTransactions,
+  getYears,
   resetTransactionsCategories,
   updateTransactionsCategory,
   updateTransactionsByFilter,

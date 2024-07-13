@@ -23,6 +23,7 @@
 
 <script setup>
 import dayjs from 'dayjs';
+import 'dayjs/locale/es';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -35,7 +36,6 @@ import ColumnSelection from '../components/import-view/ColumnSelection.vue';
 import BankSelection from '../components/import-view/BankSelection.vue';
 
 dayjs.extend(customParseFormat);
-dayjs.locale('es');
 
 const { t: $t } = useI18n();
 const appStore = useAppStore();
@@ -81,11 +81,29 @@ const selectedBank = (value) => {
 const BANK_LENGTH = 200;
 const DESCRIPTION_LENGTH = 200;
 
-const csvDateToSql = (date) =>
-  dayjs(date, 'DD/MM/YYYY').toISOString().replace('T', ' ').replace('.000Z', '');
+const csvDateToSql = (date) => {
+  let datejs = dayjs(date, 'DD/MM/YYYY', 'es').isValid() ? dayjs(date, 'DD/MM/YYYY', 'es') : null;
+
+  if (datejs === null) {
+    datejs = dayjs(date, 'DD-MM-YYYY').isValid() ? dayjs(date, 'DD-MM-YYYY') : null;
+  }
+  if (datejs === null) {
+    datejs = dayjs(date, 'YYYY/MM/DD').isValid() ? dayjs(date, 'YYYY/MM/DD') : null;
+  }
+  if (datejs === null) {
+    datejs = dayjs(date, 'YYYY-MM-DD').isValid() ? dayjs(date, 'YYYY-MM-DD') : null;
+  }
+
+  if (datejs === null) {
+    datejs = dayjs(date);
+  }
+
+  return datejs.toISOString().replace('T', ' ').replace('.000Z', '');
+};
+
 const csvAmountToSql = (amount) => amount.replace('.', '').replace(',', '.');
 
-const importFile = async () => {
+const importFileToDatabase = async () => {
   const firstRow = firstRowIsAHeader.value === true ? 1 : 0;
   let rowCount = firstRow;
 
@@ -122,12 +140,49 @@ const importFile = async () => {
           .replace('%d', appStore.csvfile.rowCount - firstRow),
       });
     }
-    appStore.alertMessage = $t('importView.importedRows').replace('%d', rowCount - firstRow);
   } catch (e) {
     appStore.alertMessage = $t('importView.importError')
       .replace('%d', e.message)
       .replace('%d', rowCount);
+    throw e;
   }
   progressDialog.stopProgress();
+
+  return rowCount - firstRow;
+};
+
+const applyFilters = async () => {
+  progressDialog.startProgress({
+    steps: appStore.csvfile.rowCount,
+    description: $t('importView.applyingCategory').replace('%s', ''),
+  });
+  try {
+    const { data: categories } = await api.categoriesNames();
+
+    for (let count = 0; count < categories.length; count += 1) {
+      const category = categories.at(count);
+      progressDialog.updateProgress({
+        description: $t('importView.applyingCategory').replace('%s', category),
+      });
+
+      // eslint-disable-next-line no-await-in-loop
+      await api.applyCategoryToTransactions(category);
+
+      // This is just to make user aware
+      // eslint-disable-next-line no-await-in-loop
+      await new Promise((r) => {
+        setTimeout(r, 250);
+      });
+    }
+  } catch (e) {
+    appStore.alertMessage = api.getErrorMessage(e);
+  }
+  progressDialog.stopProgress();
+};
+
+const importFile = async () => {
+  const importedRows = await importFileToDatabase();
+  await applyFilters();
+  appStore.alertMessage = $t('importView.importedRows').replace('%d', importedRows);
 };
 </script>

@@ -57,6 +57,11 @@ const noTransactionSelected = computed(() => {
 });
 
 const searchTransactions = async () => {
+  progressDialog.startProgress({
+    steps: 0,
+    description: $t('progress.retrievingTransactions'),
+  });
+
   try {
     const transactions = await api.duplicatedTransactions();
     tableItems.value = transactions.data;
@@ -64,6 +69,8 @@ const searchTransactions = async () => {
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }
+
+  progressDialog.stopProgress();
 };
 
 const markAsNotDuplicates = async () => {

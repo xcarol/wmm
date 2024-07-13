@@ -117,6 +117,11 @@ const searchTransactions = async () => {
   const search = selectedFilter.value;
   appStore.addSearchToCategoryHistory(search);
 
+  progressDialog.startProgress({
+    steps: 0,
+    description: $t('progress.retrievingTransactions'),
+  });
+
   try {
     await getCategoriesNames();
     const transactions = await api.searchTransactionsByCategory(search);
@@ -128,6 +133,8 @@ const searchTransactions = async () => {
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }
+
+  progressDialog.stopProgress();
 };
 
 const keyDown = (value) => {

@@ -19,7 +19,9 @@
     "duplicates": "Buscar duplicados",
     "sql": "Comandos SQL",
     "filters": "Filtros",
-    "browse": "Explorar"
+    "browse": "Explorar",
+    "browseTransactions": "Transacciones",
+    "browseCategories": "Categorías"
   },
   "progress": {
     "title": "Operación en progreso",
@@ -27,7 +29,8 @@
     "updatedTransactionsMessage": "Se han actualizado %d transacciones.",
     "deletedTransactionsMessage": "Se han eliminado %d transacciones.",
     "deletedCategoriesMessage": "Se han eliminado %d filtros y se han actualizado % transacciones.",
-    "retrievingTransactions": "Obteniendo las transacciones..."
+    "retrievingTransactions": "Obteniendo las transacciones...",
+    "retrievingCategories": "Obteniendo las categorías..."
   },
   "importView": {
     "title": "Importa un archivo CSV",
@@ -42,7 +45,8 @@
     "importButtonLabel": "Importar",
     "importedRows": "Se han importado %d filas.",
     "importError": "Error: %d en la línea: %d",
-    "importingRows": "Se han importado %d línias de %d..."
+    "importingRows": "Se han importado %d línias de %d...",
+    "applyingCategory": "Aplicando la categoría [%s]"
   },
   "duplicatesView": {
     "title": "Busqueda de duplicados",
@@ -91,7 +95,7 @@
     "applyFilterWarningMessage": "Vas a aplicar el filtro:\n  - %s\n¿Estás seguro?",
     "applyNewFilterWarningMessage": "Al crear el filtro [%s] se actulitzarán las transacciones coincidentes.\n¿Estás seguro?"
   },
-  "browseView": {
+  "browseTransactionsView": {
     "title": "Exploración de datos",
     "bankOverview": "Resumen bancario",
     "bankDetail": "Transacciones del banco",
@@ -101,6 +105,14 @@
     "dateLabel": "Fecha",
     "descriptionLabel": "Descripción",
     "categoryLabel": "Categoría"
+  },
+  "browseCategoriesView": {
+    "title": "Explocación de categorías",
+    "yearLabel": "Selecciona el año",
+    "categoryNameLabel": "Categoría",
+    "balanceLabel": "Balance",
+    "percentLabel": "Tanto por ciento",
+    "monthAverageLabel": "Media mensual"
   },
   "dialogNewFilter": {
     "title": "Nuevo filtro",

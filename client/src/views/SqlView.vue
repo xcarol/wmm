@@ -7,14 +7,9 @@
       />
     </v-card-text>
     <v-card-actions>
-      <backup-response
-        @operation-status="backupResponseStatus"
-      />
+      <backup-response @operation-status="backupResponseStatus" />
       <v-spacer />
-      <v-btn
-        @click.stop="executeQuery"
-        >{{ $t('sqlView.queryButton') }}</v-btn
-      >
+      <v-btn @click.stop="executeQuery">{{ $t('sqlView.queryButton') }}</v-btn>
     </v-card-actions>
   </v-card>
   <v-card v-show="sqlQueryResponse">
@@ -51,7 +46,9 @@ const sqlQueryResponse = ref('');
 const tableHeaders = ref([]);
 const tableItems = ref([]);
 const responseHeight = computed(() =>
-  sqlQueryResponse.value.split('\n').length > 1 ? sqlQueryResponse.value.split('\n').length + 1 : 1,
+  sqlQueryResponse.value.length && sqlQueryResponse.value.split('\n').length > 1
+    ? sqlQueryResponse.value.split('\n').length + 1
+    : 1,
 );
 
 const backupResponseStatus = (status) => {
@@ -101,7 +98,7 @@ const executeQuery = async () => {
         .replace('%d', rows.changedRows);
     }
   } catch (e) {
-    sqlQueryResponse.value = e.response?.data ?? e;
+    sqlQueryResponse.value = e.message ?? api.getErrorMessage(e);
   }
   store.stopProgress();
 };

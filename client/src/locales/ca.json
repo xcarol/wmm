@@ -19,7 +19,9 @@
     "duplicates": "Cercar duplicats",
     "sql": "Comandes SQL",
     "filters": "Filtres",
-    "browse": "Explorar"
+    "browse": "Explorar",
+    "browseTransactions": "Transaccions",
+    "browseCategories": "Categories"
   },
   "progress": {
     "title": "Operació en progress",
@@ -27,7 +29,8 @@
     "updatedTransactionsMessage": "S'han actualitzat %d transaccions.",
     "deletedTransactionsMessage": "S'han eliminat %d transaccions.",
     "deletedCategoriesMessage": "S'han eliminat %d filtres i s'han actualitzat %d transaccions.",
-    "retrievingTransactions": "Obtenint les transaccions..."
+    "retrievingTransactions": "Obtenint les transaccions...",
+    "retrievingCategories": "Obtenint les categories..."
   },
   "importView": {
     "title": "Importa un arxiu CSV",
@@ -42,7 +45,8 @@
     "importButtonLabel": "Importar",
     "importedRows": "S'han importat %d files.",
     "importError": "Error: '%d' a la línia: %d",
-    "importingRows": "S'han importat %d linies de %d..."
+    "importingRows": "S'han importat %d linies de %d...",
+    "applyingCategory": "Aplicant la categoria [%s]"
   },
   "duplicatesView": {
     "title": "Cerca de duplicats",
@@ -91,8 +95,8 @@
     "applyFilterWarningMessage": "Et's a punt d'aplicar el filtre:\n  - %s\nN'estàs segur?",
     "applyNewFilterWarningMessage": "En crear el filtre [%s] s'actulitzaran les transaccions coincidents.\nN'estàs segur?"
   },
-  "browseView": {
-    "title": "Exploració de dades",
+  "browseTransactionsView": {
+    "title": "Exploració de transaccions",
     "bankOverview": "Resum bancari",
     "bankDetail": "Transaccions del banc",
     "totalAmount": "Quantitat total",
@@ -101,6 +105,14 @@
     "dateLabel": "Data",
     "descriptionLabel": "Descripció",
     "categoryLabel": "Categoria"
+  },
+  "browseCategoriesView": {
+    "title": "Exploració de categories",
+    "yearLabel": "Sel·lecciona l'any",
+    "categoryNameLabel": "Categoria",
+    "balanceLabel": "Balanç",
+    "percentLabel": "Tant per cent",
+    "monthAverageLabel": "Mitjana mensual"
   },
   "dialogNewFilter": {
     "title": "Nou filtre",

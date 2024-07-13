@@ -2,9 +2,11 @@ const {
   addTransaction,
   applyCategory,
   deleteTransactions,
+  getCategoryBalance,
   getBankTransactions,
   getDuplicatedTransactions,
   getUncategorizedTransactions,
+  getYears,
   resetTransactionsCategories,
   updateTransactionsCategory,
   updateTransactionsByFilter,
@@ -112,6 +114,26 @@ module.exports = (app) => {
     try {
       bank = req.query.bank;
       res.json(await getBankTransactions(bank));
+    } catch (err) {
+      res.status(err.sqlState ? 400 : 500).send(err);
+    }
+  });
+
+  app.get("/transactions/years", async (req, res) => {
+    try {
+      res.json(await getYears());
+    } catch (err) {
+      res.status(err.sqlState ? 400 : 500).send(err);
+    }
+  });
+
+  app.get("/transactions/category", async (req, res) => {
+    try {
+      const category = req.query.category;
+      const start = req.query.start;
+      const end = req.query.end;
+
+      res.json(await getCategoryBalance(category, start, end));
     } catch (err) {
       res.status(err.sqlState ? 400 : 500).send(err);
     }
