@@ -7,25 +7,22 @@
         :items="yearItems"
         @update:model-value="yearSelected"
       />
-      <v-radio-group v-model="categoryView">
-        <v-row>
-          <v-col>
-            <v-radio
-              value="incomes"
-              label="Incomes"
-              :disabled="selectedYear === ''"
-              @click.stop="showIncomes"
-            />
-          </v-col>
-          <v-col
-            ><v-radio
-              value="expenses"
-              label="Expenses"
-              :disabled="selectedYear === ''"
-              @click.stop="showExpenses"
-            />
-          </v-col>
-        </v-row>
+      <v-radio-group
+        v-model="categoryView"
+        inline
+      >
+        <v-radio
+          value="incomes"
+          label="Incomes"
+          :disabled="selectedYear === ''"
+          @click.stop="showIncomes"
+        />
+        <v-radio
+          value="expenses"
+          label="Expenses"
+          :disabled="selectedYear === ''"
+          @click.stop="showExpenses"
+        />
       </v-radio-group>
     </v-card-text>
     <v-card-text v-show="selectedYear">
