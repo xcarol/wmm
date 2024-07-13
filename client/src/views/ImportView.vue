@@ -144,6 +144,7 @@ const importFileToDatabase = async () => {
     appStore.alertMessage = $t('importView.importError')
       .replace('%d', e.message)
       .replace('%d', rowCount);
+    throw e;
   }
   progressDialog.stopProgress();
 
