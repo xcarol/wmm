@@ -67,6 +67,14 @@ const headerDetails = [
   { title: $t('browseCategoriesView.monthAverageLabel'), key: 'month_average', align: 'end' },
 ];
 
+const randomColor = () => {
+  const red = (((Math.random() % 0xdd) * 100) + 0x22).toString(16).toUpperCase().slice(0,2);
+  const green = (((Math.random() % 0xdd) * 100) + 0x22).toString(16).toUpperCase().slice(0,2);
+  const blue = (((Math.random() % 0xdd) * 100) + 0x22).toString(16).toUpperCase().slice(0,2);
+  
+  return `#${red}${green}${blue}`;
+};
+
 const chartData = computed(() => {
   const selected = selectedCategories.value;
   const categories = tableCategories.value;
@@ -79,9 +87,7 @@ const chartData = computed(() => {
     const category = categories.at(count);
     if (selected.includes(category.category) === false) {
       labels.push(category.category);
-      backgroundColor.push(
-        `#${((Math.random() % 0xff) * 100).toFixed(0)}${((Math.random() % 0xff) * 100).toFixed(0)}${((Math.random() % 0xff) * 100).toFixed(0)}`,
-      );
+      backgroundColor.push(category.color);
       data.push(category.balance);
     }
   }
@@ -104,6 +110,7 @@ const addTransaction = (category, transaction, totalAmount) => {
     balance: transaction.balance.toFixed(2),
     percent: ((transaction.balance * 100.0) / totalAmount).toFixed(2),
     month_average: transaction.avg_monthly_balance.toFixed(2),
+    color: randomColor(),
   });
 };
 
