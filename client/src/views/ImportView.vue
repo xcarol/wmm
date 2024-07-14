@@ -82,7 +82,7 @@ const BANK_LENGTH = 200;
 const DESCRIPTION_LENGTH = 200;
 
 const csvDateToSql = (date) => {
-  let datejs = dayjs(date, 'DD/MM/YYYY', 'es').isValid() ? dayjs(date, 'DD/MM/YYYY', 'es') : null;
+  let datejs = dayjs(date, 'DD/MM/YYYY').isValid() ? dayjs(date, 'DD/MM/YYYY') : null;
 
   if (datejs === null) {
     datejs = dayjs(date, 'DD-MM-YYYY').isValid() ? dayjs(date, 'DD-MM-YYYY') : null;
@@ -101,7 +101,34 @@ const csvDateToSql = (date) => {
   return datejs.toISOString().replace('T', ' ').replace('.000Z', '');
 };
 
-const csvAmountToSql = (amount) => amount.replace('.', '').replace(',', '.');
+const csvAmountToSql = (amount) => {
+  let csvAmount = amount;
+  const comma = ',';
+  const point = '.';
+  const commaSeparator = amount.split(comma);
+  const pointSeparator = amount.split(point);
+
+  if (commaSeparator.length > 1) {
+    const pointIsDecimal = commaSeparator.at(commaSeparator.length - 1).split(point).length > 1;
+    const commaIsDecimal = pointSeparator.at(pointSeparator.length - 1).split(comma).length > 1;
+
+    if (pointIsDecimal) {
+      csvAmount = amount.replaceAll(',', '');
+    } else if (commaIsDecimal) {
+      csvAmount = amount.replaceAll('.', '').replaceAll(',', '.');
+    }
+  }
+
+  if (pointSeparator.length > 1) {
+    const commaIsDecimal = pointSeparator.at(pointSeparator.length - 1).split(comma).length > 1;
+
+    if (commaIsDecimal) {
+      csvAmount = amount.replaceAll('.', '').replaceAll(',', '.');
+    }
+  }
+
+  return parseFloat(csvAmount);
+};
 
 const importFileToDatabase = async () => {
   const firstRow = firstRowIsAHeader.value === true ? 1 : 0;
