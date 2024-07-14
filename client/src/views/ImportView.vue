@@ -98,7 +98,7 @@ const csvDateToSql = (date) => {
     datejs = dayjs(date);
   }
 
-  return datejs.toISOString().replace('T', ' ').replace('.000Z', '');
+  return `${datejs.year()}-${datejs.month() + 1}-${datejs.date()}`;
 };
 
 const csvAmountToSql = (amount) => {
