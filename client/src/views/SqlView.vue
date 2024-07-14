@@ -98,7 +98,7 @@ const executeQuery = async () => {
         .replace('%d', rows.changedRows);
     }
   } catch (e) {
-    sqlQueryResponse.value = e.message ?? api.getErrorMessage(e);
+    sqlQueryResponse.value = `${e.message}\n${api.getErrorMessage(e)}`;
   }
   store.stopProgress();
 };
