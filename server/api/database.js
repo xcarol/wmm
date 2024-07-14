@@ -10,6 +10,7 @@ const connectionSettings = {
   password: "secret",
   database: "wmm",
   multipleStatements: true,
+  dateStrings: true,
 };
 
 const queryInsertRow =
