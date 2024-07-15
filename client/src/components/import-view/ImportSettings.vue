@@ -9,6 +9,12 @@
             :disabled="noFileLoaded"
             @update:model-value="notifyCheckState"
           />
+          <v-spacer />
+          <v-text-field
+            v-model="initialAmount"
+            :label="$t('importView.initialAmountLabel')"
+            @update:model-value="notifyInitialAmount"
+          ></v-text-field>
         </v-row>
         <v-row>
           <v-select
@@ -55,6 +61,7 @@ const props = defineProps({
 
 const emits = defineEmits([
   'checkStateChanged',
+  'initialAmountChanged',
   'selectedDateColumn',
   'selectedDescriptionColumn',
   'selectedAmountColumn',
@@ -65,6 +72,7 @@ const appStore = useAppStore();
 const selectedDateColumn = ref('');
 const selectedDescriptionColumn = ref('');
 const selectedAmountColumn = ref('');
+const initialAmount = ref(0);
 
 const columnItems = () => {
   const items = [''];
@@ -108,6 +116,10 @@ const amountItems = computed(() => (appStore.csvfile.rowCount === 0 ? [] : amoun
 
 const notifyCheckState = (value) => {
   emits('checkStateChanged', value);
+};
+
+const notifyInitialAmount = (value) => {
+  emits('initialAmountChanged', value);
 };
 
 const notifyDateColumnSelected = (value) => {

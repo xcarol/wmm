@@ -4,6 +4,7 @@
   <import-settings
     :has-header="firstRowIsAHeader"
     @check-state-changed="updateFirstRowState"
+    @initial-amount-changed="updateInitialAmount"
     @selected-date-column="updateSelectedDateColumn"
     @selected-description-column="updateSelectedDescriptionColumn"
     @selected-amount-column="updateSelectedAmountColumn"
@@ -47,6 +48,7 @@ const selectedDateColumn = ref(-1);
 const selectedDescriptionColumn = ref(-1);
 const selectedAmountColumn = ref(-1);
 const selectedBankName = ref('');
+const initialAmount = ref(0);
 
 const rowsToParse = computed(() => appStore.csvfile.rowCount);
 const formNotFilled = computed(() =>
@@ -57,6 +59,10 @@ const formNotFilled = computed(() =>
       selectedAmountColumn.value < 0 ||
       selectedBankName.value === '',
 );
+
+const updateInitialAmount = (value) => {
+  initialAmount.value = value;
+};
 
 const updateFirstRowState = (value) => {
   firstRowIsAHeader.value = value;
@@ -142,6 +148,19 @@ const importFileToDatabase = async () => {
   });
 
   try {
+    if (initialAmount.value !== 0 ) {
+      await api
+        .addTransaction(
+          csvDateToSql('1970-01-01'),
+          $t('importView.initialAmount'),
+          csvAmountToSql(initialAmount.value),
+          selectedBankName.value.slice(0, BANK_LENGTH),
+        )
+        .catch((err) => {
+          throw new Error(api.getErrorMessage(err));
+        });
+    }
+
     for (; rowCount < appStore.csvfile.rowCount; rowCount += 1) {
       const csvRow = appStore.csvfile.rows.at(rowCount);
       // eslint-disable-next-line no-await-in-loop
