@@ -1,7 +1,7 @@
 <template>
   <file-input />
   <file-preview :has-header="firstRowIsAHeader" />
-  <column-selection
+  <import-settings
     :has-header="firstRowIsAHeader"
     @check-state-changed="updateFirstRowState"
     @selected-date-column="updateSelectedDateColumn"
@@ -32,7 +32,7 @@ import { useProgressDialogStore } from '../stores/progressDialog';
 import { useApi } from '../plugins/api';
 import FileInput from '../components/import-view/FileInput.vue';
 import FilePreview from '../components/import-view/FilePreview.vue';
-import ColumnSelection from '../components/import-view/ColumnSelection.vue';
+import ImportSettings from '../components/import-view/ImportSettings.vue';
 import BankSelection from '../components/import-view/BankSelection.vue';
 
 dayjs.extend(customParseFormat);
