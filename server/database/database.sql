@@ -29,7 +29,7 @@ DROP TABLE IF EXISTS `transactions`;
 CREATE TABLE `transactions` (
   `id` int NOT NULL AUTO_INCREMENT,
   `bank` varchar(200) NOT NULL,
-  `date` datetime NOT NULL,
+  `date` date NOT NULL,
   `description` varchar(200) NOT NULL,
   `category` varchar(200) DEFAULT '',
   `amount` double NOT NULL,

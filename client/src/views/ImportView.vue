@@ -1,9 +1,10 @@
 <template>
   <file-input />
   <file-preview :has-header="firstRowIsAHeader" />
-  <column-selection
+  <import-settings
     :has-header="firstRowIsAHeader"
     @check-state-changed="updateFirstRowState"
+    @initial-amount-changed="updateInitialAmount"
     @selected-date-column="updateSelectedDateColumn"
     @selected-description-column="updateSelectedDescriptionColumn"
     @selected-amount-column="updateSelectedAmountColumn"
@@ -32,7 +33,7 @@ import { useProgressDialogStore } from '../stores/progressDialog';
 import { useApi } from '../plugins/api';
 import FileInput from '../components/import-view/FileInput.vue';
 import FilePreview from '../components/import-view/FilePreview.vue';
-import ColumnSelection from '../components/import-view/ColumnSelection.vue';
+import ImportSettings from '../components/import-view/ImportSettings.vue';
 import BankSelection from '../components/import-view/BankSelection.vue';
 
 dayjs.extend(customParseFormat);
@@ -47,6 +48,7 @@ const selectedDateColumn = ref(-1);
 const selectedDescriptionColumn = ref(-1);
 const selectedAmountColumn = ref(-1);
 const selectedBankName = ref('');
+const initialAmount = ref(0);
 
 const rowsToParse = computed(() => appStore.csvfile.rowCount);
 const formNotFilled = computed(() =>
@@ -57,6 +59,10 @@ const formNotFilled = computed(() =>
       selectedAmountColumn.value < 0 ||
       selectedBankName.value === '',
 );
+
+const updateInitialAmount = (value) => {
+  initialAmount.value = value;
+};
 
 const updateFirstRowState = (value) => {
   firstRowIsAHeader.value = value;
@@ -82,7 +88,7 @@ const BANK_LENGTH = 200;
 const DESCRIPTION_LENGTH = 200;
 
 const csvDateToSql = (date) => {
-  let datejs = dayjs(date, 'DD/MM/YYYY', 'es').isValid() ? dayjs(date, 'DD/MM/YYYY', 'es') : null;
+  let datejs = dayjs(date, 'DD/MM/YYYY').isValid() ? dayjs(date, 'DD/MM/YYYY') : null;
 
   if (datejs === null) {
     datejs = dayjs(date, 'DD-MM-YYYY').isValid() ? dayjs(date, 'DD-MM-YYYY') : null;
@@ -98,10 +104,37 @@ const csvDateToSql = (date) => {
     datejs = dayjs(date);
   }
 
-  return datejs.toISOString().replace('T', ' ').replace('.000Z', '');
+  return `${datejs.year()}-${datejs.month() + 1}-${datejs.date()}`;
 };
 
-const csvAmountToSql = (amount) => amount.replace('.', '').replace(',', '.');
+const csvAmountToSql = (amount) => {
+  let csvAmount = amount;
+  const comma = ',';
+  const point = '.';
+  const commaSeparator = amount.split(comma);
+  const pointSeparator = amount.split(point);
+
+  if (commaSeparator.length > 1) {
+    const pointIsDecimal = commaSeparator.at(commaSeparator.length - 1).split(point).length > 1;
+    const commaIsDecimal = pointSeparator.at(pointSeparator.length - 1).split(comma).length > 1;
+
+    if (pointIsDecimal) {
+      csvAmount = amount.replaceAll(',', '');
+    } else if (commaIsDecimal) {
+      csvAmount = amount.replaceAll('.', '').replaceAll(',', '.');
+    }
+  }
+
+  if (pointSeparator.length > 1) {
+    const commaIsDecimal = pointSeparator.at(pointSeparator.length - 1).split(comma).length > 1;
+
+    if (commaIsDecimal) {
+      csvAmount = amount.replaceAll('.', '').replaceAll(',', '.');
+    }
+  }
+
+  return parseFloat(csvAmount);
+};
 
 const importFileToDatabase = async () => {
   const firstRow = firstRowIsAHeader.value === true ? 1 : 0;
@@ -115,6 +148,19 @@ const importFileToDatabase = async () => {
   });
 
   try {
+    if (initialAmount.value !== 0 ) {
+      await api
+        .addTransaction(
+          csvDateToSql('1970-01-01'),
+          $t('importView.initialAmount'),
+          csvAmountToSql(initialAmount.value),
+          selectedBankName.value.slice(0, BANK_LENGTH),
+        )
+        .catch((err) => {
+          throw new Error(api.getErrorMessage(err));
+        });
+    }
+
     for (; rowCount < appStore.csvfile.rowCount; rowCount += 1) {
       const csvRow = appStore.csvfile.rows.at(rowCount);
       // eslint-disable-next-line no-await-in-loop
