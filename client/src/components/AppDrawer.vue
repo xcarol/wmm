@@ -111,10 +111,16 @@ router.beforeEach((to) => {
     return;
   }
 
-  menuOptions.forEach((item) => {
-    if (item.value === to.path) {
-      emits('onOptionSelected', item.barTitle);
+  menuOptions.forEach((menuOption) => {
+    if (menuOption.value === to.path) {
+      emits('onOptionSelected', menuOption.barTitle);
     }
+
+    menuOption?.children.forEach((submenuOption) => {
+      if (submenuOption.value === to.path) {
+        emits('onOptionSelected', submenuOption.barTitle);
+      }
+    });
   });
 });
 </script>
