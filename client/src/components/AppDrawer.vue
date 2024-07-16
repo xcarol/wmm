@@ -116,11 +116,13 @@ router.beforeEach((to) => {
       emits('onOptionSelected', menuOption.barTitle);
     }
 
-    menuOption?.children.forEach((submenuOption) => {
-      if (submenuOption.value === to.path) {
-        emits('onOptionSelected', submenuOption.barTitle);
-      }
-    });
+    if (menuOption.children) {
+      menuOption.children.forEach((submenuOption) => {
+        if (submenuOption.value === to.path) {
+          emits('onOptionSelected', submenuOption.barTitle);
+        }
+      });
+    }
   });
 });
 </script>
