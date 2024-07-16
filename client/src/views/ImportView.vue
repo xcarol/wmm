@@ -136,6 +136,24 @@ const csvAmountToSql = (amount) => {
   return parseFloat(csvAmount);
 };
 
+const dayBeforeFirstDate = (csvfile, dateColumn) => {
+  let olderDate = dayjs();
+  
+  olderDate = olderDate.add(1, 'day');
+
+  for (let count = 0; count < csvfile.rowCount; count += 1) {
+    const rowDate = csvfile.rows.at(count).at(dateColumn);
+    const rowDayjs = dayjs(csvDateToSql(rowDate));
+    if (dayjs(rowDate).isValid() && rowDayjs < olderDate) {
+      olderDate = rowDayjs;
+    }
+  } // 221.7
+
+  olderDate = olderDate.subtract(1, 'day');
+
+  return `${olderDate.year()}-${olderDate.month() + 1}-${olderDate.date()}`;
+};
+
 const importFileToDatabase = async () => {
   const firstRow = firstRowIsAHeader.value === true ? 1 : 0;
   let rowCount = firstRow;
@@ -151,8 +169,8 @@ const importFileToDatabase = async () => {
     if (initialAmount.value !== 0 ) {
       await api
         .addTransaction(
-          csvDateToSql('1970-01-01'),
-          $t('importView.initialAmount'),
+          csvDateToSql(dayBeforeFirstDate(appStore.csvfile, selectedDateColumn.value)),
+          $t('importView.initialAmountLabel'),
           csvAmountToSql(initialAmount.value),
           selectedBankName.value.slice(0, BANK_LENGTH),
         )
