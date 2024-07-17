@@ -105,7 +105,8 @@
     "amountLabel": "Amoun",
     "dateLabel": "Date",
     "descriptionLabel": "Description",
-    "categoryLabel": "Category"
+    "categoryLabel": "Category",
+    "transactionsCountLabel": "Transactions"
   },
   "browseCategoriesView": {
     "title": "Browse categories",
