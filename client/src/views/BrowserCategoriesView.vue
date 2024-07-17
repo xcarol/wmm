@@ -200,6 +200,20 @@ const resquestBalances = async (year) => {
   return Promise.all(allBalancePromises);
 };
 
+const resquestFiltersBalances = async (category, year) => {
+  const { data } = await api.filtersNames(category);
+
+  const filters = data;
+  const allBalancePromises = [];
+  for (let filterCount = 0; filterCount < filters.length; filterCount += 1) {
+    allBalancePromises.push(
+      api.filterBalance(category, filters.at(filterCount), `${year}/01/01`, `${year}/12/31`),
+    );
+  }
+
+  return Promise.all(allBalancePromises);
+};
+
 const yearSelected = async () => {
   resetData();
 
@@ -223,6 +237,40 @@ const yearSelected = async () => {
   tableCategories.value = expenseCategories;
 
   updateView();
+};
+
+const categorySelected = async (category) => {
+  resetData();
+
+  progressDialog.startProgress({
+    steps: 0,
+    description: $t('progress.retrievingCategories'),
+  });
+
+  try {
+    const balances = await resquestFiltersBalances(category, selectedYear.value);
+
+    computeAmounts(balances);
+    addTransactions(balances);
+  } catch (e) {
+    appStore.alertMessage = api.getErrorMessage(e);
+  }
+
+  progressDialog.stopProgress();
+
+  categoryView.value = 'expenses';
+  tableCategories.value = expenseCategories;
+
+  updateView();
+};
+
+const chartOptions = {
+  interaction: {
+    mode: 'index',
+  },
+  onClick: (e, item) => {
+    categorySelected(tableCategories.value.at(item.at(0).index).category);
+  },
 };
 
 const updateYears = async () => {

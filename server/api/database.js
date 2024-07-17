@@ -52,26 +52,49 @@ const queryBankBalances =
     transactions WHERE bank = ? AND date >= ? AND date <= ?";
 
 const queryCategoryBalance =
-"WITH category_transactions AS ( \
-  SELECT \
-    category, \
-    YEAR(date) AS year, \
-    MONTH(date) AS month, \
-    SUM(amount) AS total_amount, \
-    COUNT(*) AS transaction_count \
-  FROM transactions \
-WHERE category = ? \
-  AND date >= ? \
-  AND date <= ? \
-  GROUP BY category, YEAR(date), MONTH(date) \
-) \
-SELECT \
-  category, \
-  SUM(total_amount) AS balance, \
-  AVG(total_amount) AS avg_monthly_balance, \
-  AVG(transaction_count) AS avg_monthly_transactions \
-FROM category_transactions \
-GROUP BY category";
+  "WITH category_transactions AS ( \
+      SELECT \
+        category, \
+        YEAR(date) AS year, \
+        MONTH(date) AS month, \
+        SUM(amount) AS total_amount, \
+        COUNT(*) AS transaction_count \
+      FROM transactions \
+    WHERE category = ? \
+      AND date >= ? \
+      AND date <= ? \
+      GROUP BY category, YEAR(date), MONTH(date) \
+    ) \
+    SELECT \
+      category, \
+      SUM(total_amount) AS balance, \
+      AVG(total_amount) AS avg_monthly_balance, \
+      AVG(transaction_count) AS avg_monthly_transactions \
+    FROM category_transactions \
+    GROUP BY category";
+
+const queryCategoryFiltersBalance =
+  "WITH filter_transactions AS ( \
+      SELECT \
+        category, \
+        YEAR(date) AS year, \
+        MONTH(date) AS month, \
+        SUM(amount) AS total_amount, \
+        COUNT(*) AS transaction_count \
+      FROM transactions \
+    WHERE category = ? \
+      AND description LIKE ? \
+      AND date >= ? \
+      AND date <= ? \
+      GROUP BY category, YEAR(date), MONTH(date) \
+    ) \
+    SELECT \
+      ? as category, \
+      SUM(total_amount) AS balance, \
+      AVG(total_amount) AS avg_monthly_balance, \
+      AVG(transaction_count) AS avg_monthly_transactions \
+    FROM filter_transactions \
+    GROUP BY category";
 
 const queryDuplicateRows =
   "SELECT id, bank, date, description, category, amount FROM transactions t1 \
@@ -112,7 +135,7 @@ const queryUpdateTransactionsByFilter =
   "UPDATE transactions as t \
     JOIN filters as f \
     SET t.category = f.category \
-    WHERE t.description like ? AND f.filter = ?";
+    WHERE t.description LIKE ? AND f.filter = ?";
 
 const queryRenameCategoryFilters =
   "UPDATE filters SET category = ? WHERE category = ?";
@@ -285,6 +308,25 @@ async function getCategoryBalance(category, start, end) {
       category,
       start,
       end,
+    ]);
+    connection.close();
+    return result.at(0).at(0);
+  } catch (err) {
+    err.message = `Error [${err}] retrieving category balance.`;
+    console.error(err);
+    throw err;
+  }
+}
+
+async function getCategoryFiltersBalance(category, filter, start, end) {
+  try {
+    const connection = await getConnection();
+    const result = await connection.query(queryCategoryFiltersBalance, [
+      category,
+      filter,
+      start,
+      end,
+      filter,
     ]);
     connection.close();
     return result.at(0).at(0);
@@ -488,6 +530,7 @@ module.exports = {
   getCategories,
   getCategoryBalance,
   getCategoryFilters,
+  getCategoryFiltersBalance,
   getBankTransactions,
   getDuplicatedTransactions,
   getUncategorizedTransactions,
