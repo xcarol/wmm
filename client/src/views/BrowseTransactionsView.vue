@@ -59,7 +59,7 @@ const headerBanks = [
 ];
 
 const headerDetails = [
-  { title: $t('browseTransactionsView.bankNameLabel'), key: 'id' },
+  { title: 'Id', key: 'id' },
   { title: $t('browseTransactionsView.bankNameLabel'), key: 'bank' },
   { title: $t('browseTransactionsView.dateLabel'), key: 'date' },
   { title: $t('browseTransactionsView.descriptionLabel'), key: 'description' },
