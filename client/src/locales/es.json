@@ -105,7 +105,8 @@
     "amountLabel": "Cantidad",
     "dateLabel": "Fecha",
     "descriptionLabel": "Descripción",
-    "categoryLabel": "Categoría"
+    "categoryLabel": "Categoría",
+    "transactionsCountLabel": "Transacciones"
   },
   "browseCategoriesView": {
     "title": "Explocación de categorías",

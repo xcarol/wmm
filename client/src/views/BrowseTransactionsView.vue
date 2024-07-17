@@ -19,6 +19,9 @@
       />
     </v-card-actions>
     <v-card-text>
+      <div class="pl-4">
+        {{ `${$t('browseTransactionsView.transactionsCountLabel')}: ${bankDetails.length}` }}
+      </div>
       <v-data-table-virtual
         :items="bankDetails"
         :headers="headerDetails"
