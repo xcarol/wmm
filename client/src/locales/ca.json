@@ -114,7 +114,9 @@
     "categoryNameLabel": "Categoria",
     "balanceLabel": "Balanç",
     "percentLabel": "Tant per cent",
-    "monthAverageLabel": "Mitjana mensual"
+    "monthAverageLabel": "Mitjana mensual",
+    "incomesLabel": "Ingressos",
+    "expensesLabel": "Despeses"
   },
   "dialogNewFilter": {
     "title": "Nou filtre",

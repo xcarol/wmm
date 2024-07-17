@@ -114,7 +114,9 @@
     "categoryNameLabel": "Categoría",
     "balanceLabel": "Balance",
     "percentLabel": "Tanto por ciento",
-    "monthAverageLabel": "Media mensual"
+    "monthAverageLabel": "Media mensual",
+    "incomesLabel": "Ingresos",
+    "expensesLabel": "Gastos"
   },
   "dialogNewFilter": {
     "title": "Nuevo filtro",

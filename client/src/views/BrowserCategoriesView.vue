@@ -13,13 +13,13 @@
       >
         <v-radio
           value="incomes"
-          label="Incomes"
+          :label="$t('browseCategoriesView.incomesLabel')"
           :disabled="selectedYear === ''"
           @click.stop="showIncomes"
         />
         <v-radio
           value="expenses"
-          label="Expenses"
+          :label="$t('browseCategoriesView.expensesLabel')"
           :disabled="selectedYear === ''"
           @click.stop="showExpenses"
         />
