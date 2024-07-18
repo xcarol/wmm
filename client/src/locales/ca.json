@@ -112,11 +112,13 @@
     "title": "Exploració de categories",
     "yearLabel": "Sel·lecciona l'any",
     "categoryNameLabel": "Categoria",
+    "filterNameLabel": "Filtre",
     "balanceLabel": "Balanç",
     "percentLabel": "Tant per cent",
     "monthAverageLabel": "Mitjana mensual",
     "incomesLabel": "Ingressos",
-    "expensesLabel": "Despeses"
+    "expensesLabel": "Despeses",
+    "backToCategories": "Categories"
   },
   "dialogNewFilter": {
     "title": "Nou filtre",

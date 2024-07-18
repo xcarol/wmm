@@ -5,25 +5,34 @@
         v-model="selectedYear"
         :label="$t('browseCategoriesView.yearLabel')"
         :items="yearItems"
-        @update:model-value="yearSelected"
+        @update:model-value="updateViewWithSelectedYear"
       />
-      <v-radio-group
-        v-model="categoryView"
-        inline
-      >
-        <v-radio
-          value="incomes"
-          :label="$t('browseCategoriesView.incomesLabel')"
-          :disabled="selectedYear === ''"
-          @click.stop="showIncomes"
-        />
-        <v-radio
-          value="expenses"
-          :label="$t('browseCategoriesView.expensesLabel')"
-          :disabled="selectedYear === ''"
-          @click.stop="showExpenses"
-        />
-      </v-radio-group>
+      <v-row class="pl-4 pr-4">
+        <v-radio-group
+          v-model="balanceView"
+          inline
+        >
+          <v-radio
+            value="incomes"
+            :label="$t('browseCategoriesView.incomesLabel')"
+            :disabled="selectedYear === ''"
+            @click.stop="showIncomes"
+          />
+          <v-radio
+            value="expenses"
+            :label="$t('browseCategoriesView.expensesLabel')"
+            :disabled="selectedYear === ''"
+            @click.stop="showExpenses"
+          />
+        </v-radio-group>
+        <v-btn
+          :disabled="categoryView === 'category'"
+          prepend-icon="$back"
+          @click.stop="updateViewWithCategories"
+        >
+          {{ $t('browseCategoriesView.backToCategories') }}
+        </v-btn>
+      </v-row>
     </v-card-text>
     <v-card-text v-show="selectedYear">
       <v-row>
@@ -72,19 +81,26 @@ const yearItems = ref([]);
 const selectedYear = ref('');
 const selectedCategories = ref([]);
 const tableCategories = ref([]);
-const categoryView = ref('');
+const balanceView = ref('');
+const categoryView = ref('category');
 
 let totalIncomeAmount = 0.0;
 let totalExpenseAmount = 0.0;
 let expenseCategories = [];
 let incomeCategories = [];
 
-const headerDetails = [
-  { title: $t('browseCategoriesView.categoryNameLabel'), key: 'category' },
+const headerDetails = computed(() => [
+  {
+    title:
+      categoryView.value === 'category'
+        ? $t('browseCategoriesView.categoryNameLabel')
+        : $t('browseCategoriesView.filterNameLabel'),
+    key: 'category',
+  },
   { title: $t('browseCategoriesView.balanceLabel'), key: 'balance', align: 'end' },
   { title: $t('browseCategoriesView.percentLabel'), key: 'percent', align: 'end' },
   { title: $t('browseCategoriesView.monthAverageLabel'), key: 'month_average', align: 'end' },
-];
+]);
 
 const randomColor = () => {
   const red = ((Math.random() % 0xdd) * 100 + 0x22).toString(16).toUpperCase().slice(0, 2);
@@ -214,7 +230,7 @@ const resquestFiltersBalances = async (category, year) => {
   return Promise.all(allBalancePromises);
 };
 
-const yearSelected = async () => {
+const updateViewWithSelectedYear = async () => {
   resetData();
 
   progressDialog.startProgress({
@@ -222,6 +238,7 @@ const yearSelected = async () => {
     description: $t('progress.retrievingCategories'),
   });
 
+  categoryView.value = 'category';
   try {
     const balances = await resquestBalances(selectedYear.value);
 
@@ -233,7 +250,7 @@ const yearSelected = async () => {
 
   progressDialog.stopProgress();
 
-  categoryView.value = 'expenses';
+  balanceView.value = 'expenses';
   tableCategories.value = expenseCategories;
 
   updateView();
@@ -247,6 +264,7 @@ const categorySelected = async (category) => {
     description: $t('progress.retrievingCategories'),
   });
 
+  categoryView.value = 'filter';
   try {
     const balances = await resquestFiltersBalances(category, selectedYear.value);
 
@@ -258,7 +276,7 @@ const categorySelected = async (category) => {
 
   progressDialog.stopProgress();
 
-  categoryView.value = 'expenses';
+  balanceView.value = 'expenses';
   tableCategories.value = expenseCategories;
 
   updateView();
@@ -269,7 +287,9 @@ const chartOptions = {
     mode: 'index',
   },
   onClick: (e, item) => {
-    categorySelected(tableCategories.value.at(item.at(0).index).category);
+    if (categoryView.value === 'category') {
+      categorySelected(tableCategories.value.at(item.at(0).index).category);
+    }
   },
 };
 
@@ -280,6 +300,11 @@ const updateYears = async () => {
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }
+};
+
+const updateViewWithCategories = () => {
+  categoryView.value = 'category';
+  updateViewWithSelectedYear();
 };
 
 const updateModelValue = () => {

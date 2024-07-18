@@ -112,11 +112,13 @@
     "title": "Explocación de categorías",
     "yearLabel": "Selecciona el año",
     "categoryNameLabel": "Categoría",
+    "filterNameLabel": "Filtro",
     "balanceLabel": "Balance",
     "percentLabel": "Tanto por ciento",
     "monthAverageLabel": "Media mensual",
     "incomesLabel": "Ingresos",
-    "expensesLabel": "Gastos"
+    "expensesLabel": "Gastos",
+    "backToCategories": "Categorías"
   },
   "dialogNewFilter": {
     "title": "Nuevo filtro",

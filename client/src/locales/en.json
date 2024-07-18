@@ -112,11 +112,13 @@
     "title": "Browse categories",
     "yearLabel": "Select year",
     "categoryNameLabel": "Category",
+    "filterNameLabel": "Filter",
     "balanceLabel": "Balance",
     "percentLabel": "Per cent",
     "monthAverageLabel": "Month average",
     "incomesLabel": "Incomes",
-    "expensesLabel": "Expenses"
+    "expensesLabel": "Expenses",
+    "backToCategories": "Categories"
   },
   "dialogNewFilter": {
     "title": "New Filter",
