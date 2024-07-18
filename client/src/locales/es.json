@@ -59,7 +59,7 @@
   },
   "sqlView": {
     "title": "Ejecuta comandos SQL",
-    "queryAreaLabel": "Introduce el comando SQL a ejecutar...",
+    "queryAreaLabel": "Introduce el comando SQL a ejecutar... Historia con Ctrl+↑ y Ctrl+↓",
     "queryButton": "Ejecuta",
     "backupButton": "Backup",
     "restoreButton": "Restore",
