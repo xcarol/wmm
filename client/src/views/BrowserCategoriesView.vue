@@ -276,7 +276,7 @@ const chartOptions = {
 const updateYears = async () => {
   try {
     const result = await api.getYears();
-    yearItems.value = result.data;
+    yearItems.value = result.data.sort().reverse();
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }
