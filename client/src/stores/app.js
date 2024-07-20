@@ -11,18 +11,21 @@ export const useAppStore = defineStore('app', {
   }),
   actions: {
     addSearchToCategoryHistory(search) {
-      if(search.length && this.categorySearchHistory.includes(search) === false) {
+      if (search.length && this.categorySearchHistory.includes(search) === false) {
         this.categorySearchHistory.push(search);
       }
     },
     addQueryToSqlHistory(query) {
-      if(query.length && this.sqlHistory.includes(query) === false) {
+      if (query.length && this.sqlHistory.includes(query) === false) {
         this.sqlHistory.push(query);
       }
     },
     nextQueryInHistory(query) {
+      if (query.length === 0) {
+        return this.sqlHistory.at(0);
+      }
       const idx = this.sqlHistory.indexOf(query);
-      
+
       if (idx >= 0 && idx < this.sqlHistory.length - 1) {
         return this.sqlHistory.at(idx + 1);
       }
@@ -30,8 +33,11 @@ export const useAppStore = defineStore('app', {
       return null;
     },
     previousQueryInHistory(query) {
+      if (query.length === 0) {
+        return this.sqlHistory.at(this.sqlHistory.length - 1);
+      }
       const idx = this.sqlHistory.indexOf(query);
-      
+
       if (idx > 0) {
         return this.sqlHistory.at(idx - 1);
       }
