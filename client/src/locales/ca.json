@@ -59,7 +59,7 @@
   },
   "sqlView": {
     "title": "Executa comandes SQL",
-    "queryAreaLabel": "Escriu la commanda SQL que vulquis executar...",
+    "queryAreaLabel": "Escriu la commanda SQL que vulquis executar... Història amb Ctrl+↑ i Ctrl+↓",
     "queryButton": "Executa",
     "backupButton": "Backup",
     "restoreButton": "Restore",
@@ -112,9 +112,13 @@
     "title": "Exploració de categories",
     "yearLabel": "Sel·lecciona l'any",
     "categoryNameLabel": "Categoria",
+    "filterNameLabel": "Filtre",
     "balanceLabel": "Balanç",
     "percentLabel": "Tant per cent",
-    "monthAverageLabel": "Mitjana mensual"
+    "monthAverageLabel": "Mitjana mensual",
+    "incomesLabel": "Ingressos",
+    "expensesLabel": "Despeses",
+    "backToCategories": "Categories"
   },
   "dialogNewFilter": {
     "title": "Nou filtre",

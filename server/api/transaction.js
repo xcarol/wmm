@@ -3,6 +3,8 @@ const {
   applyCategory,
   deleteTransactions,
   getCategoryBalance,
+  getCategoryFiltersBalance,
+  getCategoryNonFiltersBalance,
   getBankTransactions,
   getDuplicatedTransactions,
   getUncategorizedTransactions,
@@ -50,7 +52,9 @@ module.exports = (app) => {
       const operation = data.operation;
       switch (operation) {
         case "apply":
-          res.json(await updateTransactionsCategory(data.transactions, data.category));
+          res.json(
+            await updateTransactionsCategory(data.transactions, data.category)
+          );
           break;
         case "categorize":
           res.json(await applyCategory(data.category));
@@ -130,10 +134,21 @@ module.exports = (app) => {
   app.get("/transactions/category", async (req, res) => {
     try {
       const category = req.query.category;
+      const filter = req.query.filter;
       const start = req.query.start;
       const end = req.query.end;
 
-      res.json(await getCategoryBalance(category, start, end));
+      if (filter === undefined) {
+        res.json(await getCategoryBalance(category, start, end));
+      } else {
+        if (filter.length) {
+          res.json(
+            await getCategoryFiltersBalance(category, filter, start, end)
+          );
+        } else {
+          res.json(await getCategoryNonFiltersBalance(category, start, end));
+        }
+      }
     } catch (err) {
       res.status(err.sqlState ? 400 : 500).send(err);
     }

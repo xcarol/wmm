@@ -59,7 +59,7 @@
   },
   "sqlView": {
     "title": "Ejecuta comandos SQL",
-    "queryAreaLabel": "Introduce el comando SQL a ejecutar...",
+    "queryAreaLabel": "Introduce el comando SQL a ejecutar... Historia con Ctrl+↑ y Ctrl+↓",
     "queryButton": "Ejecuta",
     "backupButton": "Backup",
     "restoreButton": "Restore",
@@ -112,9 +112,13 @@
     "title": "Explocación de categorías",
     "yearLabel": "Selecciona el año",
     "categoryNameLabel": "Categoría",
+    "filterNameLabel": "Filtro",
     "balanceLabel": "Balance",
     "percentLabel": "Tanto por ciento",
-    "monthAverageLabel": "Media mensual"
+    "monthAverageLabel": "Media mensual",
+    "incomesLabel": "Ingresos",
+    "expensesLabel": "Gastos",
+    "backToCategories": "Categorías"
   },
   "dialogNewFilter": {
     "title": "Nuevo filtro",

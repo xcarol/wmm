@@ -4,6 +4,7 @@
       <v-textarea
         v-model="sqlQueryText"
         :label="$t('sqlView.queryAreaLabel')"
+        @keyup="keyPressed"
       />
     </v-card-text>
     <v-card-actions>
@@ -33,12 +34,14 @@
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useApi } from '../plugins/api';
+import { useAppStore } from '../stores/app';
 import { useProgressDialogStore } from '../stores/progressDialog';
 import ResponseTable from '../components/sql-view/ResponseTable.vue';
 import BackupResponse from '../components/sql-view/BackupRestore.vue';
 
 const { t: $t } = useI18n();
-const store = useProgressDialogStore();
+const progressDialog = useProgressDialogStore();
+const appStore = useAppStore();
 const api = useApi();
 
 const sqlQueryText = ref('');
@@ -66,7 +69,7 @@ const resetView = () => {
 const executeQuery = async () => {
   resetView();
 
-  store.startProgress({ steps: 0, description: $t('sqlView.executingQuery') });
+  progressDialog.startProgress({ steps: 0, description: $t('sqlView.executingQuery') });
   try {
     const res = await api.executeQuery(sqlQueryText.value);
     const rows = res.data[0];
@@ -97,9 +100,31 @@ const executeQuery = async () => {
         .replace('%d', rows.affectedRows)
         .replace('%d', rows.changedRows);
     }
+
+    appStore.addQueryToSqlHistory(sqlQueryText.value);
   } catch (e) {
     sqlQueryResponse.value = `${e.message}\n${api.getErrorMessage(e)}`;
   }
-  store.stopProgress();
+  progressDialog.stopProgress();
+};
+
+const keyPressed = (event) => {
+  let query = '';
+
+  if (event.code === 'Enter' && event.ctrlKey === true) {
+    executeQuery();
+    return;
+  }
+
+  if (event.code === 'ArrowUp' && event.ctrlKey === true) {
+    query = appStore.previousQueryInHistory(sqlQueryText.value);
+  }
+  if (event.code === 'ArrowDown' && event.ctrlKey === true) {
+    query = appStore.nextQueryInHistory(sqlQueryText.value);
+  }
+
+  if (query) {
+    sqlQueryText.value = query;
+  }
 };
 </script>
