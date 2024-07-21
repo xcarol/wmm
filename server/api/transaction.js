@@ -4,6 +4,7 @@ const {
   deleteTransactions,
   getCategoryBalance,
   getCategoryFiltersBalance,
+  getCategoryNonFiltersBalance,
   getBankTransactions,
   getDuplicatedTransactions,
   getUncategorizedTransactions,
@@ -137,10 +138,16 @@ module.exports = (app) => {
       const start = req.query.start;
       const end = req.query.end;
 
-      if (filter) {
-        res.json(await getCategoryFiltersBalance(category, filter, start, end));
-      } else {
+      if (filter === undefined) {
         res.json(await getCategoryBalance(category, start, end));
+      } else {
+        if (filter.length) {
+          res.json(
+            await getCategoryFiltersBalance(category, filter, start, end)
+          );
+        } else {
+          res.json(await getCategoryNonFiltersBalance(category, start, end));
+        }
       }
     } catch (err) {
       res.status(err.sqlState ? 400 : 500).send(err);

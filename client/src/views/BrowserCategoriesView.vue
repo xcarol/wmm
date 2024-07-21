@@ -266,10 +266,24 @@ const categorySelected = async (category) => {
 
   categoryView.value = 'filter';
   try {
-    const balances = await resquestFiltersBalances(category, selectedYear.value);
+    const year = selectedYear.value;
+    const categoryBalances = await resquestFiltersBalances(category, year);
+    const noCategoryBalances = await api.filterBalance(
+      category,
+      '',
+      `${year}/01/01`,
+      `${year}/12/31`,
+    );
 
-    computeAmounts(balances);
-    addTransactions(balances);
+    const normalizedNoCategoryBalances = [];
+    
+    noCategoryBalances.data.at(0).forEach((entry) => {
+      normalizedNoCategoryBalances.push({ data: entry });
+    });
+
+    const theUltimateList = categoryBalances.concat(normalizedNoCategoryBalances);
+    computeAmounts(theUltimateList);
+    addTransactions(theUltimateList);
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }
