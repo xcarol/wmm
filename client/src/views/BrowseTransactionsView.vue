@@ -41,7 +41,7 @@ import { useAppStore } from '../stores/app';
 import { useProgressDialogStore } from '../stores/progressDialog';
 
 const api = useApi();
-const { t: $t } = useI18n();
+const { t: $t, locale } = useI18n();
 const appStore = useAppStore();
 const progressDialog = useProgressDialogStore();
 
@@ -116,6 +116,8 @@ const onBankSelected = async (bankName) => {
     return;
   }
 
+  const currencyFormatter = new Intl.NumberFormat(locale, { style: 'currency', currency: 'EUR' });
+
   progressDialog.startProgress({
     steps: 0,
     description: $t('progress.retrievingTransactions'),
@@ -129,10 +131,10 @@ const onBankSelected = async (bankName) => {
       bankDetails.value.push({
         id: transaction.id,
         bank: transaction.bank,
-        date: new Date(transaction.date).toLocaleDateString(),
+        date: transaction.date,
         description: transaction.description,
         category: transaction.category,
-        amount: transaction.amount,
+        amount: currencyFormatter.format(transaction.amount),
       });
     });
   } catch (e) {
