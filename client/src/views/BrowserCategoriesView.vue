@@ -26,7 +26,7 @@
           />
         </v-radio-group>
         <v-btn
-          :disabled="categoryView === 'category'"
+          :disabled="categoryViewLevel === 'category'"
           prepend-icon="$back"
           @click.stop="updateViewWithCategories"
         >
@@ -39,12 +39,13 @@
         <v-col cols="6">
           <v-data-table-virtual
             v-model="selectedCategories"
-            :items="tableCategories"
+            :items="tableItems"
             :headers="headerDetails"
             item-value="category"
             show-select
             class="elevation-1"
             fixed-header
+            :height="adjustedHeight"
             @update:model-value="updateModelValue"
           >
             <template #[`header.data-table-select`]></template>
@@ -73,31 +74,31 @@ import { useProgressDialogStore } from '../stores/progressDialog';
 ChartJS.register(ArcElement, Tooltip);
 
 const api = useApi();
-const { t: $t } = useI18n();
+const { t: $t, locale } = useI18n();
 const appStore = useAppStore();
 const progressDialog = useProgressDialogStore();
+
+const adjustedHeight = ref(400); // TODO: adjust with the screen height
 
 const yearItems = ref([]);
 const selectedYear = ref('');
 const selectedCategories = ref([]);
-const tableCategories = ref([]);
-const balanceView = ref('');
-const categoryView = ref('category');
+const tableItems = ref([]);
+const balanceView = ref('expenses');
+const categoryViewLevel = ref('category');
 
-let totalIncomeAmount = 0.0;
-let totalExpenseAmount = 0.0;
-let expenseCategories = [];
-let incomeCategories = [];
+let expenseItems = [];
+let incomeItems = [];
 
 const headerDetails = computed(() => [
   {
     title:
-      categoryView.value === 'category'
+      categoryViewLevel.value === 'category'
         ? $t('browseCategoriesView.categoryNameLabel')
         : $t('browseCategoriesView.filterNameLabel'),
     key: 'category',
   },
-  { title: $t('browseCategoriesView.balanceLabel'), key: 'balance', align: 'end' },
+  { title: $t('browseCategoriesView.balanceLabel'), key: 'balance_formated', align: 'end' },
   { title: $t('browseCategoriesView.percentLabel'), key: 'percent', align: 'end' },
   { title: $t('browseCategoriesView.monthAverageLabel'), key: 'month_average', align: 'end' },
 ]);
@@ -112,7 +113,7 @@ const randomColor = () => {
 
 const chartData = computed(() => {
   const selected = selectedCategories.value;
-  const categories = tableCategories.value;
+  const categories = tableItems.value;
 
   const labels = [];
   const backgroundColor = [];
@@ -120,6 +121,7 @@ const chartData = computed(() => {
 
   for (let count = 0; count < categories.length; count += 1) {
     const category = categories.at(count);
+
     if (selected.includes(category.category) === false) {
       labels.push(category.category);
       backgroundColor.push(category.color);
@@ -130,79 +132,92 @@ const chartData = computed(() => {
   return { labels, datasets: [{ backgroundColor, data }] };
 });
 
-const showIncomes = () => {
-  tableCategories.value = incomeCategories;
-};
-
-const showExpenses = () => {
-  tableCategories.value = expenseCategories;
-};
-
 const resetData = () => {
   selectedCategories.value = [];
-  tableCategories.value = [];
-  incomeCategories = [];
-  expenseCategories = [];
-  totalExpenseAmount = 0.0;
-  totalIncomeAmount = 0.0;
+  tableItems.value = [];
+  categoryViewLevel.value = '';
+  balanceView.value = '';
+  incomeItems = [];
+  expenseItems = [];
 };
 
-const addTransaction = (category, transaction, totalAmount) => {
-  category.push({
+const nonCategoryBalancesToList = (balances) => {
+  const balancesList = [];
+
+  balances.data.at(0).forEach((balance) => {
+    balancesList.push({ data: balance });
+  });
+
+  return balancesList;
+};
+
+const addTransactionToCategoriesList = (categoryList, transaction) => {
+  const currencyFormatter = new Intl.NumberFormat(locale, { style: 'currency', currency: 'EUR' });
+
+  categoryList.push({
     category: transaction.category,
     balance: transaction.balance.toFixed(2),
-    percent: ((transaction.balance * 100.0) / totalAmount).toFixed(2),
-    month_average: transaction.avg_monthly_balance.toFixed(2),
+    balance_formated: currencyFormatter.format(transaction.balance.toFixed(2)),
+    month_average: currencyFormatter.format(transaction.avg_monthly_balance.toFixed(2)),
     color: randomColor(),
   });
 };
 
 const updateView = () => {
+  const percentFormatter = new Intl.NumberFormat(locale, {
+    style: 'percent',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
   let totalAmount = 0.0;
 
-  for (let count = 0; count < tableCategories.value.length; count += 1) {
-    const category = tableCategories.value.at(count);
+  for (let count = 0; count < tableItems.value.length; count += 1) {
+    const category = tableItems.value.at(count);
     if (selectedCategories.value.includes(category.category) === false) {
       totalAmount += parseFloat(category.balance);
-    } else {
-      tableCategories.value.at(count).percent = '';
     }
   }
 
-  for (let count = 0; count < tableCategories.value.length; count += 1) {
-    const category = tableCategories.value.at(count);
+  for (let count = 0; count < tableItems.value.length; count += 1) {
+    const category = tableItems.value.at(count);
+
     if (selectedCategories.value.includes(category.category) === false) {
-      tableCategories.value.at(count).percent = ((category.balance * 100.0) / totalAmount).toFixed(
-        2,
+      category.percent = percentFormatter.format(
+        ((category.balance * 100.0) / totalAmount).toFixed(2) / 100.0,
       );
+    } else {
+      category.percent = '';
     }
   }
 };
 
-const computeAmounts = (balances) => {
-  balances.forEach(({ data: { balance } }) => {
-    if (balance >= 0) {
-      totalIncomeAmount += balance;
-    } else {
-      totalExpenseAmount += balance;
-    }
-  });
+const showIncomes = () => {
+  tableItems.value = incomeItems;
+  balanceView.value = 'incomes';
+  updateView();
 };
 
-const addTransactions = (transactions) => {
+const showExpenses = () => {
+  tableItems.value = expenseItems;
+  balanceView.value = 'expenses';
+  updateView();
+};
+
+const addTransactionsToLists = (transactions) => {
   transactions.forEach(async (result) => {
     const { data: transaction } = result;
     if (transaction.category) {
       if (transaction.balance >= 0) {
-        addTransaction(incomeCategories, transaction, totalIncomeAmount);
+        addTransactionToCategoriesList(incomeItems, transaction);
       } else {
-        addTransaction(expenseCategories, transaction, totalExpenseAmount);
+        addTransactionToCategoriesList(expenseItems, transaction);
       }
     }
   });
 };
 
-const resquestBalances = async (year) => {
+const resquestCategoriesBalances = async (year) => {
   const { data } = await api.categoriesNames();
 
   const categories = data;
@@ -238,12 +253,9 @@ const updateViewWithSelectedYear = async () => {
     description: $t('progress.retrievingCategories'),
   });
 
-  categoryView.value = 'category';
+  categoryViewLevel.value = 'category';
   try {
-    const balances = await resquestBalances(selectedYear.value);
-
-    computeAmounts(balances);
-    addTransactions(balances);
+    addTransactionsToLists(await resquestCategoriesBalances(selectedYear.value));
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }
@@ -251,7 +263,7 @@ const updateViewWithSelectedYear = async () => {
   progressDialog.stopProgress();
 
   balanceView.value = 'expenses';
-  tableCategories.value = expenseCategories;
+  tableItems.value = expenseItems;
 
   updateView();
 };
@@ -264,26 +276,18 @@ const categorySelected = async (category) => {
     description: $t('progress.retrievingCategories'),
   });
 
-  categoryView.value = 'filter';
+  categoryViewLevel.value = 'filter';
   try {
     const year = selectedYear.value;
     const categoryBalances = await resquestFiltersBalances(category, year);
-    const noCategoryBalances = await api.filterBalance(
+    const nonCategoryBalances = await api.filterBalance(
       category,
       '',
       `${year}/01/01`,
       `${year}/12/31`,
     );
 
-    const normalizedNoCategoryBalances = [];
-    
-    noCategoryBalances.data.at(0).forEach((entry) => {
-      normalizedNoCategoryBalances.push({ data: entry });
-    });
-
-    const theUltimateList = categoryBalances.concat(normalizedNoCategoryBalances);
-    computeAmounts(theUltimateList);
-    addTransactions(theUltimateList);
+    addTransactionsToLists(categoryBalances.concat(nonCategoryBalancesToList(nonCategoryBalances)));
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }
@@ -291,7 +295,7 @@ const categorySelected = async (category) => {
   progressDialog.stopProgress();
 
   balanceView.value = 'expenses';
-  tableCategories.value = expenseCategories;
+  tableItems.value = expenseItems;
 
   updateView();
 };
@@ -301,8 +305,8 @@ const chartOptions = {
     mode: 'index',
   },
   onClick: (e, item) => {
-    if (categoryView.value === 'category') {
-      categorySelected(tableCategories.value.at(item.at(0).index).category);
+    if (categoryViewLevel.value === 'category') {
+      categorySelected(tableItems.value.at(item.at(0).index).category);
     }
   },
 };
@@ -317,7 +321,7 @@ const updateYears = async () => {
 };
 
 const updateViewWithCategories = () => {
-  categoryView.value = 'category';
+  categoryViewLevel.value = 'category';
   updateViewWithSelectedYear();
 };
 
