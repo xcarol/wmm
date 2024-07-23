@@ -26,7 +26,7 @@
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
-import { ref, computed } from 'vue';
+import { ref, computed, onBeforeMount } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useAppStore } from '../stores/app';
 import { useProgressDialogStore } from '../stores/progressDialog';
@@ -147,7 +147,7 @@ const dayBeforeFirstDate = (csvfile, dateColumn) => {
     if (dayjs(rowDate).isValid() && rowDayjs < olderDate) {
       olderDate = rowDayjs;
     }
-  } // 221.7
+  }
 
   olderDate = olderDate.subtract(1, 'day');
 
@@ -232,7 +232,7 @@ const applyFilters = async () => {
       // eslint-disable-next-line no-await-in-loop
       await api.applyCategoryToTransactions(category);
 
-      // This is just to make user aware
+      // This is just to make user aware that something's happening
       // eslint-disable-next-line no-await-in-loop
       await new Promise((r) => {
         setTimeout(r, 250);
@@ -249,4 +249,6 @@ const importFile = async () => {
   await applyFilters();
   appStore.alertMessage = $t('importView.importedRows').replace('%d', importedRows);
 };
+
+onBeforeMount(() => appStore.csvfile.reset());
 </script>
