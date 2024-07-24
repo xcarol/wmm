@@ -48,8 +48,8 @@ const queryUpdateTransactionsCategory =
   "UPDATE transactions SET category = ? WHERE id IN(?)";
 
 const queryBankBalances =
-  "SELECT bank, SUM(amount) as balance, MAX(date) AS latest_date from \
-    transactions WHERE bank = ? AND date >= ? AND date <= ?";
+  "SELECT bank, SUM(amount) as balance, MAX(date) AS latest_date, MIN(date) AS first_date \
+    FROM transactions WHERE bank = ? AND date >= ? AND date <= ?";
 
 const queryCategoryBalance =
   "WITH category_transactions AS ( \
