@@ -30,7 +30,8 @@ const queryUncategorizedTransactions =
   "SELECT id, bank, date, description, category, amount FROM transactions WHERE category = ''";
 
 const queryBankTransactions =
-  "SELECT id, bank, date, description, category, amount FROM transactions WHERE bank = ?";
+  "SELECT id, bank, date, description, category, amount \
+    FROM transactions WHERE bank = ? AND date >= ? AND date <= ?";
 
 const queryUncategorizedRowsFilter = " AND description LIKE ?";
 
@@ -48,8 +49,8 @@ const queryUpdateTransactionsCategory =
   "UPDATE transactions SET category = ? WHERE id IN(?)";
 
 const queryBankBalances =
-  "SELECT bank, SUM(amount) as balance, MAX(date) AS latest_date from \
-    transactions WHERE bank = ? AND date >= ? AND date <= ?";
+  "SELECT bank, SUM(amount) as balance, MAX(date) AS latest_date, MIN(date) AS first_date \
+    FROM transactions WHERE bank = ? AND date >= ? AND date <= ?";
 
 const queryCategoryBalance =
   "WITH category_transactions AS ( \
@@ -225,10 +226,14 @@ async function renameCategory(oldName, newName) {
   }
 }
 
-async function getBankTransactions(bankName) {
+async function getBankTransactions(bankName, startDate, endDate) {
   try {
     const connection = await getConnection();
-    const result = await connection.query(queryBankTransactions, bankName);
+    const result = await connection.query(queryBankTransactions, [
+      bankName,
+      startDate,
+      endDate,
+    ]);
     connection.close();
     return result.at(0);
   } catch (err) {

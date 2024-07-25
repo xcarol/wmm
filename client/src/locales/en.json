@@ -106,7 +106,10 @@
     "dateLabel": "Date",
     "descriptionLabel": "Description",
     "categoryLabel": "Category",
-    "transactionsCountLabel": "Transactions"
+    "transactionsCountLabel": "Transactions",
+    "searchButton": "Search",
+    "startDateLabel": "Start date",
+    "endDateLabel": "End date"
   },
   "browseCategoriesView": {
     "title": "Browse categories",
