@@ -12,28 +12,28 @@
       />
     </v-card-text>
     <v-card-title>{{ $t('browseTransactionsView.bankDetail') }}</v-card-title>
-    <v-card-actions class="align-start">
+    <v-card-actions class="align-start ml-4 mr-4">
       <v-select
         :items="banksNames"
         @update:model-value="onBankSelected"
       />
       <v-text-field
-        v-model="minDate"
+        v-model="selectedMinDate"
         class="ml-4"
         append-inner-icon="$calendar"
         :label="$t('browseTransactionsView.startDateLabel')"
         readonly
         :disabled="noBankSelected()"
-        @click:append-inner="selectDate(minDate)"
+        @click:append-inner="showMinDateCalendar"
       />
       <v-text-field
-        v-model="maxDate"
+        v-model="selectedMaxDate"
         class="ml-4"
         append-inner-icon="$calendar"
         :label="$t('browseTransactionsView.endDateLabel')"
         readonly
         :disabled="noBankSelected()"
-        @click:append-inner="selectDate(maxDate)"
+        @click:append-inner="showMaxDateCalendar"
       />
       <v-btn
         class="ml-4"
@@ -61,13 +61,24 @@
       />
     </v-card-text>
   </v-card>
-  <v-dialog v-model="calendarVisible">
+  <v-dialog v-model="startDateCalendarVisible">
     <v-calendar
-      :initial-page="initialPage"
-      :min-date="minDate"
-      :max-date="maxDate"
+      :initial-page="initialStartPage"
+      :min-date="minBankDate"
+      :max-date="maxBankDate"
+      :attributes="startDateCalendarAttributes"
       is-dark="system"
-      @dayclick="onDateSelected"
+      @dayclick="onStartDateSelected"
+    />
+  </v-dialog>
+  <v-dialog v-model="endDateCalendarVisible">
+    <v-calendar
+      :initial-page="initialEndPage"
+      :min-date="minBankDate"
+      :max-date="maxBankDate"
+      :attributes="endDateCalendarAttributes"
+      is-dark="system"
+      @dayclick="onEndDateSelected"
     />
   </v-dialog>
 </template>
@@ -88,11 +99,13 @@ const adjustedHeight = ref(400); // TODO: adjust with the screen height
 const banksBalances = ref([]);
 const banksNames = ref([]);
 const bankDetails = ref([]);
-const calendarVisible = ref(false);
-const minDate = ref('');
-const maxDate = ref('');
-const calendarDate = ref('');
+const minBankDate = ref('');
+const maxBankDate = ref('');
+const selectedMinDate = ref('');
+const selectedMaxDate = ref('');
 const selectedBankName = ref('');
+const startDateCalendarVisible = ref(false);
+const endDateCalendarVisible = ref(false);
 
 let totalAmount = 0.0;
 let retrievedBalances = null;
@@ -112,10 +125,23 @@ const headerDetails = [
   { title: $t('browseTransactionsView.amountLabel'), key: 'amount', align: 'end' },
 ];
 
-const initialPage = computed(() => {
-  const dateToShow = new Date(calendarDate.value);
+const initialStartPage = computed(() => {
+  const dateToShow = new Date(selectedMinDate.value);
   return { month: dateToShow.getMonth() + 1, year: dateToShow.getFullYear() };
 });
+
+const initialEndPage = computed(() => {
+  const dateToShow = new Date(selectedMaxDate.value);
+  return { month: dateToShow.getMonth() + 1, year: dateToShow.getFullYear() };
+});
+
+const startDateCalendarAttributes = computed(() => [
+  { highlight: true, dates: selectedMinDate.value },
+]);
+
+const endDateCalendarAttributes = computed(() => [
+  { highlight: true, dates: selectedMaxDate.value },
+]);
 
 const noBankSelected = () => selectedBankName.value === '';
 
@@ -135,7 +161,7 @@ const getBanksBrief = async () => {
     const allBalancePromises = [];
     for (let bankCount = 0; bankCount < banksNames.value.length; bankCount += 1) {
       allBalancePromises.push(
-        api.bankBalance(banksNames.value.at(bankCount), minDate.value, maxDate.value),
+        api.bankBalance(banksNames.value.at(bankCount), minBankDate.value, maxBankDate.value),
       );
     }
 
@@ -164,9 +190,12 @@ const getBanksBrief = async () => {
   progressDialog.stopProgress();
 };
 
-const selectDate = (dateToSelect) => {
-  calendarDate.value = dateToSelect;
-  calendarVisible.value = true;
+const showMinDateCalendar = () => {
+  startDateCalendarVisible.value = true;
+};
+
+const showMaxDateCalendar = () => {
+  endDateCalendarVisible.value = true;
 };
 
 const bankTransactions = async () => {
@@ -179,7 +208,11 @@ const bankTransactions = async () => {
 
   try {
     bankDetails.value = [];
-    const { data } = await api.bankTransactions(selectedBankName.value);
+    const { data } = await api.bankTransactions(
+      selectedBankName.value,
+      selectedMinDate.value,
+      selectedMaxDate.value,
+    );
 
     data.forEach(async (transaction) => {
       bankDetails.value.push({
@@ -208,21 +241,32 @@ const onBankSelected = async (bankName) => {
   retrievedBalances.forEach(async (bankBalance) => {
     const { data: balance } = bankBalance;
     if (balance.bank === bankName) {
-      minDate.value = balance.first_date;
-      maxDate.value = balance.latest_date;
+      minBankDate.value = balance.first_date;
+      maxBankDate.value = balance.latest_date;
+      selectedMinDate.value = balance.first_date;
+      selectedMaxDate.value = balance.latest_date;
     }
   });
 };
 
-const onDateSelected = (datePicked) => {
-  calendarVisible.value = false;
+const onStartDateSelected = (date) => {
+  const dateFormatted = `${date.year}-${date.month}-${date.day}`;
 
-  const dateFormatted = `${datePicked.year}-${datePicked.month + 1}-${datePicked.day}`;
-  if (calendarDate.value === minDate.value) {
-    minDate.value = dateFormatted;
-  } else if (calendarDate.value === maxDate.value) {
-    maxDate.value = dateFormatted;
+  if (Date.parse(dateFormatted) < Date.parse(minBankDate.value)) {
+    return;
   }
+  startDateCalendarVisible.value = false;
+  selectedMinDate.value = dateFormatted;
+};
+
+const onEndDateSelected = (date) => {
+  const dateFormatted = `${date.year}-${date.month}-${date.day}`;
+
+  if (Date.parse(dateFormatted) > Date.parse(maxBankDate.value)) {
+    return;
+  }
+  endDateCalendarVisible.value = false;
+  selectedMaxDate.value = dateFormatted;
 };
 
 onBeforeMount(() => getBanksBrief());
