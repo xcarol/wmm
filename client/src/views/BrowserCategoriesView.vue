@@ -5,30 +5,30 @@
         v-model="selectedYear"
         :label="$t('browseCategoriesView.yearLabel')"
         :items="yearItems"
-        @update:model-value="updateViewWithSelectedYear"
+        @update:model-value="refreshRoute"
       />
       <v-row class="pl-4 pr-4">
         <v-radio-group
-          v-model="balanceView"
+          :model-value="balanceView"
           inline
         >
           <v-radio
             value="incomes"
             :label="$t('browseCategoriesView.incomesLabel')"
-            :disabled="selectedYear === ''"
+            :disabled="selectedYear === '' || categoryViewLevel !== 'category'"
             @click.stop="showIncomes"
           />
           <v-radio
             value="expenses"
             :label="$t('browseCategoriesView.expensesLabel')"
-            :disabled="selectedYear === ''"
+            :disabled="selectedYear === '' || categoryViewLevel !== 'category'"
             @click.stop="showExpenses"
           />
         </v-radio-group>
         <v-btn
           :disabled="categoryViewLevel === 'category'"
           prepend-icon="$back"
-          @click.stop="updateViewWithCategories"
+          @click.stop="router.back()"
         >
           {{ $t('browseCategoriesView.backToCategories') }}
         </v-btn>
@@ -63,8 +63,9 @@
 </template>
 
 <script setup>
-import { ref, onBeforeMount, computed } from 'vue';
+import { ref, onBeforeMount, onBeforeUpdate, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRoute, useRouter } from 'vue-router';
 import { Chart as ChartJS, ArcElement, Tooltip } from 'chart.js';
 import { Pie } from 'vue-chartjs';
 import { useApi } from '../plugins/api';
@@ -75,6 +76,8 @@ ChartJS.register(ArcElement, Tooltip);
 
 const api = useApi();
 const { t: $t, locale } = useI18n();
+const route = useRoute();
+const router = useRouter();
 const appStore = useAppStore();
 const progressDialog = useProgressDialogStore();
 
@@ -192,18 +195,6 @@ const updateView = () => {
   }
 };
 
-const showIncomes = () => {
-  tableItems.value = incomeItems;
-  balanceView.value = 'incomes';
-  updateView();
-};
-
-const showExpenses = () => {
-  tableItems.value = expenseItems;
-  balanceView.value = 'expenses';
-  updateView();
-};
-
 const addTransactionsToLists = (transactions) => {
   transactions.forEach(async (result) => {
     const { data: transaction } = result;
@@ -217,7 +208,7 @@ const addTransactionsToLists = (transactions) => {
   });
 };
 
-const resquestCategoriesBalances = async (year) => {
+const requestCategoriesBalances = async (year) => {
   const { data } = await api.categoriesNames();
 
   const categories = data;
@@ -255,20 +246,19 @@ const updateViewWithSelectedYear = async () => {
 
   categoryViewLevel.value = 'category';
   try {
-    addTransactionsToLists(await resquestCategoriesBalances(selectedYear.value));
+    addTransactionsToLists(await requestCategoriesBalances(selectedYear.value));
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }
 
   progressDialog.stopProgress();
 
-  balanceView.value = 'expenses';
   tableItems.value = expenseItems;
 
   updateView();
 };
 
-const categorySelected = async (category) => {
+const updateViewWithSelectedCategory = async (category) => {
   resetData();
 
   progressDialog.startProgress({
@@ -294,21 +284,9 @@ const categorySelected = async (category) => {
 
   progressDialog.stopProgress();
 
-  balanceView.value = 'expenses';
   tableItems.value = expenseItems;
 
   updateView();
-};
-
-const chartOptions = {
-  interaction: {
-    mode: 'index',
-  },
-  onClick: (e, item) => {
-    if (categoryViewLevel.value === 'category') {
-      categorySelected(tableItems.value.at(item.at(0).index).category);
-    }
-  },
 };
 
 const updateYears = async () => {
@@ -320,14 +298,83 @@ const updateYears = async () => {
   }
 };
 
-const updateViewWithCategories = () => {
-  categoryViewLevel.value = 'category';
-  updateViewWithSelectedYear();
+const refreshRoute = () => {
+  router.push({
+    query: {
+      year: selectedYear.value,
+      view: balanceView.value,
+    },
+  });
+};
+
+const refreshRouteWithCategory = (category) => {
+  router.push({
+    query: {
+      year: selectedYear.value,
+      view: balanceView.value,
+      category,
+    },
+  });
+};
+
+const showIncomes = () => {
+  balanceView.value = 'incomes';
+  refreshRoute();
+};
+
+const showExpenses = () => {
+  balanceView.value = 'expenses';
+  refreshRoute();
+};
+
+const chartOptions = {
+  interaction: {
+    mode: 'index',
+  },
+  onClick: (e, item) => {
+    if (categoryViewLevel.value === 'category' && item.at(0)) {
+      refreshRouteWithCategory(tableItems.value.at(item.at(0).index).category);
+    }
+  },
 };
 
 const updateModelValue = () => {
   updateView();
 };
 
-onBeforeMount(() => updateYears());
+const parseParams = async () => {
+  const { year, view, category } = route.query;
+
+  if (year === undefined || year?.length <= 0) {
+    return;
+  }
+
+  if (yearItems.value.includes(Number.parseInt(year, 10))) {
+    selectedYear.value = year;
+
+    if (category) {
+      await updateViewWithSelectedCategory(category);
+    } else {
+      await updateViewWithSelectedYear();
+    }
+  }
+
+  if (view && view === 'incomes') {
+    balanceView.value = 'incomes';
+    tableItems.value = incomeItems;
+    updateView();
+  } else {
+    balanceView.value = 'expenses';
+    tableItems.value = expenseItems;
+    updateView();
+  }
+};
+
+const beforeMount = async () => {
+  await updateYears();
+  parseParams();
+};
+
+onBeforeMount(() => beforeMount());
+onBeforeUpdate(() => parseParams());
 </script>
