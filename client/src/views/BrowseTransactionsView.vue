@@ -39,7 +39,7 @@
       <v-btn
         class="ml-4"
         :disabled="notReadyToQuery()"
-        @click.stop="routeTodata"
+        @click.stop="routeToData"
       >
         {{ $t('browseTransactionsView.searchButton') }}
       </v-btn>
@@ -237,7 +237,7 @@ const bankTransactions = async () => {
   progressDialog.stopProgress();
 };
 
-const routeTodata = () => {
+const routeToData = () => {
   router.replace({
     query: {
       bank: selectedBankName.value,
