@@ -14,6 +14,7 @@
     <v-card-title>{{ $t('browseTransactionsView.bankDetail') }}</v-card-title>
     <v-card-actions class="align-start ml-4 mr-4">
       <v-select
+        v-model="selectedBankName"
         :items="banksNames"
         @update:model-value="onBankSelected"
       />
@@ -37,8 +38,8 @@
       />
       <v-btn
         class="ml-4"
-        :disabled="noBankSelected()"
-        @click.stop="bankTransactions"
+        :disabled="notReadyToQuery()"
+        @click.stop="routeToData"
       >
         {{ $t('browseTransactionsView.searchButton') }}
       </v-btn>
@@ -84,13 +85,16 @@
 </template>
 
 <script setup>
-import { computed, ref, onBeforeMount } from 'vue';
+import { computed, ref, onBeforeMount, onBeforeUpdate } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRoute, useRouter } from 'vue-router';
 import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
 import { useProgressDialogStore } from '../stores/progressDialog';
 
 const api = useApi();
+const route = useRoute();
+const router = useRouter();
 const { t: $t, locale } = useI18n();
 const appStore = useAppStore();
 const progressDialog = useProgressDialogStore();
@@ -144,6 +148,8 @@ const endDateCalendarAttributes = computed(() => [
 ]);
 
 const noBankSelected = () => selectedBankName.value === '';
+const notReadyToQuery = () =>
+  selectedBankName.value === '' || selectedMinDate.value === '' || selectedMaxDate.value === '';
 
 const getBanksBrief = async () => {
   totalAmount = 0.0;
@@ -231,16 +237,26 @@ const bankTransactions = async () => {
   progressDialog.stopProgress();
 };
 
+const routeToData = () => {
+  router.replace({
+    query: {
+      bank: selectedBankName.value,
+      start: selectedMinDate.value,
+      end: selectedMaxDate.value,
+    },
+  });
+  bankTransactions();
+};
+
 const onBankSelected = async (bankName) => {
   if (bankName === '') {
     return;
   }
 
-  selectedBankName.value = bankName;
-
   retrievedBalances.forEach(async (bankBalance) => {
     const { data: balance } = bankBalance;
     if (balance.bank === bankName) {
+      selectedBankName.value = bankName;
       minBankDate.value = balance.first_date;
       maxBankDate.value = balance.latest_date;
       selectedMinDate.value = balance.first_date;
@@ -269,5 +285,51 @@ const onEndDateSelected = (date) => {
   selectedMaxDate.value = dateFormatted;
 };
 
-onBeforeMount(() => getBanksBrief());
+const parseParams = async () => {
+  let gotStartDate = false;
+  let gotEndDate = false;
+
+  if (retrievedBalances === null) {
+    return;
+  }
+  
+  const bankName = route.query.bank;
+  const startDate = route.query.start;
+  const endDate = route.query.end;
+
+  if (bankName === undefined || bankName?.length <= 0) {
+    return;
+  }
+
+  await onBankSelected(bankName);
+
+  if (startDate?.length > 0 && Date.parse(startDate) > 0) {
+    selectedMinDate.value = startDate;
+    gotStartDate = true;
+  }
+
+  if (endDate?.length > 0 && Date.parse(endDate) > 0) {
+    selectedMaxDate.value = endDate;
+    gotEndDate = true;
+  }
+
+  if (gotStartDate && gotEndDate && Date.parse(endDate) < Date.parse(startDate)) {
+    gotStartDate = false;
+    selectedMinDate.value = '';
+    gotEndDate = false;
+    selectedMaxDate.value = '';
+  }
+
+  if (gotStartDate && gotEndDate) {
+    bankTransactions();
+  }
+};
+
+const beforeMount = async () => {
+  await getBanksBrief();
+  parseParams();
+};
+
+onBeforeMount(() => beforeMount());
+onBeforeUpdate(() => parseParams());
 </script>
