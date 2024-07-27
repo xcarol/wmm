@@ -114,8 +114,8 @@ module.exports = (app) => {
 
   app.get("/transactions", async (req, res) => {
     try {
-      const { bank, start, end } = req.query;
-      res.json(await getBankTransactions(bank, start, end));
+      const { bank, start, end, category, filter } = req.query;
+      res.json(await getBankTransactions(bank, start, end, category, filter));
     } catch (err) {
       res.status(err.sqlState ? 400 : 500).send(err);
     }

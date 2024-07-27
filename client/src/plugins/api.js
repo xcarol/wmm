@@ -11,7 +11,7 @@ class Api {
     deleteCategories: '/categories',
     renameCategory: '/categories/rename',
     transactions: '/transactions',
-    transactionsOfBank: '/transactions?bank={1}&start={2}&end={3}',
+    transactionsOfBank: '/transactions?bank={1}&start={2}&end={3}&category={4}&filter={5}',
     transactionsApplyCategory: '/transactions/category',
     transactionsCategorize: '/transactions/category',
     transactionsCategoryBalance: '/transactions/category?category={1}&start={2}&end={3}',
@@ -153,8 +153,8 @@ class Api {
     return this.axios.get(url);
   }
 
-  bankTransactions(bank, startDate, endDate) {
-    const url = Api.endpoint(this.endpoints.transactionsOfBank, bank, startDate, endDate);
+  bankTransactions(bank, startDate, endDate, category, filter) {
+    const url = Api.endpoint(this.endpoints.transactionsOfBank, bank, startDate, endDate, category, filter);
     return this.axios.get(url);
   }
 
