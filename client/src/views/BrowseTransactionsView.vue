@@ -85,7 +85,7 @@
 </template>
 
 <script setup>
-import { computed, ref, onBeforeMount, onBeforeUpdate } from 'vue';
+import { computed, ref, onBeforeMount } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import { useApi } from '../plugins/api';
@@ -335,5 +335,4 @@ const beforeMount = async () => {
 };
 
 onBeforeMount(() => beforeMount());
-onBeforeUpdate(() => parseParams());
 </script>
