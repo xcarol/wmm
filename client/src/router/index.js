@@ -43,12 +43,12 @@ const router = createRouter({
     },
     {
       path: '/browse/transactions',
-      name: 'browse/transactions',
+      name: 'browseTransactions',
       component: BrowseTransactionsView,
     },
     {
       path: '/browse/categories',
-      name: 'browse/categories',
+      name: 'browseCategories',
       component: BrowseCategoriesView,
     },
   ],
