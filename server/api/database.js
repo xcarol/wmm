@@ -31,7 +31,7 @@ const queryUncategorizedTransactions =
 
 const queryBankTransactions =
   "SELECT id, bank, date, description, category, amount \
-    FROM transactions WHERE bank = ? AND date >= ? AND date <= ?";
+      FROM transactions";
 
 const queryUncategorizedRowsFilter = " AND description LIKE ?";
 
@@ -226,14 +226,61 @@ async function renameCategory(oldName, newName) {
   }
 }
 
-async function getBankTransactions(bankName, startDate, endDate) {
+async function getBankTransactions(bankName, startDate, endDate, category, filter) {
   try {
     const connection = await getConnection();
-    const result = await connection.query(queryBankTransactions, [
-      bankName,
-      startDate,
-      endDate,
-    ]);
+    let query = queryBankTransactions;
+    const params = [];
+
+    if (bankName || startDate || endDate || category || filter) {
+      let useAnd = false;
+      query +=' WHERE ';
+
+      if (bankName) {
+        query += ' bank = ? ';
+        params.push(bankName);
+        useAnd = true;
+      }
+
+      if (startDate) {
+        if (useAnd) {
+          query += ' AND ';
+        }
+        query += ' date >= ? ';
+        params.push(startDate);
+        useAnd = true;
+      }
+
+      if (endDate) {
+        if (useAnd) {
+          query += ' AND ';
+        }
+        query += ' date <= ? ';
+        params.push(endDate)
+        useAnd = true;
+      }
+
+      if (category) {
+        if (useAnd) {
+          query += ' AND ';
+        }
+        query += ' category = ? ';
+        params.push(category);
+        useAnd = true;
+      }
+
+      if (filter) {
+        if (useAnd) {
+          query += ' AND ';
+        }
+        query += ' description LIKE ? ';
+        params.push(`%${filter}%`);
+        useAnd = true;
+      }
+    }
+
+    const result = await connection.query(query, params);
+
     connection.close();
     return result.at(0);
   } catch (err) {
