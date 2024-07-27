@@ -16,7 +16,7 @@
       <v-select
         v-model="selectedBankName"
         :items="banksNames"
-        @update:model-value="onBankSelected"
+        @update:model-value="setBankSelectedAttributes"
       />
       <v-text-field
         v-model="selectedMinDate"
@@ -108,6 +108,8 @@ const maxBankDate = ref('');
 const selectedMinDate = ref('');
 const selectedMaxDate = ref('');
 const selectedBankName = ref('');
+const selectedCategory = ref('');
+const selectedFilter = ref('');
 const startDateCalendarVisible = ref(false);
 const endDateCalendarVisible = ref(false);
 
@@ -218,6 +220,8 @@ const bankTransactions = async () => {
       selectedBankName.value,
       selectedMinDate.value,
       selectedMaxDate.value,
+      selectedCategory.value,
+      selectedFilter.value,
     );
 
     data.forEach(async (transaction) => {
@@ -248,12 +252,12 @@ const routeToData = () => {
   bankTransactions();
 };
 
-const onBankSelected = async (bankName) => {
-  if (bankName === '') {
+const setBankSelectedAttributes = (bankName) => {
+  if (bankName === '' || retrievedBalances === null) {
     return;
   }
 
-  retrievedBalances.forEach(async (bankBalance) => {
+  retrievedBalances.forEach((bankBalance) => {
     const { data: balance } = bankBalance;
     if (balance.bank === bankName) {
       selectedBankName.value = bankName;
@@ -286,41 +290,41 @@ const onEndDateSelected = (date) => {
 };
 
 const parseParams = async () => {
-  let gotStartDate = false;
-  let gotEndDate = false;
+  let update = false;
+  const { bank, start, end, category, filter } = route.query;
 
-  if (retrievedBalances === null) {
-    return;
-  }
-  
-  const bankName = route.query.bank;
-  const startDate = route.query.start;
-  const endDate = route.query.end;
-
-  if (bankName === undefined || bankName?.length <= 0) {
-    return;
+  if (bank?.length > 0 && selectedBankName.value !== bank) {
+    selectedBankName.value = bank;
+    setBankSelectedAttributes();
+    update = true;
   }
 
-  await onBankSelected(bankName);
-
-  if (startDate?.length > 0 && Date.parse(startDate) > 0) {
-    selectedMinDate.value = startDate;
-    gotStartDate = true;
+  if (start?.length > 0 && selectedMinDate.value !== start && Date.parse(start) > 0) {
+    selectedMinDate.value = start;
+    update = true;
   }
 
-  if (endDate?.length > 0 && Date.parse(endDate) > 0) {
-    selectedMaxDate.value = endDate;
-    gotEndDate = true;
+  if (end?.length > 0 && selectedMaxDate.value !== end && Date.parse(end) > 0) {
+    selectedMaxDate.value = end;
+    update = true;
   }
 
-  if (gotStartDate && gotEndDate && Date.parse(endDate) < Date.parse(startDate)) {
-    gotStartDate = false;
+  if (category?.length > 0 && selectedCategory.value !== category) {
+    selectedCategory.value = category;
+    update = true;
+  }
+
+  if (filter?.length > 0 && selectedFilter.value !== filter) {
+    selectedFilter.value = filter;
+    update = true;
+  }
+
+  if (Date.parse(selectedMaxDate.value) < Date.parse(selectedMinDate.value)) {
     selectedMinDate.value = '';
-    gotEndDate = false;
     selectedMaxDate.value = '';
   }
 
-  if (gotStartDate && gotEndDate) {
+  if (update) {
     bankTransactions();
   }
 };
