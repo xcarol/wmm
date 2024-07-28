@@ -49,9 +49,7 @@
         v-show="bankDetails.length"
         class="pl-4"
       >
-        {{
-          `${$t('browseTransactionsView.bankNameLabel')}: ${selectedBankName}. ${$t('browseTransactionsView.transactionsCountLabel')}: ${bankDetails.length}`
-        }}
+        {{ transactionsBrief }}
       </div>
       <v-data-table-virtual
         :items="bankDetails"
@@ -112,8 +110,11 @@ const selectedCategory = ref('');
 const selectedFilter = ref('');
 const startDateCalendarVisible = ref(false);
 const endDateCalendarVisible = ref(false);
+const totalTransactionsAmount = ref(0.0);
 
-let totalAmount = 0.0;
+const currencyFormatter = new Intl.NumberFormat(locale, { style: 'currency', currency: 'EUR' });
+
+let totalBanksAmount = 0.0;
 let retrievedBalances = null;
 
 const headerBanks = [
@@ -130,6 +131,19 @@ const headerDetails = [
   { title: $t('browseTransactionsView.categoryLabel'), key: 'category' },
   { title: $t('browseTransactionsView.amountLabel'), key: 'amount', align: 'end' },
 ];
+
+const transactionsBrief = computed(() => {
+  const banks = [];
+  const transactions = bankDetails.value;
+
+  transactions.forEach((transaction) => {
+    if (banks.includes(transaction.bank) === false) {
+      banks.push(transaction.bank);
+    }
+  });
+
+  return `${$t('browseTransactionsView.bankNameLabel')}: ${banks.toString()}. ${$t('browseTransactionsView.amountLabel')}: ${currencyFormatter.format(totalTransactionsAmount.value)}. ${$t('browseTransactionsView.transactionsCountLabel')}: ${transactions.length}`;
+});
 
 const initialStartPage = computed(() => {
   const dateToShow = new Date(selectedMinDate.value);
@@ -154,7 +168,7 @@ const notReadyToQuery = () =>
   selectedBankName.value === '' || selectedMinDate.value === '' || selectedMaxDate.value === '';
 
 const getBanksBrief = async () => {
-  totalAmount = 0.0;
+  totalBanksAmount = 0.0;
 
   progressDialog.startProgress({
     steps: 0,
@@ -183,13 +197,13 @@ const getBanksBrief = async () => {
         date: new Date(bankBalance.latest_date).toLocaleDateString(),
       });
 
-      totalAmount += bankBalance.balance;
+      totalBanksAmount += bankBalance.balance;
     });
 
     banksNames.value.splice(0, 0, '');
     banksBalances.value.push({
       bank: $t('browseTransactionsView.totalAmount'),
-      balance: totalAmount.toFixed(2),
+      balance: totalBanksAmount.toFixed(2),
     });
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
@@ -207,8 +221,6 @@ const showMaxDateCalendar = () => {
 };
 
 const bankTransactions = async () => {
-  const currencyFormatter = new Intl.NumberFormat(locale, { style: 'currency', currency: 'EUR' });
-
   progressDialog.startProgress({
     steps: 0,
     description: $t('progress.retrievingTransactions'),
@@ -216,6 +228,8 @@ const bankTransactions = async () => {
 
   try {
     bankDetails.value = [];
+    totalTransactionsAmount.value = 0.0;
+
     const { data } = await api.bankTransactions(
       selectedBankName.value,
       selectedMinDate.value,
@@ -233,6 +247,7 @@ const bankTransactions = async () => {
         category: transaction.category,
         amount: currencyFormatter.format(transaction.amount),
       });
+      totalTransactionsAmount.value += transaction.amount;
     });
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
