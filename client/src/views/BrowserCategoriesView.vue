@@ -307,6 +307,19 @@ const refreshRoute = () => {
   });
 };
 
+const routeToTransactionsWithFilter = (filter) => {
+  const year = selectedYear.value;
+  router.push({
+    name: 'browseTransactions',
+    query: {
+      bank: '',
+      start: `${year}/01/01`,
+      end: `${year}/12/31`,
+      filter,
+    },
+  });
+};
+
 const refreshRouteWithCategory = (category) => {
   router.push({
     query: {
@@ -332,8 +345,14 @@ const chartOptions = {
     mode: 'index',
   },
   onClick: (e, item) => {
-    if (categoryViewLevel.value === 'category' && item.at(0)) {
+    if (!item.at(0)) {
+      return;
+    }
+
+    if (categoryViewLevel.value === 'category') {
       refreshRouteWithCategory(tableItems.value.at(item.at(0).index).category);
+    } else if (categoryViewLevel.value === 'filter') {
+      routeToTransactionsWithFilter(tableItems.value.at(item.at(0).index).category);
     }
   },
 };

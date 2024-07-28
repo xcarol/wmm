@@ -11,7 +11,7 @@ export const useAppStore = defineStore('app', {
   }),
   actions: {
     addSearchToCategoryHistory(search) {
-      if (search.length && this.categorySearchHistory.includes(search) === false) {
+      if (search && search.length && this.categorySearchHistory.includes(search) === false) {
         this.categorySearchHistory.push(search);
       }
     },

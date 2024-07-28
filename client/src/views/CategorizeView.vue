@@ -187,6 +187,7 @@ const applyCategory = () => {
     yes: async () => {
       await updateTransactions(selectedTransactions, category);
       await searchTransactions();
+      selectedCategory.value = '';
     },
     no: () => {},
   });
@@ -221,6 +222,7 @@ const createNewFilter = async ({ category, filter }) => {
           ok: () => {},
         });
         await searchTransactions();
+        selectedCategory.value = '';
       },
       no: () => {},
     });

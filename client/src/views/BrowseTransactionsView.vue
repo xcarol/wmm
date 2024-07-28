@@ -16,7 +16,7 @@
       <v-select
         v-model="selectedBankName"
         :items="banksNames"
-        @update:model-value="onBankSelected"
+        @update:model-value="setBankSelectedAttributes"
       />
       <v-text-field
         v-model="selectedMinDate"
@@ -49,9 +49,7 @@
         v-show="bankDetails.length"
         class="pl-4"
       >
-        {{
-          `${$t('browseTransactionsView.bankNameLabel')}: ${selectedBankName}. ${$t('browseTransactionsView.transactionsCountLabel')}: ${bankDetails.length}`
-        }}
+        {{ transactionsBrief }}
       </div>
       <v-data-table-virtual
         :items="bankDetails"
@@ -85,7 +83,7 @@
 </template>
 
 <script setup>
-import { computed, ref, onBeforeMount, onBeforeUpdate } from 'vue';
+import { computed, ref, onBeforeMount } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import { useApi } from '../plugins/api';
@@ -108,10 +106,15 @@ const maxBankDate = ref('');
 const selectedMinDate = ref('');
 const selectedMaxDate = ref('');
 const selectedBankName = ref('');
+const selectedCategory = ref('');
+const selectedFilter = ref('');
 const startDateCalendarVisible = ref(false);
 const endDateCalendarVisible = ref(false);
+const totalTransactionsAmount = ref(0.0);
 
-let totalAmount = 0.0;
+const currencyFormatter = new Intl.NumberFormat(locale, { style: 'currency', currency: 'EUR' });
+
+let totalBanksAmount = 0.0;
 let retrievedBalances = null;
 
 const headerBanks = [
@@ -128,6 +131,19 @@ const headerDetails = [
   { title: $t('browseTransactionsView.categoryLabel'), key: 'category' },
   { title: $t('browseTransactionsView.amountLabel'), key: 'amount', align: 'end' },
 ];
+
+const transactionsBrief = computed(() => {
+  const banks = [];
+  const transactions = bankDetails.value;
+
+  transactions.forEach((transaction) => {
+    if (banks.includes(transaction.bank) === false) {
+      banks.push(transaction.bank);
+    }
+  });
+
+  return `${$t('browseTransactionsView.bankNameLabel')}: ${banks.toString()}. ${$t('browseTransactionsView.amountLabel')}: ${currencyFormatter.format(totalTransactionsAmount.value)}. ${$t('browseTransactionsView.transactionsCountLabel')}: ${transactions.length}`;
+});
 
 const initialStartPage = computed(() => {
   const dateToShow = new Date(selectedMinDate.value);
@@ -152,7 +168,7 @@ const notReadyToQuery = () =>
   selectedBankName.value === '' || selectedMinDate.value === '' || selectedMaxDate.value === '';
 
 const getBanksBrief = async () => {
-  totalAmount = 0.0;
+  totalBanksAmount = 0.0;
 
   progressDialog.startProgress({
     steps: 0,
@@ -181,13 +197,13 @@ const getBanksBrief = async () => {
         date: new Date(bankBalance.latest_date).toLocaleDateString(),
       });
 
-      totalAmount += bankBalance.balance;
+      totalBanksAmount += bankBalance.balance;
     });
 
     banksNames.value.splice(0, 0, '');
     banksBalances.value.push({
       bank: $t('browseTransactionsView.totalAmount'),
-      balance: totalAmount.toFixed(2),
+      balance: totalBanksAmount.toFixed(2),
     });
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
@@ -205,8 +221,6 @@ const showMaxDateCalendar = () => {
 };
 
 const bankTransactions = async () => {
-  const currencyFormatter = new Intl.NumberFormat(locale, { style: 'currency', currency: 'EUR' });
-
   progressDialog.startProgress({
     steps: 0,
     description: $t('progress.retrievingTransactions'),
@@ -214,10 +228,14 @@ const bankTransactions = async () => {
 
   try {
     bankDetails.value = [];
+    totalTransactionsAmount.value = 0.0;
+
     const { data } = await api.bankTransactions(
       selectedBankName.value,
       selectedMinDate.value,
       selectedMaxDate.value,
+      selectedCategory.value,
+      selectedFilter.value,
     );
 
     data.forEach(async (transaction) => {
@@ -229,6 +247,7 @@ const bankTransactions = async () => {
         category: transaction.category,
         amount: currencyFormatter.format(transaction.amount),
       });
+      totalTransactionsAmount.value += transaction.amount;
     });
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
@@ -248,12 +267,12 @@ const routeToData = () => {
   bankTransactions();
 };
 
-const onBankSelected = async (bankName) => {
-  if (bankName === '') {
+const setBankSelectedAttributes = (bankName) => {
+  if (bankName === '' || retrievedBalances === null) {
     return;
   }
 
-  retrievedBalances.forEach(async (bankBalance) => {
+  retrievedBalances.forEach((bankBalance) => {
     const { data: balance } = bankBalance;
     if (balance.bank === bankName) {
       selectedBankName.value = bankName;
@@ -286,41 +305,41 @@ const onEndDateSelected = (date) => {
 };
 
 const parseParams = async () => {
-  let gotStartDate = false;
-  let gotEndDate = false;
+  let update = false;
+  const { bank, start, end, category, filter } = route.query;
 
-  if (retrievedBalances === null) {
-    return;
-  }
-  
-  const bankName = route.query.bank;
-  const startDate = route.query.start;
-  const endDate = route.query.end;
-
-  if (bankName === undefined || bankName?.length <= 0) {
-    return;
+  if (bank?.length > 0 && selectedBankName.value !== bank) {
+    selectedBankName.value = bank;
+    setBankSelectedAttributes();
+    update = true;
   }
 
-  await onBankSelected(bankName);
-
-  if (startDate?.length > 0 && Date.parse(startDate) > 0) {
-    selectedMinDate.value = startDate;
-    gotStartDate = true;
+  if (start?.length > 0 && selectedMinDate.value !== start && Date.parse(start) > 0) {
+    selectedMinDate.value = start;
+    update = true;
   }
 
-  if (endDate?.length > 0 && Date.parse(endDate) > 0) {
-    selectedMaxDate.value = endDate;
-    gotEndDate = true;
+  if (end?.length > 0 && selectedMaxDate.value !== end && Date.parse(end) > 0) {
+    selectedMaxDate.value = end;
+    update = true;
   }
 
-  if (gotStartDate && gotEndDate && Date.parse(endDate) < Date.parse(startDate)) {
-    gotStartDate = false;
+  if (category?.length > 0 && selectedCategory.value !== category) {
+    selectedCategory.value = category;
+    update = true;
+  }
+
+  if (filter?.length > 0 && selectedFilter.value !== filter) {
+    selectedFilter.value = filter;
+    update = true;
+  }
+
+  if (Date.parse(selectedMaxDate.value) < Date.parse(selectedMinDate.value)) {
     selectedMinDate.value = '';
-    gotEndDate = false;
     selectedMaxDate.value = '';
   }
 
-  if (gotStartDate && gotEndDate) {
+  if (update) {
     bankTransactions();
   }
 };
@@ -331,5 +350,4 @@ const beforeMount = async () => {
 };
 
 onBeforeMount(() => beforeMount());
-onBeforeUpdate(() => parseParams());
 </script>
