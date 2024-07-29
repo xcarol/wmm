@@ -381,28 +381,21 @@ const newFilter = async (value) => {
   });
 };
 
-const updateFilter = (value) => {
+const updateFilter = async (value) => {
   showEditFilter.value = false;
 
-  messageDialog.showMessage({
-    title: $t('dialog.Warning'),
-    message: $t('filtersView.editFilterWarningMessage').replace('%s', value.filter),
-    yes: async () => {
-      progressDialog.startProgress({
-        steps: 0,
-        description: $t('progress.updateProgress'),
-      });
-
-      try {
-        await api.updateFilter(editFilterCategoryName.value, value.filter, value.label);
-      } catch (e) {
-        appStore.alertMessage = api.getErrorMessage(e);
-      }
-
-      progressDialog.stopProgress();
-    },
-    no: () => {},
+  progressDialog.startProgress({
+    steps: 0,
+    description: $t('progress.updateProgress'),
   });
+
+  try {
+    await api.updateFilter(editFilterCategoryName.value, value.filter, value.label);
+  } catch (e) {
+    appStore.alertMessage = api.getErrorMessage(e);
+  }
+
+  progressDialog.stopProgress();
 };
 
 const deleteFilter = () => {
