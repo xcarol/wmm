@@ -1,5 +1,6 @@
 const {
   addFilter,
+  updateFilter,
   applyFilter,
   deleteCategories,
   getCategories,
@@ -31,12 +32,27 @@ module.exports = (app) => {
   app.post("/categories/filter", async (req, res) => {
     let category = '';
     let filter = '';
+    let label = '';
 
     try {
       category = req.body.category;
       filter = req.body.filter;
-      res.json(await addFilter(category, filter));
+      label = req.body.label;
+      res.json(await addFilter(category, filter, label));
       res.status(201);
+    } catch (err) {
+      res.status(err.sqlState ? 400 : 500).send(err);
+    }
+  });
+
+  app.post("/categories/apply", async (req, res) => {
+    let category = '';
+    let filter = '';
+
+    try {
+      category = req.body.category;
+      filter = req.body.filter;
+      res.json(await applyFilter(category, filter));
     } catch (err) {
       res.status(err.sqlState ? 400 : 500).send(err);
     }
@@ -45,11 +61,13 @@ module.exports = (app) => {
   app.put("/categories/filter", async (req, res) => {
     let category = '';
     let filter = '';
+    let label = '';
 
     try {
       category = req.body.category;
       filter = req.body.filter;
-      res.json(await applyFilter(category, filter));
+      label = req.body.label;
+      res.json(await updateFilter(category, filter, label));
     } catch (err) {
       res.status(err.sqlState ? 400 : 500).send(err);
     }
