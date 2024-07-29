@@ -17,6 +17,10 @@
           v-model="filterInput"
           :label="$t('dialogNewFilter.filterLabel')"
         ></v-text-field>
+        <v-text-field
+          v-model="labelInput"
+          :label="$t('dialogNewFilter.labelLabel')"
+        ></v-text-field>
       </v-card-text>
       <v-card-actions>
         <v-btn @click.stop="cancel"> {{ $t('dialog.cancel') }}</v-btn>
@@ -49,21 +53,27 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  label: {
+    type: String,
+    default: '',
+  },
 });
 
 const show = computed(() => props.show);
 const categoryInput = ref(props.category);
 const filterInput = ref(props.filter);
+const labelInput = ref(props.label);
 
 watch(show, (newVal, oldVal) => {
   if (newVal && !oldVal) {
     categoryInput.value = props.category;
     filterInput.value = props.filter;
+    labelInput.value = props.label;
   }
 });
 
 const ok = () => {
-  emits('onOk', { category: categoryInput.value, filter: filterInput.value });
+  emits('onOk', { category: categoryInput.value, filter: filterInput.value, label: labelInput.value });
 };
 
 const cancel = () => {
