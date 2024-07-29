@@ -3,6 +3,7 @@
     :show="showNewFilterDialog"
     :category="selectedCategory"
     :filter="selectedItemToFilter"
+    :label="selectedItemToFilter"
     @on-ok="createNewFilter"
     @on-cancel="hideNewFilterDialog"
   />
@@ -201,11 +202,11 @@ const hideNewFilterDialog = () => {
   showNewFilterDialog.value = false;
 };
 
-const createNewFilter = async ({ category, filter }) => {
+const createNewFilter = async ({ category, filter, label }) => {
   hideNewFilterDialog();
 
   try {
-    await api.createFilter(category, filter);
+    await api.createFilter(category, filter, label);
 
     messageDialog.showMessage({
       title: $t('dialog.Warning'),
