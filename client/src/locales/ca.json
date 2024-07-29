@@ -81,12 +81,14 @@
   },
   "filtersView": {
     "title": "Gestió dels filtres",
-    "categoriesLabel": "Categories",
-    "filtersLabel": "Filtres",
+    "categoriesLabel": "Categoria",
+    "filtersName": "Filtre",
+    "filtersLabel": "Etiqueta",
     "renameCategoryButton": "Reanomena...",
     "deleteCategoryButton": "Elimina",
     "applyCategoryButton": "Aplica",
     "newFilterButton": "Nou...",
+    "editFilterButton": "Edita...",
     "deleteFilterButton": "Elimina",
     "applyFilterButton": "Aplica",
     "deleteCategoriesWarningMessage": "Et's a punt d'esborrar %d categories.\nAixò també esborrarà la categoria de les transaccions corresponents.\nN'estàs segur?",
@@ -126,12 +128,13 @@
   "dialogNewFilter": {
     "title": "Nou filtre",
     "categoryLabel": "Nom de la categoria",
-    "filterLabel": "Nom del filtre"
+    "filterLabel": "Nom del filtre",
+    "labelLabel": "Etiqueta"
   },
   "dialogRenameCategory": {
     "title": "Reanomenar la categoria",
     "categoryLabel": "Nom actual de la categoria",
-    "newCategoryLabel": "Nou nom de la categoria  "
+    "newCategoryLabel": "Nou nom de la categoria"
   },
   "dialog": {
     "Info": "Informació",
