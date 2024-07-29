@@ -6,7 +6,8 @@ const {
   getCategories,
   getCategoryFilters,
   renameCategory,
-  deleteFilters,
+  deleteFilter,
+  resetTransactionsCategoryForAFilter,
 } = require("./database");
 
 module.exports = (app) => {
@@ -19,7 +20,7 @@ module.exports = (app) => {
   });
 
   app.get("/categories", async (req, res) => {
-    let category = '';
+    let category = "";
 
     try {
       category = req.query.category;
@@ -30,9 +31,9 @@ module.exports = (app) => {
   });
 
   app.post("/categories/filter", async (req, res) => {
-    let category = '';
-    let filter = '';
-    let label = '';
+    let category = "";
+    let filter = "";
+    let label = "";
 
     try {
       category = req.body.category;
@@ -46,8 +47,8 @@ module.exports = (app) => {
   });
 
   app.post("/categories/apply", async (req, res) => {
-    let category = '';
-    let filter = '';
+    let category = "";
+    let filter = "";
 
     try {
       category = req.body.category;
@@ -59,9 +60,9 @@ module.exports = (app) => {
   });
 
   app.put("/categories/filter", async (req, res) => {
-    let category = '';
-    let filter = '';
-    let label = '';
+    let category = "";
+    let filter = "";
+    let label = "";
 
     try {
       category = req.body.category;
@@ -73,12 +74,11 @@ module.exports = (app) => {
     }
   });
 
-  app.put("/categories/filters", async (req, res) => {
-    let filters = '';
-
+  app.delete("/categories/filter", async (req, res) => {
     try {
-      filters = req.body.filters;
-      res.json(await deleteFilters(filters));
+      const { filter, category } = req.query;
+      await resetTransactionsCategoryForAFilter(filter, category);
+      res.json(await deleteFilter(filter, category));
     } catch (err) {
       res.status(err.sqlState ? 400 : 500).send(err);
     }
@@ -96,12 +96,12 @@ module.exports = (app) => {
   });
 
   app.post("/categories/rename", async (req, res) => {
-    let newName = '';
-    let oldName = '';
+    let newName = "";
+    let oldName = "";
 
     try {
       newName = req.body.newName;
-      oldName = req.body.oldName
+      oldName = req.body.oldName;
       res.json(await renameCategory(oldName, newName));
     } catch (err) {
       res.status(err.sqlState ? 400 : 500).send(err);

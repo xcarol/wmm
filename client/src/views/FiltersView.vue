@@ -409,7 +409,7 @@ const deleteFilter = () => {
       });
 
       try {
-        await api.deleteFilters(selectedFilters.value);
+        await api.deleteFilter(selectedFilters.value.at(0), selectedCategories.value.at(0));
         progressDialog.stopProgress();
 
         await getFilters();

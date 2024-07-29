@@ -8,7 +8,7 @@ class Api {
     createFilter: '/categories/filter',
     applyFilter: '/categories/apply',
     updateFilter: '/categories/filter',
-    deleteFilters: '/categories/filters',
+    deleteFilter: '/categories/filter?filter={1}&category={2}',
     deleteCategories: '/categories',
     renameCategory: '/categories/rename',
     transactions: '/transactions',
@@ -84,9 +84,9 @@ class Api {
     return this.axios.put(url, { category, filter, label });
   }
 
-  deleteFilters(filters) {
-    const url = Api.endpoint(this.endpoints.deleteFilters);
-    return this.axios.put(url, { filters });
+  deleteFilter(filter, category) {
+    const url = Api.endpoint(this.endpoints.deleteFilter, filter, category);
+    return this.axios.delete(url);
   }
 
   deleteCategories(categories) {

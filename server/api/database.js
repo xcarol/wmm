@@ -134,10 +134,14 @@ const queryAddCategoryFilters =
 
 const queryDeleteCategories = "DELETE FROM filters WHERE category IN (?)";
 
-const queryDeleteFilters = "DELETE FROM filters WHERE filter IN(?)";
+const queryDeleteFilter =
+  "DELETE FROM filters WHERE filter = ? AND category = ?";
 
 const queryResetRowsCategories =
   "UPDATE transactions SET category = '' WHERE category IN (?)";
+
+const queryResetRowsCategoryForAFilter =
+  "UPDATE transactions SET category = '' WHERE category = ? AND description LIKE ?";
 
 const queryRenameRowsCategory =
   "UPDATE transactions SET category = ? WHERE category = ?";
@@ -527,10 +531,13 @@ async function deleteCategories(categories) {
   }
 }
 
-async function deleteFilters(filters) {
+async function deleteFilter(filter, category) {
   try {
     const connection = await getConnection();
-    const result = await connection.query(queryDeleteFilters, [filters]);
+    const result = await connection.query(queryDeleteFilter, [
+      filter,
+      category,
+    ]);
     connection.close();
     return result;
   } catch (err) {
@@ -613,6 +620,22 @@ async function resetTransactionsCategories(categories) {
   }
 }
 
+async function resetTransactionsCategoryForAFilter(filter, category) {
+  try {
+    const connection = await getConnection();
+    const result = await connection.query(queryResetRowsCategoryForAFilter, [
+      category,
+      `%${filter}%`,
+    ]);
+    connection.close();
+    return result;
+  } catch (err) {
+    err.message = `Error [${err}] reseting the category of the transactions that have the category [${category}] and filter [${filter}].`;
+    console.error(err);
+    throw err;
+  }
+}
+
 async function updateTransactionsByFilter(filter) {
   try {
     const connection = await getConnection();
@@ -653,7 +676,7 @@ module.exports = {
   renameCategory,
   backupDatabase,
   deleteCategories,
-  deleteFilters,
+  deleteFilter,
   deleteTransactions,
   executeSql,
   getBankNames,
@@ -668,6 +691,7 @@ module.exports = {
   getUncategorizedTransactions,
   getYears,
   resetTransactionsCategories,
+  resetTransactionsCategoryForAFilter,
   updateTransactionsCategory,
   updateTransactionsByFilter,
   updateTransactionsAsNotDuplicated,
