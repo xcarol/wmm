@@ -15,8 +15,8 @@
                 :height="adjustedHeight"
                 @update:model-value="onUpdateCategoryModelValue"
               >
-              <template #[`header.data-table-select`]></template>
-            </v-data-table-virtual>
+                <template #[`header.data-table-select`]></template>
+              </v-data-table-virtual>
             </v-card-text>
             <v-card-actions>
               <v-spacer />
@@ -63,6 +63,11 @@
               >
               <v-btn
                 :disabled="noFilterSelected"
+                @click.stop="showEditFilterDialog"
+                >{{ $t('filtersView.editFilterButton') }}</v-btn
+              >
+              <v-btn
+                :disabled="noFilterSelected"
                 @click.stop="deleteFilter"
                 >{{ $t('filtersView.deleteFilterButton') }}</v-btn
               >
@@ -89,10 +94,18 @@
     @on-ok="newFilter"
     @on-cancel="showNewFilter = !showNewFilter"
   />
+  <new-filter-dialog
+    :show="showEditFilter"
+    :category="editFilterCategoryName"
+    :filter="editFilterName"
+    :label="editFilterLabel"
+    @on-ok="updateFilter"
+    @on-cancel="showEditFilter = !showEditFilter"
+  />
 </template>
 
 <script setup>
-import { computed, onBeforeMount, onBeforeUpdate, onMounted, ref } from 'vue';
+import { computed, onBeforeMount, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
@@ -111,10 +124,15 @@ const selectedCategories = ref([]);
 const tableCategories = ref([]);
 const selectedFilters = ref([]);
 const tableFilters = ref([]);
+const retrievedFilters = ref([]);
 const showRenameCategory = ref(false);
 const renameCategoryName = ref('');
 const showNewFilter = ref(false);
 const newFilterCategoryName = ref('');
+const showEditFilter = ref(false);
+const editFilterCategoryName = ref('');
+const editFilterName = ref('');
+const editFilterLabel = ref('');
 const innerHeight = ref(0);
 
 const adjustedHeight = computed(() => {
@@ -129,10 +147,32 @@ const noFilterSelected = computed(() => {
   return selectedFilters.value.length === 0;
 });
 
-const headerCategories = [{ title: $t('filtersView.categoriesLabel'), value: 'id' }];
-const headerFilters = [{ title: $t('filtersView.filtersLabel'), value: 'id' }];
+const headerCategories = [{ title: $t('filtersView.categoriesLabel'), key: 'id' }];
+const headerFilters = [
+  { title: $t('filtersView.filtersName'), key: 'id' },
+  { title: $t('filtersView.filtersLabel'), key: 'label' },
+];
 
-const listToTable = (list) => {
+const filterLabel = (filter) => {
+  for (let index = 0; index < retrievedFilters.value.length; index += 1) {
+    const retrievedFilter = retrievedFilters.value[index];
+    if (retrievedFilter.filter === filter) {
+      return retrievedFilter.label;
+    }
+  }
+
+  return '';
+};
+
+const filterListToTable = (list) => {
+  const table = [];
+  list.forEach((item) => {
+    table.push({ id: item.filter, label: item.label });
+  });
+  return table;
+};
+
+const categoryListToTable = (list) => {
   const table = [];
   list.forEach((item) => {
     table.push({ id: item });
@@ -142,8 +182,8 @@ const listToTable = (list) => {
 
 const getFilters = async () => {
   try {
-    const filters = await api.filtersNames(selectedCategories.value);
-    tableFilters.value = listToTable(filters.data);
+    ({ data: retrievedFilters.value } = await api.getFilters(selectedCategories.value));
+    tableFilters.value = filterListToTable(retrievedFilters.value);
     selectedFilters.value = [];
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
@@ -153,7 +193,7 @@ const getFilters = async () => {
 const getCategories = async () => {
   try {
     const categories = await api.categoriesNames();
-    tableCategories.value = listToTable(categories.data);
+    tableCategories.value = categoryListToTable(categories.data);
     selectedCategories.value = [];
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
@@ -173,7 +213,7 @@ const onUpdateCategoryModelValue = async (updateSelectedCategories) => {
   const category = updateSelectedCategories.pop();
   if (category) {
     selectedCategories.value = [category]; // Disable multi-selection
-    getFilters();
+    await getFilters();
   }
 };
 
@@ -185,6 +225,13 @@ const showRenameCategoryDialog = async () => {
 const showNewFilterDialog = async () => {
   [newFilterCategoryName.value] = selectedCategories.value;
   showNewFilter.value = true;
+};
+
+const showEditFilterDialog = async () => {
+  [editFilterCategoryName.value] = selectedCategories.value;
+  editFilterName.value = selectedFilters.value.at(0);
+  editFilterLabel.value = filterLabel(selectedFilters.value.at(0));
+  showEditFilter.value = true;
 };
 
 const renameCategory = (value) => {
@@ -302,7 +349,6 @@ const applyCategory = () => {
 const newFilter = async (value) => {
   showNewFilter.value = false;
 
-
   messageDialog.showMessage({
     title: $t('dialog.Warning'),
     message: $t('filtersView.applyNewFilterWarningMessage').replace('%s', value.filter),
@@ -313,8 +359,8 @@ const newFilter = async (value) => {
       });
 
       try {
-        await api.createFilter(newFilterCategoryName.value, value.filter);
-        const applyResult = await api.applyFilter(value.category,value.filter);
+        await api.createFilter(newFilterCategoryName.value, value.filter, value.label);
+        const applyResult = await api.applyFilter(value.category, value.filter);
         await getFilters();
         progressDialog.stopProgress();
         messageDialog.showMessage({
@@ -335,6 +381,23 @@ const newFilter = async (value) => {
   });
 };
 
+const updateFilter = async (value) => {
+  showEditFilter.value = false;
+
+  progressDialog.startProgress({
+    steps: 0,
+    description: $t('progress.updateProgress'),
+  });
+
+  try {
+    await api.updateFilter(editFilterCategoryName.value, value.filter, value.label);
+  } catch (e) {
+    appStore.alertMessage = api.getErrorMessage(e);
+  }
+
+  progressDialog.stopProgress();
+};
+
 const deleteFilter = () => {
   messageDialog.showMessage({
     title: $t('dialog.Warning'),
@@ -349,7 +412,7 @@ const deleteFilter = () => {
         await api.deleteFilters(selectedFilters.value);
         progressDialog.stopProgress();
 
-        getFilters();
+        await getFilters();
       } catch (e) {
         appStore.alertMessage = api.getErrorMessage(e);
       }
@@ -371,7 +434,10 @@ const applyFilter = () => {
       });
 
       try {
-        const applyResult = await api.applyFilter(selectedCategories.value[0], selectedFilters.value[0]);
+        const applyResult = await api.applyFilter(
+          selectedCategories.value[0],
+          selectedFilters.value[0],
+        );
         progressDialog.stopProgress();
         messageDialog.showMessage({
           title: $t('dialog.Info'),
@@ -395,7 +461,6 @@ const onResize = () => {
   innerHeight.value = window.innerHeight;
 };
 
-onBeforeUpdate(() => getCategories());
 onBeforeMount(() => getCategories());
 onMounted(() => onResize());
 </script>

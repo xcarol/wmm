@@ -50,6 +50,7 @@ CREATE TABLE `filters` (
   `id` int NOT NULL AUTO_INCREMENT,
   `category` varchar(200) NOT NULL,
   `filter` varchar(200) NOT NULL,
+  `label` varchar(200) DEFAULT '',
   PRIMARY KEY (`id`),
   UNIQUE KEY `filter` (`filter`),
   KEY `category` (`category`)

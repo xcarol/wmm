@@ -223,13 +223,13 @@ const requestCategoriesBalances = async (year) => {
 };
 
 const resquestFiltersBalances = async (category, year) => {
-  const { data } = await api.filtersNames(category);
+  const { data } = await api.getFilters(category);
 
-  const filters = data;
+  const filterNames = data.map((d) => d.filter);
   const allBalancePromises = [];
-  for (let filterCount = 0; filterCount < filters.length; filterCount += 1) {
+  for (let index = 0; index < filterNames.length; index += 1) {
     allBalancePromises.push(
-      api.filterBalance(category, filters.at(filterCount), `${year}/01/01`, `${year}/12/31`),
+      api.filterBalance(category, filterNames.at(index), `${year}/01/01`, `${year}/12/31`),
     );
   }
 

@@ -4,9 +4,10 @@ class Api {
     banksNames: '/banks/names',
     banksBalance: '/banks/balance?bank={1}&start={2}&end={3}',
     categoriesNames: '/categories/names',
-    filtersNames: '/categories?category={1}',
+    filters: '/categories?category={1}',
     createFilter: '/categories/filter',
-    applyFilter: '/categories/filter',
+    applyFilter: '/categories/apply',
+    updateFilter: '/categories/filter',
     deleteFilters: '/categories/filters',
     deleteCategories: '/categories',
     renameCategory: '/categories/rename',
@@ -63,19 +64,24 @@ class Api {
     return this.axios.get(url);
   }
 
-  filtersNames(category) {
-    const url = Api.endpoint(this.endpoints.filtersNames, category);
+  getFilters(category) {
+    const url = Api.endpoint(this.endpoints.filters, category);
     return this.axios.get(url);
   }
 
-  createFilter(category, filter) {
+  createFilter(category, filter, label) {
     const url = Api.endpoint(this.endpoints.createFilter);
-    return this.axios.post(url, { category, filter });
+    return this.axios.post(url, { category, filter, label });
   }
 
   applyFilter(category, filter) {
     const url = Api.endpoint(this.endpoints.applyFilter);
-    return this.axios.put(url, { category, filter });
+    return this.axios.post(url, { category, filter });
+  }
+
+  updateFilter(category, filter, label) {
+    const url = Api.endpoint(this.endpoints.updateFilter);
+    return this.axios.put(url, { category, filter, label });
   }
 
   deleteFilters(filters) {

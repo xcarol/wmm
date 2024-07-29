@@ -1,8 +1,8 @@
 {
-  "en": "English",
-  "en-US": "fallback:en",
   "ca": "Català",
   "ca-ES": "fallback:ca",
+  "en": "English",
+  "en-US": "fallback:en",
   "es": "Español",
   "languages": {
     "ca": "Català",
@@ -10,7 +10,7 @@
     "en": "English"
   },
   "global": {
-    "close": "Close",
+    "close": "Cerrar",
     "cancel": "Cancelar"
   },
   "mainDrawer": {
@@ -81,12 +81,14 @@
   },
   "filtersView": {
     "title": "Gestión de los filtros",
-    "categoriesLabel": "Categorías",
-    "filtersLabel": "Filtros",
+    "categoriesLabel": "Categoría",
+    "filtersName": "Filtro",
+    "filtersLabel": "Etiqueta",
     "renameCategoryButton": "Renombra...",
     "deleteCategoryButton": "Elimina",
     "applyCategoryButton": "Aplica",
     "newFilterButton": "Nuevo...",
+    "editFilterButton": "Edita...",
     "deleteFilterButton": "Elimina",
     "applyFilterButton": "Aplica",
     "deleteCategoriesWarningMessage": "Vas borrar %d categorías.\nEsto también borrará la categoria de las transacciones corresponendientes.\n¿Estàs seguro?",
@@ -126,7 +128,13 @@
   "dialogNewFilter": {
     "title": "Nuevo filtro",
     "categoryLabel": "Nombre de la categoría",
-    "filterLabel": "Nombre del filtro"
+    "filterLabel": "Nombre del filtro",
+    "labelLabel": "Etiqueta"
+  },
+  "dialogRenameCategory": {
+    "title": "Renombrar la categoría",
+    "categoryLabel": "Nombre actual de la categoría",
+    "newCategoryLabel": "Nuevo nombre de la categoría"
   },
   "dialog": {
     "Info": "Información",

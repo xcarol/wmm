@@ -1,9 +1,9 @@
 {
   "ca": "Català",
   "ca-ES": "fallback:ca",
-  "es": "Español",
   "en": "English",
   "en-US": "fallback:en",
+  "es": "Español",
   "languages": {
     "ca": "Català",
     "es": "Castellano",
@@ -81,12 +81,14 @@
   },
   "filtersView": {
     "title": "Filter management",
-    "categoriesLabel": "Categories",
-    "filtersLabel": "Filters",
+    "categoriesLabel": "Category",
+    "filtersName": "Filter",
+    "filtersLabel": "Label",
     "renameCategoryButton": "Rename...",
     "deleteCategoryButton": "Delete",
     "applyCategoryButton": "Apply",
     "newFilterButton": "New...",
+    "editFilterButton": "Edit...",
     "deleteFilterButton": "Delete",
     "applyFilterButton": "Apply",
     "deleteCategoriesWarningMessage": "You're about to delete %d categories.\nIt will also reset the category of the corresponding transactions.\nAre you sure?",
@@ -126,7 +128,13 @@
   "dialogNewFilter": {
     "title": "New Filter",
     "categoryLabel": "Category name",
-    "filterLabel": "Filter name"
+    "filterLabel": "Filter name",
+    "labelLabel": "Label"
+  },
+  "dialogRenameCategory": {
+    "title": "Rename category",
+    "categoryLabel": "Actual category name",
+    "newCategoryLabel": "New category name"
   },
   "dialog": {
     "Info": "Information",

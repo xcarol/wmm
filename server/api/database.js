@@ -24,7 +24,7 @@ const queryCategoryNames =
     FROM filters ORDER BY category ASC";
 
 const queryFilterNames =
-  "SELECT DISTINCT filter FROM filters WHERE category=? ORDER BY filter ASC";
+  "SELECT filter, label FROM filters WHERE category=? ORDER BY filter ASC";
 
 const queryUncategorizedTransactions =
   "SELECT id, bank, date, description, category, amount FROM transactions WHERE category = ''";
@@ -130,7 +130,7 @@ const queryMarkNotDuplicateRows =
 const queryYears = "SELECT DISTINCT YEAR(date) as year FROM transactions";
 
 const queryAddCategoryFilters =
-  "INSERT INTO filters (category, filter) VALUES (?, ?)";
+  "INSERT INTO filters (category, filter, label) VALUES (?, ?, ?)";
 
 const queryDeleteCategories = "DELETE FROM filters WHERE category IN (?)";
 
@@ -151,22 +151,45 @@ const queryUpdateTransactionsByFilter =
 const queryRenameCategoryFilters =
   "UPDATE filters SET category = ? WHERE category = ?";
 
+const queryUpdateFilter =
+  "UPDATE filters SET filter = ?, label = ? WHERE category = ? AND filter = ?";
+
 async function getConnection() {
   return await mysql.createConnection(connectionSettings);
 }
 
-async function addFilter(category, filter) {
+async function addFilter(category, filter, label) {
   try {
     const connection = await getConnection();
 
     const result = await connection.query(queryAddCategoryFilters, [
       category.slice(0, MAX_LEN),
       filter.slice(0, MAX_LEN),
+      label.slice(0, MAX_LEN),
     ]);
     connection.close();
     return result;
   } catch (err) {
-    err.message = `Error [${err}] adding filter ${filter} to category ${category}.`;
+    err.message = `Error [${err}] adding filter ${filter} with label ${label} to category ${category}.`;
+    console.error(err);
+    throw err;
+  }
+}
+
+async function updateFilter(category, filter, label) {
+  try {
+    const connection = await getConnection();
+
+    const result = await connection.query(queryUpdateFilter, [
+      filter.slice(0, MAX_LEN),
+      label.slice(0, MAX_LEN),
+      category.slice(0, MAX_LEN),
+      filter.slice(0, MAX_LEN),
+    ]);
+    connection.close();
+    return result;
+  } catch (err) {
+    err.message = `Error [${err}] updating filter ${filter} with label ${label} to category ${category}.`;
     console.error(err);
     throw err;
   }
@@ -226,7 +249,13 @@ async function renameCategory(oldName, newName) {
   }
 }
 
-async function getBankTransactions(bankName, startDate, endDate, category, filter) {
+async function getBankTransactions(
+  bankName,
+  startDate,
+  endDate,
+  category,
+  filter
+) {
   try {
     const connection = await getConnection();
     let query = queryBankTransactions;
@@ -234,46 +263,46 @@ async function getBankTransactions(bankName, startDate, endDate, category, filte
 
     if (bankName || startDate || endDate || category || filter) {
       let useAnd = false;
-      query +=' WHERE ';
+      query += " WHERE ";
 
       if (bankName) {
-        query += ' bank = ? ';
+        query += " bank = ? ";
         params.push(bankName);
         useAnd = true;
       }
 
       if (startDate) {
         if (useAnd) {
-          query += ' AND ';
+          query += " AND ";
         }
-        query += ' date >= ? ';
+        query += " date >= ? ";
         params.push(startDate);
         useAnd = true;
       }
 
       if (endDate) {
         if (useAnd) {
-          query += ' AND ';
+          query += " AND ";
         }
-        query += ' date <= ? ';
-        params.push(endDate)
+        query += " date <= ? ";
+        params.push(endDate);
         useAnd = true;
       }
 
       if (category) {
         if (useAnd) {
-          query += ' AND ';
+          query += " AND ";
         }
-        query += ' category = ? ';
+        query += " category = ? ";
         params.push(category);
         useAnd = true;
       }
 
       if (filter) {
         if (useAnd) {
-          query += ' AND ';
+          query += " AND ";
         }
-        query += ' description LIKE ? ';
+        query += " description LIKE ? ";
         params.push(`%${filter}%`);
         useAnd = true;
       }
@@ -443,7 +472,7 @@ async function getCategoryFilters(category) {
     const connection = await getConnection();
     const result = await connection.query(queryFilterNames, [category]);
     connection.close();
-    return result.at(0).map((row) => row.filter);
+    return result.at(0);
   } catch (err) {
     err.message = `Error [${err}] retrieving filters for the category [${category}].`;
     console.error(err);
@@ -618,6 +647,7 @@ async function updateTransactionsAsNotDuplicated(transactions) {
 module.exports = {
   addTransaction,
   addFilter,
+  updateFilter,
   applyFilter,
   applyCategory,
   renameCategory,
