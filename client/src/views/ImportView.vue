@@ -138,7 +138,7 @@ const csvAmountToSql = (amount) => {
 
 const dayBeforeFirstDate = (csvfile, dateColumn) => {
   let olderDate = dayjs();
-  
+
   olderDate = olderDate.add(1, 'day');
 
   for (let count = 0; count < csvfile.rowCount; count += 1) {
@@ -166,7 +166,7 @@ const importFileToDatabase = async () => {
   });
 
   try {
-    if (initialAmount.value !== 0 ) {
+    if (initialAmount.value !== 0) {
       await api
         .addTransaction(
           csvDateToSql(dayBeforeFirstDate(appStore.csvfile, selectedDateColumn.value)),

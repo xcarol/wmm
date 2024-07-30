@@ -11,8 +11,7 @@ export const useMessageDialogStore = defineStore('messageDialog', {
     ok: ref(null),
     cancel: ref(null),
   }),
-  getters: {
-  },
+  getters: {},
   actions: {
     showMessage(payload) {
       this.show = true;

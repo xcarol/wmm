@@ -16,7 +16,8 @@ class Api {
     transactionsApplyCategory: '/transactions/category',
     transactionsCategorize: '/transactions/category',
     transactionsCategoryBalance: '/transactions/category?category={1}&start={2}&end={3}',
-    transactionsCategoryFiltersBalance: '/transactions/category?category={1}&filter={2}&start={3}&end={4}',
+    transactionsCategoryFiltersBalance:
+      '/transactions/category?category={1}&filter={2}&start={3}&end={4}',
     resetCategoryFromTransactions: '/transactions/category',
     updateTransactionsByFilter: '/transactions/filter',
     uncategorizedTransactions: '/transactions/uncategorized?filter={1}',
@@ -160,7 +161,14 @@ class Api {
   }
 
   bankTransactions(bank, startDate, endDate, category, filter) {
-    const url = Api.endpoint(this.endpoints.transactionsOfBank, bank, startDate, endDate, category, filter);
+    const url = Api.endpoint(
+      this.endpoints.transactionsOfBank,
+      bank,
+      startDate,
+      endDate,
+      category,
+      filter,
+    );
     return this.axios.get(url);
   }
 
@@ -175,7 +183,13 @@ class Api {
   }
 
   filterBalance(category, filter, start, end) {
-    const url = Api.endpoint(this.endpoints.transactionsCategoryFiltersBalance, category, filter, start, end);
+    const url = Api.endpoint(
+      this.endpoints.transactionsCategoryFiltersBalance,
+      category,
+      filter,
+      start,
+      end,
+    );
     return this.axios.get(url);
   }
 }

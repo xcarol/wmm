@@ -69,5 +69,7 @@ const cancel = () => {
 const canRenameCategory = computed(() => {
   return !!(categoryCurrentName.value.length === 0 || categoryNewName.value.length === 0);
 });
-onBeforeUpdate(() => {categoryNewName.value = '';});
+onBeforeUpdate(() => {
+  categoryNewName.value = '';
+});
 </script>

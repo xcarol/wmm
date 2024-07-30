@@ -57,7 +57,7 @@
     "markWarningMessage": "You're about to mark %d transactions as NOT duplicated\nAre you sure?",
     "deleteWarningMessage": "You're about to delete %d transactions\nAre you sure?"
   },
- "sqlView": {
+  "sqlView": {
     "title": "Execute SQL commands",
     "queryAreaLabel": "Type your SQL query in... History with Ctrl+↑ & Ctrl+↓",
     "queryButton": "Execute",
