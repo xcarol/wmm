@@ -33,13 +33,15 @@ CREATE TABLE `transactions` (
   `description` varchar(200) NOT NULL,
   `category` varchar(200) DEFAULT '',
   `amount` double NOT NULL,
-  `not_duplicate` BOOL DEFAULT FALSE,
+  `not_duplicate` bool DEFAULT FALSE,
+  `filter_id` int,
   PRIMARY KEY (`id`),
   KEY `bank` (`bank`),
   KEY `description` (`description`),
   KEY `category` (`category`),
   KEY `amount` (`amount`),
-  KEY `not_duplicate_idx` (`not_duplicate`)
+  KEY `not_duplicate_idx` (`not_duplicate`),
+  CONSTRAINT fk_transactions_filters FOREIGN KEY (filter_id) REFERENCES filters(id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
