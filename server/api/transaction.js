@@ -9,7 +9,7 @@ const {
   getDuplicatedTransactions,
   getUncategorizedTransactions,
   getYears,
-  resetTransactionsCategories,
+  resetTransactionsCategory,
   updateTransactionsCategory,
   updateTransactionsByFilter,
   updateTransactionsAsNotDuplicated,
@@ -60,7 +60,7 @@ module.exports = (app) => {
           res.json(await applyCategory(data.category));
           break;
         case "reset":
-          res.json(await resetTransactionsCategories(data.categories));
+          res.json(await resetTransactionsCategory(data.category));
           break;
         default:
           throw `Error [unknow operation: ${operation}] updating transactions category.`;

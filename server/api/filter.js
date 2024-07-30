@@ -2,7 +2,7 @@ const {
   addFilter,
   updateFilter,
   applyFilter,
-  deleteCategories,
+  deleteCategory,
   getCategories,
   getCategoryFilters,
   renameCategory,
@@ -19,7 +19,16 @@ module.exports = (app) => {
     }
   });
 
-  app.get("/categories", async (req, res) => {
+  app.delete("/categories", async (req, res) => {
+    try {
+      const category = req.query.category;
+      res.json(await deleteCategory(category));
+    } catch (err) {
+      res.status(err.sqlState ? 400 : 500).send(err);
+    }
+  });
+
+  app.get("/categories/filters", async (req, res) => {
     let category = "";
 
     try {
@@ -79,17 +88,6 @@ module.exports = (app) => {
       const { filter, category } = req.query;
       await resetTransactionsCategoryForAFilter(filter, category);
       res.json(await deleteFilter(filter, category));
-    } catch (err) {
-      res.status(err.sqlState ? 400 : 500).send(err);
-    }
-  });
-
-  app.put("/categories", async (req, res) => {
-    let categories = [];
-
-    try {
-      categories = req.body.categories;
-      res.json(await deleteCategories(categories));
     } catch (err) {
       res.status(err.sqlState ? 400 : 500).send(err);
     }

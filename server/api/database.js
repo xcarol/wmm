@@ -132,13 +132,13 @@ const queryYears = "SELECT DISTINCT YEAR(date) as year FROM transactions";
 const queryAddCategoryFilters =
   "INSERT INTO filters (category, filter, label) VALUES (?, ?, ?)";
 
-const queryDeleteCategories = "DELETE FROM filters WHERE category IN (?)";
+const queryDeleteCategory = "DELETE FROM filters WHERE category = ?";
 
 const queryDeleteFilter =
   "DELETE FROM filters WHERE filter = ? AND category = ?";
 
-const queryResetRowsCategories =
-  "UPDATE transactions SET category = '' WHERE category IN (?)";
+const queryResetRowsCategory =
+  "UPDATE transactions SET category = '' WHERE category = ?";
 
 const queryResetRowsCategoryForAFilter =
   "UPDATE transactions SET category = '' WHERE category = ? AND description LIKE ?";
@@ -518,14 +518,14 @@ async function addTransaction(date, description, amount, bank) {
   }
 }
 
-async function deleteCategories(categories) {
+async function deleteCategory(category) {
   try {
     const connection = await getConnection();
-    const result = await connection.query(queryDeleteCategories, [categories]);
+    const result = await connection.query(queryDeleteCategory, [category]);
     connection.close();
     return result;
   } catch (err) {
-    err.message = `Error [${err}] deleting the following categories [${categories}].`;
+    err.message = `Error [${err}] deleting the following category [${category}].`;
     console.error(err);
     throw err;
   }
@@ -541,7 +541,7 @@ async function deleteFilter(filter, category) {
     connection.close();
     return result;
   } catch (err) {
-    err.message = `Error [${err}] deleting the following filters [${filters}].`;
+    err.message = `Error [${err}] deleting the following filter [${filter}].`;
     console.error(err);
     throw err;
   }
@@ -605,16 +605,14 @@ async function updateTransactionsCategory(transactions, category) {
   }
 }
 
-async function resetTransactionsCategories(categories) {
+async function resetTransactionsCategory(category) {
   try {
     const connection = await getConnection();
-    const result = await connection.query(queryResetRowsCategories, [
-      categories,
-    ]);
+    const result = await connection.query(queryResetRowsCategory, [category]);
     connection.close();
     return result;
   } catch (err) {
-    err.message = `Error [${err}] reseting the category of the transactions that have the following categories [${categories}].`;
+    err.message = `Error [${err}] reseting the category of the transactions that have the following categories [${category}].`;
     console.error(err);
     throw err;
   }
@@ -675,7 +673,7 @@ module.exports = {
   applyCategory,
   renameCategory,
   backupDatabase,
-  deleteCategories,
+  deleteCategory,
   deleteFilter,
   deleteTransactions,
   executeSql,
@@ -690,7 +688,7 @@ module.exports = {
   getDuplicatedTransactions,
   getUncategorizedTransactions,
   getYears,
-  resetTransactionsCategories,
+  resetTransactionsCategory,
   resetTransactionsCategoryForAFilter,
   updateTransactionsCategory,
   updateTransactionsByFilter,

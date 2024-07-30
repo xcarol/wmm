@@ -4,12 +4,12 @@ class Api {
     banksNames: '/banks/names',
     banksBalance: '/banks/balance?bank={1}&start={2}&end={3}',
     categoriesNames: '/categories/names',
-    filters: '/categories?category={1}',
+    filters: '/categories/filters?category={1}',
     createFilter: '/categories/filter',
     applyFilter: '/categories/apply',
     updateFilter: '/categories/filter',
     deleteFilter: '/categories/filter?filter={1}&category={2}',
-    deleteCategories: '/categories',
+    deleteCategory: '/categories?category={1}',
     renameCategory: '/categories/rename',
     transactions: '/transactions',
     transactionsOfBank: '/transactions?bank={1}&start={2}&end={3}&category={4}&filter={5}',
@@ -90,9 +90,9 @@ class Api {
     return this.axios.delete(url);
   }
 
-  deleteCategories(categories) {
-    const url = Api.endpoint(this.endpoints.deleteCategories);
-    return this.axios.put(url, { categories });
+  deleteCategory(category) {
+    const url = Api.endpoint(this.endpoints.deleteCategory, category);
+    return this.axios.delete(url);
   }
 
   renameCategory(oldName, newName) {
@@ -120,9 +120,9 @@ class Api {
     return this.axios.put(url, { operation: 'categorize', category });
   }
 
-  resetCategoryFromTransactions(categories) {
+  resetCategoryFromTransactions(category) {
     const url = Api.endpoint(this.endpoints.resetCategoryFromTransactions);
-    return this.axios.put(url, { operation: 'reset', categories });
+    return this.axios.put(url, { operation: 'reset', category });
   }
 
   updateTransactionsByFilter(filter) {

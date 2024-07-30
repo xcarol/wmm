@@ -181,20 +181,24 @@ const categoryListToTable = (list) => {
 };
 
 const getFilters = async () => {
+  selectedFilters.value = [];
+
   try {
     ({ data: retrievedFilters.value } = await api.getFilters(selectedCategories.value));
     tableFilters.value = filterListToTable(retrievedFilters.value);
-    selectedFilters.value = [];
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }
 };
 
 const getCategories = async () => {
+  retrievedFilters.value = [];
+  tableFilters.value = [];
+  selectedCategories.value = [];
+
   try {
-    const categories = await api.categoriesNames();
-    tableCategories.value = categoryListToTable(categories.data);
-    selectedCategories.value = [];
+    const { data: categories } = await api.categoriesNames();
+    tableCategories.value = categoryListToTable(categories);
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }
@@ -286,8 +290,8 @@ const deleteCategories = async () => {
       });
 
       try {
-        const deleteResult = await api.deleteCategories(selectedCategories.value);
-        const resetResult = await api.resetCategoryFromTransactions(selectedCategories.value);
+        const deleteResult = await api.deleteCategory(selectedCategories.value.at(0));
+        const resetResult = await api.resetCategoryFromTransactions(selectedCategories.value.at(0));
 
         progressDialog.stopProgress();
         messageDialog.showMessage({
