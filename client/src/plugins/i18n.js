@@ -12,7 +12,9 @@ function getUserLanguage() {
   return VueCookies.get('locale');
 }
 
-export function localeFallback() { return localeFallback; }
+export function localeFallback() {
+  return localeFallback;
+}
 
 export function getBrowserLang() {
   let browserLocale = navigator.language;

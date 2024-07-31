@@ -9,9 +9,8 @@ const {
   getDuplicatedTransactions,
   getUncategorizedTransactions,
   getYears,
-  resetTransactionsCategories,
+  resetTransactionsCategory,
   updateTransactionsCategory,
-  updateTransactionsByFilter,
   updateTransactionsAsNotDuplicated,
 } = require("./database");
 
@@ -60,24 +59,13 @@ module.exports = (app) => {
           res.json(await applyCategory(data.category));
           break;
         case "reset":
-          res.json(await resetTransactionsCategories(data.categories));
+          res.json(await resetTransactionsCategory(data.category));
           break;
         default:
           throw `Error [unknow operation: ${operation}] updating transactions category.`;
       }
     } catch (err) {
       console.error(err);
-      res.status(err.sqlState ? 400 : 500).send(err);
-    }
-  });
-
-  app.put("/transactions/filter", async (req, res) => {
-    let filter;
-
-    try {
-      filter = req.body.filter;
-      res.json(await updateTransactionsByFilter(filter));
-    } catch (err) {
       res.status(err.sqlState ? 400 : 500).send(err);
     }
   });

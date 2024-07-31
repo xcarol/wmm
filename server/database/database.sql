@@ -1,9 +1,3 @@
--- MySQL dump 10.13  Distrib 8.0.35, for Linux (x86_64)
---
--- Host: 127.0.0.1    Database: wmm
--- ------------------------------------------------------
--- Server version	8.3.0
-
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
@@ -33,13 +27,15 @@ CREATE TABLE `transactions` (
   `description` varchar(200) NOT NULL,
   `category` varchar(200) DEFAULT '',
   `amount` double NOT NULL,
-  `not_duplicate` BOOL DEFAULT FALSE,
+  `not_duplicate` bool DEFAULT FALSE,
+  `filter_id` int,
   PRIMARY KEY (`id`),
   KEY `bank` (`bank`),
   KEY `description` (`description`),
   KEY `category` (`category`),
   KEY `amount` (`amount`),
-  KEY `not_duplicate_idx` (`not_duplicate`)
+  KEY `not_duplicate_idx` (`not_duplicate`),
+  CONSTRAINT fk_transactions_filters FOREIGN KEY (filter_id) REFERENCES filters(id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -65,5 +61,3 @@ CREATE TABLE `filters` (
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2024-04-07 12:55:56

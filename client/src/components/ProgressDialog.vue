@@ -20,19 +20,18 @@
           <v-row>
             <v-col cols="12">
               <v-progress-linear
-              :model-value="step"
-              :max="maxSteps"
-              :indeterminate="maxSteps===0">
-            </v-progress-linear>
+                :model-value="step"
+                :max="maxSteps"
+                :indeterminate="maxSteps === 0"
+              >
+              </v-progress-linear>
             </v-col>
           </v-row>
         </v-container>
       </v-card-text>
       <v-card-actions>
         <v-spacer />
-        <v-btn
-          @click.stop="cancel"
-        >
+        <v-btn @click.stop="cancel">
           {{ $t('global.cancel') }}
         </v-btn>
       </v-card-actions>

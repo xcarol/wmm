@@ -4,21 +4,21 @@ class Api {
     banksNames: '/banks/names',
     banksBalance: '/banks/balance?bank={1}&start={2}&end={3}',
     categoriesNames: '/categories/names',
-    filters: '/categories?category={1}',
+    filters: '/categories/filters?category={1}',
     createFilter: '/categories/filter',
     applyFilter: '/categories/apply',
     updateFilter: '/categories/filter',
-    deleteFilters: '/categories/filters',
-    deleteCategories: '/categories',
+    deleteFilter: '/categories/filter?filter={1}',
+    deleteCategory: '/categories?category={1}',
     renameCategory: '/categories/rename',
     transactions: '/transactions',
     transactionsOfBank: '/transactions?bank={1}&start={2}&end={3}&category={4}&filter={5}',
     transactionsApplyCategory: '/transactions/category',
     transactionsCategorize: '/transactions/category',
     transactionsCategoryBalance: '/transactions/category?category={1}&start={2}&end={3}',
-    transactionsCategoryFiltersBalance: '/transactions/category?category={1}&filter={2}&start={3}&end={4}',
+    transactionsCategoryFiltersBalance:
+      '/transactions/category?category={1}&filter={2}&start={3}&end={4}',
     resetCategoryFromTransactions: '/transactions/category',
-    updateTransactionsByFilter: '/transactions/filter',
     uncategorizedTransactions: '/transactions/uncategorized?filter={1}',
     duplicated: '/transactions/duplicated',
     years: '/transactions/years',
@@ -74,9 +74,9 @@ class Api {
     return this.axios.post(url, { category, filter, label });
   }
 
-  applyFilter(category, filter) {
+  applyFilter(filterId) {
     const url = Api.endpoint(this.endpoints.applyFilter);
-    return this.axios.post(url, { category, filter });
+    return this.axios.post(url, { filterId });
   }
 
   updateFilter(category, filter, label) {
@@ -84,14 +84,14 @@ class Api {
     return this.axios.put(url, { category, filter, label });
   }
 
-  deleteFilters(filters) {
-    const url = Api.endpoint(this.endpoints.deleteFilters);
-    return this.axios.put(url, { filters });
+  deleteFilter(filterId) {
+    const url = Api.endpoint(this.endpoints.deleteFilter, filterId);
+    return this.axios.delete(url);
   }
 
-  deleteCategories(categories) {
-    const url = Api.endpoint(this.endpoints.deleteCategories);
-    return this.axios.put(url, { categories });
+  deleteCategory(category) {
+    const url = Api.endpoint(this.endpoints.deleteCategory, category);
+    return this.axios.delete(url);
   }
 
   renameCategory(oldName, newName) {
@@ -119,14 +119,9 @@ class Api {
     return this.axios.put(url, { operation: 'categorize', category });
   }
 
-  resetCategoryFromTransactions(categories) {
+  resetCategoryFromTransactions(category) {
     const url = Api.endpoint(this.endpoints.resetCategoryFromTransactions);
-    return this.axios.put(url, { operation: 'reset', categories });
-  }
-
-  updateTransactionsByFilter(filter) {
-    const url = Api.endpoint(this.endpoints.updateTransactionsByFilter);
-    return this.axios.put(url, { filter });
+    return this.axios.put(url, { operation: 'reset', category });
   }
 
   searchTransactionsByCategory(filter) {
@@ -160,7 +155,14 @@ class Api {
   }
 
   bankTransactions(bank, startDate, endDate, category, filter) {
-    const url = Api.endpoint(this.endpoints.transactionsOfBank, bank, startDate, endDate, category, filter);
+    const url = Api.endpoint(
+      this.endpoints.transactionsOfBank,
+      bank,
+      startDate,
+      endDate,
+      category,
+      filter,
+    );
     return this.axios.get(url);
   }
 
@@ -175,7 +177,13 @@ class Api {
   }
 
   filterBalance(category, filter, start, end) {
-    const url = Api.endpoint(this.endpoints.transactionsCategoryFiltersBalance, category, filter, start, end);
+    const url = Api.endpoint(
+      this.endpoints.transactionsCategoryFiltersBalance,
+      category,
+      filter,
+      start,
+      end,
+    );
     return this.axios.get(url);
   }
 }

@@ -47,5 +47,4 @@ const optionSelected = (optionTitle) => {
 .v-btn--disabled {
   opacity: 0.5 !important;
 }
-
 </style>

@@ -73,7 +73,11 @@ watch(show, (newVal, oldVal) => {
 });
 
 const ok = () => {
-  emits('onOk', { category: categoryInput.value, filter: filterInput.value, label: labelInput.value });
+  emits('onOk', {
+    category: categoryInput.value,
+    filter: filterInput.value,
+    label: labelInput.value,
+  });
 };
 
 const cancel = () => {

@@ -12,7 +12,7 @@
         class="elevation-1"
         fixed-header
         :height="adjustedHeight"
-        ></v-data-table-virtual>
+      ></v-data-table-virtual>
     </v-card-text>
     <v-card-actions>
       <v-spacer />

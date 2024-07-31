@@ -153,6 +153,17 @@ const headerFilters = [
   { title: $t('filtersView.filtersLabel'), key: 'label' },
 ];
 
+const filterId = (filter) => {
+  for (let index = 0; index < retrievedFilters.value.length; index += 1) {
+    const retrievedFilter = retrievedFilters.value[index];
+    if (retrievedFilter.filter === filter) {
+      return retrievedFilter.id;
+    }
+  }
+
+  return null;
+};
+
 const filterLabel = (filter) => {
   for (let index = 0; index < retrievedFilters.value.length; index += 1) {
     const retrievedFilter = retrievedFilters.value[index];
@@ -181,20 +192,24 @@ const categoryListToTable = (list) => {
 };
 
 const getFilters = async () => {
+  selectedFilters.value = [];
+
   try {
     ({ data: retrievedFilters.value } = await api.getFilters(selectedCategories.value));
     tableFilters.value = filterListToTable(retrievedFilters.value);
-    selectedFilters.value = [];
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }
 };
 
 const getCategories = async () => {
+  retrievedFilters.value = [];
+  tableFilters.value = [];
+  selectedCategories.value = [];
+
   try {
-    const categories = await api.categoriesNames();
-    tableCategories.value = categoryListToTable(categories.data);
-    selectedCategories.value = [];
+    const { data: categories } = await api.categoriesNames();
+    tableCategories.value = categoryListToTable(categories);
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }
@@ -286,8 +301,8 @@ const deleteCategories = async () => {
       });
 
       try {
-        const deleteResult = await api.deleteCategories(selectedCategories.value);
-        const resetResult = await api.resetCategoryFromTransactions(selectedCategories.value);
+        const deleteResult = await api.deleteCategory(selectedCategories.value.at(0));
+        const resetResult = await api.resetCategoryFromTransactions(selectedCategories.value.at(0));
 
         progressDialog.stopProgress();
         messageDialog.showMessage({
@@ -359,8 +374,10 @@ const newFilter = async (value) => {
       });
 
       try {
-        await api.createFilter(newFilterCategoryName.value, value.filter, value.label);
-        const applyResult = await api.applyFilter(value.category, value.filter);
+        const {
+          data: [{ insertId }],
+        } = await api.createFilter(newFilterCategoryName.value, value.filter, value.label);
+        const applyResult = await api.applyFilter(insertId);
         await getFilters();
         progressDialog.stopProgress();
         messageDialog.showMessage({
@@ -409,8 +426,15 @@ const deleteFilter = () => {
       });
 
       try {
-        await api.deleteFilters(selectedFilters.value);
+        const {
+          data: [{ affectedRows }],
+        } = await api.deleteFilter(filterId(selectedFilters.value.at(0)));
         progressDialog.stopProgress();
+        messageDialog.showMessage({
+          title: $t('dialog.Info'),
+          message: $t('filtersView.deleteFilterNoticeMessage').replace('%d', affectedRows),
+          ok: () => {},
+        });
 
         await getFilters();
       } catch (e) {
@@ -434,10 +458,7 @@ const applyFilter = () => {
       });
 
       try {
-        const applyResult = await api.applyFilter(
-          selectedCategories.value[0],
-          selectedFilters.value[0],
-        );
+        const applyResult = await api.applyFilter(selectedFilters.value[0].filter_id);
         progressDialog.stopProgress();
         messageDialog.showMessage({
           title: $t('dialog.Info'),

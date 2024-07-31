@@ -1,12 +1,6 @@
 <template>
-  <v-btn
-    @click.stop="executeBackup"
-    >{{ $t('sqlView.backupButton') }}</v-btn
-  >
-  <v-btn
-    @click.stop="executeRestore"
-    >{{ $t('sqlView.restoreButton') }}</v-btn
-  >
+  <v-btn @click.stop="executeBackup">{{ $t('sqlView.backupButton') }}</v-btn>
+  <v-btn @click.stop="executeRestore">{{ $t('sqlView.restoreButton') }}</v-btn>
   <input
     id="fileInput"
     type="file"
