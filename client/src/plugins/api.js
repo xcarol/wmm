@@ -8,7 +8,7 @@ class Api {
     createFilter: '/categories/filter',
     applyFilter: '/categories/apply',
     updateFilter: '/categories/filter',
-    deleteFilter: '/categories/filter?filter={1}&category={2}',
+    deleteFilter: '/categories/filter?filter={1}',
     deleteCategory: '/categories?category={1}',
     renameCategory: '/categories/rename',
     transactions: '/transactions',
@@ -19,7 +19,6 @@ class Api {
     transactionsCategoryFiltersBalance:
       '/transactions/category?category={1}&filter={2}&start={3}&end={4}',
     resetCategoryFromTransactions: '/transactions/category',
-    updateTransactionsByFilter: '/transactions/filter',
     uncategorizedTransactions: '/transactions/uncategorized?filter={1}',
     duplicated: '/transactions/duplicated',
     years: '/transactions/years',
@@ -75,9 +74,9 @@ class Api {
     return this.axios.post(url, { category, filter, label });
   }
 
-  applyFilter(category, filter) {
+  applyFilter(filterId) {
     const url = Api.endpoint(this.endpoints.applyFilter);
-    return this.axios.post(url, { category, filter });
+    return this.axios.post(url, { filterId });
   }
 
   updateFilter(category, filter, label) {
@@ -85,8 +84,8 @@ class Api {
     return this.axios.put(url, { category, filter, label });
   }
 
-  deleteFilter(filter, category) {
-    const url = Api.endpoint(this.endpoints.deleteFilter, filter, category);
+  deleteFilter(filterId) {
+    const url = Api.endpoint(this.endpoints.deleteFilter, filterId);
     return this.axios.delete(url);
   }
 
@@ -123,11 +122,6 @@ class Api {
   resetCategoryFromTransactions(category) {
     const url = Api.endpoint(this.endpoints.resetCategoryFromTransactions);
     return this.axios.put(url, { operation: 'reset', category });
-  }
-
-  updateTransactionsByFilter(filter) {
-    const url = Api.endpoint(this.endpoints.updateTransactionsByFilter);
-    return this.axios.put(url, { filter });
   }
 
   searchTransactionsByCategory(filter) {

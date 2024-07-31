@@ -95,6 +95,7 @@
     "updateCategoryWarningMessage": "Et's a punt d'actualitzar totes les transaccions que coincideixin amb els filtres de la categoria:\n  - %s\nN'estàs segur?",
     "renameCategoryMessage": "Et's a punt de reanomenar la categoria [%s] a [%s]\nN'estàs segur?",
     "deleteFilterWarningMessage": "Et's a punt d'esborrar el filtre:\n  - %s\nAixò també esborrarà la categoria de les transaccions corresponents.\nN'estàs segur?",
+    "deleteFilterNoticeMessage": "S'ha esborrat la categoria de %d transaccions.",
     "applyFilterWarningMessage": "Et's a punt d'aplicar el filtre:\n  - %s\nN'estàs segur?",
     "applyNewFilterWarningMessage": "En crear el filtre [%s] s'actulitzaran les transaccions coincidents.\nN'estàs segur?"
   },

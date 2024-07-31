@@ -23,8 +23,10 @@ const queryCategoryNames =
   "SELECT DISTINCT category FROM transactions WHERE category != '' UNION SELECT DISTINCT category \
     FROM filters ORDER BY category ASC";
 
-const queryFilterNames =
-  "SELECT filter, label FROM filters WHERE category=? ORDER BY filter ASC";
+const queryFilter = "SELECT category, filter, label FROM filters WHERE id = ?";
+
+const queryCategoryFilters =
+  "SELECT id, filter, label FROM filters WHERE category=? ORDER BY filter ASC";
 
 const queryUncategorizedTransactions =
   "SELECT id, bank, date, description, category, amount FROM transactions WHERE category = ''";
@@ -42,8 +44,8 @@ const queryUpdateRowsCategoryWithAllFilters =
     SET t.category = f.category \
     WHERE f.category = ? AND t.category = ''";
 
-const queryUpdateRowsCategoryWithDescriptionLikeFilter =
-  "UPDATE transactions SET category = ? WHERE description LIKE ? AND category = ''";
+const queryUpdateTransactionsByFilter =
+  "UPDATE transactions SET category = ?, filter_id = ? WHERE description LIKE ? AND category = ''";
 
 const queryUpdateTransactionsCategory =
   "UPDATE transactions SET category = ? WHERE id IN(?)";
@@ -134,23 +136,16 @@ const queryAddCategoryFilters =
 
 const queryDeleteCategory = "DELETE FROM filters WHERE category = ?";
 
-const queryDeleteFilter =
-  "DELETE FROM filters WHERE filter = ? AND category = ?";
+const queryDeleteFilter = "DELETE FROM filters WHERE id = ?";
 
 const queryResetRowsCategory =
   "UPDATE transactions SET category = '' WHERE category = ?";
 
 const queryResetRowsCategoryForAFilter =
-  "UPDATE transactions SET category = '' WHERE category = ? AND description LIKE ?";
+  "UPDATE transactions SET category = '', filter_id = NULL WHERE filter_id = ?";
 
 const queryRenameRowsCategory =
   "UPDATE transactions SET category = ? WHERE category = ?";
-
-const queryUpdateTransactionsByFilter =
-  "UPDATE transactions as t \
-    JOIN filters as f \
-    SET t.category = f.category \
-    WHERE t.description LIKE ? AND f.filter = ?";
 
 const queryRenameCategoryFilters =
   "UPDATE filters SET category = ? WHERE category = ?";
@@ -199,14 +194,16 @@ async function updateFilter(category, filter, label) {
   }
 }
 
-async function applyFilter(category, filter) {
+async function applyFilter(filterId) {
   try {
     const connection = await getConnection();
 
-    const result = await connection.query(
-      queryUpdateRowsCategoryWithDescriptionLikeFilter,
-      [category.slice(0, MAX_LEN), `%${filter}%`]
-    );
+    const categoryFilter = await getCategoryFilter(filterId);
+    const result = await connection.query(queryUpdateTransactionsByFilter, [
+      categoryFilter.category,
+      filterId,
+      `%${categoryFilter.filter}%`,
+    ]);
     connection.close();
     return result;
   } catch (err) {
@@ -413,6 +410,19 @@ async function getCategoryBalance(category, start, end) {
   }
 }
 
+async function getCategoryFilter(filterId) {
+  try {
+    const connection = await getConnection();
+    const result = await connection.query(queryFilter, [filterId]);
+    connection.close();
+    return result.at(0).at(0);
+  } catch (err) {
+    err.message = `Error [${err}] retrieving category balance.`;
+    console.error(err);
+    throw err;
+  }
+}
+
 async function getCategoryFiltersBalance(category, filter, start, end) {
   try {
     const connection = await getConnection();
@@ -436,7 +446,7 @@ async function getCategoryNonFiltersBalance(category, start, end) {
   try {
     const balances = [];
     const connection = await getConnection();
-    const filterNamesResult = await connection.query(queryFilterNames, [
+    const filterNamesResult = await connection.query(queryCategoryFilters, [
       category,
     ]);
     const filterNames = filterNamesResult.at(0);
@@ -474,7 +484,7 @@ async function getCategoryNonFiltersBalance(category, start, end) {
 async function getCategoryFilters(category) {
   try {
     const connection = await getConnection();
-    const result = await connection.query(queryFilterNames, [category]);
+    const result = await connection.query(queryCategoryFilters, [category]);
     connection.close();
     return result.at(0);
   } catch (err) {
@@ -531,17 +541,14 @@ async function deleteCategory(category) {
   }
 }
 
-async function deleteFilter(filter, category) {
+async function deleteFilter(filterId) {
   try {
     const connection = await getConnection();
-    const result = await connection.query(queryDeleteFilter, [
-      filter,
-      category,
-    ]);
+    const result = await connection.query(queryDeleteFilter, [filterId]);
     connection.close();
     return result;
   } catch (err) {
-    err.message = `Error [${err}] deleting the following filter [${filter}].`;
+    err.message = `Error [${err}] deleting the filter with id [${filterId}].`;
     console.error(err);
     throw err;
   }
@@ -618,33 +625,16 @@ async function resetTransactionsCategory(category) {
   }
 }
 
-async function resetTransactionsCategoryForAFilter(filter, category) {
+async function resetTransactionsCategoryForAFilter(filterId) {
   try {
     const connection = await getConnection();
     const result = await connection.query(queryResetRowsCategoryForAFilter, [
-      category,
-      `%${filter}%`,
+      filterId,
     ]);
     connection.close();
     return result;
   } catch (err) {
-    err.message = `Error [${err}] reseting the category of the transactions that have the category [${category}] and filter [${filter}].`;
-    console.error(err);
-    throw err;
-  }
-}
-
-async function updateTransactionsByFilter(filter) {
-  try {
-    const connection = await getConnection();
-    const result = await connection.query(queryUpdateTransactionsByFilter, [
-      `%${filter}%`,
-      filter,
-    ]);
-    connection.close();
-    return result;
-  } catch (err) {
-    err.message = `Error [${err}] updating the category of transactions whose description matches filter [${filter}].`;
+    err.message = `Error [${err}] reseting the category of the transactions with filterId [${filterId}].`;
     console.error(err);
     throw err;
   }
@@ -691,6 +681,5 @@ module.exports = {
   resetTransactionsCategory,
   resetTransactionsCategoryForAFilter,
   updateTransactionsCategory,
-  updateTransactionsByFilter,
   updateTransactionsAsNotDuplicated,
 };

@@ -95,6 +95,7 @@
     "updateCategoryWarningMessage": "Vas a actualizar todas las transacciones que coincidan con los filtros de la categoría:\n  - %s\n¿Estàs seguro?",
     "renameCategoryMessage": "Vas a renombrar la categoría [%s] a [%s]\n¿Estàs seguro?",
     "deleteFilterWarningMessage": "Vas a borrar el filtro:\n  - %s\nEsto también borrará la categoria de las transacciones corresponendientes.\n¿Estás seguro?",
+    "deleteFilterNoticeMessage": "Se ha borrado la categoría de %d transacciones.",
     "applyFilterWarningMessage": "Vas a aplicar el filtro:\n  - %s\n¿Estás seguro?",
     "applyNewFilterWarningMessage": "Al crear el filtro [%s] se actulitzarán las transacciones coincidentes.\n¿Estás seguro?"
   },

@@ -56,13 +56,9 @@ module.exports = (app) => {
   });
 
   app.post("/categories/apply", async (req, res) => {
-    let category = "";
-    let filter = "";
-
     try {
-      category = req.body.category;
-      filter = req.body.filter;
-      res.json(await applyFilter(category, filter));
+      const { filterId } = req.body;
+      res.json(await applyFilter(filterId));
     } catch (err) {
       res.status(err.sqlState ? 400 : 500).send(err);
     }
@@ -85,9 +81,10 @@ module.exports = (app) => {
 
   app.delete("/categories/filter", async (req, res) => {
     try {
-      const { filter, category } = req.query;
-      await resetTransactionsCategoryForAFilter(filter, category);
-      res.json(await deleteFilter(filter, category));
+      const { filter } = req.query;
+      const result = await resetTransactionsCategoryForAFilter(filter);
+      await deleteFilter(filter);
+      res.json(result);
     } catch (err) {
       res.status(err.sqlState ? 400 : 500).send(err);
     }

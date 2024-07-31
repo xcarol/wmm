@@ -11,7 +11,6 @@ const {
   getYears,
   resetTransactionsCategory,
   updateTransactionsCategory,
-  updateTransactionsByFilter,
   updateTransactionsAsNotDuplicated,
 } = require("./database");
 
@@ -67,17 +66,6 @@ module.exports = (app) => {
       }
     } catch (err) {
       console.error(err);
-      res.status(err.sqlState ? 400 : 500).send(err);
-    }
-  });
-
-  app.put("/transactions/filter", async (req, res) => {
-    let filter;
-
-    try {
-      filter = req.body.filter;
-      res.json(await updateTransactionsByFilter(filter));
-    } catch (err) {
       res.status(err.sqlState ? 400 : 500).send(err);
     }
   });
