@@ -217,7 +217,7 @@ const importFileToDatabase = async () => {
 
 const importFile = async () => {
   const importedRows = await importFileToDatabase();
-  // TODO: await applyFilters();
+  await api.applyFilters();
   appStore.alertMessage = $t('importView.importedRows').replace('%d', importedRows);
 };
 

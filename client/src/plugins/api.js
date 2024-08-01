@@ -16,6 +16,7 @@ class Api {
     transactionsCategoryBalance: '/transactions/category?category={1}&start={2}&end={3}',
     transactionsCategoryFiltersBalance:
       '/transactions/category?category={1}&filter={2}&start={3}&end={4}',
+    applyFilters: '/transactions/category',
     resetCategoryFromTransactions: '/transactions/category',
     uncategorizedTransactions: '/transactions/uncategorized?filter={1}',
     duplicated: '/transactions/duplicated',
@@ -100,6 +101,11 @@ class Api {
   deleteTransactions(transactions) {
     const url = Api.endpoint(this.endpoints.transactions);
     return this.axios.put(url, { transactions });
+  }
+
+  applyFilters() {
+    const url = Api.endpoint(this.endpoints.applyFilters);
+    return this.axios.put(url, { operation: 'apply' });
   }
 
   updateTransactionsCategory(transactions, category) {
