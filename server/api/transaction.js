@@ -49,7 +49,7 @@ module.exports = (app) => {
       const data = req.body;
       const operation = data.operation;
       switch (operation) {
-        case "apply":
+        case "update":
           res.json(
             await updateTransactionsCategory(data.transactions, data.category)
           );

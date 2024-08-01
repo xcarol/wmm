@@ -12,8 +12,7 @@ class Api {
     renameCategory: '/categories/rename',
     transactions: '/transactions',
     transactionsOfBank: '/transactions?bank={1}&start={2}&end={3}&category={4}&filter={5}',
-    transactionsApplyCategory: '/transactions/category',
-    transactionsCategorize: '/transactions/category',
+    transactionsUpdateCategory: '/transactions/category',
     transactionsCategoryBalance: '/transactions/category?category={1}&start={2}&end={3}',
     transactionsCategoryFiltersBalance:
       '/transactions/category?category={1}&filter={2}&start={3}&end={4}',
@@ -104,8 +103,8 @@ class Api {
   }
 
   updateTransactionsCategory(transactions, category) {
-    const url = Api.endpoint(this.endpoints.transactionsApplyCategory);
-    return this.axios.put(url, { operation: 'apply', transactions, category });
+    const url = Api.endpoint(this.endpoints.transactionsUpdateCategory);
+    return this.axios.put(url, { operation: 'update', transactions, category });
   }
 
   resetCategoryFromTransactions(category) {
