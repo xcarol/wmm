@@ -47,7 +47,7 @@ const queryApplyFilters = `
   JOIN ordered_filters AS f ON t.description LIKE CONCAT('%', 
   REPLACE(f.filter, '%', '\%'), '%')
   SET t.category = f.category, t.filter_id = f.id
-  WHERE f.category = ? AND t.category = '';
+  WHERE t.category = ''
   `;
 
 const queryUpdateTransactionsCategory =
