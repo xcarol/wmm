@@ -30,11 +30,6 @@
                 @click.stop="deleteCategories"
                 >{{ $t('filtersView.deleteCategoryButton') }}</v-btn
               >
-              <v-btn
-                :disabled="noCategorySelected"
-                @click.stop="applyCategory"
-                >{{ $t('filtersView.applyCategoryButton') }}</v-btn
-              >
             </v-card-actions>
           </v-card>
         </v-col>
@@ -310,43 +305,6 @@ const deleteCategories = async () => {
           message: $t('progress.deletedCategoriesMessage')
             .replace('%d', `${deleteResult?.data[0]?.affectedRows ?? 0}`)
             .replace('%d', `${resetResult?.data[0]?.affectedRows ?? 0}`),
-          ok: () => {},
-        });
-
-        await getCategories();
-      } catch (e) {
-        appStore.alertMessage = api.getErrorMessage(e);
-      }
-
-      progressDialog.stopProgress();
-    },
-    no: () => {},
-  });
-};
-
-const applyCategory = () => {
-  messageDialog.showMessage({
-    title: $t('dialog.Warning'),
-    message: $t('filtersView.updateCategoryWarningMessage').replace(
-      '%s',
-      selectedCategories.value[0],
-    ),
-    yes: async () => {
-      progressDialog.startProgress({
-        steps: 0,
-        description: $t('progress.updateProgress'),
-      });
-
-      try {
-        const applyResult = await api.applyCategoryToTransactions(selectedCategories.value[0]);
-
-        progressDialog.stopProgress();
-        messageDialog.showMessage({
-          title: $t('dialog.Info'),
-          message: $t('progress.updatedTransactionsMessage').replace(
-            '%d',
-            `${applyResult?.data[0]?.affectedRows ?? 0}`,
-          ),
           ok: () => {},
         });
 

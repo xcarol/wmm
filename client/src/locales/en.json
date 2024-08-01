@@ -46,7 +46,6 @@
     "importedRows": "%d rows imported.",
     "importError": "Error: '%d' at line: %d",
     "importingRows": "%d lines of %d imported...",
-    "applyingCategory": "Applying category [%s]",
     "initialAmountLabel": "Account initial amount"
   },
   "duplicatesView": {
@@ -86,7 +85,6 @@
     "filtersLabel": "Label",
     "renameCategoryButton": "Rename...",
     "deleteCategoryButton": "Delete",
-    "applyCategoryButton": "Apply",
     "newFilterButton": "New...",
     "editFilterButton": "Edit...",
     "deleteFilterButton": "Delete",

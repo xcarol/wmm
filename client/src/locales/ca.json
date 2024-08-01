@@ -46,7 +46,6 @@
     "importedRows": "S'han importat %d files.",
     "importError": "Error: '%d' a la línia: %d",
     "importingRows": "S'han importat %d linies de %d...",
-    "applyingCategory": "Aplicant la categoria [%s]",
     "initialAmountLabel": "Quantitat inicial del compte"
   },
   "duplicatesView": {
@@ -86,7 +85,6 @@
     "filtersLabel": "Etiqueta",
     "renameCategoryButton": "Reanomena...",
     "deleteCategoryButton": "Elimina",
-    "applyCategoryButton": "Aplica",
     "newFilterButton": "Nou...",
     "editFilterButton": "Edita...",
     "deleteFilterButton": "Elimina",

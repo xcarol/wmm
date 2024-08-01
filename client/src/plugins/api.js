@@ -114,11 +114,6 @@ class Api {
     return this.axios.put(url, { operation: 'apply', transactions, category });
   }
 
-  applyCategoryToTransactions(category) {
-    const url = Api.endpoint(this.endpoints.transactionsCategorize);
-    return this.axios.put(url, { operation: 'categorize', category });
-  }
-
   resetCategoryFromTransactions(category) {
     const url = Api.endpoint(this.endpoints.resetCategoryFromTransactions);
     return this.axios.put(url, { operation: 'reset', category });
