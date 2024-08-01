@@ -33,19 +33,22 @@ const queryUncategorizedTransactions =
 
 const queryBankTransactions =
   "SELECT id, bank, date, description, category, amount \
-      FROM transactions";
+    FROM transactions";
 
 const queryUncategorizedRowsFilter = " AND description LIKE ?";
 
-const queryUpdateRowsCategoryWithAllFilters =
-  "UPDATE transactions AS t \
-    JOIN filters AS f ON t.description LIKE CONCAT('%',  \
-    REPLACE(f.filter, '%', '\\%'), '%') \
-    SET t.category = f.category \
-    WHERE f.category = ? AND t.category = ''";
-
-const queryUpdateTransactionsByFilter =
-  "UPDATE transactions SET category = ?, filter_id = ? WHERE description LIKE ? AND category = ''";
+const queryApplyFilters = `
+  WITH ordered_filters AS (
+    SELECT *
+    FROM filters
+    ORDER BY filter DESC
+  )
+  UPDATE transactions AS t
+  JOIN ordered_filters AS f ON t.description LIKE CONCAT('%', 
+  REPLACE(f.filter, '%', '\%'), '%')
+  SET t.category = f.category, t.filter_id = f.id
+  WHERE f.category = ? AND t.category = '';
+  `;
 
 const queryUpdateTransactionsCategory =
   "UPDATE transactions SET category = ? WHERE id IN(?)";
@@ -155,6 +158,20 @@ const queryUpdateFilter =
 
 async function getConnection() {
   return await mysql.createConnection(connectionSettings);
+}
+
+async function applyFilters() {
+  try {
+    const connection = await getConnection();
+
+    const result = await connection.query(queryApplyFilters);
+    connection.close();
+    return result;
+  } catch (err) {
+    err.message = `Error [${err}] applying filters.`;
+    console.error(err);
+    throw err;
+  }
 }
 
 async function addFilter(category, filter, label) {
@@ -620,28 +637,29 @@ async function updateTransactionsAsNotDuplicated(transactions) {
 }
 
 module.exports = {
-  addTransaction,
   addFilter,
-  updateFilter,
-  renameCategory,
+  addTransaction,
+  applyFilters,
   backupDatabase,
   deleteCategory,
   deleteFilter,
   deleteTransactions,
   executeSql,
-  getBankNames,
   getBankBalance,
+  getBankNames,
+  getBankTransactions,
   getCategories,
   getCategoryBalance,
   getCategoryFilters,
   getCategoryFiltersBalance,
   getCategoryNonFiltersBalance,
-  getBankTransactions,
   getDuplicatedTransactions,
   getUncategorizedTransactions,
   getYears,
+  renameCategory,
   resetTransactionsCategory,
   resetTransactionsCategoryForAFilter,
-  updateTransactionsCategory,
+  updateFilter,
   updateTransactionsAsNotDuplicated,
+  updateTransactionsCategory,
 };
