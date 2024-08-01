@@ -131,7 +131,7 @@ const queryMarkNotDuplicateRows =
 
 const queryYears = "SELECT DISTINCT YEAR(date) as year FROM transactions";
 
-const queryAddCategoryFilters =
+const queryAddCategoryFilter =
   "INSERT INTO filters (category, filter, label) VALUES (?, ?, ?)";
 
 const queryDeleteCategory = "DELETE FROM filters WHERE category = ?";
@@ -139,7 +139,7 @@ const queryDeleteCategory = "DELETE FROM filters WHERE category = ?";
 const queryDeleteFilter = "DELETE FROM filters WHERE id = ?";
 
 const queryResetRowsCategory =
-  "UPDATE transactions SET category = '' WHERE category = ?";
+  "UPDATE transactions SET category = '', filter_id = NULL WHERE category = ?";
 
 const queryResetRowsCategoryForAFilter =
   "UPDATE transactions SET category = '', filter_id = NULL WHERE filter_id = ?";
@@ -161,7 +161,7 @@ async function addFilter(category, filter, label) {
   try {
     const connection = await getConnection();
 
-    const result = await connection.query(queryAddCategoryFilters, [
+    const result = await connection.query(queryAddCategoryFilter, [
       category.slice(0, MAX_LEN),
       filter.slice(0, MAX_LEN),
       label.slice(0, MAX_LEN),
