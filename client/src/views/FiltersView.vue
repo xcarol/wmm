@@ -317,27 +317,19 @@ const deleteCategories = async () => {
 const newFilter = async (value) => {
   showNewFilter.value = false;
 
-  messageDialog.showMessage({
-    title: $t('dialog.Warning'),
-    message: $t('filtersView.applyNewFilterWarningMessage').replace('%s', value.filter),
-    yes: async () => {
-      progressDialog.startProgress({
-        steps: 0,
-        description: $t('progress.updateProgress'),
-      });
-
-      try {
-        await api.createFilter(newFilterCategoryName.value, value.filter, value.label);
-        await getFilters();
-        progressDialog.stopProgress();
-      } catch (e) {
-        appStore.alertMessage = api.getErrorMessage(e);
-      }
-
-      progressDialog.stopProgress();
-    },
-    no: () => {},
+  progressDialog.startProgress({
+    steps: 0,
+    description: $t('progress.updateProgress'),
   });
+
+  try {
+    await api.createFilter(newFilterCategoryName.value, value.filter, value.label);
+    await getFilters();
+  } catch (e) {
+    appStore.alertMessage = api.getErrorMessage(e);
+  }
+
+  progressDialog.stopProgress();
 };
 
 const updateFilter = async (value) => {
