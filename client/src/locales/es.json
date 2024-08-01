@@ -75,8 +75,7 @@
     "categoryLabel": "Busca la categoría o añade una nueva...",
     "applyButton": "Aplica",
     "createFilterButton": "Crea un filtro",
-    "applyWarningMessage": "Vas a actualizar %d transacciones con la categoría:\n  - %s\n¿Estás seguro?",
-    "updateTransactionsMessage": "¿Quieres aplicar ahora este nuevo filtro?"
+    "applyWarningMessage": "Vas a actualizar %d transacciones con la categoría:\n  - %s\n¿Estás seguro?"
   },
   "filtersView": {
     "title": "Gestión de los filtros",
@@ -88,7 +87,6 @@
     "newFilterButton": "Nuevo...",
     "editFilterButton": "Edita...",
     "deleteFilterButton": "Elimina",
-    "applyFilterButton": "Aplica",
     "deleteCategoriesWarningMessage": "Vas borrar %d categorías.\nEsto también borrará la categoria de las transacciones corresponendientes.\n¿Estàs seguro?",
     "updateCategoryWarningMessage": "Vas a actualizar todas las transacciones que coincidan con los filtros de la categoría:\n  - %s\n¿Estàs seguro?",
     "renameCategoryMessage": "Vas a renombrar la categoría [%s] a [%s]\n¿Estàs seguro?",

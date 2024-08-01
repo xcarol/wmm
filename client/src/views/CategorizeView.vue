@@ -159,23 +159,6 @@ const updateTransactions = async (transactions, category) => {
   progressDialog.stopProgress();
 };
 
-const updateTransactionsByFilter = async (filterId) => {
-  let updatedTransactions = 0;
-  progressDialog.startProgress({
-    steps: 0,
-    description: $t('progress.updateProgress'),
-  });
-
-  try {
-    updatedTransactions = await api.applyFilter(filterId);
-  } catch (e) {
-    appStore.alertMessage = api.getErrorMessage(e);
-  }
-
-  progressDialog.stopProgress();
-  return updatedTransactions;
-};
-
 const applyCategory = () => {
   const category = selectedCategory.value;
   const selectedTransactions = selectedItems.value;
@@ -206,33 +189,7 @@ const createNewFilter = async ({ category, filter, label }) => {
   hideNewFilterDialog();
 
   try {
-    const {
-      data: [{ insertId }],
-    } = await api.createFilter(category, filter, label);
-
-    messageDialog.showMessage({
-      title: $t('dialog.Warning'),
-      message: $t('categorizeView.updateTransactionsMessage'),
-      yes: async () => {
-        try {
-          const result = await updateTransactionsByFilter(insertId);
-          const tit = $t('progress.updatedTransactionsMessage').replace(
-            '%d',
-            `${result?.data[0]?.affectedRows ?? 0}`,
-          );
-          messageDialog.showMessage({
-            title: $t('dialog.Info'),
-            message: tit,
-            ok: () => {},
-          });
-          await searchTransactions();
-          selectedCategory.value = '';
-        } catch (e) {
-          appStore.alertMessage = api.getErrorMessage(e);
-        }
-      },
-      no: () => {},
-    });
+    await api.createFilter(category, filter, label);
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }

@@ -194,25 +194,6 @@ async function updateFilter(category, filter, label) {
   }
 }
 
-async function applyFilter(filterId) {
-  try {
-    const connection = await getConnection();
-
-    const categoryFilter = await getCategoryFilter(filterId);
-    const result = await connection.query(queryUpdateTransactionsByFilter, [
-      categoryFilter.category,
-      filterId,
-      `%${categoryFilter.filter}%`,
-    ]);
-    connection.close();
-    return result;
-  } catch (err) {
-    err.message = `Error [${err}] applying filter [${filter}] from category [${category}].`;
-    console.error(err);
-    throw err;
-  }
-}
-
 async function renameCategory(oldName, newName) {
   try {
     const connection = await getConnection();
@@ -642,7 +623,6 @@ module.exports = {
   addTransaction,
   addFilter,
   updateFilter,
-  applyFilter,
   renameCategory,
   backupDatabase,
   deleteCategory,

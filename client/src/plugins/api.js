@@ -6,7 +6,6 @@ class Api {
     categoriesNames: '/categories/names',
     filters: '/categories/filters?category={1}',
     createFilter: '/categories/filter',
-    applyFilter: '/categories/apply',
     updateFilter: '/categories/filter',
     deleteFilter: '/categories/filter?filter={1}',
     deleteCategory: '/categories?category={1}',
@@ -72,11 +71,6 @@ class Api {
   createFilter(category, filter, label) {
     const url = Api.endpoint(this.endpoints.createFilter);
     return this.axios.post(url, { category, filter, label });
-  }
-
-  applyFilter(filterId) {
-    const url = Api.endpoint(this.endpoints.applyFilter);
-    return this.axios.post(url, { filterId });
   }
 
   updateFilter(category, filter, label) {

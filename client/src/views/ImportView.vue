@@ -215,38 +215,9 @@ const importFileToDatabase = async () => {
   return rowCount - firstRow;
 };
 
-const applyFilters = async () => {
-  progressDialog.startProgress({
-    steps: appStore.csvfile.rowCount,
-    description: $t('importView.applyingCategory').replace('%s', ''),
-  });
-  try {
-    const { data: categories } = await api.categoriesNames();
-
-    for (let count = 0; count < categories.length; count += 1) {
-      const category = categories.at(count);
-      progressDialog.updateProgress({
-        description: $t('importView.applyingCategory').replace('%s', category),
-      });
-
-      // eslint-disable-next-line no-await-in-loop
-      await api.applyCategoryToTransactions(category);
-
-      // This is just to make user aware that something's happening
-      // eslint-disable-next-line no-await-in-loop
-      await new Promise((r) => {
-        setTimeout(r, 250);
-      });
-    }
-  } catch (e) {
-    appStore.alertMessage = api.getErrorMessage(e);
-  }
-  progressDialog.stopProgress();
-};
-
 const importFile = async () => {
   const importedRows = await importFileToDatabase();
-  await applyFilters();
+  // TODO: await applyFilters();
   appStore.alertMessage = $t('importView.importedRows').replace('%d', importedRows);
 };
 

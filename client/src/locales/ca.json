@@ -75,8 +75,7 @@
     "categoryLabel": "Cerca la categoria o afegeix-ne una de nova...",
     "applyButton": "Aplica",
     "createFilterButton": "Crea un filtre",
-    "applyWarningMessage": "Et's a punt d'actualitzar %d transaccions amb la categoria:\n  - %s\nN'estàs segur?",
-    "updateTransactionsMessage": "Vols aplicar ara aquest nou filtre?"
+    "applyWarningMessage": "Et's a punt d'actualitzar %d transaccions amb la categoria:\n  - %s\nN'estàs segur?"
   },
   "filtersView": {
     "title": "Gestió dels filtres",
@@ -88,7 +87,6 @@
     "newFilterButton": "Nou...",
     "editFilterButton": "Edita...",
     "deleteFilterButton": "Elimina",
-    "applyFilterButton": "Aplica",
     "deleteCategoriesWarningMessage": "Et's a punt d'esborrar %d categories.\nAixò també esborrarà la categoria de les transaccions corresponents.\nN'estàs segur?",
     "updateCategoryWarningMessage": "Et's a punt d'actualitzar totes les transaccions que coincideixin amb els filtres de la categoria:\n  - %s\nN'estàs segur?",
     "renameCategoryMessage": "Et's a punt de reanomenar la categoria [%s] a [%s]\nN'estàs segur?",

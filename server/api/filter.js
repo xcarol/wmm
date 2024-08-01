@@ -1,7 +1,6 @@
 const {
   addFilter,
   updateFilter,
-  applyFilter,
   deleteCategory,
   getCategories,
   getCategoryFilters,
@@ -50,15 +49,6 @@ module.exports = (app) => {
       label = req.body.label;
       res.json(await addFilter(category, filter, label));
       res.status(201);
-    } catch (err) {
-      res.status(err.sqlState ? 400 : 500).send(err);
-    }
-  });
-
-  app.post("/categories/apply", async (req, res) => {
-    try {
-      const { filterId } = req.body;
-      res.json(await applyFilter(filterId));
     } catch (err) {
       res.status(err.sqlState ? 400 : 500).send(err);
     }

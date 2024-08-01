@@ -75,8 +75,7 @@
     "categoryLabel": "Search for a category or add a new one...",
     "applyButton": "Apply",
     "createFilterButton": "Create new filter",
-    "applyWarningMessage": "You're about to update %d records with the category:\n  - %s\nAre you sure?",
-    "updateTransactionsMessage": "Do you want to apply this new filter now?"
+    "applyWarningMessage": "You're about to update %d records with the category:\n  - %s\nAre you sure?"
   },
   "filtersView": {
     "title": "Filter management",
@@ -88,7 +87,6 @@
     "newFilterButton": "New...",
     "editFilterButton": "Edit...",
     "deleteFilterButton": "Delete",
-    "applyFilterButton": "Apply",
     "deleteCategoriesWarningMessage": "You're about to delete %d categories.\nIt will also reset the category of the corresponding transactions.\nAre you sure?",
     "updateCategoryWarningMessage": "You're about to update all transactions that match the filters of the category:\n  - %s\nAre you sure?",
     "renameCategoryMessage": "You're about to rename category [%s] to [%s]\nAre you sure?",
