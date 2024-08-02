@@ -73,9 +73,11 @@
     "filterButton": "Search",
     "transactionsFound": "%d transactions found with this criteria: [%d]",
     "categoryLabel": "Search for a category or add a new one...",
+    "applyFiltersButton": "Apply all filters",
     "applyButton": "Apply",
     "createFilterButton": "Create new filter",
-    "applyWarningMessage": "You're about to update %d records with the category:\n  - %s\nAre you sure?"
+    "applyWarningMessage": "You're about to update %d records with the category:\n  - %s\nAre you sure?",
+    "applyFiltersWarningMessage": "WARNING: You're about to apply ALL filters of ALL categories.\nThis is a time consuming operation.\nAre you sure?"
   },
   "filtersView": {
     "title": "Filter management",

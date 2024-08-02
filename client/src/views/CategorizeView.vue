@@ -33,6 +33,7 @@
     <v-card-actions class="align-start">
       <v-combobox
         v-model="selectedCategory"
+        class="ml-2"
         :label="$t('categorizeView.categoryLabel')"
         :items="categoryNames"
         clearable
@@ -46,9 +47,15 @@
         >{{ $t('categorizeView.applyButton') }}</v-btn
       >
       <v-btn
+        class="mr-2"
         :disabled="canApplyCategory"
         @click.stop="showCreateFilterDialog"
         >{{ $t('categorizeView.createFilterButton') }}</v-btn
+      >
+      <v-btn
+        class="ml-2"
+        @click.stop="applyFilters"
+        >{{ $t('categorizeView.applyFiltersButton') }}</v-btn
       >
     </v-card-actions>
   </v-card>
@@ -157,6 +164,28 @@ const updateTransactions = async (transactions, category) => {
   }
 
   progressDialog.stopProgress();
+};
+
+const applyFilters = () => {
+  messageDialog.showMessage({
+    title: $t('dialog.Warning'),
+    message: $t('categorizeView.applyFiltersWarningMessage'),
+    yes: async () => {
+      progressDialog.startProgress({
+        steps: 0,
+        description: $t('progress.updateProgress'),
+      });
+
+      try {
+        await api.applyFilters();
+      } catch (e) {
+        appStore.alertMessage = api.getErrorMessage(e);
+      }
+
+      progressDialog.stopProgress();
+    },
+    no: () => {},
+  });
 };
 
 const applyCategory = () => {

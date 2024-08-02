@@ -73,9 +73,11 @@
     "filterButton": "Busca",
     "transactionsFound": "Se han encontrado %d transacciones ambcon el següiente criterio: [%d]",
     "categoryLabel": "Busca la categoría o añade una nueva...",
+    "applyFiltersButton": "Aplica todos los filtros",
     "applyButton": "Aplica",
     "createFilterButton": "Crea un filtro",
-    "applyWarningMessage": "Vas a actualizar %d transacciones con la categoría:\n  - %s\n¿Estás seguro?"
+    "applyWarningMessage": "Vas a actualizar %d transacciones con la categoría:\n  - %s\n¿Estás seguro?",
+    "applyFiltersWarningMessage": "ATENCIÓN: Se van a aplicar TODOS los filtros de TODAS las categorías.\nEsta operación puede consumir un tiempo considerable.\n¿Estás seguro?"
   },
   "filtersView": {
     "title": "Gestión de los filtros",

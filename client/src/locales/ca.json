@@ -73,9 +73,11 @@
     "filterButton": "Cerca",
     "transactionsFound": "S'han trobat %d transaccions amb el següent criteri: [%d]",
     "categoryLabel": "Cerca la categoria o afegeix-ne una de nova...",
+    "applyFiltersButton": "Aplica tots els filtres",
     "applyButton": "Aplica",
     "createFilterButton": "Crea un filtre",
-    "applyWarningMessage": "Et's a punt d'actualitzar %d transaccions amb la categoria:\n  - %s\nN'estàs segur?"
+    "applyWarningMessage": "Et's a punt d'actualitzar %d transaccions amb la categoria:\n  - %s\nN'estàs segur?",
+    "applyFiltersWarningMessage": "ATENCIÓ: Ets a punt d'aplicar TOTS els filtres de TOTES les categories.\nAquesta operació pot consumir un temps considerable.\nN'estàs segur?"
   },
   "filtersView": {
     "title": "Gestió dels filtres",
