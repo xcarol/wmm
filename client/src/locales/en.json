@@ -43,7 +43,7 @@
     "rowCountLabel": "This file contains %d rows.",
     "bankLabel": "Bank name",
     "importButtonLabel": "Import",
-    "importedRows": "%d rows imported.",
+    "importedRows": "%d transactions imported.",
     "importError": "Error: '%d' at line: %d",
     "importingRows": "%d lines of %d imported...",
     "initialAmountLabel": "Account initial amount"
