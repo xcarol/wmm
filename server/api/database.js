@@ -37,17 +37,13 @@ const queryBankTransactions =
 
 const queryUncategorizedRowsFilter = " AND description LIKE ?";
 
-const queryApplyFilters = `
-  WITH ordered_filters AS (
-    SELECT *
-    FROM filters
-    ORDER BY filter DESC
-  )
-  UPDATE transactions AS t
-  JOIN ordered_filters AS f ON t.description LIKE CONCAT('%', 
-  REPLACE(f.filter, '%', '\%'), '%')
-  SET t.category = f.category, t.filter_id = f.id
-  WHERE t.category = ''
+const queryFiltersToApply =
+  "SELECT id, category, filter FROM filters ORDER BY filter DESC";
+
+const queryApplyFilter = `
+  UPDATE transactions
+    SET category = ?, filter_id = ?
+    WHERE description LIKE CONCAT('%', REPLACE(?, '%', '\%'), '%') AND category = '';
   `;
 
 const queryUpdateTransactionsCategory =
@@ -163,10 +159,26 @@ async function getConnection() {
 async function applyFilters() {
   try {
     const connection = await getConnection();
+    const operations = [];
+    const [filters] = await connection.query(queryFiltersToApply);
 
-    const result = await connection.query(queryApplyFilters);
+    for (let index = 0; index < filters.length; index++) {
+      const filter = filters[index];
+      operations.push(connection.query(queryApplyFilter, [
+        filter.category,
+        filter.id,
+        filter.filter,
+      ]));
+    }
+
+    const results = await Promise.all(operations);
+    let affectedRows = 0;
+    for (let index = 0; index < results.length; index++) {
+      const [result] = results[index];
+      affectedRows += result.affectedRows;
+    }
     connection.close();
-    return result;
+    return affectedRows;
   } catch (err) {
     err.message = `Error [${err}] applying filters.`;
     console.error(err);
