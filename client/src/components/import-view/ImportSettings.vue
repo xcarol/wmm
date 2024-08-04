@@ -13,6 +13,7 @@
           <v-text-field
             v-model="initialAmount"
             :label="$t('importView.initialAmountLabel')"
+            :disabled="noFileLoaded"
             @update:model-value="notifyInitialAmount"
           ></v-text-field>
         </v-row>
