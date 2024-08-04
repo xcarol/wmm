@@ -30,6 +30,7 @@ import { ref, computed, onBeforeMount } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useAppStore } from '../stores/app';
 import { useProgressDialogStore } from '../stores/progressDialog';
+import { useMessageDialogStore } from '../stores/messageDialog';
 import { useApi } from '../plugins/api';
 import FileInput from '../components/import-view/FileInput.vue';
 import FilePreview from '../components/import-view/FilePreview.vue';
@@ -41,6 +42,7 @@ dayjs.extend(customParseFormat);
 const { t: $t } = useI18n();
 const appStore = useAppStore();
 const progressDialog = useProgressDialogStore();
+const messageDialog = useMessageDialogStore();
 const api = useApi();
 
 const firstRowIsAHeader = ref(false);
@@ -215,10 +217,24 @@ const importFileToDatabase = async () => {
   return rowCount - firstRow;
 };
 
+const applyFiltersToDatabase = async () => {
+  progressDialog.startProgress({
+    steps: appStore.csvfile.rowCount,
+    description: $t('progress.updateProgress'),
+  });
+  await api.applyFilters();
+  progressDialog.stopProgress();
+};
+
 const importFile = async () => {
   const importedRows = await importFileToDatabase();
-  await api.applyFilters();
-  appStore.alertMessage = $t('importView.importedRows').replace('%d', importedRows);
+  await applyFiltersToDatabase();
+
+  messageDialog.showMessage({
+    title: $t('dialog.Info'),
+    message: $t('importView.importedRows').replace('%d', importedRows),
+    ok: () => {},
+  });
 };
 
 onBeforeMount(() => appStore.csvfile.reset());
