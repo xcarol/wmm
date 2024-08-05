@@ -55,15 +55,9 @@ module.exports = (app) => {
   });
 
   app.put("/categories/filter", async (req, res) => {
-    let category = "";
-    let filter = "";
-    let label = "";
-
     try {
-      category = req.body.category;
-      filter = req.body.filter;
-      label = req.body.label;
-      res.json(await updateFilter(category, filter, label));
+      const {filterId, filter, label} = req.body;
+      res.json(await updateFilter(filterId, filter, label));
     } catch (err) {
       res.status(err.sqlState ? 400 : 500).send(err);
     }

@@ -150,7 +150,7 @@ const queryRenameCategoryFilters =
   "UPDATE filters SET category = ? WHERE category = ?";
 
 const queryUpdateFilter =
-  "UPDATE filters SET filter = ?, label = ? WHERE category = ? AND filter = ?";
+  "UPDATE filters SET filter = ?, label = ? WHERE id = ?";
 
 async function getConnection() {
   return await mysql.createConnection(connectionSettings);
@@ -204,15 +204,14 @@ async function addFilter(category, filter, label) {
   }
 }
 
-async function updateFilter(category, filter, label) {
+async function updateFilter(id, filter, label) {
   try {
     const connection = await getConnection();
 
     const result = await connection.query(queryUpdateFilter, [
       filter.slice(0, MAX_LEN),
       label.slice(0, MAX_LEN),
-      category.slice(0, MAX_LEN),
-      filter.slice(0, MAX_LEN),
+      id,
     ]);
     connection.close();
     return result;
