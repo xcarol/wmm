@@ -73,9 +73,9 @@ class Api {
     return this.axios.post(url, { category, filter, label });
   }
 
-  updateFilter(category, filter, label) {
+  updateFilter(filterId, filter, label) {
     const url = Api.endpoint(this.endpoints.updateFilter);
-    return this.axios.put(url, { category, filter, label });
+    return this.axios.put(url, { filterId, filter, label });
   }
 
   deleteFilter(filterId) {
