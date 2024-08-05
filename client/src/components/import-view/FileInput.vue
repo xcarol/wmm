@@ -22,6 +22,8 @@ import { useAppStore } from '../../stores/app';
 const appStore = useAppStore();
 const { t: $t } = useI18n();
 
+const emits = defineEmits(['clear']);
+
 const fileName = ref([]);
 const fileNameLabel = ref($t('importView.importFileInputLabel'));
 const rowsToParse = ref(0);
@@ -57,5 +59,6 @@ const handleFileChange = (event) => {
 const resetView = () => {
   appStore.csvfile.reset();
   rowsToParse.value = 0;
+  emits('clear');
 };
 </script>
