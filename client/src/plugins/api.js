@@ -6,18 +6,17 @@ class Api {
     categoriesNames: '/categories/names',
     filters: '/categories/filters?category={1}',
     createFilter: '/categories/filter',
-    applyFilter: '/categories/apply',
     updateFilter: '/categories/filter',
     deleteFilter: '/categories/filter?filter={1}',
     deleteCategory: '/categories?category={1}',
     renameCategory: '/categories/rename',
     transactions: '/transactions',
     transactionsOfBank: '/transactions?bank={1}&start={2}&end={3}&category={4}&filter={5}',
-    transactionsApplyCategory: '/transactions/category',
-    transactionsCategorize: '/transactions/category',
+    transactionsUpdateCategory: '/transactions/category',
     transactionsCategoryBalance: '/transactions/category?category={1}&start={2}&end={3}',
     transactionsCategoryFiltersBalance:
       '/transactions/category?category={1}&filter={2}&start={3}&end={4}',
+    applyFilters: '/transactions/category',
     resetCategoryFromTransactions: '/transactions/category',
     uncategorizedTransactions: '/transactions/uncategorized?filter={1}',
     duplicated: '/transactions/duplicated',
@@ -74,11 +73,6 @@ class Api {
     return this.axios.post(url, { category, filter, label });
   }
 
-  applyFilter(filterId) {
-    const url = Api.endpoint(this.endpoints.applyFilter);
-    return this.axios.post(url, { filterId });
-  }
-
   updateFilter(category, filter, label) {
     const url = Api.endpoint(this.endpoints.updateFilter);
     return this.axios.put(url, { category, filter, label });
@@ -109,14 +103,14 @@ class Api {
     return this.axios.put(url, { transactions });
   }
 
-  updateTransactionsCategory(transactions, category) {
-    const url = Api.endpoint(this.endpoints.transactionsApplyCategory);
-    return this.axios.put(url, { operation: 'apply', transactions, category });
+  applyFilters() {
+    const url = Api.endpoint(this.endpoints.applyFilters);
+    return this.axios.put(url, { operation: 'apply' });
   }
 
-  applyCategoryToTransactions(category) {
-    const url = Api.endpoint(this.endpoints.transactionsCategorize);
-    return this.axios.put(url, { operation: 'categorize', category });
+  updateTransactionsCategory(transactions, category) {
+    const url = Api.endpoint(this.endpoints.transactionsUpdateCategory);
+    return this.axios.put(url, { operation: 'update', transactions, category });
   }
 
   resetCategoryFromTransactions(category) {

@@ -1,6 +1,6 @@
 const {
   addTransaction,
-  applyCategory,
+  applyFilters,
   deleteTransactions,
   getCategoryBalance,
   getCategoryFiltersBalance,
@@ -51,12 +51,12 @@ module.exports = (app) => {
       const operation = data.operation;
       switch (operation) {
         case "apply":
+          res.json(await applyFilters());
+          break;
+        case "update":
           res.json(
             await updateTransactionsCategory(data.transactions, data.category)
           );
-          break;
-        case "categorize":
-          res.json(await applyCategory(data.category));
           break;
         case "reset":
           res.json(await resetTransactionsCategory(data.category));

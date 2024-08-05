@@ -30,6 +30,7 @@ import { ref, computed, onBeforeMount } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useAppStore } from '../stores/app';
 import { useProgressDialogStore } from '../stores/progressDialog';
+import { useMessageDialogStore } from '../stores/messageDialog';
 import { useApi } from '../plugins/api';
 import FileInput from '../components/import-view/FileInput.vue';
 import FilePreview from '../components/import-view/FilePreview.vue';
@@ -41,6 +42,7 @@ dayjs.extend(customParseFormat);
 const { t: $t } = useI18n();
 const appStore = useAppStore();
 const progressDialog = useProgressDialogStore();
+const messageDialog = useMessageDialogStore();
 const api = useApi();
 
 const firstRowIsAHeader = ref(false);
@@ -215,39 +217,24 @@ const importFileToDatabase = async () => {
   return rowCount - firstRow;
 };
 
-const applyFilters = async () => {
+const applyFiltersToDatabase = async () => {
   progressDialog.startProgress({
     steps: appStore.csvfile.rowCount,
-    description: $t('importView.applyingCategory').replace('%s', ''),
+    description: $t('progress.updateProgress'),
   });
-  try {
-    const { data: categories } = await api.categoriesNames();
-
-    for (let count = 0; count < categories.length; count += 1) {
-      const category = categories.at(count);
-      progressDialog.updateProgress({
-        description: $t('importView.applyingCategory').replace('%s', category),
-      });
-
-      // eslint-disable-next-line no-await-in-loop
-      await api.applyCategoryToTransactions(category);
-
-      // This is just to make user aware that something's happening
-      // eslint-disable-next-line no-await-in-loop
-      await new Promise((r) => {
-        setTimeout(r, 250);
-      });
-    }
-  } catch (e) {
-    appStore.alertMessage = api.getErrorMessage(e);
-  }
+  await api.applyFilters();
   progressDialog.stopProgress();
 };
 
 const importFile = async () => {
   const importedRows = await importFileToDatabase();
-  await applyFilters();
-  appStore.alertMessage = $t('importView.importedRows').replace('%d', importedRows);
+  await applyFiltersToDatabase();
+
+  messageDialog.showMessage({
+    title: $t('dialog.Info'),
+    message: $t('importView.importedRows').replace('%d', importedRows),
+    ok: () => {},
+  });
 };
 
 onBeforeMount(() => appStore.csvfile.reset());

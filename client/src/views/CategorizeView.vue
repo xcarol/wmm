@@ -33,6 +33,7 @@
     <v-card-actions class="align-start">
       <v-combobox
         v-model="selectedCategory"
+        class="ml-2"
         :label="$t('categorizeView.categoryLabel')"
         :items="categoryNames"
         clearable
@@ -46,9 +47,15 @@
         >{{ $t('categorizeView.applyButton') }}</v-btn
       >
       <v-btn
+        class="mr-2"
         :disabled="canApplyCategory"
         @click.stop="showCreateFilterDialog"
         >{{ $t('categorizeView.createFilterButton') }}</v-btn
+      >
+      <v-btn
+        class="ml-2"
+        @click.stop="applyFilters"
+        >{{ $t('categorizeView.applyFiltersButton') }}</v-btn
       >
     </v-card-actions>
   </v-card>
@@ -159,21 +166,26 @@ const updateTransactions = async (transactions, category) => {
   progressDialog.stopProgress();
 };
 
-const updateTransactionsByFilter = async (filterId) => {
-  let updatedTransactions = 0;
-  progressDialog.startProgress({
-    steps: 0,
-    description: $t('progress.updateProgress'),
+const applyFilters = () => {
+  messageDialog.showMessage({
+    title: $t('dialog.Warning'),
+    message: $t('categorizeView.applyFiltersWarningMessage'),
+    yes: async () => {
+      progressDialog.startProgress({
+        steps: 0,
+        description: $t('progress.updateProgress'),
+      });
+
+      try {
+        await api.applyFilters();
+      } catch (e) {
+        appStore.alertMessage = api.getErrorMessage(e);
+      }
+
+      progressDialog.stopProgress();
+    },
+    no: () => {},
   });
-
-  try {
-    updatedTransactions = await api.applyFilter(filterId);
-  } catch (e) {
-    appStore.alertMessage = api.getErrorMessage(e);
-  }
-
-  progressDialog.stopProgress();
-  return updatedTransactions;
 };
 
 const applyCategory = () => {
@@ -206,33 +218,7 @@ const createNewFilter = async ({ category, filter, label }) => {
   hideNewFilterDialog();
 
   try {
-    const {
-      data: [{ insertId }],
-    } = await api.createFilter(category, filter, label);
-
-    messageDialog.showMessage({
-      title: $t('dialog.Warning'),
-      message: $t('categorizeView.updateTransactionsMessage'),
-      yes: async () => {
-        try {
-          const result = await updateTransactionsByFilter(insertId);
-          const tit = $t('progress.updatedTransactionsMessage').replace(
-            '%d',
-            `${result?.data[0]?.affectedRows ?? 0}`,
-          );
-          messageDialog.showMessage({
-            title: $t('dialog.Info'),
-            message: tit,
-            ok: () => {},
-          });
-          await searchTransactions();
-          selectedCategory.value = '';
-        } catch (e) {
-          appStore.alertMessage = api.getErrorMessage(e);
-        }
-      },
-      no: () => {},
-    });
+    await api.createFilter(category, filter, label);
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }

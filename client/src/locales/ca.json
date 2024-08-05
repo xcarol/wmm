@@ -43,10 +43,9 @@
     "rowCountLabel": "Aquest arxiu conté %d files.",
     "bankLabel": "Nom del banc",
     "importButtonLabel": "Importar",
-    "importedRows": "S'han importat %d files.",
+    "importedRows": "S'han importat %d transaccions.",
     "importError": "Error: '%d' a la línia: %d",
     "importingRows": "S'han importat %d linies de %d...",
-    "applyingCategory": "Aplicant la categoria [%s]",
     "initialAmountLabel": "Quantitat inicial del compte"
   },
   "duplicatesView": {
@@ -74,10 +73,11 @@
     "filterButton": "Cerca",
     "transactionsFound": "S'han trobat %d transaccions amb el següent criteri: [%d]",
     "categoryLabel": "Cerca la categoria o afegeix-ne una de nova...",
+    "applyFiltersButton": "Aplica tots els filtres",
     "applyButton": "Aplica",
     "createFilterButton": "Crea un filtre",
     "applyWarningMessage": "Et's a punt d'actualitzar %d transaccions amb la categoria:\n  - %s\nN'estàs segur?",
-    "updateTransactionsMessage": "Vols aplicar ara aquest nou filtre?"
+    "applyFiltersWarningMessage": "ATENCIÓ: Ets a punt d'aplicar TOTS els filtres de TOTES les categories.\nAquesta operació pot consumir un temps considerable.\nN'estàs segur?"
   },
   "filtersView": {
     "title": "Gestió dels filtres",
@@ -86,11 +86,9 @@
     "filtersLabel": "Etiqueta",
     "renameCategoryButton": "Reanomena...",
     "deleteCategoryButton": "Elimina",
-    "applyCategoryButton": "Aplica",
     "newFilterButton": "Nou...",
     "editFilterButton": "Edita...",
     "deleteFilterButton": "Elimina",
-    "applyFilterButton": "Aplica",
     "deleteCategoriesWarningMessage": "Et's a punt d'esborrar %d categories.\nAixò també esborrarà la categoria de les transaccions corresponents.\nN'estàs segur?",
     "updateCategoryWarningMessage": "Et's a punt d'actualitzar totes les transaccions que coincideixin amb els filtres de la categoria:\n  - %s\nN'estàs segur?",
     "renameCategoryMessage": "Et's a punt de reanomenar la categoria [%s] a [%s]\nN'estàs segur?",

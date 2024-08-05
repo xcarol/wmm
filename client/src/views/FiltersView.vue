@@ -30,11 +30,6 @@
                 @click.stop="deleteCategories"
                 >{{ $t('filtersView.deleteCategoryButton') }}</v-btn
               >
-              <v-btn
-                :disabled="noCategorySelected"
-                @click.stop="applyCategory"
-                >{{ $t('filtersView.applyCategoryButton') }}</v-btn
-              >
             </v-card-actions>
           </v-card>
         </v-col>
@@ -70,11 +65,6 @@
                 :disabled="noFilterSelected"
                 @click.stop="deleteFilter"
                 >{{ $t('filtersView.deleteFilterButton') }}</v-btn
-              >
-              <v-btn
-                :disabled="noFilterSelected"
-                @click.stop="applyFilter"
-                >{{ $t('filtersView.applyFilterButton') }}</v-btn
               >
             </v-card-actions>
           </v-card>
@@ -324,78 +314,22 @@ const deleteCategories = async () => {
   });
 };
 
-const applyCategory = () => {
-  messageDialog.showMessage({
-    title: $t('dialog.Warning'),
-    message: $t('filtersView.updateCategoryWarningMessage').replace(
-      '%s',
-      selectedCategories.value[0],
-    ),
-    yes: async () => {
-      progressDialog.startProgress({
-        steps: 0,
-        description: $t('progress.updateProgress'),
-      });
-
-      try {
-        const applyResult = await api.applyCategoryToTransactions(selectedCategories.value[0]);
-
-        progressDialog.stopProgress();
-        messageDialog.showMessage({
-          title: $t('dialog.Info'),
-          message: $t('progress.updatedTransactionsMessage').replace(
-            '%d',
-            `${applyResult?.data[0]?.affectedRows ?? 0}`,
-          ),
-          ok: () => {},
-        });
-
-        await getCategories();
-      } catch (e) {
-        appStore.alertMessage = api.getErrorMessage(e);
-      }
-
-      progressDialog.stopProgress();
-    },
-    no: () => {},
-  });
-};
-
 const newFilter = async (value) => {
   showNewFilter.value = false;
 
-  messageDialog.showMessage({
-    title: $t('dialog.Warning'),
-    message: $t('filtersView.applyNewFilterWarningMessage').replace('%s', value.filter),
-    yes: async () => {
-      progressDialog.startProgress({
-        steps: 0,
-        description: $t('progress.updateProgress'),
-      });
-
-      try {
-        const {
-          data: [{ insertId }],
-        } = await api.createFilter(newFilterCategoryName.value, value.filter, value.label);
-        const applyResult = await api.applyFilter(insertId);
-        await getFilters();
-        progressDialog.stopProgress();
-        messageDialog.showMessage({
-          title: $t('dialog.Info'),
-          message: $t('progress.updatedTransactionsMessage').replace(
-            '%d',
-            `${applyResult?.data[0]?.affectedRows ?? 0}`,
-          ),
-          ok: () => {},
-        });
-      } catch (e) {
-        appStore.alertMessage = api.getErrorMessage(e);
-      }
-
-      progressDialog.stopProgress();
-    },
-    no: () => {},
+  progressDialog.startProgress({
+    steps: 0,
+    description: $t('progress.updateProgress'),
   });
+
+  try {
+    await api.createFilter(newFilterCategoryName.value, value.filter, value.label);
+    await getFilters();
+  } catch (e) {
+    appStore.alertMessage = api.getErrorMessage(e);
+  }
+
+  progressDialog.stopProgress();
 };
 
 const updateFilter = async (value) => {
@@ -437,37 +371,6 @@ const deleteFilter = () => {
         });
 
         await getFilters();
-      } catch (e) {
-        appStore.alertMessage = api.getErrorMessage(e);
-      }
-
-      progressDialog.stopProgress();
-    },
-    no: () => {},
-  });
-};
-
-const applyFilter = () => {
-  messageDialog.showMessage({
-    title: $t('dialog.Warning'),
-    message: $t('filtersView.applyFilterWarningMessage').replace('%s', selectedFilters.value),
-    yes: async () => {
-      progressDialog.startProgress({
-        steps: 0,
-        description: $t('progress.updateProgress'),
-      });
-
-      try {
-        const applyResult = await api.applyFilter(selectedFilters.value[0].filter_id);
-        progressDialog.stopProgress();
-        messageDialog.showMessage({
-          title: $t('dialog.Info'),
-          message: $t('progress.updatedTransactionsMessage').replace(
-            '%d',
-            `${applyResult?.data[0]?.affectedRows ?? 0}`,
-          ),
-          ok: () => {},
-        });
       } catch (e) {
         appStore.alertMessage = api.getErrorMessage(e);
       }

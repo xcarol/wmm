@@ -43,10 +43,9 @@
     "rowCountLabel": "Este archivo contiene %d filas.",
     "bankLabel": "Nombre del banco",
     "importButtonLabel": "Importar",
-    "importedRows": "Se han importado %d filas.",
+    "importedRows": "Se han importado %d transacciones.",
     "importError": "Error: %d en la línea: %d",
     "importingRows": "Se han importado %d línias de %d...",
-    "applyingCategory": "Aplicando la categoría [%s]",
     "initialAmountLabel": "Cantidad inicial de la cuenta"
   },
   "duplicatesView": {
@@ -74,10 +73,11 @@
     "filterButton": "Busca",
     "transactionsFound": "Se han encontrado %d transacciones ambcon el següiente criterio: [%d]",
     "categoryLabel": "Busca la categoría o añade una nueva...",
+    "applyFiltersButton": "Aplica todos los filtros",
     "applyButton": "Aplica",
     "createFilterButton": "Crea un filtro",
     "applyWarningMessage": "Vas a actualizar %d transacciones con la categoría:\n  - %s\n¿Estás seguro?",
-    "updateTransactionsMessage": "¿Quieres aplicar ahora este nuevo filtro?"
+    "applyFiltersWarningMessage": "ATENCIÓN: Se van a aplicar TODOS los filtros de TODAS las categorías.\nEsta operación puede consumir un tiempo considerable.\n¿Estás seguro?"
   },
   "filtersView": {
     "title": "Gestión de los filtros",
@@ -86,11 +86,9 @@
     "filtersLabel": "Etiqueta",
     "renameCategoryButton": "Renombra...",
     "deleteCategoryButton": "Elimina",
-    "applyCategoryButton": "Aplica",
     "newFilterButton": "Nuevo...",
     "editFilterButton": "Edita...",
     "deleteFilterButton": "Elimina",
-    "applyFilterButton": "Aplica",
     "deleteCategoriesWarningMessage": "Vas borrar %d categorías.\nEsto también borrará la categoria de las transacciones corresponendientes.\n¿Estàs seguro?",
     "updateCategoryWarningMessage": "Vas a actualizar todas las transacciones que coincidan con los filtros de la categoría:\n  - %s\n¿Estàs seguro?",
     "renameCategoryMessage": "Vas a renombrar la categoría [%s] a [%s]\n¿Estàs seguro?",

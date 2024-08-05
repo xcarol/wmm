@@ -33,19 +33,18 @@ const queryUncategorizedTransactions =
 
 const queryBankTransactions =
   "SELECT id, bank, date, description, category, amount \
-      FROM transactions";
+    FROM transactions";
 
 const queryUncategorizedRowsFilter = " AND description LIKE ?";
 
-const queryUpdateRowsCategoryWithAllFilters =
-  "UPDATE transactions AS t \
-    JOIN filters AS f ON t.description LIKE CONCAT('%',  \
-    REPLACE(f.filter, '%', '\\%'), '%') \
-    SET t.category = f.category \
-    WHERE f.category = ? AND t.category = ''";
+const queryFiltersToApply =
+  "SELECT id, category, filter FROM filters ORDER BY filter DESC";
 
-const queryUpdateTransactionsByFilter =
-  "UPDATE transactions SET category = ?, filter_id = ? WHERE description LIKE ? AND category = ''";
+const queryApplyFilter = `
+  UPDATE transactions
+    SET category = ?, filter_id = ?
+    WHERE description LIKE CONCAT('%', REPLACE(?, '%', '\%'), '%') AND category = '';
+  `;
 
 const queryUpdateTransactionsCategory =
   "UPDATE transactions SET category = ? WHERE id IN(?)";
@@ -131,7 +130,7 @@ const queryMarkNotDuplicateRows =
 
 const queryYears = "SELECT DISTINCT YEAR(date) as year FROM transactions";
 
-const queryAddCategoryFilters =
+const queryAddCategoryFilter =
   "INSERT INTO filters (category, filter, label) VALUES (?, ?, ?)";
 
 const queryDeleteCategory = "DELETE FROM filters WHERE category = ?";
@@ -139,7 +138,7 @@ const queryDeleteCategory = "DELETE FROM filters WHERE category = ?";
 const queryDeleteFilter = "DELETE FROM filters WHERE id = ?";
 
 const queryResetRowsCategory =
-  "UPDATE transactions SET category = '' WHERE category = ?";
+  "UPDATE transactions SET category = '', filter_id = NULL WHERE category = ?";
 
 const queryResetRowsCategoryForAFilter =
   "UPDATE transactions SET category = '', filter_id = NULL WHERE filter_id = ?";
@@ -157,11 +156,41 @@ async function getConnection() {
   return await mysql.createConnection(connectionSettings);
 }
 
+async function applyFilters() {
+  try {
+    const connection = await getConnection();
+    const operations = [];
+    const [filters] = await connection.query(queryFiltersToApply);
+
+    for (let index = 0; index < filters.length; index++) {
+      const filter = filters[index];
+      operations.push(connection.query(queryApplyFilter, [
+        filter.category,
+        filter.id,
+        filter.filter,
+      ]));
+    }
+
+    const results = await Promise.all(operations);
+    let affectedRows = 0;
+    for (let index = 0; index < results.length; index++) {
+      const [result] = results[index];
+      affectedRows += result.affectedRows;
+    }
+    connection.close();
+    return affectedRows;
+  } catch (err) {
+    err.message = `Error [${err}] applying filters.`;
+    console.error(err);
+    throw err;
+  }
+}
+
 async function addFilter(category, filter, label) {
   try {
     const connection = await getConnection();
 
-    const result = await connection.query(queryAddCategoryFilters, [
+    const result = await connection.query(queryAddCategoryFilter, [
       category.slice(0, MAX_LEN),
       filter.slice(0, MAX_LEN),
       label.slice(0, MAX_LEN),
@@ -189,42 +218,6 @@ async function updateFilter(category, filter, label) {
     return result;
   } catch (err) {
     err.message = `Error [${err}] updating filter ${filter} with label ${label} to category ${category}.`;
-    console.error(err);
-    throw err;
-  }
-}
-
-async function applyFilter(filterId) {
-  try {
-    const connection = await getConnection();
-
-    const categoryFilter = await getCategoryFilter(filterId);
-    const result = await connection.query(queryUpdateTransactionsByFilter, [
-      categoryFilter.category,
-      filterId,
-      `%${categoryFilter.filter}%`,
-    ]);
-    connection.close();
-    return result;
-  } catch (err) {
-    err.message = `Error [${err}] applying filter [${filter}] from category [${category}].`;
-    console.error(err);
-    throw err;
-  }
-}
-
-async function applyCategory(category) {
-  try {
-    const connection = await getConnection();
-
-    const result = await connection.query(
-      queryUpdateRowsCategoryWithAllFilters,
-      category
-    );
-    connection.close();
-    return result;
-  } catch (err) {
-    err.message = `Error [${err}] applying category [${category}].`;
     console.error(err);
     throw err;
   }
@@ -656,30 +649,29 @@ async function updateTransactionsAsNotDuplicated(transactions) {
 }
 
 module.exports = {
-  addTransaction,
   addFilter,
-  updateFilter,
-  applyFilter,
-  applyCategory,
-  renameCategory,
+  addTransaction,
+  applyFilters,
   backupDatabase,
   deleteCategory,
   deleteFilter,
   deleteTransactions,
   executeSql,
-  getBankNames,
   getBankBalance,
+  getBankNames,
+  getBankTransactions,
   getCategories,
   getCategoryBalance,
   getCategoryFilters,
   getCategoryFiltersBalance,
   getCategoryNonFiltersBalance,
-  getBankTransactions,
   getDuplicatedTransactions,
   getUncategorizedTransactions,
   getYears,
+  renameCategory,
   resetTransactionsCategory,
   resetTransactionsCategoryForAFilter,
-  updateTransactionsCategory,
+  updateFilter,
   updateTransactionsAsNotDuplicated,
+  updateTransactionsCategory,
 };
