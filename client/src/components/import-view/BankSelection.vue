@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onBeforeMount } from 'vue';
+import { ref, computed, onBeforeUpdate } from 'vue';
 import { useApi } from '../../plugins/api';
 import { useAppStore } from '../../stores/app';
 
@@ -46,5 +46,5 @@ const getBankNames = async () => {
   }
 };
 
-onBeforeMount(() => getBankNames());
+onBeforeUpdate(() => getBankNames());
 </script>
