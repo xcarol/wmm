@@ -2,7 +2,7 @@
   <v-card>
     <v-card-text>
       <v-combobox
-        v-model="selectedBankName"
+        :model-value="bankName"
         :label="$t('importView.bankLabel')"
         :items="bankNames"
         :disabled="noFileLoaded"
@@ -19,10 +19,16 @@ import { useAppStore } from '../../stores/app';
 
 const emits = defineEmits(['selectedBank']);
 
+defineProps({
+  bankName: {
+    type: String,
+    required: true,
+  },
+});
+
 const api = useApi();
 const appStore = useAppStore();
 
-const selectedBankName = ref('');
 const bankNames = ref([]);
 
 const noFileLoaded = computed(() => appStore.csvfile.rowCount === 0);

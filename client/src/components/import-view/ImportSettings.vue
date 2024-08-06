@@ -4,14 +4,14 @@
       <v-col>
         <v-row>
           <v-checkbox
-            v-model="headerStatus"
+            :model-value="hasHeader"
             :label="$t('importView.firstRowIsAHeader')"
             :disabled="noFileLoaded"
             @update:model-value="notifyCheckState"
           />
           <v-spacer />
           <v-text-field
-            v-model="initialAmount"
+            :value="initialAmount"
             :label="$t('importView.initialAmountLabel')"
             :disabled="noFileLoaded"
             @update:model-value="notifyInitialAmount"
@@ -19,7 +19,7 @@
         </v-row>
         <v-row>
           <v-select
-            v-model="selectedDateColumn"
+            :model-value="dateColumn"
             :label="$t('importView.dateColumnLabel')"
             :items="dateItems"
             :disabled="noFileLoaded"
@@ -28,7 +28,7 @@
         </v-row>
         <v-row>
           <v-select
-            v-model="selectedDescriptionColumn"
+            :model-value="descriptionColumn"
             :label="$t('importView.descriptionColumnLabel')"
             :items="descriptionItems"
             :disabled="noFileLoaded"
@@ -37,7 +37,7 @@
         </v-row>
         <v-row>
           <v-select
-            v-model="selectedAmountColumn"
+            :model-value="amountColumn"
             :label="$t('importView.amountColumnLabel')"
             :items="amountItems"
             :disabled="noFileLoaded"
@@ -50,13 +50,29 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 import { useAppStore } from '../../stores/app';
 
 const props = defineProps({
   hasHeader: {
     type: Boolean,
     default: false,
+  },
+  initialAmount: {
+    type: Number,
+    default: 0.0,
+  },
+  dateColumn: {
+    type: String,
+    required: true,
+  },
+  descriptionColumn: {
+    type: String,
+    required: true,
+  },
+  amountColumn: {
+    type: String,
+    required: true,
   },
 });
 
@@ -69,11 +85,6 @@ const emits = defineEmits([
 ]);
 
 const appStore = useAppStore();
-
-const selectedDateColumn = ref('');
-const selectedDescriptionColumn = ref('');
-const selectedAmountColumn = ref('');
-const initialAmount = ref(0);
 
 const columnItems = () => {
   const items = [''];
@@ -92,28 +103,10 @@ const columnItems = () => {
   return items;
 };
 
-const dateColumnItems = () => {
-  selectedDateColumn.value = '';
-  return columnItems();
-};
-
-const descriptionColumnItems = () => {
-  selectedDescriptionColumn.value = '';
-  return columnItems();
-};
-
-const amountColumnItems = () => {
-  selectedAmountColumn.value = '';
-  return columnItems();
-};
-
-const headerStatus = ref(props.hasHeader);
 const noFileLoaded = computed(() => appStore.csvfile.rowCount === 0);
-const dateItems = computed(() => (appStore.csvfile.rowCount === 0 ? [] : dateColumnItems()));
-const descriptionItems = computed(() =>
-  appStore.csvfile.rowCount === 0 ? [] : descriptionColumnItems(),
-);
-const amountItems = computed(() => (appStore.csvfile.rowCount === 0 ? [] : amountColumnItems()));
+const dateItems = computed(() => (appStore.csvfile.rowCount === 0 ? [] : columnItems()));
+const descriptionItems = computed(() => (appStore.csvfile.rowCount === 0 ? [] : columnItems()));
+const amountItems = computed(() => (appStore.csvfile.rowCount === 0 ? [] : columnItems()));
 
 const notifyCheckState = (value) => {
   emits('checkStateChanged', value);
@@ -124,14 +117,14 @@ const notifyInitialAmount = (value) => {
 };
 
 const notifyDateColumnSelected = (value) => {
-  emits('selectedDateColumn', dateItems.value.indexOf(value) - 1);
+  emits('selectedDateColumn', value);
 };
 
 const notifyDescriptionColumnSelected = (value) => {
-  emits('selectedDescriptionColumn', descriptionItems.value.indexOf(value) - 1);
+  emits('selectedDescriptionColumn', value);
 };
 
 const notifyAmountColumnSelected = (value) => {
-  emits('selectedAmountColumn', amountItems.value.indexOf(value) - 1);
+  emits('selectedAmountColumn', value);
 };
 </script>
