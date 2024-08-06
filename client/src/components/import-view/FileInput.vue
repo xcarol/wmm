@@ -2,7 +2,7 @@
   <v-card>
     <v-card-text>
       <v-file-input
-        v-model="fileName"
+        :model-value="fileName"
         :label="fileNameLabel"
         accept="text/csv"
         clearable
@@ -22,11 +22,20 @@ import { useAppStore } from '../../stores/app';
 const appStore = useAppStore();
 const { t: $t } = useI18n();
 
-const fileName = ref([]);
+const emits = defineEmits(['clear']);
+
+defineProps({
+  fileName: {
+    type: Array,
+    default: () => [],
+  },
+});
+
 const fileNameLabel = ref($t('importView.importFileInputLabel'));
-const rowsToParse = ref(0);
 const rowCountLabel = computed(() =>
-  rowsToParse.value === 0 ? '' : $t('importView.rowCountLabel').replace('%d', rowsToParse.value),
+  appStore.csvfile.rowCount === 0
+    ? ''
+    : $t('importView.rowCountLabel').replace('%d', appStore.csvfile.rowCount),
 );
 
 const readFileContent = (file) => {
@@ -34,15 +43,12 @@ const readFileContent = (file) => {
   reader.onload = (event) => {
     const fileContent = event.target.result;
 
-    rowsToParse.value = 0;
-
     if (appStore.csvfile.isValidCsvFile(fileContent.slice(0, 300)) === false) {
       appStore.alertMessage = $t('importView.invalidFile');
       return;
     }
 
     appStore.csvfile.read(fileContent);
-    rowsToParse.value = appStore.csvfile.rowCount;
   };
   reader.readAsText(file);
 };
@@ -56,6 +62,6 @@ const handleFileChange = (event) => {
 
 const resetView = () => {
   appStore.csvfile.reset();
-  rowsToParse.value = 0;
+  emits('clear');
 };
 </script>

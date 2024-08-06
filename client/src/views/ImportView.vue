@@ -1,15 +1,22 @@
 <template>
-  <file-input />
+  <file-input :file-name="fileName" @clear="resetView" />
   <file-preview :has-header="firstRowIsAHeader" />
   <import-settings
     :has-header="firstRowIsAHeader"
+    :initial-amount="initialAmount"
+    :date-column="selectedDateColumn"
+    :description-column="selectedDescriptionColumn"
+    :amount-column="selectedAmountColumn"
     @check-state-changed="updateFirstRowState"
     @initial-amount-changed="updateInitialAmount"
     @selected-date-column="updateSelectedDateColumn"
     @selected-description-column="updateSelectedDescriptionColumn"
     @selected-amount-column="updateSelectedAmountColumn"
   />
-  <bank-selection @selected-bank="selectedBank" />
+  <bank-selection
+    :bank-name="selectedBankName"
+    @selected-bank="selectedBank"
+  />
   <v-card>
     <v-card-actions>
       <v-spacer />
@@ -45,20 +52,21 @@ const progressDialog = useProgressDialogStore();
 const messageDialog = useMessageDialogStore();
 const api = useApi();
 
+const fileName = ref([]);
 const firstRowIsAHeader = ref(false);
-const selectedDateColumn = ref(-1);
-const selectedDescriptionColumn = ref(-1);
-const selectedAmountColumn = ref(-1);
+const selectedDateColumn = ref('');
+const selectedDescriptionColumn = ref('');
+const selectedAmountColumn = ref('');
 const selectedBankName = ref('');
-const initialAmount = ref(0);
+const initialAmount = ref(0.0);
 
 const rowsToParse = computed(() => appStore.csvfile.rowCount);
 const formNotFilled = computed(() =>
   rowsToParse.value === 0
     ? true
-    : selectedDateColumn.value < 0 ||
-      selectedDescriptionColumn.value < 0 ||
-      selectedAmountColumn.value < 0 ||
+    : selectedDateColumn.value === '' ||
+      selectedDescriptionColumn.value === '' ||
+      selectedAmountColumn.value === '' ||
       selectedBankName.value === '',
 );
 
@@ -68,6 +76,9 @@ const updateInitialAmount = (value) => {
 
 const updateFirstRowState = (value) => {
   firstRowIsAHeader.value = value;
+  selectedDateColumn.value = '';
+  selectedDescriptionColumn.value = '';
+  selectedAmountColumn.value = '';
 };
 
 const updateSelectedDateColumn = (value) => {
@@ -84,6 +95,17 @@ const updateSelectedAmountColumn = (value) => {
 
 const selectedBank = (value) => {
   selectedBankName.value = value ?? '';
+};
+
+const resetView = () => {
+  fileName.value = [];
+  initialAmount.value = 0.0;
+  firstRowIsAHeader.value = false;
+  selectedDateColumn.value = '';
+  selectedDescriptionColumn.value = '';
+  selectedAmountColumn.value = '';
+  selectedBankName.value = '';
+  appStore.csvfile.reset();
 };
 
 const BANK_LENGTH = 200;
@@ -156,6 +178,8 @@ const dayBeforeFirstDate = (csvfile, dateColumn) => {
   return `${olderDate.year()}-${olderDate.month() + 1}-${olderDate.date()}`;
 };
 
+const selectedColumn = (column) => appStore.csvfile.rows.at(0).indexOf(column);
+
 const importFileToDatabase = async () => {
   const firstRow = firstRowIsAHeader.value === true ? 1 : 0;
   let rowCount = firstRow;
@@ -171,7 +195,7 @@ const importFileToDatabase = async () => {
     if (initialAmount.value !== 0) {
       await api
         .addTransaction(
-          csvDateToSql(dayBeforeFirstDate(appStore.csvfile, selectedDateColumn.value)),
+          csvDateToSql(dayBeforeFirstDate(appStore.csvfile, selectedColumn(selectedDateColumn))),
           $t('importView.initialAmountLabel'),
           csvAmountToSql(initialAmount.value),
           selectedBankName.value.slice(0, BANK_LENGTH),
@@ -186,9 +210,9 @@ const importFileToDatabase = async () => {
       // eslint-disable-next-line no-await-in-loop
       await api
         .addTransaction(
-          csvDateToSql(csvRow.at(selectedDateColumn.value)),
-          csvRow.at(selectedDescriptionColumn.value).slice(0, DESCRIPTION_LENGTH),
-          csvAmountToSql(csvRow.at(selectedAmountColumn.value)),
+          csvDateToSql(csvRow.at(selectedColumn(selectedDateColumn.value))),
+          csvRow.at(selectedColumn(selectedDescriptionColumn.value)).slice(0, DESCRIPTION_LENGTH),
+          csvAmountToSql(csvRow.at(selectedColumn((selectedAmountColumn.value)))),
           selectedBankName.value.slice(0, BANK_LENGTH),
         )
         .catch((err) => {
@@ -233,7 +257,9 @@ const importFile = async () => {
   messageDialog.showMessage({
     title: $t('dialog.Info'),
     message: $t('importView.importedRows').replace('%d', importedRows),
-    ok: () => {},
+    ok: () => {
+      resetView();
+    },
   });
 };
 
