@@ -174,6 +174,7 @@ const applyCategory = () => {
       await updateTransactions(selectedTransactions, category);
       await searchTransactions();
       selectedCategory.value = '';
+      selectedItems.value = [];
     },
     no: () => {},
   });
@@ -192,6 +193,10 @@ const createNewFilter = async ({ category, filter, label }) => {
 
   try {
     await api.createFilter(category, filter, label);
+    await api.applyFilters();
+    await searchTransactions();
+    selectedCategory.value = '';
+    selectedItems.value = [];
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }
