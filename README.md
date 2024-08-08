@@ -12,11 +12,12 @@ A Personal 'Fintech' Application
 
 ## MySql Server
 
-Under the _server_ directory:
+Database is located in the _server_ directory.
 
-The _sqlserver.sh_ script uses the _docker-compose.yml_ file, located in the _database_ directory, to create a local mysql database. This database will be created under the directory _mysql_.
+The _sqlserver.sh_ script uses the _docker-compose.yml_ file, located in the _database_ directory, to create a local mysql database.  
+This database will be created under the directory _mysql_ and can be accessed at [http://localhost:8080](http://localhost:8080)  
 
-Acces database through [http://localhost:8080](http://localhost:8080)  
+At the very first run you will need to use the [adminer](http://localhost:8080) to create the `wmm`database.
 
 ## Backup / Restore
 
