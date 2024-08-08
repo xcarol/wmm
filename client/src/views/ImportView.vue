@@ -73,7 +73,7 @@ const formNotFilled = computed(() =>
 );
 
 const updateInitialAmount = (value) => {
-  initialAmount.value = value;
+  initialAmount.value = csvAmountToSql(value);
 };
 
 const updateFirstRowState = (value) => {
@@ -199,7 +199,7 @@ const importFileToDatabase = async () => {
         .addTransaction(
           csvDateToSql(dayBeforeFirstDate(appStore.csvfile, selectedColumn(selectedDateColumn))),
           $t('importView.initialAmountLabel'),
-          csvAmountToSql(initialAmount.value),
+          initialAmount.value,
           selectedBankName.value.slice(0, BANK_LENGTH),
         )
         .catch((err) => {
