@@ -46,7 +46,8 @@
     "importedRows": "Se han importado %d transacciones.",
     "importError": "Error: %d en la línea: %d",
     "importingRows": "Se han importado %d línias de %d...",
-    "initialAmountLabel": "Cantidad inicial de la cuenta"
+    "initialAmountLabel": "Cantidad inicial de la cuenta",
+    "searchDuplicates": "Quieres buscar duplicados?\nAhora parece un buen momento! ;)"
   },
   "duplicatesView": {
     "title": "Busqueda de duplicados",

@@ -36,6 +36,7 @@ import 'dayjs/locale/es';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { ref, computed, onBeforeMount } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
 import { useAppStore } from '../stores/app';
 import { useProgressDialogStore } from '../stores/progressDialog';
 import { useMessageDialogStore } from '../stores/messageDialog';
@@ -47,6 +48,7 @@ import ImportSettings from '../components/import-view/ImportSettings.vue';
 dayjs.extend(customParseFormat);
 
 const { t: $t } = useI18n();
+const router = useRouter();
 const appStore = useAppStore();
 const progressDialog = useProgressDialogStore();
 const messageDialog = useMessageDialogStore();
@@ -259,6 +261,15 @@ const importFile = async () => {
     message: $t('importView.importedRows').replace('%d', importedRows),
     ok: () => {
       resetView();
+
+      messageDialog.showMessage({
+        title: $t('dialog.Question'),
+        message: $t('importView.searchDuplicates'),
+        yes: () => {
+          router.push('duplicates');
+        },
+        no: () => {},
+      });
     },
   });
 };

@@ -46,7 +46,8 @@
     "importedRows": "%d transactions imported.",
     "importError": "Error: '%d' at line: %d",
     "importingRows": "%d lines of %d imported...",
-    "initialAmountLabel": "Account initial amount"
+    "initialAmountLabel": "Account initial amount",
+    "searchDuplicates": "Do you want to search for duplicates?\nIt seems a good moment now! ;)"
   },
   "duplicatesView": {
     "title": "Find duplicates",

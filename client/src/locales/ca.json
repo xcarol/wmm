@@ -46,7 +46,8 @@
     "importedRows": "S'han importat %d transaccions.",
     "importError": "Error: '%d' a la línia: %d",
     "importingRows": "S'han importat %d linies de %d...",
-    "initialAmountLabel": "Quantitat inicial del compte"
+    "initialAmountLabel": "Quantitat inicial del compte",
+    "searchDuplicates": "Vols fer una cerca de duplicats?\nAra és un bon moment! ;)"
   },
   "duplicatesView": {
     "title": "Cerca de duplicats",
@@ -138,6 +139,7 @@
   "dialog": {
     "Info": "Informació",
     "Warning": "Avís",
+    "Question": "Pregunta",
     "yes": "Sí",
     "no": "No",
     "ok": "D'acord",
