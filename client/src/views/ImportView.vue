@@ -1,5 +1,8 @@
 <template>
-  <file-input :file-name="fileName" @clear="resetView" />
+  <file-input
+    :file-name="fileName"
+    @clear="resetView"
+  />
   <file-preview :has-header="firstRowIsAHeader" />
   <import-settings
     :has-header="firstRowIsAHeader"
@@ -7,15 +10,13 @@
     :date-column="selectedDateColumn"
     :description-column="selectedDescriptionColumn"
     :amount-column="selectedAmountColumn"
+    :bank-name="selectedBankName"
     @check-state-changed="updateFirstRowState"
     @initial-amount-changed="updateInitialAmount"
+    @bank-name-changed="selectedBank"
     @selected-date-column="updateSelectedDateColumn"
     @selected-description-column="updateSelectedDescriptionColumn"
     @selected-amount-column="updateSelectedAmountColumn"
-  />
-  <bank-selection
-    :bank-name="selectedBankName"
-    @selected-bank="selectedBank"
   />
   <v-card>
     <v-card-actions>
@@ -42,7 +43,6 @@ import { useApi } from '../plugins/api';
 import FileInput from '../components/import-view/FileInput.vue';
 import FilePreview from '../components/import-view/FilePreview.vue';
 import ImportSettings from '../components/import-view/ImportSettings.vue';
-import BankSelection from '../components/import-view/BankSelection.vue';
 
 dayjs.extend(customParseFormat);
 
@@ -212,7 +212,7 @@ const importFileToDatabase = async () => {
         .addTransaction(
           csvDateToSql(csvRow.at(selectedColumn(selectedDateColumn.value))),
           csvRow.at(selectedColumn(selectedDescriptionColumn.value)).slice(0, DESCRIPTION_LENGTH),
-          csvAmountToSql(csvRow.at(selectedColumn((selectedAmountColumn.value)))),
+          csvAmountToSql(csvRow.at(selectedColumn(selectedAmountColumn.value))),
           selectedBankName.value.slice(0, BANK_LENGTH),
         )
         .catch((err) => {

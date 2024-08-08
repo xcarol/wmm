@@ -2,20 +2,31 @@
   <v-card>
     <v-card-text>
       <v-col>
-        <v-row>
+        <v-row align="baseline">
+          <v-col cols="4">
           <v-checkbox
             :model-value="hasHeader"
             :label="$t('importView.firstRowIsAHeader')"
             :disabled="noFileLoaded"
             @update:model-value="notifyCheckState"
           />
-          <v-spacer />
+        </v-col>
+        <v-col cols="4">
+          <bank-selection
+            flat
+            :bank-name="bankName"
+            :disabled="noFileLoaded"
+            @selected-bank="notifySelectedBank"
+          />
+        </v-col>
+        <v-col cols="4">
           <v-text-field
             :value="initialAmount"
             :label="$t('importView.initialAmountLabel')"
-            :disabled="noFileLoaded"
+            :disabled="noFileLoaded || noBankSelected"
             @update:model-value="notifyInitialAmount"
           ></v-text-field>
+        </v-col>
         </v-row>
         <v-row>
           <v-select
@@ -53,6 +64,8 @@
 import { computed } from 'vue';
 import { useAppStore } from '../../stores/app';
 
+import BankSelection from './BankSelection.vue';
+
 const props = defineProps({
   hasHeader: {
     type: Boolean,
@@ -61,6 +74,10 @@ const props = defineProps({
   initialAmount: {
     type: Number,
     default: 0.0,
+  },
+  bankName: {
+    type: String,
+    default: '',
   },
   dateColumn: {
     type: String,
@@ -79,6 +96,7 @@ const props = defineProps({
 const emits = defineEmits([
   'checkStateChanged',
   'initialAmountChanged',
+  'bankNameChanged',
   'selectedDateColumn',
   'selectedDescriptionColumn',
   'selectedAmountColumn',
@@ -104,6 +122,7 @@ const columnItems = () => {
 };
 
 const noFileLoaded = computed(() => appStore.csvfile.rowCount === 0);
+const noBankSelected = computed(() => props.bankName.length === 0);
 const dateItems = computed(() => (appStore.csvfile.rowCount === 0 ? [] : columnItems()));
 const descriptionItems = computed(() => (appStore.csvfile.rowCount === 0 ? [] : columnItems()));
 const amountItems = computed(() => (appStore.csvfile.rowCount === 0 ? [] : columnItems()));
@@ -114,6 +133,10 @@ const notifyCheckState = (value) => {
 
 const notifyInitialAmount = (value) => {
   emits('initialAmountChanged', value);
+};
+
+const notifySelectedBank = (value) => {
+  emits('bankNameChanged', value);
 };
 
 const notifyDateColumnSelected = (value) => {
