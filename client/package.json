@@ -15,6 +15,7 @@
   "dependencies": {
     "@mdi/js": "^7.4.47",
     "@popperjs/core": "^2.11.8",
+    "@vueuse/core": "^10.11.0",
     "axios": "^1.7.2",
     "chart.js": "^4.4.3",
     "dayjs": "^1.11.11",

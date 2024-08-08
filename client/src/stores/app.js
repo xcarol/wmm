@@ -1,11 +1,12 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
 import { useCsvFile } from '../plugins/csvfile';
+import { useLocalStorage } from '@vueuse/core';
 
 export const useAppStore = defineStore('app', {
   state: () => ({
-    categorySearchHistory: ref([]),
-    sqlHistory: ref([]),
+    categorySearchHistory: useLocalStorage('app_categorySearchHistory', []),
+    sqlHistory: useLocalStorage('app_sqlHistory', []),
     alertMessage: ref(''),
     csvfile: useCsvFile(),
   }),
