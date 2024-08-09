@@ -71,6 +71,7 @@
   "categorizeView": {
     "title": "Categoritza les transaccions",
     "filterLabel": "Cerca per descripció...",
+    "filterCategoryLabel": "Filtra per categoria...",
     "filterButton": "Cerca",
     "transactionsFound": "S'han trobat %d transaccions amb el següent criteri: [%d]",
     "categoryLabel": "Cerca la categoria o afegeix-ne una de nova...",
