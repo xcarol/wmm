@@ -7,7 +7,7 @@ const {
   getCategoryNonFiltersBalance,
   getBankTransactions,
   getDuplicatedTransactions,
-  getUncategorizedTransactions,
+  getTransactions,
   getYears,
   resetTransactionsCategory,
   updateTransactionsCategory,
@@ -15,6 +15,15 @@ const {
 } = require("./database");
 
 module.exports = (app) => {
+  app.get("/transactions", async (req, res) => {
+    try {
+      const {filter, category} = req.query;
+      res.json(await getTransactions(filter, category));
+    } catch (err) {
+      res.status(err.sqlState ? 400 : 500).send(err);
+    }
+  });
+
   app.post("/transactions", async (req, res) => {
     let date,
       description,
@@ -66,17 +75,6 @@ module.exports = (app) => {
       }
     } catch (err) {
       console.error(err);
-      res.status(err.sqlState ? 400 : 500).send(err);
-    }
-  });
-
-  app.get("/transactions/uncategorized", async (req, res) => {
-    let filter;
-
-    try {
-      filter = req.query.filter;
-      res.json(await getUncategorizedTransactions(filter));
-    } catch (err) {
       res.status(err.sqlState ? 400 : 500).send(err);
     }
   });
