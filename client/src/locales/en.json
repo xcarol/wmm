@@ -70,6 +70,7 @@
   "categorizeView": {
     "title": "Categorize transactions",
     "filterLabel": "Search by description...",
+    "filterCategoryLabel": "Filter by category...",
     "filterButton": "Search",
     "transactionsFound": "%d transactions found with this criteria: [%d]",
     "categoryLabel": "Search for a category or add a new one...",
