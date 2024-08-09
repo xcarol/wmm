@@ -18,7 +18,7 @@ class Api {
       '/transactions/category?category={1}&filter={2}&start={3}&end={4}',
     applyFilters: '/transactions/category',
     resetCategoryFromTransactions: '/transactions/category',
-    uncategorizedTransactions: '/transactions/uncategorized?filter={1}',
+    filterTransactions: '/transactions?filter={1}&category={2}',
     duplicated: '/transactions/duplicated',
     years: '/transactions/years',
     sql: '/sql',
@@ -118,8 +118,8 @@ class Api {
     return this.axios.put(url, { operation: 'reset', category });
   }
 
-  searchTransactionsByCategory(filter) {
-    const url = Api.endpoint(this.endpoints.uncategorizedTransactions, filter ?? '');
+  searchTransactions(filter, category) {
+    const url = Api.endpoint(this.endpoints.filterTransactions, filter ?? '', category ?? '');
     return this.axios.get(url);
   }
 

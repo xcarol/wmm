@@ -9,15 +9,28 @@
   />
   <v-card>
     <v-card-text>
-      <v-combobox
-        v-model="selectedFilter"
-        :label="$t('categorizeView.filterLabel')"
-        :items="filters"
-        append-icon="$search"
-        clearable
-        @click:append="searchTransactions"
-        @keydown="keyDown"
-      />
+      <v-row>
+        <v-col cols="8">
+          <v-combobox
+            v-model="selectedFilter"
+            :label="$t('categorizeView.filterLabel')"
+            :items="filters"
+            clearable
+            @keydown="keyDown"
+          />
+        </v-col>
+        <v-col cols="4">
+          <v-combobox
+            v-model="filterCategory"
+            :label="$t('categorizeView.filterCategoryLabel')"
+            :items="categoryNames"
+            append-icon="$search"
+            clearable
+            @click:append="searchTransactions"
+            @keydown="keyDown"
+          />
+        </v-col>
+      </v-row>
       {{ filterMessage }}
     </v-card-text>
     <v-card-text v-resize="onResize">
@@ -78,6 +91,7 @@ const progressDialog = useProgressDialogStore();
 
 const filters = computed(() => appStore.categorySearchHistory);
 const selectedFilter = ref('');
+const filterCategory = ref('');
 const tableItems = ref([]);
 const selectedItems = ref([]);
 const filterMessage = ref('');
@@ -122,8 +136,10 @@ const getCategoriesNames = async () => {
 };
 
 const searchTransactions = async () => {
-  const search = selectedFilter.value;
-  appStore.addSearchToCategoryHistory(search);
+  const filter = selectedFilter.value;
+  const category = filterCategory.value;
+
+  appStore.addSearchToCategoryHistory(filter);
 
   progressDialog.startProgress({
     steps: 0,
@@ -132,12 +148,12 @@ const searchTransactions = async () => {
 
   try {
     await getCategoriesNames();
-    const transactions = await api.searchTransactionsByCategory(search);
+    const transactions = await api.searchTransactions(filter, category);
     tableItems.value = transactions.data;
     selectedItems.value = [];
     filterMessage.value = $t('categorizeView.transactionsFound')
       .replace('%d', tableItems.value.length)
-      .replace('%d', search ?? '');
+      .replace('%d', filter ?? '');
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }

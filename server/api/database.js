@@ -28,14 +28,11 @@ const queryFilter = "SELECT category, filter, label FROM filters WHERE id = ?";
 const queryCategoryFilters =
   "SELECT id, filter, label FROM filters WHERE category=? ORDER BY filter ASC";
 
-const queryUncategorizedTransactions =
-  "SELECT id, bank, date, description, category, amount FROM transactions WHERE category = ''";
+const queryTransactions =
+  "SELECT id, bank, date, description, category, amount FROM transactions";
 
-const queryBankTransactions =
-  "SELECT id, bank, date, description, category, amount \
-    FROM transactions";
-
-const queryUncategorizedRowsFilter = " AND description LIKE ?";
+const queryTransactionsFilter = " description LIKE ? AND ";
+const queryTransactionsCategory = " category = ?";
 
 const queryFiltersToApply =
   "SELECT id, category, filter FROM filters ORDER BY filter DESC";
@@ -164,11 +161,13 @@ async function applyFilters() {
 
     for (let index = 0; index < filters.length; index++) {
       const filter = filters[index];
-      operations.push(connection.query(queryApplyFilter, [
-        filter.category,
-        filter.id,
-        filter.filter,
-      ]));
+      operations.push(
+        connection.query(queryApplyFilter, [
+          filter.category,
+          filter.id,
+          filter.filter,
+        ])
+      );
     }
 
     const results = await Promise.all(operations);
@@ -251,7 +250,7 @@ async function getBankTransactions(
 ) {
   try {
     const connection = await getConnection();
-    let query = queryBankTransactions;
+    let query = queryTransactions;
     const params = [];
 
     if (bankName || startDate || endDate || category || filter) {
@@ -325,18 +324,25 @@ async function getDuplicatedTransactions() {
   }
 }
 
-async function getUncategorizedTransactions(filter) {
+async function getTransactions(filter, category) {
   try {
     const connection = await getConnection();
-    let query = queryUncategorizedTransactions;
+    let query = queryTransactions + " WHERE ";
+    let params = [];
+
     if (filter?.length) {
-      query += queryUncategorizedRowsFilter;
+      query += queryTransactionsFilter;
+      params.push(`%${filter}%`);
     }
-    const result = await connection.query(query, `%${filter}%`);
+
+    query += queryTransactionsCategory;
+    params.push(category ?? "");
+
+    const result = await connection.query(query, params);
     connection.close();
     return result.at(0);
   } catch (err) {
-    err.message = `Error [${err}] retrieving uncategorized transactions.`;
+    err.message = `Error [${err}] retrieving transactions.`;
     console.error(err);
     throw err;
   }
@@ -665,7 +671,7 @@ module.exports = {
   getCategoryFiltersBalance,
   getCategoryNonFiltersBalance,
   getDuplicatedTransactions,
-  getUncategorizedTransactions,
+  getTransactions,
   getYears,
   renameCategory,
   resetTransactionsCategory,
