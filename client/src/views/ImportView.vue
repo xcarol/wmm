@@ -185,6 +185,7 @@ const selectedColumn = (column) => appStore.csvfile.rows.at(0).indexOf(column);
 const importFileToDatabase = async () => {
   const firstRow = firstRowIsAHeader.value === true ? 1 : 0;
   let rowCount = firstRow;
+  let ignoredRows = [];
 
   progressDialog.startProgress({
     steps: appStore.csvfile.rowCount,
@@ -209,17 +210,23 @@ const importFileToDatabase = async () => {
 
     for (; rowCount < appStore.csvfile.rowCount; rowCount += 1) {
       const csvRow = appStore.csvfile.rows.at(rowCount);
+      const dateLimit = csvDateToSql(Date.now());
+      const date = csvDateToSql(csvRow.at(selectedColumn(selectedDateColumn.value)));
+      const description = csvRow
+        .at(selectedColumn(selectedDescriptionColumn.value))
+        .slice(0, DESCRIPTION_LENGTH);
+      const amount = csvAmountToSql(csvRow.at(selectedColumn(selectedAmountColumn.value)));
+      const bank = selectedBankName.value.slice(0, BANK_LENGTH);
+
+      if (date > dateLimit) {
+        ignoredRows.push(csvRow);
+        continue;
+      }
+
       // eslint-disable-next-line no-await-in-loop
-      await api
-        .addTransaction(
-          csvDateToSql(csvRow.at(selectedColumn(selectedDateColumn.value))),
-          csvRow.at(selectedColumn(selectedDescriptionColumn.value)).slice(0, DESCRIPTION_LENGTH),
-          csvAmountToSql(csvRow.at(selectedColumn(selectedAmountColumn.value))),
-          selectedBankName.value.slice(0, BANK_LENGTH),
-        )
-        .catch((err) => {
-          throw new Error(api.getErrorMessage(err));
-        });
+      await api.addTransaction(date, description, amount, bank).catch((err) => {
+        throw new Error(api.getErrorMessage(err));
+      });
 
       if (progressDialog.progressIsCancelled) {
         break;
@@ -240,7 +247,7 @@ const importFileToDatabase = async () => {
   }
   progressDialog.stopProgress();
 
-  return rowCount - firstRow;
+  return { rowCount, firstRow, outDatedRows: ignoredRows };
 };
 
 const applyFiltersToDatabase = async () => {
@@ -253,12 +260,21 @@ const applyFiltersToDatabase = async () => {
 };
 
 const importFile = async () => {
-  const importedRows = await importFileToDatabase();
+  let message = '';
+  const { rowCount, firstRow, ignoredRows } = await importFileToDatabase();
   await applyFiltersToDatabase();
+
+  if (ignoredRows) {
+    message = $t('importView.importedRowsWithIgnored')
+      .replace('%d', rowCount - firstRow)
+      .replace('%s', ignoredRows);
+  } else {
+    message = $t('importView.importedRows').replace('%d', rowCount - firstRow);
+  }
 
   messageDialog.showMessage({
     title: $t('dialog.Info'),
-    message: $t('importView.importedRows').replace('%d', importedRows),
+    message,
     ok: () => {
       resetView();
 

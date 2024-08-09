@@ -44,6 +44,7 @@
     "bankLabel": "Bank name",
     "importButtonLabel": "Import",
     "importedRows": "%d transactions imported.",
+    "importedRowsWithIgnored": "%d transactions have been imported.\nThe following transactions have been ignored:\n%s\n\nTHE TRANSACTIONS FROM YESTERDAY AND TODAY CANNOT BE IMPORTED YET BECAUSE THEY MAY NOT BE CONSOLIDATED YET.",
     "importError": "Error: '%d' at line: %d",
     "importingRows": "%d lines of %d imported...",
     "initialAmountLabel": "Account initial amount",

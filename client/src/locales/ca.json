@@ -44,6 +44,7 @@
     "bankLabel": "Nom del banc",
     "importButtonLabel": "Importar",
     "importedRows": "S'han importat %d transaccions.",
+    "importedRowsWithIgnored": "S'han importat %d transaccions.\nS'han ignorat les següents transaccions:\n%s\n\nLES TRANSACCIONS D'AHIR I AVUI NO ES PODEN IMPORTAR ENCARA DEGUT A QUE POT SER QUE ENCARA NO ESTIGUIN CONSOLIDADES.",
     "importError": "Error: '%d' a la línia: %d",
     "importingRows": "S'han importat %d linies de %d...",
     "initialAmountLabel": "Quantitat inicial del compte",

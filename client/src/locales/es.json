@@ -44,6 +44,7 @@
     "bankLabel": "Nombre del banco",
     "importButtonLabel": "Importar",
     "importedRows": "Se han importado %d transacciones.",
+    "importedRowsWithIgnored": "Se han importado %d transacciones.\nSe han ignorado las següientes transacciones:\n%s\n\nLAS TRANSACCIONES DE AYER Y HOY NO SE PUEDEN IMPORTAR AUN DEBIDO A QUE QUIZÁS NO ESTEN CONSOLIDADAS TODAVÌA.",
     "importError": "Error: %d en la línea: %d",
     "importingRows": "Se han importado %d línias de %d...",
     "initialAmountLabel": "Cantidad inicial de la cuenta",
