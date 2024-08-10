@@ -12,7 +12,7 @@
       <v-row>
         <v-col cols="8">
           <v-combobox
-            v-model="selectedFilter"
+            v-model="filterText"
             :label="$t('categorizeView.filterLabel')"
             :items="filters"
             clearable
@@ -26,7 +26,7 @@
             :items="categoryNames"
             append-icon="$search"
             clearable
-            @click:append="searchTransactions"
+            @click:append="searchSelectedTransactions"
             @keydown="keyDown"
           />
         </v-col>
@@ -41,7 +41,11 @@
         class="elevation-1"
         fixed-header
         :height="adjustedHeight"
-      ></v-data-table-virtual>
+      >
+        <template v-slot:item.description="{ item }">
+          <RouterLink :to="categorizeFilter(item)">{{ item.description }}</RouterLink>
+        </template>
+      </v-data-table-virtual>
     </v-card-text>
     <v-card-actions class="align-start">
       <v-combobox
@@ -70,22 +74,26 @@
 </template>
 
 <script setup>
-import { computed, ref, onBeforeMount, onMounted } from 'vue';
+import { computed, ref, onBeforeMount, onBeforeUpdate } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRoute, useRouter } from 'vue-router';
 import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
 import { useMessageDialogStore } from '../stores/messageDialog';
 import { useProgressDialogStore } from '../stores/progressDialog';
 import NewFilterDialog from '../components/categorize-view/NewFilterDialog.vue';
+import { RouterLink } from 'vue-router';
 
 const appStore = useAppStore();
+const route = useRoute();
+const router = useRouter();
 const api = useApi();
 const { t: $t } = useI18n();
 const messageDialog = useMessageDialogStore();
 const progressDialog = useProgressDialogStore();
 
 const filters = computed(() => appStore.categorySearchHistory);
-const selectedFilter = ref('');
+const filterText = ref('');
 const filterCategory = ref('');
 const tableItems = ref([]);
 const selectedItems = ref([]);
@@ -121,6 +129,25 @@ const canApplyCategory = computed(() => {
   );
 });
 
+const getPath = (filter, category) => {
+  let separator = '?';
+  let path = '/categorize';
+
+  if (filter) {
+    path += `${separator}filter=${filter}`;
+    separator = '&';
+  }
+  if (category) {
+    path += `${separator}category=${category}`;
+  }
+
+  return path;
+};
+
+const categorizeFilter = (transaction) => {
+  return getPath(transaction.description, transaction.category);
+};
+
 const getCategoriesNames = async () => {
   try {
     const dbNames = await api.categoriesNames();
@@ -130,10 +157,13 @@ const getCategoriesNames = async () => {
   }
 };
 
-const searchTransactions = async () => {
-  const filter = selectedFilter.value;
+const searchSelectedTransactions = async () => {
+  const filter = filterText.value;
   const category = filterCategory.value;
+  router.push(getPath(filter, category));
+}
 
+const searchTransactions = async (filter, category) => {
   appStore.addSearchToCategoryHistory(filter);
 
   progressDialog.startProgress({
@@ -158,7 +188,7 @@ const searchTransactions = async () => {
 
 const keyDown = (value) => {
   if (value.keyCode === 13) {
-    searchTransactions();
+    searchSelectedTransactions();
   }
 };
 
@@ -222,6 +252,15 @@ const onResize = () => {
   innerHeight.value = window.innerHeight;
 };
 
+const beforeUpdate = () => {
+  onResize();
+
+  const { category, filter } = route.query;
+  filterText.value = filter;
+  filterCategory.value = category;
+  searchTransactions(filter, category);
+};
+
 onBeforeMount(() => getCategoriesNames());
-onMounted(() => onResize());
+onBeforeUpdate(() => beforeUpdate());
 </script>
