@@ -128,11 +128,7 @@ const canApplyCategory = computed(() => {
 });
 
 const canCreateCategory = computed(() => {
-  return !!(
-    selectedItems.value.length !== 1 ||
-    selectedCategory.value === null ||
-    selectedCategory.value.length === 0
-  );
+  return !!(selectedItems.value.length !== 1);
 });
 
 const getPath = (filter, category) => {
