@@ -54,8 +54,6 @@
         :label="$t('categorizeView.categoryLabel')"
         :items="categoryNames"
         clearable
-        @click:append="searchTransactions"
-        @keydown="keyDown"
       />
       <v-btn
         class="ml-2"
@@ -65,7 +63,7 @@
       >
       <v-btn
         class="mr-2"
-        :disabled="canApplyCategory"
+        :disabled="canCreateCategory"
         @click.stop="showCreateFilterDialog"
         >{{ $t('categorizeView.createFilterButton') }}</v-btn
       >
@@ -129,6 +127,14 @@ const canApplyCategory = computed(() => {
   );
 });
 
+const canCreateCategory = computed(() => {
+  return !!(
+    selectedItems.value.length !== 1 ||
+    selectedCategory.value === null ||
+    selectedCategory.value.length === 0
+  );
+});
+
 const getPath = (filter, category) => {
   let separator = '?';
   let path = '/categorize';
@@ -160,8 +166,17 @@ const getCategoriesNames = async () => {
 const searchSelectedTransactions = async () => {
   const filter = filterText.value;
   const category = filterCategory.value;
-  router.push(getPath(filter, category));
-}
+
+  if (
+    (route.query?.filter ?? '') !== (filter ?? '') ||
+    (router.query?.category ?? '') !== (category ?? '')
+  ) {
+    tableItems.value = [];
+    router.push(getPath(filter, category));
+  } else {
+    searchTransactions(filter, category);
+  }
+};
 
 const searchTransactions = async (filter, category) => {
   appStore.addSearchToCategoryHistory(filter);
@@ -218,9 +233,10 @@ const applyCategory = () => {
       .replace('%s', category),
     yes: async () => {
       await updateTransactions(selectedTransactions, category);
-      await searchTransactions();
       selectedCategory.value = '';
-      selectedItems.value = [];
+      filterText.value = '';
+      filterCategory.value = '';
+      searchSelectedTransactions();
     },
     no: () => {},
   });
@@ -256,9 +272,15 @@ const beforeUpdate = () => {
   onResize();
 
   const { category, filter } = route.query;
-  filterText.value = filter;
-  filterCategory.value = category;
-  searchTransactions(filter, category);
+  if (
+    filterText.value !== filter ||
+    filterCategory.value !== category ||
+    tableItems.value.length === 0
+  ) {
+    filterText.value = filter;
+    filterCategory.value = category;
+    searchTransactions(filter, category);
+  }
 };
 
 onBeforeMount(() => getCategoriesNames());
