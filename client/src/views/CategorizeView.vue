@@ -74,13 +74,13 @@
 <script setup>
 import { computed, ref, onBeforeMount, onBeforeUpdate } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute, useRouter, RouterLink } from 'vue-router';
 import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
 import { useMessageDialogStore } from '../stores/messageDialog';
 import { useProgressDialogStore } from '../stores/progressDialog';
+import { getCategoriesNames } from '../models/filters';
 import NewFilterDialog from '../components/categorize-view/NewFilterDialog.vue';
-import { RouterLink } from 'vue-router';
 
 const appStore = useAppStore();
 const route = useRoute();
@@ -148,15 +148,6 @@ const getPath = (filter, category) => {
 
 const categorizeFilter = (transaction) => {
   return getPath(transaction.description, transaction.category);
-};
-
-const getCategoriesNames = async () => {
-  try {
-    const dbNames = await api.categoriesNames();
-    categoryNames.value = dbNames.data;
-  } catch (e) {
-    appStore.alertMessage = api.getErrorMessage(e);
-  }
 };
 
 const searchSelectedTransactions = async () => {
@@ -264,6 +255,10 @@ const onResize = () => {
   innerHeight.value = window.innerHeight;
 };
 
+const beforeMount = async () => {
+  categoryNames.value = await getCategoriesNames();
+};
+
 const beforeUpdate = () => {
   onResize();
 
@@ -279,6 +274,6 @@ const beforeUpdate = () => {
   }
 };
 
-onBeforeMount(() => getCategoriesNames());
+onBeforeMount(() => beforeMount());
 onBeforeUpdate(() => beforeUpdate());
 </script>
