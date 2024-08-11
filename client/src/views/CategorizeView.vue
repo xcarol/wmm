@@ -34,47 +34,12 @@
       {{ filterMessage }}
     </v-card-text>
     <v-card-text v-resize="onResize">
-      <v-data-table-virtual
-        v-model="selectedItems"
-        :items="tableItems"
-        show-select
-        class="elevation-1"
-        fixed-header
-        :height="adjustedHeight"
-      >
-        <template v-slot:item.description="{ item }">
-          <v-tooltip
-            :text="item.description"
-            :disabled="item.description === truncated(item.description)"
-            location="bottom"
-          >
-            <template v-slot:activator="{ props }">
-              <div>
-                <span
-                  @click.stop="categorizeFilter(item)"
-                  class="cursor-pointer"
-                  v-bind="props"
-                  >{{ truncated(item.description) }}&nbsp;&nbsp;</span
-                >
-                <v-tooltip
-                  :text="$t('categorizeView.searchTransactionDescription')"
-                  location="bottom"
-                >
-                <template v-slot:activator="{ props }">
-                  <v-icon
-                    icon="$open-in-new"
-                    size="x-small"
-                    v-bind="props"
-                    class="cursor-pointer"
-                    @click.stop="searchTheWeb(item.description)"
-                  ></v-icon>
-                  </template>
-                </v-tooltip>
-              </div>
-            </template>
-          </v-tooltip>
-        </template>
-      </v-data-table-virtual>
+      <transaction-table
+        :selected-items="selectedItems"
+        :table-items="tableItems"
+        :height="autoHeight"
+        @update-model-value="updateModelValue"
+      />
     </v-card-text>
     <v-card-actions class="align-start">
       <v-combobox
@@ -103,14 +68,16 @@
 <script setup>
 import { computed, ref, onBeforeMount, onBeforeUpdate } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useRoute, useRouter, RouterLink } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { _ } from 'lodash';
 import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
 import { useMessageDialogStore } from '../stores/messageDialog';
 import { useProgressDialogStore } from '../stores/progressDialog';
 import { getCategoriesNames } from '../models/filters';
+import { categorizeUrlPath } from '../models/categorize';
 import NewFilterDialog from '../components/categorize-view/NewFilterDialog.vue';
+import TransactionTable from '../components/categorize-view/TransactionTable.vue';
 
 const appStore = useAppStore();
 const route = useRoute();
@@ -131,7 +98,7 @@ const categoryNames = ref(['']);
 const showNewFilterDialog = ref(false);
 const innerHeight = ref(0);
 
-const adjustedHeight = computed(() => {
+const autoHeight = computed(() => {
   return innerHeight.value - 290;
 });
 
@@ -161,29 +128,8 @@ const canCreateCategory = computed(() => {
   return !!(selectedItems.value.length !== 1);
 });
 
-const searchTheWeb = (search) => window.open(`https://www.google.com/search?q=${search}`, '_blank');
-
-const truncated = (text) =>
-  _.truncate(text, { options: { length: 50, omission: '...', separator: ' ' } });
-
-const getPath = (filter, category) => {
-  let separator = '?';
-  let path = '/categorize';
-
-  if (filter) {
-    path += `${separator}filter=${filter}`;
-    separator = '&';
-  }
-  if (category) {
-    path += `${separator}category=${category}`;
-  }
-
-  return path;
-};
-
-const categorizeFilter = (transaction) => {
-  const { description, category } = transaction;
-  router.push(getPath(description, category));
+const updateModelValue = (modelValue) => {
+  selectedItems.value = modelValue;
 };
 
 const routeChanged = () => {
@@ -197,18 +143,6 @@ const routeChanged = () => {
   }
 
   return false;
-};
-
-const searchSelectedTransactions = async () => {
-  const category = filterCategory.value;
-  const filter = filterText.value;
-
-  if (routeChanged()) {
-    tableItems.value = [];
-    router.push(getPath(filter, category));
-  } else {
-    searchTransactions(filter, category);
-  }
 };
 
 const searchTransactions = async (filter, category) => {
@@ -232,6 +166,18 @@ const searchTransactions = async (filter, category) => {
   }
 
   progressDialog.stopProgress();
+};
+
+const searchSelectedTransactions = async () => {
+  const category = filterCategory.value;
+  const filter = filterText.value;
+
+  if (routeChanged()) {
+    tableItems.value = [];
+    router.push(categorizeUrlPath(filter, category));
+  } else {
+    searchTransactions(filter, category);
+  }
 };
 
 const keyDown = (value) => {
@@ -301,10 +247,6 @@ const onResize = () => {
   innerHeight.value = window.innerHeight;
 };
 
-const beforeMount = async () => {
-  categoryNames.value = await getCategoriesNames();
-};
-
 const beforeUpdate = () => {
   onResize();
 
@@ -314,6 +256,13 @@ const beforeUpdate = () => {
     filterText.value = qfilter;
     filterCategory.value = qcategory;
     searchTransactions(qfilter, qcategory);
+  }
+};
+
+const beforeMount = async () => {
+  categoryNames.value = await getCategoriesNames();
+  if (route.query.filter || route.query.category) {
+    beforeUpdate();
   }
 };
 
