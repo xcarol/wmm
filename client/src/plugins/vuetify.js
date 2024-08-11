@@ -11,7 +11,7 @@ import ca from 'vuetify/lib/locale/ca.mjs';
 import en from 'vuetify/lib/locale/en.mjs';
 import es from 'vuetify/lib/locale/es.mjs';
 import colors from 'vuetify/lib/util/colors.mjs';
-import { mdiHome, mdiMagnify, mdiArrowLeft, mdiCalendarMonth } from '@mdi/js';
+import { mdiHome, mdiMagnify, mdiArrowLeft, mdiCalendarMonth, mdiOpenInNew } from '@mdi/js';
 
 const defaultTheme =
   import.meta.env.VITE_THEME ||
@@ -59,6 +59,7 @@ const vuetify = createVuetify({
       search: mdiMagnify,
       back: mdiArrowLeft,
       calendar: mdiCalendarMonth,
+      'open-in-new': mdiOpenInNew,
     },
     sets: {
       mdi,

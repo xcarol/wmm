@@ -78,7 +78,8 @@
     "applyButton": "Apply",
     "createFilterButton": "Create new filter",
     "applyWarningMessage": "You're about to update %d records with the category:\n  - %s\nAre you sure?",
-    "applyFiltersWarningMessage": "WARNING: You're about to apply ALL filters of ALL categories.\nThis is a time consuming operation.\nAre you sure?"
+    "applyFiltersWarningMessage": "WARNING: You're about to apply ALL filters of ALL categories.\nThis is a time consuming operation.\nAre you sure?",
+    "searchTransactionDescription": "Search for it at the web"
   },
   "filtersView": {
     "title": "Filter management",

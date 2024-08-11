@@ -78,7 +78,8 @@
     "applyButton": "Aplica",
     "createFilterButton": "Crea un filtre",
     "applyWarningMessage": "Et's a punt d'actualitzar %d transaccions amb la categoria:\n  - %s\nN'estàs segur?",
-    "applyFiltersWarningMessage": "ATENCIÓ: Ets a punt d'aplicar TOTS els filtres de TOTES les categories.\nAquesta operació pot consumir un temps considerable.\nN'estàs segur?"
+    "applyFiltersWarningMessage": "ATENCIÓ: Ets a punt d'aplicar TOTS els filtres de TOTES les categories.\nAquesta operació pot consumir un temps considerable.\nN'estàs segur?",
+    "searchTransactionDescription": "Cerca'l a la web"
   },
   "filtersView": {
     "title": "Gestió dels filtres",

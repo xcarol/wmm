@@ -43,7 +43,36 @@
         :height="adjustedHeight"
       >
         <template v-slot:item.description="{ item }">
-          <RouterLink :to="categorizeFilter(item)">{{ item.description }}</RouterLink>
+          <v-tooltip
+            :text="item.description"
+            :disabled="item.description === truncated(item.description)"
+            location="bottom"
+          >
+            <template v-slot:activator="{ props }">
+              <div>
+                <span
+                  @click.stop="categorizeFilter(item)"
+                  class="cursor-pointer"
+                  v-bind="props"
+                  >{{ truncated(item.description) }}&nbsp;&nbsp;</span
+                >
+                <v-tooltip
+                  :text="$t('categorizeView.searchTransactionDescription')"
+                  location="bottom"
+                >
+                <template v-slot:activator="{ props }">
+                  <v-icon
+                    icon="$open-in-new"
+                    size="x-small"
+                    v-bind="props"
+                    class="cursor-pointer"
+                    @click.stop="searchTheWeb(item.description)"
+                  ></v-icon>
+                  </template>
+                </v-tooltip>
+              </div>
+            </template>
+          </v-tooltip>
         </template>
       </v-data-table-virtual>
     </v-card-text>
@@ -132,6 +161,11 @@ const canCreateCategory = computed(() => {
   return !!(selectedItems.value.length !== 1);
 });
 
+const searchTheWeb = (search) => window.open(`https://www.google.com/search?q=${search}`, '_blank');
+
+const truncated = (text) =>
+  _.truncate(text, { options: { length: 50, omission: '...', separator: ' ' } });
+
 const getPath = (filter, category) => {
   let separator = '?';
   let path = '/categorize';
@@ -148,7 +182,8 @@ const getPath = (filter, category) => {
 };
 
 const categorizeFilter = (transaction) => {
-  return getPath(transaction.description, transaction.category);
+  const { description, category } = transaction;
+  router.push(getPath(description, category));
 };
 
 const routeChanged = () => {
