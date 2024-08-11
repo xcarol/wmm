@@ -75,6 +75,7 @@
 import { computed, ref, onBeforeMount, onBeforeUpdate } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter, RouterLink } from 'vue-router';
+import { _ } from 'lodash';
 import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
 import { useMessageDialogStore } from '../stores/messageDialog';
@@ -150,14 +151,24 @@ const categorizeFilter = (transaction) => {
   return getPath(transaction.description, transaction.category);
 };
 
-const searchSelectedTransactions = async () => {
-  const filter = filterText.value;
-  const category = filterCategory.value;
+const routeChanged = () => {
+  const { category: qcategory, filter: qfilter } = route.query;
 
   if (
-    (route.query?.filter ?? '') !== (filter ?? '') ||
-    (router.query?.category ?? '') !== (category ?? '')
+    _.toString(filterText.value) !== _.toString(qfilter) ||
+    _.toString(filterCategory.value) !== _.toString(qcategory)
   ) {
+    return true;
+  }
+
+  return false;
+};
+
+const searchSelectedTransactions = async () => {
+  const category = filterCategory.value;
+  const filter = filterText.value;
+
+  if (routeChanged()) {
     tableItems.value = [];
     router.push(getPath(filter, category));
   } else {
@@ -180,7 +191,7 @@ const searchTransactions = async (filter, category) => {
     selectedItems.value = [];
     filterMessage.value = $t('categorizeView.transactionsFound')
       .replace('%d', tableItems.value.length)
-      .replace('%d', filter ?? '');
+      .replace('%d', _.toString(filter));
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }
@@ -243,7 +254,7 @@ const createNewFilter = async ({ category, filter, label }) => {
   try {
     await api.createFilter(category, filter, label);
     await api.applyFilters();
-    await searchTransactions();
+    await searchTransactions(filterText.value, filterCategory.value);
     selectedCategory.value = '';
     selectedItems.value = [];
   } catch (e) {
@@ -262,15 +273,12 @@ const beforeMount = async () => {
 const beforeUpdate = () => {
   onResize();
 
-  const { category, filter } = route.query;
-  if (
-    filterText.value !== filter ||
-    filterCategory.value !== category ||
-    tableItems.value.length === 0
-  ) {
-    filterText.value = filter;
-    filterCategory.value = category;
-    searchTransactions(filter, category);
+  const { category: qcategory, filter: qfilter } = route.query;
+
+  if (routeChanged() || tableItems.value.length === 0) {
+    filterText.value = qfilter;
+    filterCategory.value = qcategory;
+    searchTransactions(qfilter, qcategory);
   }
 };
 
