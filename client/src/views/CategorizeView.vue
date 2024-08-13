@@ -132,6 +132,21 @@ const updateModelValue = (modelValue) => {
   selectedItems.value = modelValue;
 };
 
+const updateFilterMessage = (filter, category) => {
+  filterMessage.value = $t('categorizeView.transactionsFound').replace(
+    '%d',
+    tableItems.value.length,
+  );
+
+  if (filter) {
+    filterMessage.value += $t('categorizeView.transactionsFoundFilter').replace('%s', filter);
+  }
+
+  if (category) {
+    filterMessage.value += $t('categorizeView.transactionsFoundCategory').replace('%s', category);
+  }
+};
+
 const routeChanged = () => {
   const { category: qcategory, filter: qfilter } = route.query;
 
@@ -158,9 +173,7 @@ const searchTransactions = async (filter, category) => {
     const transactions = await api.searchTransactions(filter, category);
     tableItems.value = transactions.data;
     selectedItems.value = [];
-    filterMessage.value = $t('categorizeView.transactionsFound')
-      .replace('%d', tableItems.value.length)
-      .replace('%d', _.toString(filter));
+    updateFilterMessage(filter, category);
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }
