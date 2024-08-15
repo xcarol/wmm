@@ -19,6 +19,7 @@
       <v-card-actions>
         <v-btn
           v-show="showNo"
+          color="secondary"
           @click.stop="no"
         >
           {{ $t('dialog.no') }}</v-btn
@@ -31,6 +32,7 @@
         >
         <v-btn
           v-show="showCancel"
+          color="secondary"
           @click.stop="cancel"
         >
           {{ $t('dialog.cancel') }}</v-btn
