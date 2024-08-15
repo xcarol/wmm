@@ -79,7 +79,8 @@
     "categoryLabel": "Cerca la categoria o afegeix-ne una de nova...",
     "applyButton": "Aplica",
     "createFilterButton": "Crea un filtre",
-    "applyWarningMessage": "Et's a punt d'actualitzar %d transaccions amb la categoria:\n  - %s\nN'estàs segur?",
+    "applyWarningTitle": "Actualització a la categoria [%s]",
+    "applyWarningMessageItem": "· %s (%d)\n",
     "applyFiltersWarningMessage": "ATENCIÓ: Ets a punt d'aplicar TOTS els filtres de TOTES les categories.\nAquesta operació pot consumir un temps considerable.\nN'estàs segur?",
     "searchTransactionDescription": "Cerca'l a la web"
   },

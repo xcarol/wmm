@@ -214,15 +214,36 @@ const updateTransactions = async (transactions, category) => {
   progressDialog.stopProgress();
 };
 
+const transactionFromId = (id) => {
+  for (let index = 0; index < tableItems.value.length; index += 1) {
+    const transaction = tableItems.value[index];
+    if (transaction.id === id) {
+      return transaction;
+    }
+  }
+  return { description: 'unknown', amount: 'unknown' };
+};
+
+const applyWarningMessage = () => {
+  let messageTable = '';
+
+  for (let index = 0; index < selectedItems.value.length; index += 1) {
+    const transaction = transactionFromId(selectedItems.value[index]);
+    messageTable += $t('categorizeView.applyWarningMessageItem')
+      .replace('%s', transaction.description)
+      .replace('%d', transaction.amount);
+  }
+
+  return messageTable;
+};
+
 const applyCategory = () => {
   const category = selectedCategory.value;
   const selectedTransactions = selectedItems.value;
 
   messageDialog.showMessage({
-    title: $t('dialog.Warning'),
-    message: $t('categorizeView.applyWarningMessage')
-      .replace('%d', selectedTransactions.length)
-      .replace('%s', category),
+    title: $t('categorizeView.applyWarningTitle').replace('%s', category.toLocaleUpperCase()),
+    message: applyWarningMessage(),
     yes: async () => {
       await updateTransactions(selectedTransactions, category);
       selectedCategory.value = '';

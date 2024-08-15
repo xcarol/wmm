@@ -79,7 +79,8 @@
     "categoryLabel": "Busca la categoría o añade una nueva...",
     "applyButton": "Aplica",
     "createFilterButton": "Crea un filtro",
-    "applyWarningMessage": "Vas a actualizar %d transacciones con la categoría:\n  - %s\n¿Estás seguro?",
+    "applyWarningTitle": "Actualización a la categoría [%s]",
+    "applyWarningMessageItem": "· %s (%d)\n",
     "applyFiltersWarningMessage": "ATENCIÓN: Se van a aplicar TODOS los filtros de TODAS las categorías.\nEsta operación puede consumir un tiempo considerable.\n¿Estás seguro?",
     "searchTransactionDescription": "Buscalo en la web"
   },
