@@ -46,7 +46,8 @@
     "importedRows": "S'han importat %d transaccions.",
     "importError": "Error: '%d' a la línia: %d",
     "importingRows": "S'han importat %d linies de %d...",
-    "initialAmountLabel": "Quantitat inicial del compte"
+    "initialAmountLabel": "Quantitat inicial del compte",
+    "searchDuplicates": "Vols fer una cerca de duplicats?\nAra és un bon moment! ;)"
   },
   "duplicatesView": {
     "title": "Cerca de duplicats",
@@ -72,13 +73,16 @@
     "filterLabel": "Cerca per descripció...",
     "filterCategoryLabel": "Filtra per categoria...",
     "filterButton": "Cerca",
-    "transactionsFound": "S'han trobat %d transaccions amb el següent criteri: [%d]",
+    "transactionsFound": "S'han trobat %d transaccions",
+    "transactionsFoundFilter": " amb el següent criteri: [%s]",
+    "transactionsFoundCategory": " de la categoria [%s]",
     "categoryLabel": "Cerca la categoria o afegeix-ne una de nova...",
-    "applyFiltersButton": "Aplica tots els filtres",
     "applyButton": "Aplica",
     "createFilterButton": "Crea un filtre",
-    "applyWarningMessage": "Et's a punt d'actualitzar %d transaccions amb la categoria:\n  - %s\nN'estàs segur?",
-    "applyFiltersWarningMessage": "ATENCIÓ: Ets a punt d'aplicar TOTS els filtres de TOTES les categories.\nAquesta operació pot consumir un temps considerable.\nN'estàs segur?"
+    "applyWarningTitle": "Actualització a la categoria [%s]",
+    "applyWarningMessageItem": "· %s (%d)\n",
+    "applyFiltersWarningMessage": "ATENCIÓ: Ets a punt d'aplicar TOTS els filtres de TOTES les categories.\nAquesta operació pot consumir un temps considerable.\nN'estàs segur?",
+    "searchTransactionDescription": "Cerca'l a la web"
   },
   "filtersView": {
     "title": "Gestió dels filtres",
@@ -87,6 +91,7 @@
     "filtersLabel": "Etiqueta",
     "renameCategoryButton": "Reanomena...",
     "deleteCategoryButton": "Elimina",
+    "applyFiltersButton": "Aplica tots",
     "newFilterButton": "Nou...",
     "editFilterButton": "Edita...",
     "deleteFilterButton": "Elimina",
@@ -139,6 +144,7 @@
   "dialog": {
     "Info": "Informació",
     "Warning": "Avís",
+    "Question": "Pregunta",
     "yes": "Sí",
     "no": "No",
     "ok": "D'acord",

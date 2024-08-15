@@ -46,7 +46,8 @@
     "importedRows": "Se han importado %d transacciones.",
     "importError": "Error: %d en la línea: %d",
     "importingRows": "Se han importado %d línias de %d...",
-    "initialAmountLabel": "Cantidad inicial de la cuenta"
+    "initialAmountLabel": "Cantidad inicial de la cuenta",
+    "searchDuplicates": "Quieres buscar duplicados?\nAhora parece un buen momento! ;)"
   },
   "duplicatesView": {
     "title": "Busqueda de duplicados",
@@ -72,13 +73,16 @@
     "filterLabel": "Busca por la descripción...",
     "filterCategoryLabel": "Filtra por categoría...",
     "filterButton": "Busca",
-    "transactionsFound": "Se han encontrado %d transacciones ambcon el següiente criterio: [%d]",
+    "transactionsFound": "Se han encontrado %d transacciones",
+    "transactionsFoundFilter": " con el siguiente criterio: [%s]",
+    "transactionsFoundCategory": " de la categoría [%s]",
     "categoryLabel": "Busca la categoría o añade una nueva...",
-    "applyFiltersButton": "Aplica todos los filtros",
     "applyButton": "Aplica",
     "createFilterButton": "Crea un filtro",
-    "applyWarningMessage": "Vas a actualizar %d transacciones con la categoría:\n  - %s\n¿Estás seguro?",
-    "applyFiltersWarningMessage": "ATENCIÓN: Se van a aplicar TODOS los filtros de TODAS las categorías.\nEsta operación puede consumir un tiempo considerable.\n¿Estás seguro?"
+    "applyWarningTitle": "Actualización a la categoría [%s]",
+    "applyWarningMessageItem": "· %s (%d)\n",
+    "applyFiltersWarningMessage": "ATENCIÓN: Se van a aplicar TODOS los filtros de TODAS las categorías.\nEsta operación puede consumir un tiempo considerable.\n¿Estás seguro?",
+    "searchTransactionDescription": "Buscalo en la web"
   },
   "filtersView": {
     "title": "Gestión de los filtros",
@@ -87,6 +91,7 @@
     "filtersLabel": "Etiqueta",
     "renameCategoryButton": "Renombra...",
     "deleteCategoryButton": "Elimina",
+    "applyFiltersButton": "Aplica todos",
     "newFilterButton": "Nuevo...",
     "editFilterButton": "Edita...",
     "deleteFilterButton": "Elimina",

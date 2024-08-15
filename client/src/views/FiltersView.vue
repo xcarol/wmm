@@ -50,6 +50,11 @@
               </v-data-table-virtual>
             </v-card-text>
             <v-card-actions>
+              <v-btn
+                class="ml-2"
+                @click.stop="applyFilters"
+                >{{ $t('filtersView.applyFiltersButton') }}</v-btn
+              >
               <v-spacer />
               <v-btn
                 :disabled="noCategorySelected"
@@ -383,6 +388,28 @@ const deleteFilter = () => {
 
 const onResize = () => {
   innerHeight.value = window.innerHeight;
+};
+
+const applyFilters = () => {
+  messageDialog.showMessage({
+    title: $t('dialog.Warning'),
+    message: $t('categorizeView.applyFiltersWarningMessage'),
+    yes: async () => {
+      progressDialog.startProgress({
+        steps: 0,
+        description: $t('progress.updateProgress'),
+      });
+
+      try {
+        await api.applyFilters();
+      } catch (e) {
+        appStore.alertMessage = api.getErrorMessage(e);
+      }
+
+      progressDialog.stopProgress();
+    },
+    no: () => {},
+  });
 };
 
 onBeforeMount(() => getCategories());

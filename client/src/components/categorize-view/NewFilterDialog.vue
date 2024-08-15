@@ -9,10 +9,11 @@
     <v-card>
       <v-card-title>{{ $t('dialogNewFilter.title') }}</v-card-title>
       <v-card-text>
-        <v-text-field
+        <v-combobox
           v-model="categoryInput"
           :label="$t('dialogNewFilter.categoryLabel')"
-        ></v-text-field>
+          :items="categoryNames"
+        />
         <v-text-field
           v-model="filterInput"
           :label="$t('dialogNewFilter.filterLabel')"
@@ -36,7 +37,8 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onBeforeUpdate } from 'vue';
+import { getCategoriesNames } from '../../models/filters';
 
 const emits = defineEmits(['onOk', 'onCancel']);
 
@@ -63,6 +65,7 @@ const show = computed(() => props.show);
 const categoryInput = ref(props.category);
 const filterInput = ref(props.filter);
 const labelInput = ref(props.label);
+const categoryNames = ref(['']);
 
 watch(show, (newVal, oldVal) => {
   if (newVal && !oldVal) {
@@ -87,4 +90,10 @@ const cancel = () => {
 const canCreateNewFilter = computed(() => {
   return !!(categoryInput.value.length === 0 || filterInput.value.length === 0);
 });
+
+const beforeUpdate = async () => {
+  categoryNames.value = await getCategoriesNames();
+};
+
+onBeforeUpdate(() => beforeUpdate());
 </script>

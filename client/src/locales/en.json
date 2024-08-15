@@ -46,7 +46,8 @@
     "importedRows": "%d transactions imported.",
     "importError": "Error: '%d' at line: %d",
     "importingRows": "%d lines of %d imported...",
-    "initialAmountLabel": "Account initial amount"
+    "initialAmountLabel": "Account initial amount",
+    "searchDuplicates": "Do you want to search for duplicates?\nIt seems a good moment now! ;)"
   },
   "duplicatesView": {
     "title": "Find duplicates",
@@ -72,13 +73,16 @@
     "filterLabel": "Search by description...",
     "filterCategoryLabel": "Filter by category...",
     "filterButton": "Search",
-    "transactionsFound": "%d transactions found with this criteria: [%d]",
+    "transactionsFound": "%d transactions found",
+    "transactionsFoundFilter": " with this criteria: [%s]",
+    "transactionsFoundCategory": " from category [%s]",
     "categoryLabel": "Search for a category or add a new one...",
-    "applyFiltersButton": "Apply all filters",
     "applyButton": "Apply",
     "createFilterButton": "Create new filter",
-    "applyWarningMessage": "You're about to update %d records with the category:\n  - %s\nAre you sure?",
-    "applyFiltersWarningMessage": "WARNING: You're about to apply ALL filters of ALL categories.\nThis is a time consuming operation.\nAre you sure?"
+    "applyWarningTitle": "Update to category [%s]",
+    "applyWarningMessageItem": "· %s (%d)\n",
+    "applyFiltersWarningMessage": "WARNING: You're about to apply ALL filters of ALL categories.\nThis is a time consuming operation.\nAre you sure?",
+    "searchTransactionDescription": "Search for it at the web"
   },
   "filtersView": {
     "title": "Filter management",
@@ -87,6 +91,7 @@
     "filtersLabel": "Label",
     "renameCategoryButton": "Rename...",
     "deleteCategoryButton": "Delete",
+    "applyFiltersButton": "Apply all",
     "newFilterButton": "New...",
     "editFilterButton": "Edit...",
     "deleteFilterButton": "Delete",

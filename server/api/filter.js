@@ -9,6 +9,8 @@ const {
   resetTransactionsCategoryForAFilter,
 } = require("./database");
 
+const MIN_FILTER_LENGTH = 4;
+
 module.exports = (app) => {
   app.get("/categories/names", async (req, res) => {
     try {
@@ -44,9 +46,15 @@ module.exports = (app) => {
     let label = "";
 
     try {
-      category = req.body.category;
-      filter = req.body.filter;
-      label = req.body.label;
+      const { category, filter, label } = req.body;
+
+      if (filter.trim().length < MIN_FILTER_LENGTH) {
+        res
+          .status(400)
+          .send({ message: `minimum filter length is ${MIN_FILTER_LENGTH}` });
+        return;
+      }
+
       res.json(await addFilter(category, filter, label));
       res.status(201);
     } catch (err) {
@@ -56,7 +64,7 @@ module.exports = (app) => {
 
   app.put("/categories/filter", async (req, res) => {
     try {
-      const {filterId, filter, label} = req.body;
+      const { filterId, filter, label } = req.body;
       res.json(await updateFilter(filterId, filter, label));
     } catch (err) {
       res.status(err.sqlState ? 400 : 500).send(err);

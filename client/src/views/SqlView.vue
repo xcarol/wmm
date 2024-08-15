@@ -71,6 +71,7 @@ const executeQuery = async () => {
 
   progressDialog.startProgress({ steps: 0, description: $t('sqlView.executingQuery') });
   try {
+    appStore.addQueryToSqlHistory(sqlQueryText.value);
     const res = await api.executeQuery(sqlQueryText.value);
     const rows = res.data[0];
     const headers = res.data[1];
@@ -100,8 +101,6 @@ const executeQuery = async () => {
         .replace('%d', rows.affectedRows)
         .replace('%d', rows.changedRows);
     }
-
-    appStore.addQueryToSqlHistory(sqlQueryText.value);
   } catch (e) {
     sqlQueryResponse.value = `${e.message}\n${api.getErrorMessage(e)}`;
   }
