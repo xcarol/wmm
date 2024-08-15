@@ -37,7 +37,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onBeforeMount } from 'vue';
+import { ref, computed, watch, onBeforeUpdate } from 'vue';
 import { getCategoriesNames } from '../../models/filters';
 
 const emits = defineEmits(['onOk', 'onCancel']);
@@ -91,9 +91,9 @@ const canCreateNewFilter = computed(() => {
   return !!(categoryInput.value.length === 0 || filterInput.value.length === 0);
 });
 
-const beforeMount = async () => {
+const beforeUpdate = async () => {
   categoryNames.value = await getCategoriesNames();
 };
 
-onBeforeMount(() => beforeMount());
+onBeforeUpdate(() => beforeUpdate());
 </script>
