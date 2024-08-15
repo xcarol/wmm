@@ -169,7 +169,7 @@ const searchTransactions = async (filter, category) => {
   });
 
   try {
-    await getCategoriesNames();
+    categoryNames.value = await getCategoriesNames();
     const transactions = await api.searchTransactions(filter, category);
     tableItems.value = transactions.data;
     selectedItems.value = [];
