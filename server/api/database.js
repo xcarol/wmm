@@ -241,7 +241,7 @@ async function renameCategory(oldName, newName) {
   }
 }
 
-async function getBankTransactions(
+async function getTransactions(
   bankName,
   startDate,
   endDate,
@@ -319,30 +319,6 @@ async function getDuplicatedTransactions() {
     return result.at(0);
   } catch (err) {
     err.message = `Error [${err}] retrieving duplicated transactions.`;
-    console.error(err);
-    throw err;
-  }
-}
-
-async function getTransactions(filter, category) {
-  try {
-    const connection = await getConnection();
-    let query = queryTransactions + " WHERE ";
-    let params = [];
-
-    if (filter?.length) {
-      query += queryTransactionsFilter;
-      params.push(`%${filter}%`);
-    }
-
-    query += queryTransactionsCategory;
-    params.push(category ?? "");
-
-    const result = await connection.query(query, params);
-    connection.close();
-    return result.at(0);
-  } catch (err) {
-    err.message = `Error [${err}] retrieving transactions.`;
     console.error(err);
     throw err;
   }
@@ -664,7 +640,6 @@ module.exports = {
   executeSql,
   getBankBalance,
   getBankNames,
-  getBankTransactions,
   getCategories,
   getCategoryBalance,
   getCategoryFilters,

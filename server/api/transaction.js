@@ -5,9 +5,8 @@ const {
   getCategoryBalance,
   getCategoryFiltersBalance,
   getCategoryNonFiltersBalance,
-  getBankTransactions,
-  getDuplicatedTransactions,
   getTransactions,
+  getDuplicatedTransactions,
   getYears,
   resetTransactionsCategory,
   updateTransactionsCategory,
@@ -15,15 +14,6 @@ const {
 } = require("./database");
 
 module.exports = (app) => {
-  app.get("/transactions", async (req, res) => {
-    try {
-      const {filter, category} = req.query;
-      res.json(await getTransactions(filter, category));
-    } catch (err) {
-      res.status(err.sqlState ? 400 : 500).send(err);
-    }
-  });
-
   app.post("/transactions", async (req, res) => {
     let date,
       description,
@@ -101,7 +91,7 @@ module.exports = (app) => {
   app.get("/transactions", async (req, res) => {
     try {
       const { bank, start, end, category, filter } = req.query;
-      res.json(await getBankTransactions(bank, start, end, category, filter));
+      res.json(await getTransactions(bank, start, end, category, filter));
     } catch (err) {
       res.status(err.sqlState ? 400 : 500).send(err);
     }
