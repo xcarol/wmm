@@ -302,7 +302,7 @@ async function getTransactions(
         useAnd = true;
       }
 
-      if (category) {
+      if (typeof category === 'string') {
         if (useAnd) {
           query += " AND ";
         }
