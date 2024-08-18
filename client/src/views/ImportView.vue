@@ -72,10 +72,6 @@ const formNotFilled = computed(() =>
       selectedBankName.value === '',
 );
 
-const updateInitialAmount = (value) => {
-  initialAmount.value = csvAmountToSql(value);
-};
-
 const updateFirstRowState = (value) => {
   firstRowIsAHeader.value = value;
   selectedDateColumn.value = '';
@@ -160,6 +156,10 @@ const csvAmountToSql = (amount) => {
   }
 
   return parseFloat(csvAmount);
+};
+
+const updateInitialAmount = (value) => {
+  initialAmount.value = csvAmountToSql(value);
 };
 
 const dayBeforeFirstDate = (csvfile, dateColumn) => {
