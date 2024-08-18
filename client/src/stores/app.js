@@ -1,7 +1,7 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
-import { useCsvFile } from '../plugins/csvfile';
 import { useLocalStorage } from '@vueuse/core';
+import { useCsvFile } from '../plugins/csvfile';
 
 export const useAppStore = defineStore('app', {
   state: () => ({
