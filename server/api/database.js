@@ -31,9 +31,6 @@ const queryCategoryFilters =
 const queryTransactions =
   "SELECT id, bank, date, description, category, amount FROM transactions";
 
-const queryTransactionsFilter = " description LIKE ? AND ";
-const queryTransactionsCategory = " category = ?";
-
 const queryFiltersToApply =
   "SELECT id, category, filter FROM filters ORDER BY filter DESC";
 
@@ -154,8 +151,10 @@ async function getConnection() {
 }
 
 async function applyFilters() {
+  let connection;
+
   try {
-    const connection = await getConnection();
+    connection = await getConnection();
     const operations = [];
     const [filters] = await connection.query(queryFiltersToApply);
 
@@ -176,54 +175,72 @@ async function applyFilters() {
       const [result] = results[index];
       affectedRows += result.affectedRows;
     }
-    connection.close();
+
     return affectedRows;
   } catch (err) {
     err.message = `Error [${err}] applying filters.`;
     console.error(err);
     throw err;
+  } finally {
+    if (connection) {
+      connection.close();
+    }
   }
 }
 
 async function addFilter(category, filter, label) {
+  let connection;
+
   try {
-    const connection = await getConnection();
+    connection = await getConnection();
 
     const result = await connection.query(queryAddCategoryFilter, [
       category.slice(0, MAX_LEN),
       filter.slice(0, MAX_LEN),
       label.slice(0, MAX_LEN),
     ]);
-    connection.close();
+
     return result;
   } catch (err) {
     err.message = `Error [${err}] adding filter ${filter} with label ${label} to category ${category}.`;
     console.error(err);
     throw err;
+  } finally {
+    if (connection) {
+      connection.close();
+    }
   }
 }
 
 async function updateFilter(id, filter, label) {
+  let connection;
+
   try {
-    const connection = await getConnection();
+    connection = await getConnection();
 
     const result = await connection.query(queryUpdateFilter, [
       filter.slice(0, MAX_LEN),
       label.slice(0, MAX_LEN),
       id,
     ]);
-    connection.close();
+
     return result;
   } catch (err) {
     err.message = `Error [${err}] updating filter ${filter} with label ${label} to category ${category}.`;
     console.error(err);
     throw err;
+  } finally {
+    if (connection) {
+      connection.close();
+    }
   }
 }
 
 async function renameCategory(oldName, newName) {
+  let connection;
+
   try {
-    const connection = await getConnection();
+    connection = await getConnection();
 
     const result = await connection.query(queryRenameRowsCategory, [
       newName.slice(0, MAX_LEN),
@@ -231,13 +248,15 @@ async function renameCategory(oldName, newName) {
     ]);
     await connection.query(queryRenameCategoryFilters, [newName, oldName]);
 
-    connection.close();
-
     return result;
   } catch (err) {
     err.message = `Error [${err}] renaming category [${oldName}] to new name [${newName}].`;
     console.error(err);
     throw err;
+  } finally {
+    if (connection) {
+      connection.close();
+    }
   }
 }
 
@@ -248,8 +267,10 @@ async function getTransactions(
   category,
   filter
 ) {
+  let connection;
+
   try {
-    const connection = await getConnection();
+    connection = await getConnection();
     let query = queryTransactions;
     const params = [];
 
@@ -302,104 +323,121 @@ async function getTransactions(
 
     const result = await connection.query(query, params);
 
-    connection.close();
     return result.at(0);
   } catch (err) {
     err.message = `Error [${err}] retrieving transactions.`;
     console.error(err);
     throw err;
+  } finally {
+    if (connection) {
+      connection.close();
+    }
   }
 }
 
 async function getDuplicatedTransactions() {
+  let connection;
+
   try {
-    const connection = await getConnection();
+    connection = await getConnection();
     const result = await connection.query(queryDuplicateRows);
-    connection.close();
     return result.at(0);
   } catch (err) {
     err.message = `Error [${err}] retrieving duplicated transactions.`;
     console.error(err);
     throw err;
+  } finally {
+    if (connection) {
+      connection.close();
+    }
   }
 }
 
 async function getYears() {
+  let connection;
+
   try {
-    const connection = await getConnection();
+    connection = await getConnection();
     const result = await connection.query(queryYears);
-    connection.close();
     return result.at(0).map((row) => row.year);
   } catch (err) {
     err.message = `Error [${err}] retrieving years from transactions.`;
     console.error(err);
     throw err;
+  } finally {
+    if (connection) {
+      connection.close();
+    }
   }
 }
 
 async function getBankBalance(bank, start, end) {
+  let connection;
+
   try {
-    const connection = await getConnection();
+    connection = await getConnection();
     const result = await connection.query(queryBankBalances, [
       bank,
       start,
       end,
     ]);
-    connection.close();
     return result.at(0).at(0);
   } catch (err) {
     err.message = `Error [${err}] retrieving bank balance.`;
     console.error(err);
     throw err;
+  } finally {
+    if (connection) {
+      connection.close();
+    }
   }
 }
 
 async function getCategories() {
+  let connection;
+
   try {
-    const connection = await getConnection();
+    connection = await getConnection();
     const result = await connection.query(queryCategoryNames);
-    connection.close();
     return result.at(0).map((row) => row.category);
   } catch (err) {
     err.message = `Error [${err}] retrieving categories.`;
     console.error(err);
     throw err;
+  } finally {
+    if (connection) {
+      connection.close();
+    }
   }
 }
 
 async function getCategoryBalance(category, start, end) {
+  let connection;
+
   try {
-    const connection = await getConnection();
+    connection = await getConnection();
     const result = await connection.query(queryCategoryBalance, [
       category,
       start,
       end,
     ]);
-    connection.close();
     return result.at(0).at(0);
   } catch (err) {
     err.message = `Error [${err}] retrieving category balance.`;
     console.error(err);
     throw err;
-  }
-}
-
-async function getCategoryFilter(filterId) {
-  try {
-    const connection = await getConnection();
-    const result = await connection.query(queryFilter, [filterId]);
-    connection.close();
-    return result.at(0).at(0);
-  } catch (err) {
-    err.message = `Error [${err}] retrieving category balance.`;
-    console.error(err);
-    throw err;
+  } finally {
+    if (connection) {
+      connection.close();
+    }
   }
 }
 
 async function getCategoryFiltersBalance(category, filter, start, end) {
+  let connection;
+
   try {
-    const connection = await getConnection();
+    connection = await getConnection();
     const result = await connection.query(queryCategoryFiltersBalance, [
       category,
       `%${filter}%`,
@@ -407,19 +445,24 @@ async function getCategoryFiltersBalance(category, filter, start, end) {
       end,
       filter,
     ]);
-    connection.close();
     return result.at(0).at(0);
   } catch (err) {
     err.message = `Error [${err}] retrieving category balance.`;
     console.error(err);
     throw err;
+  } finally {
+    if (connection) {
+      connection.close();
+    }
   }
 }
 
 async function getCategoryNonFiltersBalance(category, start, end) {
+  let connection;
+
   try {
     const balances = [];
-    const connection = await getConnection();
+    connection = await getConnection();
     const filterNamesResult = await connection.query(queryCategoryFilters, [
       category,
     ]);
@@ -446,45 +489,60 @@ async function getCategoryNonFiltersBalance(category, start, end) {
 
     balances.push(result.at(0));
 
-    connection.close();
     return balances;
   } catch (err) {
     err.message = `Error [${err}] retrieving category balance.`;
     console.error(err);
     throw err;
+  } finally {
+    if (connection) {
+      connection.close();
+    }
   }
 }
 
 async function getCategoryFilters(category) {
+  let connection;
+
   try {
-    const connection = await getConnection();
+    connection = await getConnection();
     const result = await connection.query(queryCategoryFilters, [category]);
-    connection.close();
     return result.at(0);
   } catch (err) {
     err.message = `Error [${err}] retrieving filters for the category [${category}].`;
     console.error(err);
     throw err;
+  } finally {
+    if (connection) {
+      connection.close();
+    }
   }
 }
 
 async function getBankNames() {
+  let connection;
+
   try {
-    const connection = await getConnection();
+    connection = await getConnection();
     const query = queryBankNames;
     const result = await connection.query(query);
-    connection.close();
     return result.at(0).map((row) => row.bank);
   } catch (err) {
     err.message = `Error [${err}] retrieving banks names.`;
     console.error(err);
     throw err;
+  } finally {
+    if (connection) {
+      connection.close();
+    }
   }
 }
 
 async function addTransaction(date, description, amount, bank) {
+  let connection;
+
   try {
-    const connection = await getConnection();
+    connection = await getConnection();
 
     const result = await connection.query(queryInsertRow, [
       bank.slice(0, MAX_LEN),
@@ -493,64 +551,87 @@ async function addTransaction(date, description, amount, bank) {
       amount,
     ]);
 
-    connection.close();
     return result;
   } catch (err) {
     err.message = `Error [${err}] adding a new transaction with date:[${date}] description:[${description}] amount:[${amount}] bank [${bank}].`;
     console.error(err);
     throw err;
+  } finally {
+    if (connection) {
+      connection.close();
+    }
   }
 }
 
 async function deleteCategory(category) {
+  let connection;
+
   try {
-    const connection = await getConnection();
+    connection = await getConnection();
     const result = await connection.query(queryDeleteCategory, [category]);
-    connection.close();
     return result;
   } catch (err) {
     err.message = `Error [${err}] deleting the following category [${category}].`;
     console.error(err);
     throw err;
+  } finally {
+    if (connection) {
+      connection.close();
+    }
   }
 }
 
 async function deleteFilter(filterId) {
+  let connection;
+
   try {
-    const connection = await getConnection();
+    connection = await getConnection();
     const result = await connection.query(queryDeleteFilter, [filterId]);
-    connection.close();
     return result;
   } catch (err) {
     err.message = `Error [${err}] deleting the filter with id [${filterId}].`;
     console.error(err);
     throw err;
+  } finally {
+    if (connection) {
+      connection.close();
+    }
   }
 }
 
 async function deleteTransactions(transactions) {
+  let connection;
+
   try {
-    const connection = await getConnection();
+    connection = await getConnection();
     const result = await connection.query(queryDeleteRows, [transactions]);
-    connection.close();
     return result;
   } catch (err) {
     err.message = `Error [${err}] deleting the following transactions [${transactions}].`;
     console.error(err);
     throw err;
+  } finally {
+    if (connection) {
+      connection.close();
+    }
   }
 }
 
 async function executeSql(query) {
+  let connection;
+
   try {
-    const connection = await getConnection();
+    connection = await getConnection();
     const result = await connection.query(query);
-    connection.close();
     return result;
   } catch (err) {
     err.message = `Error [${err}] executing the following query [${query}].`;
     console.error(err);
     throw err;
+  } finally {
+    if (connection) {
+      connection.close();
+    }
   }
 }
 
@@ -571,61 +652,81 @@ async function backupDatabase() {
 }
 
 async function updateTransactionsCategory(transactions, category) {
+  let connection;
+
   try {
-    const connection = await getConnection();
+    connection = await getConnection();
     const result = await connection.query(queryUpdateTransactionsCategory, [
       category.slice(0, MAX_LEN),
       transactions,
     ]);
-    connection.close();
     return result;
   } catch (err) {
     err.message = `Error [${err}] updating the transactions [${transactions}] to the category [${category}].`;
     console.error(err);
     throw err;
+  } finally {
+    if (connection) {
+      connection.close();
+    }
   }
 }
 
 async function resetTransactionsCategory(category) {
+  let connection;
+
   try {
-    const connection = await getConnection();
+    connection = await getConnection();
     const result = await connection.query(queryResetRowsCategory, [category]);
-    connection.close();
     return result;
   } catch (err) {
     err.message = `Error [${err}] reseting the category of the transactions that have the following categories [${category}].`;
     console.error(err);
     throw err;
+  } finally {
+    if (connection) {
+      connection.close();
+    }
   }
 }
 
 async function resetTransactionsCategoryForAFilter(filterId) {
+  let connection;
+
   try {
-    const connection = await getConnection();
+    connection = await getConnection();
     const result = await connection.query(queryResetRowsCategoryForAFilter, [
       filterId,
     ]);
-    connection.close();
     return result;
   } catch (err) {
     err.message = `Error [${err}] reseting the category of the transactions with filterId [${filterId}].`;
     console.error(err);
     throw err;
+  } finally {
+    if (connection) {
+      connection.close();
+    }
   }
 }
 
 async function updateTransactionsAsNotDuplicated(transactions) {
+  let connection;
+
   try {
-    const connection = await getConnection();
+    connection = await getConnection();
     const result = await connection.query(queryMarkNotDuplicateRows, [
       transactions,
     ]);
-    connection.close();
     return result;
   } catch (err) {
     err.message = `Error [${err}] updating the following transactions as not duplicated [${transactions}].`;
     console.error(err);
     throw err;
+  } finally {
+    if (connection) {
+      connection.close();
+    }
   }
 }
 

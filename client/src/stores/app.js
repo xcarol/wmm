@@ -1,7 +1,7 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
-import { useCsvFile } from '../plugins/csvfile';
 import { useLocalStorage } from '@vueuse/core';
+import { useCsvFile } from '../plugins/csvfile';
 
 export const useAppStore = defineStore('app', {
   state: () => ({
@@ -17,7 +17,13 @@ export const useAppStore = defineStore('app', {
       }
     },
     addQueryToSqlHistory(query) {
-      if (query.length && this.sqlHistory.includes(query) === false) {
+      const idx = this.sqlHistory.indexOf(query);
+
+      if (idx >= 0) {
+        this.sqlHistory.splice(idx, 1);
+      }
+      
+      if (query.length) {
         this.sqlHistory.push(query);
       }
     },
