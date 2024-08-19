@@ -74,8 +74,8 @@ import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
 import { useMessageDialogStore } from '../stores/messageDialog';
 import { useProgressDialogStore } from '../stores/progressDialog';
-import { getCategoriesNames } from '../models/filters';
-import { categorizeUrlPath } from '../models/categorize';
+import { getCategoriesNames } from '../helpers/filters';
+import { categorizeUrlPath } from '../helpers/categorize';
 import NewFilterDialog from '../components/categorize-view/NewFilterDialog.vue';
 import TransactionTable from '../components/categorize-view/TransactionTable.vue';
 

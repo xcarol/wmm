@@ -38,7 +38,7 @@
 
 <script setup>
 import { ref, computed, watch, onBeforeUpdate } from 'vue';
-import { getCategoriesNames } from '../../models/filters';
+import { getCategoriesNames } from '../../helpers/filters';
 
 const emits = defineEmits(['onOk', 'onCancel']);
 

@@ -47,7 +47,7 @@
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { _ } from 'lodash';
-import { categorizeUrlPath } from '../../models/categorize';
+import { categorizeUrlPath } from '../../helpers/categorize';
 
 const emits = defineEmits(['updateModelValue']);
 
