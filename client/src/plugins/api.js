@@ -43,7 +43,7 @@ class Api {
     }
 
     if (error && error.response && error.response.data) {
-      return error.response.data;
+      return JSON.stringify(error.response.data);
     }
 
     if (error && error.response && error.response.statusText) {
