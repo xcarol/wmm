@@ -36,7 +36,6 @@ import 'dayjs/locale/es';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { ref, computed, onBeforeMount } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useRouter } from 'vue-router';
 import { useAppStore } from '../stores/app';
 import { useProgressDialogStore } from '../stores/progressDialog';
 import { useMessageDialogStore } from '../stores/messageDialog';
@@ -48,7 +47,6 @@ import ImportSettings from '../components/import-view/ImportSettings.vue';
 dayjs.extend(customParseFormat);
 
 const { t: $t } = useI18n();
-const router = useRouter();
 const appStore = useAppStore();
 const progressDialog = useProgressDialogStore();
 const messageDialog = useMessageDialogStore();
@@ -126,7 +124,7 @@ const csvDateToSql = (date) => {
     datejs = dayjs(date);
   }
 
-  return `${datejs.year()}-${datejs.month() + 1}-${datejs.date()}`;
+  return datejs.format('YYYY-MM-DD');
 };
 
 const csvAmountToSql = (amount) => {
@@ -163,28 +161,51 @@ const updateInitialAmount = (value) => {
 };
 
 const dayBeforeFirstDate = (csvfile, dateColumn) => {
-  let olderDate = dayjs();
+  let dayBefore = dayjs();
 
-  olderDate = olderDate.add(1, 'day');
+  dayBefore = dayBefore.add(1, 'day');
 
   for (let count = 0; count < csvfile.rowCount; count += 1) {
-    const rowDate = csvfile.rows.at(count).at(dateColumn);
-    const rowDayjs = dayjs(csvDateToSql(rowDate));
-    if (rowDayjs.isValid() && rowDayjs < olderDate) {
-      olderDate = rowDayjs;
+    const rowDayjs = dayjs(csvDateToSql(csvfile.rows.at(count).at(dateColumn)));
+    if (rowDayjs.isValid() && rowDayjs < dayBefore) {
+      dayBefore = rowDayjs;
     }
   }
 
-  olderDate = olderDate.subtract(1, 'day');
+  dayBefore = dayBefore.subtract(1, 'day');
 
-  return `${olderDate.year()}-${olderDate.month() + 1}-${olderDate.date()}`;
+  return dayBefore.format('YYYY-MM-DD');
 };
 
 const selectedColumn = (column) => appStore.csvfile.rows.at(0).indexOf(column);
 
+const sortTransactionsByDate = (dateColumn) =>
+  appStore.csvfile.rows.sort((a, b) => {
+    const aDate = csvDateToSql(a.at(dateColumn));
+    const bDate = csvDateToSql(b.at(dateColumn));
+    const dateHeader = selectedDateColumn.value;
+    const hasHeader = firstRowIsAHeader.value;
+
+    console.log(`${a.at(dateColumn)} <> ${b.at(dateColumn)}`);
+    if (hasHeader && a.at(dateColumn) === dateHeader) {
+      return -1;
+    }
+    if (hasHeader && b.at(dateColumn) === dateHeader) {
+      return 0;
+    }
+    if (aDate < bDate) {
+      return -1;
+    }
+    if (aDate === bDate) {
+      return 0;
+    }
+    return 1;
+  });
+
 const importFileToDatabase = async () => {
   const firstRow = firstRowIsAHeader.value === true ? 1 : 0;
   let rowCount = firstRow;
+  const conflictingRows = [];
 
   progressDialog.startProgress({
     steps: appStore.csvfile.rowCount,
@@ -197,7 +218,9 @@ const importFileToDatabase = async () => {
     if (initialAmount.value !== 0) {
       await api
         .addTransaction(
-          csvDateToSql(dayBeforeFirstDate(appStore.csvfile, selectedColumn(selectedDateColumn.value))),
+          csvDateToSql(
+            dayBeforeFirstDate(appStore.csvfile, selectedColumn(selectedDateColumn.value)),
+          ),
           $t('importView.initialAmountLabel'),
           initialAmount.value,
           selectedBankName.value.slice(0, BANK_LENGTH),
@@ -207,8 +230,11 @@ const importFileToDatabase = async () => {
         });
     }
 
+    sortTransactionsByDate(selectedColumn(selectedDateColumn.value));
+
     for (; rowCount < appStore.csvfile.rowCount; rowCount += 1) {
       const csvRow = appStore.csvfile.rows.at(rowCount);
+
       // eslint-disable-next-line no-await-in-loop
       await api
         .addTransaction(
@@ -218,7 +244,12 @@ const importFileToDatabase = async () => {
           selectedBankName.value.slice(0, BANK_LENGTH),
         )
         .catch((err) => {
-          throw new Error(api.getErrorMessage(err));
+          const errorMessage = api.getErrorMessage(err);
+          if (err.response.status === 400 && errorMessage.includes('date range')) {
+            conflictingRows.push(csvRow);
+          } else {
+            throw new Error(api.getErrorMessage(err));
+          }
         });
 
       if (progressDialog.progressIsCancelled) {
@@ -237,10 +268,11 @@ const importFileToDatabase = async () => {
       .replace('%d', e.message)
       .replace('%d', rowCount);
     throw e;
+  } finally {
+    progressDialog.stopProgress();
   }
-  progressDialog.stopProgress();
 
-  return rowCount - firstRow;
+  return { importedRowsCount: rowCount - firstRow - conflictingRows.length, conflictingRows };
 };
 
 const applyFiltersToDatabase = async () => {
@@ -253,23 +285,16 @@ const applyFiltersToDatabase = async () => {
 };
 
 const importFile = async () => {
-  const importedRows = await importFileToDatabase();
+  const { importedRowsCount, conflictingRows } = await importFileToDatabase();
   await applyFiltersToDatabase();
 
   messageDialog.showMessage({
     title: $t('dialog.Info'),
-    message: $t('importView.importedRows').replace('%d', importedRows),
+    message: $t('importView.importedRows')
+      .replace('%d', importedRowsCount)
+      .replace('%s', conflictingRows.map((row) => `- ${row}\n`).join('\n')),
     ok: () => {
       resetView();
-
-      messageDialog.showMessage({
-        title: $t('dialog.Question'),
-        message: $t('importView.searchDuplicates'),
-        yes: () => {
-          router.push('duplicates');
-        },
-        no: () => {},
-      });
     },
   });
 };

@@ -23,13 +23,14 @@ const queryCategoryNames =
   "SELECT DISTINCT category FROM transactions WHERE category != '' UNION SELECT DISTINCT category \
     FROM filters ORDER BY category ASC";
 
-const queryFilter = "SELECT category, filter, label FROM filters WHERE id = ?";
-
 const queryCategoryFilters =
   "SELECT id, filter, label FROM filters WHERE category=? ORDER BY filter ASC";
 
 const queryTransactions =
   "SELECT id, bank, date, description, category, amount FROM transactions";
+
+const queryTransactionsDateRange =
+  "select MIN(date) as min, MAX(date) as max from transactions where bank = ?";
 
 const queryFiltersToApply =
   "SELECT id, category, filter FROM filters ORDER BY filter DESC";
@@ -260,13 +261,7 @@ async function renameCategory(oldName, newName) {
   }
 }
 
-async function getTransactions(
-  bankName,
-  startDate,
-  endDate,
-  category,
-  filter
-) {
+async function getTransactions(bankName, startDate, endDate, category, filter) {
   let connection;
 
   try {
@@ -302,7 +297,7 @@ async function getTransactions(
         useAnd = true;
       }
 
-      if (typeof category === 'string') {
+      if (typeof category === "string") {
         if (useAnd) {
           query += " AND ";
         }
@@ -326,6 +321,24 @@ async function getTransactions(
     return result.at(0);
   } catch (err) {
     err.message = `Error [${err}] retrieving transactions.`;
+    console.error(err);
+    throw err;
+  } finally {
+    if (connection) {
+      connection.close();
+    }
+  }
+}
+
+async function getTransactionsDateRange(bank) {
+  let connection;
+
+  try {
+    connection = await getConnection();
+    const result = await connection.query(queryTransactionsDateRange, [bank]);
+    return result.at(0).at(0);
+  } catch (err) {
+    err.message = `Error [${err}] retrieving transactions date range.`;
     console.error(err);
     throw err;
   } finally {
@@ -538,7 +551,7 @@ async function getBankNames() {
   }
 }
 
-async function addTransaction(date, description, amount, bank) {
+async function addTransaction({ date, description, amount, bank }) {
   let connection;
 
   try {
@@ -748,6 +761,7 @@ module.exports = {
   getCategoryNonFiltersBalance,
   getDuplicatedTransactions,
   getTransactions,
+  getTransactionsDateRange,
   getYears,
   renameCategory,
   resetTransactionsCategory,

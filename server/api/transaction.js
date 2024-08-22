@@ -11,23 +11,42 @@ const {
   resetTransactionsCategory,
   updateTransactionsCategory,
   updateTransactionsAsNotDuplicated,
+  getTransactionsDateRange,
 } = require("./database");
+
+const dayjs = require("dayjs");
+
+const canAddTransaction = async ({ date, bank }) => {
+  const dateToCheck = dayjs(date).format("YYYY-MM-DD");
+  const today = dayjs().format("YYYY-MM-DD");
+  const yesterday = dayjs().subtract(1, "day").format("YYYY-MM-DD");
+  const databaseDates = await getTransactionsDateRange(bank);
+
+  if (
+    dateToCheck < databaseDates.max ||
+    dateToCheck === today ||
+    dateToCheck === yesterday
+  ) {
+    return false;
+  }
+
+  return true;
+};
 
 module.exports = (app) => {
   app.post("/transactions", async (req, res) => {
-    let date,
-      description,
-      amount,
-      bank = "";
-
     try {
-      date = req.body.date;
-      description = req.body.description;
-      amount = req.body.amount;
-      bank = req.body.bank;
+      const transaction = ({ date, description, amount, bank } = req.body);
 
-      res.json(await addTransaction(date, description, amount, bank));
-      res.status(201);
+      if (await canAddTransaction(transaction)) {
+        res.json(await addTransaction(transaction));
+        res.status(201);
+      } else {
+        res.status(400).send({
+          message:
+            "Cannot add transactions with a date that falls within the bank's date range in database. Transactions from yesterday and today will not be imported, as they may still be pending of being consolidated.",
+        });
+      }
     } catch (err) {
       res.status(err.sqlState ? 400 : 500).send(err);
     }
