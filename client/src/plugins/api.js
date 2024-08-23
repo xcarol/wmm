@@ -41,7 +41,12 @@ class Api {
       return error.response.data.message;
     }
 
-    if (error && error.response && error.response.data) {
+    if (
+      error &&
+      error.response &&
+      error.response.data &&
+      JSON.stringify(error.response.data) !== '{}'
+    ) {
       return JSON.stringify(error.response.data);
     }
 
