@@ -36,4 +36,8 @@ Make sure _mysqldump_ is installed and accessible by _$PATH_.
 
 ~~Since bank transactions may not include a timestamp, only the date appears in the transaction details. Imagine buying a €1 drink in the morning and the same drink at the same store for the same price in the evening. You'd see a duplicate transaction that's a false positive. In this case, you can mark them as non-duplicates. The next time you search for duplicates, they won't appear, but they will still be counted as separate transactions.~~
 
-The duplicates problem is solved by omitting yesterday's and today's transactions from the import. These transactions will be consolidated and imported in full the following day, ensuring complete data for all time zones. This approach reduces data freshness but improves system robustness.  
+~~Second approach~~
+~~The duplicates problem is solved by omitting yesterday's and today's transactions from the import. These transactions will be consolidated and imported in full the following day, ensuring complete data for all time zones. This approach reduces data freshness but improves system robustness.~~  
+
+Third approach
+Transactions have to be added in bulk operations. And the 'conflicting' transactions will be deleted before the import. Are considred 'conflicting' transactions those that are in the database and their date falls with the date range of the bulk of transactions to be imported.  
