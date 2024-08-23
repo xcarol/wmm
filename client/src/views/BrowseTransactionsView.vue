@@ -234,8 +234,8 @@ const bankTransactions = async () => {
       selectedBankName.value,
       selectedMinDate.value,
       selectedMaxDate.value,
-      selectedCategory.value,
-      selectedFilter.value,
+      selectedCategory.value.length ? selectedCategory.value : undefined,
+      selectedFilter.value.length ? selectedFilter.value : undefined,
     );
 
     data.forEach(async (transaction) => {

@@ -11,7 +11,6 @@ class Api {
     deleteCategory: '/categories?category={1}',
     renameCategory: '/categories/rename',
     transactions: '/transactions',
-    transactionsOfBank: '/transactions?bank={1}&start={2}&end={3}&category={4}&filter={5}',
     transactionsUpdateCategory: '/transactions/category',
     transactionsCategoryBalance: '/transactions/category?category={1}&start={2}&end={3}',
     transactionsCategoryFiltersBalance:
@@ -149,14 +148,45 @@ class Api {
   }
 
   bankTransactions(bank, startDate, endDate, category, filter) {
-    const url = Api.endpoint(
-      this.endpoints.transactionsOfBank,
-      bank,
-      startDate,
-      endDate,
-      category,
-      filter,
-    );
+    let url = Api.endpoint(this.endpoints.transactions);
+    let useAnd = false;
+
+    if (bank || startDate || endDate || category || filter) {
+      url += '?';
+
+      if (bank) {
+        url += `bank=${bank}`;
+        useAnd = true;
+      }
+
+      if (startDate) {
+        if (useAnd) {
+          url += '&';
+        }
+        url += `start=${startDate}`;
+      }
+
+      if (endDate) {
+        if (useAnd) {
+          url += '&';
+        }
+        url += `end=${endDate}`;
+      }
+
+      if (category) {
+        if (useAnd) {
+          url += '&';
+        }
+        category = `category=${category}`;
+      }
+
+      if (filter) {
+        if (useAnd) {
+          url += '&';
+        }
+        url += `filter=${filter}`;
+      }
+    }
     return this.axios.get(url);
   }
 
