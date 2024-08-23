@@ -107,6 +107,7 @@ const resetView = () => {
 const BANK_LENGTH = 200;
 const DESCRIPTION_LENGTH = 200;
 
+// TODO: move this logic to the server
 const csvDateToSql = (date) => {
   let datejs = dayjs(date, 'DD/MM/YYYY').isValid() ? dayjs(date, 'DD/MM/YYYY') : null;
 
@@ -127,6 +128,7 @@ const csvDateToSql = (date) => {
   return datejs.format('YYYY-MM-DD');
 };
 
+// TODO: move this logic to the server
 const csvAmountToSql = (amount) => {
   let csvAmount = amount;
   const comma = ',';
@@ -179,100 +181,50 @@ const dayBeforeFirstDate = (csvfile, dateColumn) => {
 
 const selectedColumn = (column) => appStore.csvfile.rows.at(0).indexOf(column);
 
-const sortTransactionsByDate = (dateColumn) =>
-  appStore.csvfile.rows.sort((a, b) => {
-    const aDate = csvDateToSql(a.at(dateColumn));
-    const bDate = csvDateToSql(b.at(dateColumn));
-    const dateHeader = selectedDateColumn.value;
-    const hasHeader = firstRowIsAHeader.value;
-
-    console.log(`${a.at(dateColumn)} <> ${b.at(dateColumn)}`);
-    if (hasHeader && a.at(dateColumn) === dateHeader) {
-      return -1;
-    }
-    if (hasHeader && b.at(dateColumn) === dateHeader) {
-      return 0;
-    }
-    if (aDate < bDate) {
-      return -1;
-    }
-    if (aDate === bDate) {
-      return 0;
-    }
-    return 1;
-  });
-
 const importFileToDatabase = async () => {
   const firstRow = firstRowIsAHeader.value === true ? 1 : 0;
   let rowCount = firstRow;
-  const conflictingRows = [];
+  const transactions = [];
+  let result = true;
+
+  if (initialAmount.value !== 0) {
+    transactions.push(
+      csvDateToSql(dayBeforeFirstDate(appStore.csvfile, selectedColumn(selectedDateColumn.value))),
+      $t('importView.initialAmountLabel'),
+      initialAmount.value,
+      selectedBankName.value.slice(0, BANK_LENGTH),
+    );
+  }
+
+  for (; rowCount < appStore.csvfile.rowCount; rowCount += 1) {
+    const csvRow = appStore.csvfile.rows.at(rowCount);
+
+    transactions.push(
+      csvDateToSql(csvRow.at(selectedColumn(selectedDateColumn.value))),
+      csvRow.at(selectedColumn(selectedDescriptionColumn.value)).slice(0, DESCRIPTION_LENGTH),
+      csvAmountToSql(csvRow.at(selectedColumn(selectedAmountColumn.value))),
+      selectedBankName.value.slice(0, BANK_LENGTH),
+    );
+
+    if (progressDialog.progressIsCancelled) {
+      break;
+    }
+  }
 
   progressDialog.startProgress({
-    steps: appStore.csvfile.rowCount,
-    description: $t('importView.importingRows')
-      .replace('%d', rowCount)
-      .replace('%d', appStore.csvfile.rowCount - firstRow),
+    description: $t('importView.importingRows'),
   });
 
   try {
-    if (initialAmount.value !== 0) {
-      await api
-        .addTransaction(
-          csvDateToSql(
-            dayBeforeFirstDate(appStore.csvfile, selectedColumn(selectedDateColumn.value)),
-          ),
-          $t('importView.initialAmountLabel'),
-          initialAmount.value,
-          selectedBankName.value.slice(0, BANK_LENGTH),
-        )
-        .catch((err) => {
-          throw new Error(api.getErrorMessage(err));
-        });
-    }
-
-    sortTransactionsByDate(selectedColumn(selectedDateColumn.value));
-
-    for (; rowCount < appStore.csvfile.rowCount; rowCount += 1) {
-      const csvRow = appStore.csvfile.rows.at(rowCount);
-
-      // eslint-disable-next-line no-await-in-loop
-      await api
-        .addTransaction(
-          csvDateToSql(csvRow.at(selectedColumn(selectedDateColumn.value))),
-          csvRow.at(selectedColumn(selectedDescriptionColumn.value)).slice(0, DESCRIPTION_LENGTH),
-          csvAmountToSql(csvRow.at(selectedColumn(selectedAmountColumn.value))),
-          selectedBankName.value.slice(0, BANK_LENGTH),
-        )
-        .catch((err) => {
-          const errorMessage = api.getErrorMessage(err);
-          if (err.response.status === 400 && errorMessage.includes('date range')) {
-            conflictingRows.push(csvRow);
-          } else {
-            throw new Error(api.getErrorMessage(err));
-          }
-        });
-
-      if (progressDialog.progressIsCancelled) {
-        break;
-      }
-
-      progressDialog.updateProgress({
-        step: rowCount,
-        description: $t('importView.importingRows')
-          .replace('%d', rowCount)
-          .replace('%d', appStore.csvfile.rowCount - firstRow),
-      });
-    }
-  } catch (e) {
-    appStore.alertMessage = $t('importView.importError')
-      .replace('%d', e.message)
-      .replace('%d', rowCount);
-    throw e;
+    await api.addTransactions(transactions);
+  } catch (err) {
+    appStore.alertMessage = api.getErrorMessage(err);
+    result = false;
   } finally {
     progressDialog.stopProgress();
   }
 
-  return { importedRowsCount: rowCount - firstRow - conflictingRows.length, conflictingRows };
+  return result;
 };
 
 const applyFiltersToDatabase = async () => {
@@ -285,18 +237,17 @@ const applyFiltersToDatabase = async () => {
 };
 
 const importFile = async () => {
-  const { importedRowsCount, conflictingRows } = await importFileToDatabase();
-  await applyFiltersToDatabase();
+  if (await importFileToDatabase()) {
+    await applyFiltersToDatabase();
 
-  messageDialog.showMessage({
-    title: $t('dialog.Info'),
-    message: $t('importView.importedRows')
-      .replace('%d', importedRowsCount)
-      .replace('%s', conflictingRows.map((row) => `- ${row}\n`).join('\n')),
-    ok: () => {
-      resetView();
-    },
-  });
+    messageDialog.showMessage({
+      title: $t('dialog.Info'),
+      message: $t('importView.importedRows'),
+      ok: () => {
+        resetView();
+      },
+    });
+  }
 };
 
 onBeforeMount(() => appStore.csvfile.reset());

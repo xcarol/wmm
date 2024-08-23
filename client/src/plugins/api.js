@@ -97,9 +97,9 @@ class Api {
     return this.axios.post(url, { oldName, newName });
   }
 
-  addTransaction(date, description, amount, bank) {
+  addTransactions(transactions) {
     const url = Api.endpoint(this.endpoints.transactions);
-    return this.axios.post(url, { date, description, amount, bank });
+    return this.axios.post(url, { transactions });
   }
 
   deleteTransactions(transactions) {

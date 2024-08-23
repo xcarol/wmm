@@ -43,9 +43,9 @@
     "rowCountLabel": "This file contains %d rows.",
     "bankLabel": "Bank name",
     "importButtonLabel": "Import",
-    "importedRows": "%d transactions imported.\nThe following transactions cannot be imported because their date already exists in database:\n%s",
+    "importedRows": "Transactions have been imported successfully.",
     "importError": "Error: '%d' at line: %d",
-    "importingRows": "%d lines of %d imported...",
+    "importingRows": "Import process in progress...",
     "initialAmountLabel": "Account initial amount",
     "searchDuplicates": "Do you want to search for duplicates?\nIt seems a good moment now! ;)"
   },
