@@ -43,9 +43,9 @@
     "rowCountLabel": "Aquest arxiu conté %d files.",
     "bankLabel": "Nom del banc",
     "importButtonLabel": "Importar",
-    "importedRows": "S'han importat %d transaccions.",
+    "importedRows": "La importació s'ha realitzat amb èxit.\nS'han importat %d transaccions.",
     "importError": "Error: '%d' a la línia: %d",
-    "importingRows": "S'han importat %d linies de %d...",
+    "importingRows": "Important les transaccions...",
     "initialAmountLabel": "Quantitat inicial del compte",
     "searchDuplicates": "Vols fer una cerca de duplicats?\nAra és un bon moment! ;)"
   },

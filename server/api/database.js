@@ -13,17 +13,14 @@ const connectionSettings = {
   dateStrings: true,
 };
 
-const queryInsertRow =
-  "INSERT INTO transactions (bank, date, description, amount) \
-    VALUES (?, ?, ?, ?)";
+const queryInsertTransactions =
+  "INSERT INTO transactions (bank, date, description, amount) VALUES ";
 
 const queryBankNames = "SELECT DISTINCT bank FROM transactions";
 
 const queryCategoryNames =
   "SELECT DISTINCT category FROM transactions WHERE category != '' UNION SELECT DISTINCT category \
     FROM filters ORDER BY category ASC";
-
-const queryFilter = "SELECT category, filter, label FROM filters WHERE id = ?";
 
 const queryCategoryFilters =
   "SELECT id, filter, label FROM filters WHERE category=? ORDER BY filter ASC";
@@ -118,6 +115,9 @@ const queryDuplicateRows =
     ORDER BY bank, date DESC";
 
 const queryDeleteRows = "DELETE FROM transactions WHERE id IN (?)";
+
+const queryDeleteRowsNewerThanDate =
+  "DELETE FROM transactions WHERE bank = ? AND date >= ?";
 
 const queryMarkNotDuplicateRows =
   "UPDATE transactions SET not_duplicate = TRUE WHERE id IN (?)";
@@ -260,13 +260,7 @@ async function renameCategory(oldName, newName) {
   }
 }
 
-async function getTransactions(
-  bankName,
-  startDate,
-  endDate,
-  category,
-  filter
-) {
+async function getTransactions(bankName, startDate, endDate, category, filter) {
   let connection;
 
   try {
@@ -302,7 +296,7 @@ async function getTransactions(
         useAnd = true;
       }
 
-      if (typeof category === 'string') {
+      if (typeof category === "string") {
         if (useAnd) {
           query += " AND ";
         }
@@ -538,22 +532,29 @@ async function getBankNames() {
   }
 }
 
-async function addTransaction(date, description, amount, bank) {
+async function addTransactions(transactions) {
   let connection;
 
   try {
     connection = await getConnection();
+    let query = queryInsertTransactions;
+    const parameters = [];
 
-    const result = await connection.query(queryInsertRow, [
-      bank.slice(0, MAX_LEN),
-      date,
-      description.slice(0, MAX_LEN),
-      amount,
-    ]);
+    transactions.forEach((transaction) => {
+      query += " (?, ?, ?, ?),";
+      parameters.push(
+        transaction.bank,
+        transaction.date,
+        transaction.description,
+        transaction.amount
+      );
+    });
+    query = query.slice(0, -1);
 
-    return result;
+    const result = await connection.query(query, parameters);
+    return result.at(0);
   } catch (err) {
-    err.message = `Error [${err}] adding a new transaction with date:[${date}] description:[${description}] amount:[${amount}] bank [${bank}].`;
+    err.message = `Error [${err}] adding new transactions:[${transactions}].`;
     console.error(err);
     throw err;
   } finally {
@@ -608,6 +609,27 @@ async function deleteTransactions(transactions) {
     return result;
   } catch (err) {
     err.message = `Error [${err}] deleting the following transactions [${transactions}].`;
+    console.error(err);
+    throw err;
+  } finally {
+    if (connection) {
+      connection.close();
+    }
+  }
+}
+
+async function deleteNewerTransactions(bank, date) {
+  let connection;
+
+  try {
+    connection = await getConnection();
+    const result = await connection.query(queryDeleteRowsNewerThanDate, [
+      bank,
+      date,
+    ]);
+    return result.at(0);
+  } catch (err) {
+    err.message = `Error [${err}] deleting transactions newer than ${date}.`;
     console.error(err);
     throw err;
   } finally {
@@ -732,12 +754,13 @@ async function updateTransactionsAsNotDuplicated(transactions) {
 
 module.exports = {
   addFilter,
-  addTransaction,
+  addTransactions,
   applyFilters,
   backupDatabase,
   deleteCategory,
   deleteFilter,
   deleteTransactions,
+  deleteNewerTransactions,
   executeSql,
   getBankBalance,
   getBankNames,

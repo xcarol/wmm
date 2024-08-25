@@ -1,7 +1,8 @@
 const {
-  addTransaction,
+  addTransactions,
   applyFilters,
   deleteTransactions,
+  deleteNewerTransactions,
   getCategoryBalance,
   getCategoryFiltersBalance,
   getCategoryNonFiltersBalance,
@@ -13,20 +14,21 @@ const {
   updateTransactionsAsNotDuplicated,
 } = require("./database");
 
+const prepareTransactions = async (transactions) => {
+  transactions.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
+
+  const transaction = transactions.at(0);
+  await deleteNewerTransactions(transaction.bank, transaction.date);
+  
+  return transactions;
+};
+
 module.exports = (app) => {
   app.post("/transactions", async (req, res) => {
-    let date,
-      description,
-      amount,
-      bank = "";
-
     try {
-      date = req.body.date;
-      description = req.body.description;
-      amount = req.body.amount;
-      bank = req.body.bank;
+      const transactions = await prepareTransactions(req.body.transactions);
 
-      res.json(await addTransaction(date, description, amount, bank));
+      res.json(await addTransactions(transactions));
       res.status(201);
     } catch (err) {
       res.status(err.sqlState ? 400 : 500).send(err);
