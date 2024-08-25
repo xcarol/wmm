@@ -43,7 +43,7 @@
     "rowCountLabel": "Este archivo contiene %d filas.",
     "bankLabel": "Nombre del banco",
     "importButtonLabel": "Importar",
-    "importedRows": "La importación se ha realizado correctamente.",
+    "importedRows": "La importación se ha realizado correctamente.\nSe han importado %d transacciones.",
     "importError": "Error: %d en la línea: %d",
     "importingRows": "Importando las transacciones...",
     "initialAmountLabel": "Cantidad inicial de la cuenta",

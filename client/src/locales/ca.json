@@ -43,7 +43,7 @@
     "rowCountLabel": "Aquest arxiu conté %d files.",
     "bankLabel": "Nom del banc",
     "importButtonLabel": "Importar",
-    "importedRows": "La importació s'ha realitzat amb èxit.",
+    "importedRows": "La importació s'ha realitzat amb èxit.\nS'han importat %d transaccions.",
     "importError": "Error: '%d' a la línia: %d",
     "importingRows": "Important les transaccions...",
     "initialAmountLabel": "Quantitat inicial del compte",

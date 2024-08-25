@@ -185,26 +185,26 @@ const importFileToDatabase = async () => {
   const firstRow = firstRowIsAHeader.value === true ? 1 : 0;
   let rowCount = firstRow;
   const transactions = [];
-  let result = true;
+  let result = 0;
 
   if (initialAmount.value !== 0) {
-    transactions.push(
-      csvDateToSql(dayBeforeFirstDate(appStore.csvfile, selectedColumn(selectedDateColumn.value))),
-      $t('importView.initialAmountLabel'),
-      initialAmount.value,
-      selectedBankName.value.slice(0, BANK_LENGTH),
-    );
+    transactions.push({
+      date: csvDateToSql(dayBeforeFirstDate(appStore.csvfile, selectedColumn(selectedDateColumn.value))),
+      description: $t('importView.initialAmountLabel'),
+      amount: initialAmount.value,
+      bank: selectedBankName.value.slice(0, BANK_LENGTH),
+    });
   }
 
   for (; rowCount < appStore.csvfile.rowCount; rowCount += 1) {
     const csvRow = appStore.csvfile.rows.at(rowCount);
 
-    transactions.push(
-      csvDateToSql(csvRow.at(selectedColumn(selectedDateColumn.value))),
-      csvRow.at(selectedColumn(selectedDescriptionColumn.value)).slice(0, DESCRIPTION_LENGTH),
-      csvAmountToSql(csvRow.at(selectedColumn(selectedAmountColumn.value))),
-      selectedBankName.value.slice(0, BANK_LENGTH),
-    );
+    transactions.push({
+      date: csvDateToSql(csvRow.at(selectedColumn(selectedDateColumn.value))),
+      description: csvRow.at(selectedColumn(selectedDescriptionColumn.value)).slice(0, DESCRIPTION_LENGTH),
+      amount: csvAmountToSql(csvRow.at(selectedColumn(selectedAmountColumn.value))),
+      bank: selectedBankName.value.slice(0, BANK_LENGTH),
+    });
 
     if (progressDialog.progressIsCancelled) {
       break;
@@ -216,10 +216,11 @@ const importFileToDatabase = async () => {
   });
 
   try {
-    await api.addTransactions(transactions);
+    const { data: {affectedRows} } = await api.addTransactions(transactions);
+    result = affectedRows;
   } catch (err) {
     appStore.alertMessage = api.getErrorMessage(err);
-    result = false;
+    result = -1;
   } finally {
     progressDialog.stopProgress();
   }
@@ -237,12 +238,14 @@ const applyFiltersToDatabase = async () => {
 };
 
 const importFile = async () => {
-  if (await importFileToDatabase()) {
+  const importedRows = await importFileToDatabase();
+
+  if (importedRows > 0) {
     await applyFiltersToDatabase();
 
     messageDialog.showMessage({
       title: $t('dialog.Info'),
-      message: $t('importView.importedRows'),
+      message: $t('importView.importedRows').replace('%d', importedRows),
       ok: () => {
         resetView();
       },

@@ -1,7 +1,8 @@
 const {
-  addTransaction,
+  addTransactions,
   applyFilters,
   deleteTransactions,
+  deleteNewerTransactions,
   getCategoryBalance,
   getCategoryFiltersBalance,
   getCategoryNonFiltersBalance,
@@ -11,42 +12,24 @@ const {
   resetTransactionsCategory,
   updateTransactionsCategory,
   updateTransactionsAsNotDuplicated,
-  getTransactionsDateRange,
 } = require("./database");
 
-const dayjs = require("dayjs");
+const prepareTransactions = async (transactions) => {
+  transactions.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
 
-const canAddTransaction = async ({ date, bank }) => {
-  const dateToCheck = dayjs(date).format("YYYY-MM-DD");
-  const today = dayjs().format("YYYY-MM-DD");
-  const yesterday = dayjs().subtract(1, "day").format("YYYY-MM-DD");
-  const databaseDates = await getTransactionsDateRange(bank);
-
-  if (
-    dateToCheck < databaseDates.max ||
-    dateToCheck === today ||
-    dateToCheck === yesterday
-  ) {
-    return false;
-  }
-
-  return true;
+  const transaction = transactions.at(0);
+  await deleteNewerTransactions(transaction.bank, transaction.date);
+  
+  return transactions;
 };
 
 module.exports = (app) => {
   app.post("/transactions", async (req, res) => {
     try {
-      const transaction = ({ date, description, amount, bank } = req.body);
+      const transactions = await prepareTransactions(req.body.transactions);
 
-      if (await canAddTransaction(transaction)) {
-        res.json(await addTransaction(transaction));
-        res.status(201);
-      } else {
-        res.status(400).send({
-          message:
-            "Cannot add transactions with a date that falls within the bank's date range in database. Transactions from yesterday and today will not be imported, as they may still be pending of being consolidated.",
-        });
-      }
+      res.json(await addTransactions(transactions));
+      res.status(201);
     } catch (err) {
       res.status(err.sqlState ? 400 : 500).send(err);
     }
