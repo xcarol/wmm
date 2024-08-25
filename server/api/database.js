@@ -268,7 +268,7 @@ async function getTransactions(bankName, startDate, endDate, category, filter) {
     let query = queryTransactions;
     const params = [];
 
-    if (bankName || startDate || endDate || category || filter) {
+    if (bankName || startDate || endDate || typeof category === "string" || filter) {
       let useAnd = false;
       query += " WHERE ";
 
