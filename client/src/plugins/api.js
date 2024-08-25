@@ -169,6 +169,7 @@ class Api {
           url += '&';
         }
         url += `start=${startDate}`;
+        useAnd = true;
       }
 
       if (endDate) {
@@ -176,6 +177,7 @@ class Api {
           url += '&';
         }
         url += `end=${endDate}`;
+        useAnd = true;
       }
 
       if (category) {
@@ -183,6 +185,7 @@ class Api {
           url += '&';
         }
         category = `category=${category}`;
+        useAnd = true;
       }
 
       if (filter) {
