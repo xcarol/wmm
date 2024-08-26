@@ -41,10 +41,6 @@ module.exports = (app) => {
   });
 
   app.post("/categories/filter", async (req, res) => {
-    let category = "";
-    let filter = "";
-    let label = "";
-
     try {
       const { category, filter, label } = req.body;
 
