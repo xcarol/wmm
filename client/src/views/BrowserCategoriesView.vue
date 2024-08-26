@@ -144,7 +144,7 @@ const resetData = () => {
   expenseItems = [];
 };
 
-const nonCategoryBalancesToList = (balances) => {
+const nonFilterBalancesToList = (balances) => {
   const balancesList = [];
 
   balances.data.at(0).forEach((balance) => {
@@ -156,9 +156,19 @@ const nonCategoryBalancesToList = (balances) => {
 
 const addTransactionToCategoriesList = (categoryList, transaction) => {
   const currencyFormatter = new Intl.NumberFormat(locale, { style: 'currency', currency: 'EUR' });
+  let categoryLabel = transaction.label;
+
+  if (!categoryLabel) {
+    categoryLabel = transaction.filter;
+  }
+
+  if (!categoryLabel) {
+    categoryLabel = transaction.category;
+  }
 
   categoryList.push({
-    category: transaction.category,
+    category: categoryLabel,
+    filter: transaction.filter,
     balance: transaction.balance.toFixed(2),
     balance_formated: currencyFormatter.format(transaction.balance.toFixed(2)),
     month_average: currencyFormatter.format(transaction.avg_monthly_balance.toFixed(2)),
@@ -269,15 +279,15 @@ const updateViewWithSelectedCategory = async (category) => {
   categoryViewLevel.value = 'filter';
   try {
     const year = selectedYear.value;
-    const categoryBalances = await resquestFiltersBalances(category, year);
-    const nonCategoryBalances = await api.filterBalance(
+    const filterBalances = await resquestFiltersBalances(category, year);
+    const nonFilterBalances = await api.filterBalance(
       category,
       '',
       `${year}/01/01`,
       `${year}/12/31`,
     );
 
-    addTransactionsToLists(categoryBalances.concat(nonCategoryBalancesToList(nonCategoryBalances)));
+    addTransactionsToLists(filterBalances.concat(nonFilterBalancesToList(nonFilterBalances)));
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }
@@ -349,10 +359,11 @@ const chartOptions = {
       return;
     }
 
+    const transaction = tableItems.value.at(item.at(0).index);
     if (categoryViewLevel.value === 'category') {
-      refreshRouteWithCategory(tableItems.value.at(item.at(0).index).category);
+      refreshRouteWithCategory(transaction.category);
     } else if (categoryViewLevel.value === 'filter') {
-      routeToTransactionsWithFilter(tableItems.value.at(item.at(0).index).category);
+      routeToTransactionsWithFilter(transaction.filter);
     }
   },
 };
