@@ -69,20 +69,23 @@ const queryCategoryBalance =
 const queryCategoryFiltersBalance =
   "WITH filter_transactions AS ( \
         SELECT \
-          category, \
-          YEAR(date) AS year, \
-          MONTH(date) AS month, \
-          SUM(amount) AS total_amount, \
+          t.category as category, \
+          f.filter as filter, \
+          f.label as label, \
+          YEAR(t.date) AS year, \
+          MONTH(t.date) AS month, \
+          SUM(t.amount) AS total_amount, \
           COUNT(*) AS transaction_count \
-        FROM transactions \
-      WHERE category = ? \
-        AND description LIKE ? \
-        AND date >= ? \
-        AND date <= ? \
-        GROUP BY category, YEAR(date), MONTH(date) \
+        FROM transactions t\
+        JOIN filters f ON t.filter_id = f.id \
+      WHERE t.category = ? \
+        AND f.filter = ? \
+        AND t.date >= ? \
+        AND t.date <= ? \
+        GROUP BY t.category, YEAR(t.date), MONTH(t.date) \
       ) \
       SELECT \
-        ? as category, \
+        category, filter, label, \
         SUM(total_amount) AS balance, \
         AVG(total_amount) AS avg_monthly_balance, \
         AVG(transaction_count) AS avg_monthly_transactions \
@@ -434,10 +437,9 @@ async function getCategoryFiltersBalance(category, filter, start, end) {
     connection = await getConnection();
     const result = await connection.query(queryCategoryFiltersBalance, [
       category,
-      `%${filter}%`,
+      filter,
       start,
       end,
-      filter,
     ]);
     return result.at(0).at(0);
   } catch (err) {
