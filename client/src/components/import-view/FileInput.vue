@@ -1,17 +1,13 @@
 <template>
-  <v-card>
-    <v-card-text>
-      <v-file-input
-        :model-value="fileName"
-        :label="fileNameLabel"
-        accept="text/csv"
-        clearable
-        @click:clear="resetView"
-        @change="handleFileChange"
-      ></v-file-input>
-      <v-footer>{{ rowCountLabel }}</v-footer>
-    </v-card-text>
-  </v-card>
+  <v-file-input
+    :model-value="fileName"
+    :label="fileNameLabel"
+    accept="text/csv"
+    clearable
+    @click:clear="resetView"
+    @change="handleFileChange"
+  ></v-file-input>
+  <v-footer>{{ rowCountLabel }}</v-footer>
 </template>
 
 <script setup>

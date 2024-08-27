@@ -1,15 +1,11 @@
 <template>
-  <v-card>
-    <v-card-text>
-      <v-combobox
-        :model-value="bankName"
-        :label="$t('importView.bankLabel')"
-        :items="bankNames"
-        :disabled="noFileLoaded"
-        @update:model-value="bankSelected"
-      />
-    </v-card-text>
-  </v-card>
+  <v-combobox
+    :model-value="bankName"
+    :label="$t('importView.bankLabel')"
+    :items="bankNames"
+    :disabled="noFileLoaded"
+    @update:model-value="bankSelected"
+  />
 </template>
 
 <script setup>
