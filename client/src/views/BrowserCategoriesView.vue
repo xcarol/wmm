@@ -360,9 +360,9 @@ const chartOptions = {
     }
 
     const transaction = tableItems.value.at(item.at(0).index);
-    if (categoryViewLevel.value === 'category') {
+    if (categoryViewLevel.value === 'category' && transaction.category) {
       refreshRouteWithCategory(transaction.category);
-    } else if (categoryViewLevel.value === 'filter') {
+    } else if (categoryViewLevel.value === 'filter' && transaction.filter) {
       routeToTransactionsWithFilter(transaction.filter);
     }
   },
