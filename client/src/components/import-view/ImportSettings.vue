@@ -4,29 +4,29 @@
       <v-col>
         <v-row align="baseline">
           <v-col cols="4">
-          <v-checkbox
-            :model-value="hasHeader"
-            :label="$t('importView.firstRowIsAHeader')"
-            :disabled="noFileLoaded"
-            @update:model-value="notifyCheckState"
-          />
-        </v-col>
-        <v-col cols="4">
-          <bank-selection
-            flat
-            :bank-name="bankName"
-            :disabled="noFileLoaded"
-            @selected-bank="notifySelectedBank"
-          />
-        </v-col>
-        <v-col cols="4">
-          <v-text-field
-            :value="initialAmount"
-            :label="$t('importView.initialAmountLabel')"
-            :disabled="noFileLoaded || noBankSelected"
-            @update:model-value="notifyInitialAmount"
-          ></v-text-field>
-        </v-col>
+            <v-checkbox
+              :model-value="hasHeader"
+              :label="$t('importView.firstRowIsAHeader')"
+              :disabled="noFileLoaded"
+              @update:model-value="notifyCheckState"
+            />
+          </v-col>
+          <v-col cols="4">
+            <bank-selection
+              flat
+              :bank-name="bankName"
+              :disabled="noFileLoaded"
+              @selected-bank="notifySelectedBank"
+            />
+          </v-col>
+          <v-col cols="4">
+            <v-text-field
+              :value="initialAmount"
+              :label="$t('importView.initialAmountLabel')"
+              :disabled="noFileLoaded || noBankSelected || bankExists"
+              @update:model-value="notifyInitialAmount"
+            ></v-text-field>
+          </v-col>
         </v-row>
         <v-row>
           <v-select
@@ -63,6 +63,7 @@
 <script setup>
 import { computed } from 'vue';
 import { useAppStore } from '../../stores/app';
+import { banksStore } from '../../stores/banks';
 
 import BankSelection from './BankSelection.vue';
 
@@ -103,6 +104,7 @@ const emits = defineEmits([
 ]);
 
 const appStore = useAppStore();
+const banks = banksStore();
 
 const columnItems = () => {
   const items = [''];
@@ -123,6 +125,7 @@ const columnItems = () => {
 
 const noFileLoaded = computed(() => appStore.csvfile.rowCount === 0);
 const noBankSelected = computed(() => props.bankName.length === 0);
+const bankExists = computed(() => banks.bankNames.includes(props.bankName));
 const dateItems = computed(() => (appStore.csvfile.rowCount === 0 ? [] : columnItems()));
 const descriptionItems = computed(() => (appStore.csvfile.rowCount === 0 ? [] : columnItems()));
 const amountItems = computed(() => (appStore.csvfile.rowCount === 0 ? [] : columnItems()));
