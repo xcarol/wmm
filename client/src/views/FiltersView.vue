@@ -347,6 +347,7 @@ const updateFilter = async (value) => {
 
   try {
     await api.updateFilter(filterId(selectedFilters.value.at(0)), value.filter, value.label);
+    await getFilters();
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }
