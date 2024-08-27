@@ -22,7 +22,7 @@ export const useAppStore = defineStore('app', {
       if (idx >= 0) {
         this.sqlHistory.splice(idx, 1);
       }
-      
+
       if (query.length) {
         this.sqlHistory.push(query);
       }

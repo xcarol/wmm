@@ -1,4 +1,4 @@
-import { useApi } from "../plugins/api";
+import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
 
 export const getCategoriesNames = async () => {
