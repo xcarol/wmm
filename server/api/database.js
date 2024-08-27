@@ -168,7 +168,7 @@ async function applyFilters() {
           filter.category,
           filter.id,
           filter.filter,
-        ])
+        ]),
       );
     }
 
@@ -271,7 +271,13 @@ async function getTransactions(bankName, startDate, endDate, category, filter) {
     let query = queryTransactions;
     const params = [];
 
-    if (bankName || startDate || endDate || typeof category === "string" || filter) {
+    if (
+      bankName ||
+      startDate ||
+      endDate ||
+      typeof category === "string" ||
+      filter
+    ) {
       let useAnd = false;
       query += " WHERE ";
 
@@ -467,7 +473,7 @@ async function getCategoryNonFiltersBalance(category, start, end) {
     const queryBalancesWithoutCategory =
       queryBalancesWithoutCategoryStart.concat(
         queryBalancesWithoutCategoryDescription.repeat(filterNames.length),
-        queryBalancesWithoutCategoryEnd
+        queryBalancesWithoutCategoryEnd,
       );
 
     const parameters = [];
@@ -480,7 +486,7 @@ async function getCategoryNonFiltersBalance(category, start, end) {
 
     const result = await connection.query(
       queryBalancesWithoutCategory,
-      parameters
+      parameters,
     );
 
     balances.push(result.at(0));
@@ -548,7 +554,7 @@ async function addTransactions(transactions) {
         transaction.bank,
         transaction.date,
         transaction.description,
-        transaction.amount
+        transaction.amount,
       );
     });
     query = query.slice(0, -1);
@@ -664,7 +670,7 @@ async function backupDatabase() {
     const filePath = path.join(__dirname, "wmm.sql");
 
     execSync(
-      `/usr/bin/mysqldump --host=127.0.0.1 --user=root --password=secret wmm > ${filePath}`
+      `/usr/bin/mysqldump --host=127.0.0.1 --user=root --password=secret wmm > ${filePath}`,
     );
 
     return filePath;

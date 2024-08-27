@@ -19,7 +19,7 @@ const prepareTransactions = async (transactions) => {
 
   const transaction = transactions.at(0);
   await deleteNewerTransactions(transaction.bank, transaction.date);
-  
+
   return transactions;
 };
 
@@ -56,7 +56,7 @@ module.exports = (app) => {
           break;
         case "update":
           res.json(
-            await updateTransactionsCategory(data.transactions, data.category)
+            await updateTransactionsCategory(data.transactions, data.category),
           );
           break;
         case "reset":
@@ -119,7 +119,7 @@ module.exports = (app) => {
       } else {
         if (filter.length) {
           res.json(
-            await getCategoryFiltersBalance(category, filter, start, end)
+            await getCategoryFiltersBalance(category, filter, start, end),
           );
         } else {
           res.json(await getCategoryNonFiltersBalance(category, start, end));

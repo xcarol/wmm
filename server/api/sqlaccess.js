@@ -3,7 +3,7 @@ const path = require("path");
 
 module.exports = (app) => {
   app.post("/sql", async (req, res) => {
-    let query = '';
+    let query = "";
 
     try {
       query = req.body.query;

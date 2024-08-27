@@ -6,7 +6,7 @@ const transactionsRouter = require("./transaction");
 const sqlRouter = require("./sqlaccess");
 
 const app = express();
-app.use(express.json({ limit: '5mb' }));
+app.use(express.json({ limit: "5mb" }));
 app.use(cors());
 
 categoriesRouter(app);
