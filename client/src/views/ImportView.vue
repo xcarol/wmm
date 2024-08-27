@@ -1,24 +1,26 @@
 <template>
-  <file-input
-    :file-name="fileName"
-    @clear="resetView"
-  />
-  <file-preview :has-header="firstRowIsAHeader" />
-  <import-settings
-    :has-header="firstRowIsAHeader"
-    :initial-amount="initialAmount"
-    :date-column="selectedDateColumn"
-    :description-column="selectedDescriptionColumn"
-    :amount-column="selectedAmountColumn"
-    :bank-name="selectedBankName"
-    @check-state-changed="updateFirstRowState"
-    @initial-amount-changed="updateInitialAmount"
-    @bank-name-changed="selectedBank"
-    @selected-date-column="updateSelectedDateColumn"
-    @selected-description-column="updateSelectedDescriptionColumn"
-    @selected-amount-column="updateSelectedAmountColumn"
-  />
   <v-card>
+    <v-card-text>
+      <file-input
+        :file-name="fileName"
+        @clear="resetView"
+      />
+      <import-settings
+        :has-header="firstRowIsAHeader"
+        :initial-amount="initialAmount"
+        :date-column="selectedDateColumn"
+        :description-column="selectedDescriptionColumn"
+        :amount-column="selectedAmountColumn"
+        :bank-name="selectedBankName"
+        @check-state-changed="updateFirstRowState"
+        @initial-amount-changed="updateInitialAmount"
+        @bank-name-changed="selectedBank"
+        @selected-date-column="updateSelectedDateColumn"
+        @selected-description-column="updateSelectedDescriptionColumn"
+        @selected-amount-column="updateSelectedAmountColumn"
+      />
+      <file-preview :has-header="firstRowIsAHeader" />
+    </v-card-text>
     <v-card-actions>
       <v-spacer />
       <v-btn
@@ -189,7 +191,9 @@ const importFileToDatabase = async () => {
 
   if (initialAmount.value !== 0) {
     transactions.push({
-      date: csvDateToSql(dayBeforeFirstDate(appStore.csvfile, selectedColumn(selectedDateColumn.value))),
+      date: csvDateToSql(
+        dayBeforeFirstDate(appStore.csvfile, selectedColumn(selectedDateColumn.value)),
+      ),
       description: $t('importView.initialAmountLabel'),
       amount: initialAmount.value,
       bank: selectedBankName.value.slice(0, BANK_LENGTH),
@@ -201,7 +205,9 @@ const importFileToDatabase = async () => {
 
     transactions.push({
       date: csvDateToSql(csvRow.at(selectedColumn(selectedDateColumn.value))),
-      description: csvRow.at(selectedColumn(selectedDescriptionColumn.value)).slice(0, DESCRIPTION_LENGTH),
+      description: csvRow
+        .at(selectedColumn(selectedDescriptionColumn.value))
+        .slice(0, DESCRIPTION_LENGTH),
       amount: csvAmountToSql(csvRow.at(selectedColumn(selectedAmountColumn.value))),
       bank: selectedBankName.value.slice(0, BANK_LENGTH),
     });
@@ -216,7 +222,9 @@ const importFileToDatabase = async () => {
   });
 
   try {
-    const { data: {affectedRows} } = await api.addTransactions(transactions);
+    const {
+      data: { affectedRows },
+    } = await api.addTransactions(transactions);
     result = affectedRows;
   } catch (err) {
     appStore.alertMessage = api.getErrorMessage(err);
