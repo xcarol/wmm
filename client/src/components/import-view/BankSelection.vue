@@ -13,9 +13,9 @@
 </template>
 
 <script setup>
-import { ref, computed, onBeforeUpdate, onBeforeMount } from 'vue';
-import { useApi } from '../../plugins/api';
+import { computed, onBeforeUpdate, onBeforeMount } from 'vue';
 import { useAppStore } from '../../stores/app';
+import { banksStore } from '../../stores/banks';
 
 const emits = defineEmits(['selectedBank']);
 
@@ -26,26 +26,16 @@ defineProps({
   },
 });
 
-const api = useApi();
+const banks = banksStore();
 const appStore = useAppStore();
 
-const bankNames = ref([]);
-
 const noFileLoaded = computed(() => appStore.csvfile.rowCount === 0);
+const bankNames = computed(() => banks.bankNames);
 
 const bankSelected = (value) => {
   emits('selectedBank', value);
 };
 
-const getBankNames = async () => {
-  try {
-    const dbNames = await api.banksNames();
-    bankNames.value = dbNames.data;
-  } catch (e) {
-    appStore.alertMessage = api.getErrorMessage(e);
-  }
-};
-
-onBeforeUpdate(() => getBankNames());
-onBeforeMount(() => getBankNames());
+onBeforeUpdate(() => banks.fetchBanks());
+onBeforeMount(() => banks.fetchBanks());
 </script>
