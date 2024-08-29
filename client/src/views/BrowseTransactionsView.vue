@@ -84,6 +84,8 @@
 import { computed, ref, onBeforeMount } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
+import dayjs from 'dayjs';
+import 'dayjs/locale/es';
 import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
 import { useProgressDialogStore } from '../stores/progressDialog';
@@ -272,10 +274,11 @@ const setBankSelectedAttributes = (bankName) => {
   retrievedBalances.forEach((bankBalance) => {
     const { data: balance } = bankBalance;
     if (balance.bank === bankName) {
+      const minDate = dayjs(balance.latest_date).subtract(1, 'month').format('YYYY-MM-DD');
       selectedBankName.value = bankName;
       minBankDate.value = balance.first_date;
       maxBankDate.value = balance.latest_date;
-      selectedMinDate.value = balance.first_date;
+      selectedMinDate.value = balance.first_date > minDate ? balance.first_date : minDate;
       selectedMaxDate.value = balance.latest_date;
     }
   });
