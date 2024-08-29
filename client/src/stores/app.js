@@ -6,6 +6,7 @@ import { useCsvFile } from '../plugins/csvfile';
 export const useAppStore = defineStore('app', {
   state: () => ({
     categorySearchHistory: useLocalStorage('app_categorySearchHistory', []),
+    addTransactionHistory: useLocalStorage('app_addTransactionHistory', []),
     sqlHistory: useLocalStorage('app_sqlHistory', []),
     alertMessage: ref(''),
     csvfile: useCsvFile(),
@@ -13,7 +14,12 @@ export const useAppStore = defineStore('app', {
   actions: {
     addSearchToCategoryHistory(search) {
       if (search && search.length && this.categorySearchHistory.includes(search) === false) {
-        this.categorySearchHistory.push(search);
+        this.categorySearchHistory.unshift(search);
+      }
+    },
+    addDescriptionToAddTransactionHistory(description) {
+      if (description && description.length && this.addTransactionHistory.includes(description) === false) {
+        this.addTransactionHistory.unshift(description);
       }
     },
     addQueryToSqlHistory(query) {
