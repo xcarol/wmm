@@ -16,7 +16,15 @@
       <v-select
         v-model="selectedBankName"
         :items="banksNames"
+        :label="$t('browseTransactionsView.bankNameLabel')"
         @update:model-value="setBankSelectedAttributes"
+      />
+      <v-select
+        v-model="selectedCategory"
+        class="ml-4"
+        :items="categoriesNames"
+        :label="$t('browseTransactionsView.categoryLabel')"
+        @update:model-value="setCategorySelectedAttributes"
       />
       <v-text-field
         v-model="selectedMinDate"
@@ -103,6 +111,7 @@ const banksNames = ref([]);
 const bankDetails = ref([]);
 const minBankDate = ref('');
 const maxBankDate = ref('');
+const categoriesNames = ref([]);
 const selectedMinDate = ref('');
 const selectedMaxDate = ref('');
 const selectedBankName = ref('');
@@ -163,8 +172,7 @@ const endDateCalendarAttributes = computed(() => [
   { highlight: true, dates: selectedMaxDate.value },
 ]);
 
-const notReadyToQuery = () =>
-  selectedBankName.value === '' || selectedMinDate.value === '' || selectedMaxDate.value === '';
+const notReadyToQuery = () => selectedMinDate.value === '' || selectedMaxDate.value === '';
 
 const getBanksBrief = async () => {
   totalBanksAmount = 0.0;
@@ -175,9 +183,11 @@ const getBanksBrief = async () => {
   });
 
   try {
-    const { data } = await api.banksNames();
+    const { data: categories } = await api.categoriesNames();
+    const { data: banks } = await api.banksNames();
 
-    banksNames.value = data;
+    categoriesNames.value = [''].concat(categories);
+    banksNames.value = banks;
 
     const allBalancePromises = [];
     for (let bankCount = 0; bankCount < banksNames.value.length; bankCount += 1) {
@@ -256,14 +266,43 @@ const bankTransactions = async () => {
 };
 
 const routeToData = () => {
-  router.replace({
-    query: {
-      bank: selectedBankName.value,
-      start: selectedMinDate.value,
-      end: selectedMaxDate.value,
-    },
-  });
+  const query = {};
+  if (selectedBankName.value) {
+    query.bank = selectedBankName.value;
+  }
+
+  if (selectedMinDate.value) {
+    query.start = selectedMinDate.value;
+  }
+
+  if (selectedMaxDate.value) {
+    query.end = selectedMaxDate.value;
+  }
+
+  if (selectedCategory.value) {
+    query.category = selectedCategory.value;
+  }
+
+  router.replace({ query });
   bankTransactions();
+};
+
+const setCategorySelectedAttributes = (categoryName) => {
+  if (categoryName === '' || retrievedBalances === null) {
+    return;
+  }
+
+  retrievedBalances.forEach((bankBalance) => {
+    const { data: balance } = bankBalance;
+    if (balance.bank === categoryName) {
+      const minDate = dayjs(balance.latest_date).subtract(1, 'month').format('YYYY-MM-DD');
+      selectedBankName.value = categoryName;
+      minBankDate.value = balance.first_date;
+      maxBankDate.value = balance.latest_date;
+      selectedMinDate.value = balance.first_date > minDate ? balance.first_date : minDate;
+      selectedMaxDate.value = balance.latest_date;
+    }
+  });
 };
 
 const setBankSelectedAttributes = (bankName) => {
