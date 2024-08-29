@@ -2,6 +2,7 @@ import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import VueCookies from 'vue-cookies';
 import VCalendar from 'v-calendar';
+// eslint-disable-next-line import/no-unresolved
 import 'v-calendar/style.css';
 import axios from './plugins/axios';
 import App from './App.vue';

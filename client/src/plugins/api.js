@@ -184,7 +184,7 @@ class Api {
         if (useAnd) {
           url += '&';
         }
-        category = `category=${category}`;
+        url += `category=${category}`;
         useAnd = true;
       }
 
