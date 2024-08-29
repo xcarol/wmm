@@ -24,7 +24,6 @@
         append-inner-icon="$calendar"
         :label="$t('browseTransactionsView.startDateLabel')"
         readonly
-        :disabled="noBankSelected()"
         @click:append-inner="showMinDateCalendar"
       />
       <v-text-field
@@ -33,7 +32,6 @@
         append-inner-icon="$calendar"
         :label="$t('browseTransactionsView.endDateLabel')"
         readonly
-        :disabled="noBankSelected()"
         @click:append-inner="showMaxDateCalendar"
       />
       <v-btn
@@ -163,7 +161,6 @@ const endDateCalendarAttributes = computed(() => [
   { highlight: true, dates: selectedMaxDate.value },
 ]);
 
-const noBankSelected = () => selectedBankName.value === '';
 const notReadyToQuery = () =>
   selectedBankName.value === '' || selectedMinDate.value === '' || selectedMaxDate.value === '';
 
