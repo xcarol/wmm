@@ -122,7 +122,7 @@ const getBanksAndCategories = async () => {
   progressDialog.stopProgress();
 };
 
-const addTransaction = () => {
+const addTransaction = async () => {
   const date = selectedDate.value;
   const bank = selectedBankName.value;
   const category = selectedCategory.value;
@@ -130,6 +130,19 @@ const addTransaction = () => {
   const description = transactionDescription.value;
 
   appStore.addDescriptionToAddTransactionHistory(description);
+
+  progressDialog.startProgress({
+    steps: 0,
+    description: $t('progress.retrievingCategories'),
+  });
+
+  try {
+    await api.addTransaction(date, bank, category, description, amount);
+  } catch (e) {
+    appStore.alertMessage = api.getErrorMessage(e);
+  }
+
+  progressDialog.stopProgress();
 
   messageDialog.showMessage({
     title: $t('dialog.Info'),
