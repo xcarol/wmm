@@ -13,6 +13,9 @@ const connectionSettings = {
   dateStrings: true,
 };
 
+const queryAddTransaction =
+  "INSERT INTO transactions (date, bank, category, description, amount) VALUES (?, ?, ?, ?, ?)";
+
 const queryInsertTransactions =
   "INSERT INTO transactions (bank, date, description, amount) VALUES ";
 
@@ -271,7 +274,13 @@ async function getTransactions(bankName, startDate, endDate, category, filter) {
     let query = queryTransactions;
     const params = [];
 
-    if (bankName || startDate || endDate || typeof category === "string" || filter) {
+    if (
+      bankName ||
+      startDate ||
+      endDate ||
+      typeof category === "string" ||
+      filter
+    ) {
       let useAnd = false;
       query += " WHERE ";
 
@@ -520,11 +529,34 @@ async function getBankNames() {
 
   try {
     connection = await getConnection();
-    const query = queryBankNames;
-    const result = await connection.query(query);
+    const result = await connection.query(queryBankNames);
     return result.at(0).map((row) => row.bank);
   } catch (err) {
     err.message = `Error [${err}] retrieving banks names.`;
+    console.error(err);
+    throw err;
+  } finally {
+    if (connection) {
+      connection.close();
+    }
+  }
+}
+
+async function addTransaction(date, bank, category, description, amount) {
+  let connection;
+
+  try {
+    connection = await getConnection();
+    const result = await connection.query(queryAddTransaction, [
+      date,
+      bank,
+      category,
+      description,
+      amount,
+    ]);
+    return result.at(0);
+  } catch (err) {
+    err.message = `Error [${err}] adding a transaction with date: ${date}, bank: ${bank}, category: ${category}, description: ${description}, amount: ${amount}.`;
     console.error(err);
     throw err;
   } finally {
@@ -756,6 +788,7 @@ async function updateTransactionsAsNotDuplicated(transactions) {
 
 module.exports = {
   addFilter,
+  addTransaction,
   addTransactions,
   applyFilters,
   backupDatabase,

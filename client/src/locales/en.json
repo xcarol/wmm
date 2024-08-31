@@ -15,6 +15,7 @@
   },
   "mainDrawer": {
     "import": "Import",
+    "addTransaction": "Add manually",
     "categorize": "Categorize",
     "duplicates": "Find duplicates",
     "sql": "SQL Commands",
@@ -129,6 +130,16 @@
     "incomesLabel": "Incomes",
     "expensesLabel": "Expenses",
     "backToCategories": "Categories"
+  },
+  "addTransactionView": {
+    "title": "Add a transaction",
+    "bankNameLabel": "Bank",
+    "amountLabel": "amount",
+    "dateLabel": "Date",
+    "descriptionLabel": "Description",
+    "categoryLabel": "Category",
+    "addButton": "Add",
+    "success": "Transaction added successfully."
   },
   "dialogNewFilter": {
     "title": "New Filter",

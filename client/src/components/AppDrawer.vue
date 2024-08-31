@@ -58,6 +58,11 @@ const menuOptions = [
     barTitle: $t('categorizeView.title'),
   },
   {
+    title: $t('mainDrawer.addTransaction'),
+    value: '/add-transaction',
+    barTitle: $t('addTransactionView.title'),
+  },
+  {
     title: $t('mainDrawer.duplicates'),
     value: '/duplicates',
     barTitle: $t('duplicatesView.title'),
