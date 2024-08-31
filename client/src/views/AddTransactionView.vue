@@ -23,7 +23,9 @@
       <v-text-field
         v-model="transactionAmount"
         class="ml-4"
+        :prepend-inner-icon="amountSign"
         :label="$t('addTransactionView.amountLabel')"
+        @click:prepend-inner="switchSign"
       />
     </v-card-actions>
     <v-card-actions class="align-start ml-4 mr-4">
@@ -64,6 +66,8 @@ import { useMessageDialogStore } from '../stores/messageDialog';
 
 dayjs.extend(customParseFormat);
 
+const minusIcon = '$minus';
+const plusIcon = '$plus';
 const banksNames = ref([]);
 const categoriesNames = ref([]);
 const selectedDate = ref(dayjs().format('YYYY-MM-DD'));
@@ -72,6 +76,8 @@ const selectedCategory = ref('');
 const transactionDescription = ref('');
 const transactionAmount = ref('');
 const dateCalendarVisible = ref(false);
+const amountSign = ref(minusIcon);
+let amountOperator = -1;
 
 const api = useApi();
 const appStore = useAppStore();
@@ -81,6 +87,16 @@ const { t: $t } = useI18n();
 
 const showDateCalendar = () => {
   dateCalendarVisible.value = true;
+};
+
+const switchSign = () => {
+  if (amountSign.value === minusIcon) {
+    amountSign.value = plusIcon;
+    amountOperator = 1;
+  } else {
+    amountSign.value = minusIcon;
+    amountOperator = -1;
+  }
 };
 
 const onDateSelected = (date) => {
@@ -94,7 +110,6 @@ const dateCalendarAttributes = computed(() => [{ highlight: true, dates: selecte
 const descriptions = computed(() => appStore.addTransactionHistory);
 
 const notReadyToAdd = () => {
-  console.log(`${transactionAmount.value} is ${parseFloat(transactionAmount.value)}`);
   return (
     selectedDate.value === '' ||
     transactionDescription.value === '' ||
@@ -126,7 +141,7 @@ const addTransaction = async () => {
   const date = selectedDate.value;
   const bank = selectedBankName.value;
   const category = selectedCategory.value;
-  const amount = transactionAmount.value;
+  const amount = transactionAmount.value * amountOperator;
   const description = transactionDescription.value;
 
   appStore.addDescriptionToAddTransactionHistory(description);
