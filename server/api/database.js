@@ -1,54 +1,51 @@
-const mysql = require("mysql2/promise");
-const path = require("path");
-const { execSync } = require("child_process");
+const mysql = require('mysql2/promise');
+const path = require('path');
+const { execSync } = require('child_process');
 
 const MAX_LEN = 200;
 
 const connectionSettings = {
-  host: "localhost",
-  user: "root",
-  password: "secret",
-  database: "wmm",
+  host: 'localhost',
+  user: 'root',
+  password: 'secret',
+  database: 'wmm',
   multipleStatements: true,
   dateStrings: true,
 };
 
 const queryAddTransaction =
-  "INSERT INTO transactions (date, bank, category, description, amount) VALUES (?, ?, ?, ?, ?)";
+  'INSERT INTO transactions (date, bank, category, description, amount) VALUES (?, ?, ?, ?, ?)';
 
 const queryInsertTransactions =
-  "INSERT INTO transactions (bank, date, description, amount) VALUES ";
+  'INSERT INTO transactions (bank, date, description, amount) VALUES ';
 
-const queryBankNames = "SELECT DISTINCT bank FROM transactions";
+const queryBankNames = 'SELECT DISTINCT bank FROM transactions';
 
 const queryCategoryNames =
   "SELECT DISTINCT category FROM transactions WHERE category != '' UNION SELECT DISTINCT category \
     FROM filters ORDER BY category ASC";
 
 const queryCategoryFilters =
-  "SELECT id, filter, label FROM filters WHERE category=? ORDER BY filter ASC";
+  'SELECT id, filter, label FROM filters WHERE category=? ORDER BY filter ASC';
 
-const queryTransactions =
-  "SELECT id, bank, date, description, category, amount FROM transactions";
+const queryTransactions = 'SELECT id, bank, date, description, category, amount FROM transactions';
 
-const queryFiltersToApply =
-  "SELECT id, category, filter FROM filters ORDER BY filter DESC";
+const queryFiltersToApply = 'SELECT id, category, filter FROM filters ORDER BY filter DESC';
 
 const queryApplyFilter = `
   UPDATE transactions
     SET category = ?, filter_id = ?
-    WHERE description LIKE CONCAT('%', REPLACE(?, '%', '\%'), '%') AND category = '';
+    WHERE description LIKE CONCAT('%', REPLACE(?, '%', '%'), '%') AND category = '';
   `;
 
-const queryUpdateTransactionsCategory =
-  "UPDATE transactions SET category = ? WHERE id IN(?)";
+const queryUpdateTransactionsCategory = 'UPDATE transactions SET category = ? WHERE id IN(?)';
 
 const queryBankBalances =
-  "SELECT bank, SUM(amount) as balance, MAX(date) AS latest_date, MIN(date) AS first_date \
-    FROM transactions WHERE bank = ? AND date >= ? AND date <= ?";
+  'SELECT bank, SUM(amount) as balance, MAX(date) AS latest_date, MIN(date) AS first_date \
+    FROM transactions WHERE bank = ? AND date >= ? AND date <= ?';
 
 const queryCategoryBalance =
-  "WITH category_transactions AS ( \
+  'WITH category_transactions AS ( \
       SELECT \
         category, \
         YEAR(date) AS year, \
@@ -67,10 +64,10 @@ const queryCategoryBalance =
       AVG(total_amount) AS avg_monthly_balance, \
       AVG(transaction_count) AS avg_monthly_transactions \
     FROM category_transactions \
-    GROUP BY category";
+    GROUP BY category';
 
 const queryCategoryFiltersBalance =
-  "WITH filter_transactions AS ( \
+  'WITH filter_transactions AS ( \
         SELECT \
           t.category as category, \
           f.filter as filter, \
@@ -93,20 +90,20 @@ const queryCategoryFiltersBalance =
         AVG(total_amount) AS avg_monthly_balance, \
         AVG(transaction_count) AS avg_monthly_transactions \
       FROM filter_transactions \
-      GROUP BY category";
+      GROUP BY category';
 
 const queryBalancesWithoutCategoryStart =
-  "SELECT description AS category, \
+  'SELECT description AS category, \
     amount AS balance, \
     amount AS avg_monthly_balance, \
     amount AS avg_monthly_transactions \
-  FROM transactions WHERE category = ? ";
+  FROM transactions WHERE category = ? ';
 
-const queryBalancesWithoutCategoryDescription = "AND description NOT LIKE ? ";
-const queryBalancesWithoutCategoryEnd = "AND date >= ? AND date <= ?";
+const queryBalancesWithoutCategoryDescription = 'AND description NOT LIKE ? ';
+const queryBalancesWithoutCategoryEnd = 'AND date >= ? AND date <= ?';
 
 const queryDuplicateRows =
-  "SELECT id, bank, date, description, category, amount FROM transactions t1 \
+  'SELECT id, bank, date, description, category, amount FROM transactions t1 \
     WHERE EXISTS ( \
         SELECT 1 \
         FROM transactions t2 \
@@ -118,24 +115,21 @@ const queryDuplicateRows =
         AND t1.not_duplicate = FALSE \
         AND t2.not_duplicate = FALSE \
     ) \
-    ORDER BY bank, date DESC";
+    ORDER BY bank, date DESC';
 
-const queryDeleteRows = "DELETE FROM transactions WHERE id IN (?)";
+const queryDeleteRows = 'DELETE FROM transactions WHERE id IN (?)';
 
-const queryDeleteRowsNewerThanDate =
-  "DELETE FROM transactions WHERE bank = ? AND date >= ?";
+const queryDeleteRowsNewerThanDate = 'DELETE FROM transactions WHERE bank = ? AND date >= ?';
 
-const queryMarkNotDuplicateRows =
-  "UPDATE transactions SET not_duplicate = TRUE WHERE id IN (?)";
+const queryMarkNotDuplicateRows = 'UPDATE transactions SET not_duplicate = TRUE WHERE id IN (?)';
 
-const queryYears = "SELECT DISTINCT YEAR(date) as year FROM transactions";
+const queryYears = 'SELECT DISTINCT YEAR(date) as year FROM transactions';
 
-const queryAddCategoryFilter =
-  "INSERT INTO filters (category, filter, label) VALUES (?, ?, ?)";
+const queryAddCategoryFilter = 'INSERT INTO filters (category, filter, label) VALUES (?, ?, ?)';
 
-const queryDeleteCategory = "DELETE FROM filters WHERE category = ?";
+const queryDeleteCategory = 'DELETE FROM filters WHERE category = ?';
 
-const queryDeleteFilter = "DELETE FROM filters WHERE id = ?";
+const queryDeleteFilter = 'DELETE FROM filters WHERE id = ?';
 
 const queryResetRowsCategory =
   "UPDATE transactions SET category = '', filter_id = NULL WHERE category = ?";
@@ -143,14 +137,11 @@ const queryResetRowsCategory =
 const queryResetRowsCategoryForAFilter =
   "UPDATE transactions SET category = '', filter_id = NULL WHERE filter_id = ?";
 
-const queryRenameRowsCategory =
-  "UPDATE transactions SET category = ? WHERE category = ?";
+const queryRenameRowsCategory = 'UPDATE transactions SET category = ? WHERE category = ?';
 
-const queryRenameCategoryFilters =
-  "UPDATE filters SET category = ? WHERE category = ?";
+const queryRenameCategoryFilters = 'UPDATE filters SET category = ? WHERE category = ?';
 
-const queryUpdateFilter =
-  "UPDATE filters SET filter = ?, label = ? WHERE id = ?";
+const queryUpdateFilter = 'UPDATE filters SET filter = ?, label = ? WHERE id = ?';
 
 async function getConnection() {
   return await mysql.createConnection(connectionSettings);
@@ -167,11 +158,7 @@ async function applyFilters() {
     for (let index = 0; index < filters.length; index++) {
       const filter = filters[index];
       operations.push(
-        connection.query(queryApplyFilter, [
-          filter.category,
-          filter.id,
-          filter.filter,
-        ])
+        connection.query(queryApplyFilter, [filter.category, filter.id, filter.filter]),
       );
     }
 
@@ -232,7 +219,7 @@ async function updateFilter(id, filter, label) {
 
     return result;
   } catch (err) {
-    err.message = `Error [${err}] updating filter ${filter} with label ${label} to category ${category}.`;
+    err.message = `Error [${err}] updating filter ${filter} with label ${label}.`;
     console.error(err);
     throw err;
   } finally {
@@ -274,54 +261,48 @@ async function getTransactions(bankName, startDate, endDate, category, filter) {
     let query = queryTransactions;
     const params = [];
 
-    if (
-      bankName ||
-      startDate ||
-      endDate ||
-      typeof category === "string" ||
-      filter
-    ) {
+    if (bankName || startDate || endDate || typeof category === 'string' || filter) {
       let useAnd = false;
-      query += " WHERE ";
+      query += ' WHERE ';
 
       if (bankName) {
-        query += " bank = ? ";
+        query += ' bank = ? ';
         params.push(bankName);
         useAnd = true;
       }
 
       if (startDate) {
         if (useAnd) {
-          query += " AND ";
+          query += ' AND ';
         }
-        query += " date >= ? ";
+        query += ' date >= ? ';
         params.push(startDate);
         useAnd = true;
       }
 
       if (endDate) {
         if (useAnd) {
-          query += " AND ";
+          query += ' AND ';
         }
-        query += " date <= ? ";
+        query += ' date <= ? ';
         params.push(endDate);
         useAnd = true;
       }
 
-      if (typeof category === "string") {
+      if (typeof category === 'string') {
         if (useAnd) {
-          query += " AND ";
+          query += ' AND ';
         }
-        query += " category = ? ";
+        query += ' category = ? ';
         params.push(category);
         useAnd = true;
       }
 
       if (filter) {
         if (useAnd) {
-          query += " AND ";
+          query += ' AND ';
         }
-        query += " description LIKE ? ";
+        query += ' description LIKE ? ';
         params.push(`%${filter}%`);
         useAnd = true;
       }
@@ -382,11 +363,7 @@ async function getBankBalance(bank, start, end) {
 
   try {
     connection = await getConnection();
-    const result = await connection.query(queryBankBalances, [
-      bank,
-      start,
-      end,
-    ]);
+    const result = await connection.query(queryBankBalances, [bank, start, end]);
     return result.at(0).at(0);
   } catch (err) {
     err.message = `Error [${err}] retrieving bank balance.`;
@@ -422,11 +399,7 @@ async function getCategoryBalance(category, start, end) {
 
   try {
     connection = await getConnection();
-    const result = await connection.query(queryCategoryBalance, [
-      category,
-      start,
-      end,
-    ]);
+    const result = await connection.query(queryCategoryBalance, [category, start, end]);
     return result.at(0).at(0);
   } catch (err) {
     err.message = `Error [${err}] retrieving category balance.`;
@@ -468,16 +441,13 @@ async function getCategoryNonFiltersBalance(category, start, end) {
   try {
     const balances = [];
     connection = await getConnection();
-    const filterNamesResult = await connection.query(queryCategoryFilters, [
-      category,
-    ]);
+    const filterNamesResult = await connection.query(queryCategoryFilters, [category]);
     const filterNames = filterNamesResult.at(0);
 
-    const queryBalancesWithoutCategory =
-      queryBalancesWithoutCategoryStart.concat(
-        queryBalancesWithoutCategoryDescription.repeat(filterNames.length),
-        queryBalancesWithoutCategoryEnd
-      );
+    const queryBalancesWithoutCategory = queryBalancesWithoutCategoryStart.concat(
+      queryBalancesWithoutCategoryDescription.repeat(filterNames.length),
+      queryBalancesWithoutCategoryEnd,
+    );
 
     const parameters = [];
     parameters.push(category);
@@ -487,10 +457,7 @@ async function getCategoryNonFiltersBalance(category, start, end) {
     parameters.push(start);
     parameters.push(end);
 
-    const result = await connection.query(
-      queryBalancesWithoutCategory,
-      parameters
-    );
+    const result = await connection.query(queryBalancesWithoutCategory, parameters);
 
     balances.push(result.at(0));
 
@@ -575,12 +542,12 @@ async function addTransactions(transactions) {
     const parameters = [];
 
     transactions.forEach((transaction) => {
-      query += " (?, ?, ?, ?),";
+      query += ' (?, ?, ?, ?),';
       parameters.push(
         transaction.bank,
         transaction.date,
         transaction.description,
-        transaction.amount
+        transaction.amount,
       );
     });
     query = query.slice(0, -1);
@@ -657,10 +624,7 @@ async function deleteNewerTransactions(bank, date) {
 
   try {
     connection = await getConnection();
-    const result = await connection.query(queryDeleteRowsNewerThanDate, [
-      bank,
-      date,
-    ]);
+    const result = await connection.query(queryDeleteRowsNewerThanDate, [bank, date]);
     return result.at(0);
   } catch (err) {
     err.message = `Error [${err}] deleting transactions newer than ${date}.`;
@@ -692,13 +656,10 @@ async function executeSql(query) {
 }
 
 async function backupDatabase() {
+  const filePath = path.join(__dirname, 'wmm.sql');
+
   try {
-    const filePath = path.join(__dirname, "wmm.sql");
-
-    execSync(
-      `/usr/bin/mysqldump --host=127.0.0.1 --user=root --password=secret wmm > ${filePath}`
-    );
-
+    execSync(`/usr/bin/mysqldump --host=127.0.0.1 --user=root --password=secret wmm > ${filePath}`);
     return filePath;
   } catch (err) {
     err.message = `Error [${err}] creating a backup to the file [${filePath}].`;
@@ -751,9 +712,7 @@ async function resetTransactionsCategoryForAFilter(filterId) {
 
   try {
     connection = await getConnection();
-    const result = await connection.query(queryResetRowsCategoryForAFilter, [
-      filterId,
-    ]);
+    const result = await connection.query(queryResetRowsCategoryForAFilter, [filterId]);
     return result;
   } catch (err) {
     err.message = `Error [${err}] reseting the category of the transactions with filterId [${filterId}].`;
@@ -771,9 +730,7 @@ async function updateTransactionsAsNotDuplicated(transactions) {
 
   try {
     connection = await getConnection();
-    const result = await connection.query(queryMarkNotDuplicateRows, [
-      transactions,
-    ]);
+    const result = await connection.query(queryMarkNotDuplicateRows, [transactions]);
     return result;
   } catch (err) {
     err.message = `Error [${err}] updating the following transactions as not duplicated [${transactions}].`;

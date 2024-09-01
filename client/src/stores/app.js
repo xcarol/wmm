@@ -18,7 +18,11 @@ export const useAppStore = defineStore('app', {
       }
     },
     addDescriptionToAddTransactionHistory(description) {
-      if (description && description.length && this.addTransactionHistory.includes(description) === false) {
+      if (
+        description &&
+        description.length &&
+        this.addTransactionHistory.includes(description) === false
+      ) {
         this.addTransactionHistory.unshift(description);
       }
     },

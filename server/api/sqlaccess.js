@@ -1,8 +1,7 @@
-const { executeSql, backupDatabase } = require("./database");
-const path = require("path");
+const { executeSql, backupDatabase } = require('./database');
 
 module.exports = (app) => {
-  app.post("/sql", async (req, res) => {
+  app.post('/sql', async (req, res) => {
     let query = '';
 
     try {
@@ -14,7 +13,7 @@ module.exports = (app) => {
     }
   });
 
-  app.get("/sql/backup", async (req, res) => {
+  app.get('/sql/backup', async (req, res) => {
     try {
       res.sendFile(await backupDatabase());
       res.status(201);

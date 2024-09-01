@@ -7,12 +7,12 @@ const {
   renameCategory,
   deleteFilter,
   resetTransactionsCategoryForAFilter,
-} = require("./database");
+} = require('./database');
 
 const MIN_FILTER_LENGTH = 4;
 
 module.exports = (app) => {
-  app.get("/categories/names", async (req, res) => {
+  app.get('/categories/names', async (req, res) => {
     try {
       res.json(await getCategories());
     } catch (err) {
@@ -20,7 +20,7 @@ module.exports = (app) => {
     }
   });
 
-  app.delete("/categories", async (req, res) => {
+  app.delete('/categories', async (req, res) => {
     try {
       const category = req.query.category;
       res.json(await deleteCategory(category));
@@ -29,8 +29,8 @@ module.exports = (app) => {
     }
   });
 
-  app.get("/categories/filters", async (req, res) => {
-    let category = "";
+  app.get('/categories/filters', async (req, res) => {
+    let category = '';
 
     try {
       category = req.query.category;
@@ -40,14 +40,12 @@ module.exports = (app) => {
     }
   });
 
-  app.post("/categories/filter", async (req, res) => {
+  app.post('/categories/filter', async (req, res) => {
     try {
       const { category, filter, label } = req.body;
 
       if (filter.trim().length < MIN_FILTER_LENGTH) {
-        res
-          .status(400)
-          .send({ message: `minimum filter length is ${MIN_FILTER_LENGTH}` });
+        res.status(400).send({ message: `minimum filter length is ${MIN_FILTER_LENGTH}` });
         return;
       }
 
@@ -58,7 +56,7 @@ module.exports = (app) => {
     }
   });
 
-  app.put("/categories/filter", async (req, res) => {
+  app.put('/categories/filter', async (req, res) => {
     try {
       const { filterId, filter, label } = req.body;
       res.json(await updateFilter(filterId, filter, label));
@@ -67,7 +65,7 @@ module.exports = (app) => {
     }
   });
 
-  app.delete("/categories/filter", async (req, res) => {
+  app.delete('/categories/filter', async (req, res) => {
     try {
       const { filter } = req.query;
       const result = await resetTransactionsCategoryForAFilter(filter);
@@ -78,9 +76,9 @@ module.exports = (app) => {
     }
   });
 
-  app.post("/categories/rename", async (req, res) => {
-    let newName = "";
-    let oldName = "";
+  app.post('/categories/rename', async (req, res) => {
+    let newName = '';
+    let oldName = '';
 
     try {
       newName = req.body.newName;

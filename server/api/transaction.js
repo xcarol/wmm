@@ -13,7 +13,7 @@ const {
   resetTransactionsCategory,
   updateTransactionsCategory,
   updateTransactionsAsNotDuplicated,
-} = require("./database");
+} = require('./database');
 
 const prepareTransactions = async (transactions) => {
   transactions.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
@@ -25,7 +25,7 @@ const prepareTransactions = async (transactions) => {
 };
 
 module.exports = (app) => {
-  app.post("/transactions", async (req, res) => {
+  app.post('/transactions', async (req, res) => {
     try {
       const transactions = await prepareTransactions(req.body.transactions);
 
@@ -36,7 +36,7 @@ module.exports = (app) => {
     }
   });
 
-  app.put("/transactions", async (req, res) => {
+  app.put('/transactions', async (req, res) => {
     let transactions;
 
     try {
@@ -47,20 +47,18 @@ module.exports = (app) => {
     }
   });
 
-  app.put("/transactions/category", async (req, res) => {
+  app.put('/transactions/category', async (req, res) => {
     try {
       const data = req.body;
       const operation = data.operation;
       switch (operation) {
-        case "apply":
+        case 'apply':
           res.json(await applyFilters());
           break;
-        case "update":
-          res.json(
-            await updateTransactionsCategory(data.transactions, data.category)
-          );
+        case 'update':
+          res.json(await updateTransactionsCategory(data.transactions, data.category));
           break;
-        case "reset":
+        case 'reset':
           res.json(await resetTransactionsCategory(data.category));
           break;
         default:
@@ -72,7 +70,7 @@ module.exports = (app) => {
     }
   });
 
-  app.get("/transactions/add", async (req, res) => {
+  app.get('/transactions/add', async (req, res) => {
     try {
       const { date, bank, category, description, amount } = req.query;
       res.json(await addTransaction(date, bank, category ?? '', description, amount));
@@ -81,7 +79,7 @@ module.exports = (app) => {
     }
   });
 
-  app.get("/transactions/duplicated", async (req, res) => {
+  app.get('/transactions/duplicated', async (req, res) => {
     try {
       res.json(await getDuplicatedTransactions());
     } catch (err) {
@@ -89,7 +87,7 @@ module.exports = (app) => {
     }
   });
 
-  app.put("/transactions/duplicated", async (req, res) => {
+  app.put('/transactions/duplicated', async (req, res) => {
     let transactions;
 
     try {
@@ -100,7 +98,7 @@ module.exports = (app) => {
     }
   });
 
-  app.get("/transactions", async (req, res) => {
+  app.get('/transactions', async (req, res) => {
     try {
       const { bank, start, end, category, filter } = req.query;
       res.json(await getTransactions(bank, start, end, category, filter));
@@ -109,7 +107,7 @@ module.exports = (app) => {
     }
   });
 
-  app.get("/transactions/years", async (req, res) => {
+  app.get('/transactions/years', async (req, res) => {
     try {
       res.json(await getYears());
     } catch (err) {
@@ -117,7 +115,7 @@ module.exports = (app) => {
     }
   });
 
-  app.get("/transactions/category", async (req, res) => {
+  app.get('/transactions/category', async (req, res) => {
     try {
       const category = req.query.category;
       const filter = req.query.filter;
@@ -128,9 +126,7 @@ module.exports = (app) => {
         res.json(await getCategoryBalance(category, start, end));
       } else {
         if (filter.length) {
-          res.json(
-            await getCategoryFiltersBalance(category, filter, start, end)
-          );
+          res.json(await getCategoryFiltersBalance(category, filter, start, end));
         } else {
           res.json(await getCategoryNonFiltersBalance(category, start, end));
         }
