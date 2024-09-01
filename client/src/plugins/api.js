@@ -11,6 +11,7 @@ class Api {
     deleteCategory: '/categories?category={1}',
     renameCategory: '/categories/rename',
     transactions: '/transactions',
+    addTransaction: '/transactions/add?date={1}&bank={2}&description={3}&amount={4}',
     transactionsUpdateCategory: '/transactions/category',
     transactionsCategoryBalance: '/transactions/category?category={1}&start={2}&end={3}',
     transactionsCategoryFiltersBalance:
@@ -95,6 +96,16 @@ class Api {
   renameCategory(oldName, newName) {
     const url = Api.endpoint(this.endpoints.renameCategory);
     return this.axios.post(url, { oldName, newName });
+  }
+
+  addTransaction(date, bank, category, description, amount) {
+    let url = Api.endpoint(this.endpoints.addTransaction, date, bank, description, amount);
+
+    if (category) {
+      url += `&category=${category}`;
+    }
+
+    return this.axios.get(url);
   }
 
   addTransactions(transactions) {
@@ -184,7 +195,7 @@ class Api {
         if (useAnd) {
           url += '&';
         }
-        category = `category=${category}`;
+        url += `category=${category}`;
         useAnd = true;
       }
 

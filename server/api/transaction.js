@@ -1,4 +1,5 @@
 const {
+  addTransaction,
   addTransactions,
   applyFilters,
   deleteTransactions,
@@ -67,6 +68,15 @@ module.exports = (app) => {
       }
     } catch (err) {
       console.error(err);
+      res.status(err.sqlState ? 400 : 500).send(err);
+    }
+  });
+
+  app.get("/transactions/add", async (req, res) => {
+    try {
+      const { date, bank, category, description, amount } = req.query;
+      res.json(await addTransaction(date, bank, category ?? '', description, amount));
+    } catch (err) {
       res.status(err.sqlState ? 400 : 500).send(err);
     }
   });

@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import ImportView from '../views/ImportView.vue';
+import AddTransactionView from '../views/AddTransactionView.vue';
 import CategorizeView from '../views/CategorizeView.vue';
 import DuplicatesView from '../views/DuplicatesView.vue';
 import SqlView from '../views/SqlView.vue';
@@ -20,6 +21,11 @@ const router = createRouter({
       path: '/import',
       name: 'import',
       component: ImportView,
+    },
+    {
+      path: '/add-transaction',
+      name: 'addTransaction',
+      component: AddTransactionView,
     },
     {
       path: '/categorize',
