@@ -13,6 +13,10 @@
     "close": "Cerrar",
     "cancel": "Cancelar"
   },
+  "validation": {
+    "required": "Requerido",
+    "number": "Valor numérico inválido"
+  },
   "mainDrawer": {
     "import": "Importar",
     "addTransaction": "Añadir manualmente",

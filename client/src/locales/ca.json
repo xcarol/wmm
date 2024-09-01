@@ -13,6 +13,10 @@
     "close": "Tanca",
     "cancel": "Cancel·lar"
   },
+  "validation": {
+    "required": "Requerit",
+    "number": "Valor numèric invàlid"
+  },
   "mainDrawer": {
     "import": "Importar",
     "addTransaction": "Afegir manualment",

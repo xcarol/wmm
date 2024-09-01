@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card class="pt-5">
     <v-card-actions class="align-start ml-4 mr-4">
       <v-text-field
         v-model="selectedDate"
@@ -12,6 +12,7 @@
         v-model="selectedBankName"
         class="ml-4"
         :items="banksNames"
+        :rules="[validationRules.required]"
         :label="$t('addTransactionView.bankNameLabel')"
       />
       <v-select
@@ -23,15 +24,23 @@
       <v-text-field
         v-model="transactionAmount"
         class="ml-4"
-        :prepend-inner-icon="amountSign"
+        :rules="[validationRules.required, validationRules.number]"
         :label="$t('addTransactionView.amountLabel')"
-        @click:prepend-inner="switchSign"
-      />
+      >
+        <template #prepend-inner>
+          <v-icon
+            :color="amountColor"
+            @click.stop="switchSign"
+            >{{ amountSign }}</v-icon
+          >
+        </template>
+      </v-text-field>
     </v-card-actions>
     <v-card-actions class="align-start ml-4 mr-4">
       <v-combobox
         v-model="transactionDescription"
         :items="descriptions"
+        :rules="[validationRules.required]"
         :label="$t('addTransactionView.descriptionLabel')"
         clearable
       />
@@ -67,7 +76,9 @@ import { useMessageDialogStore } from '../stores/messageDialog';
 dayjs.extend(customParseFormat);
 
 const minusIcon = '$minus';
+const minusColor = 'red';
 const plusIcon = '$plus';
+const plusColor = 'green';
 const banksNames = ref([]);
 const categoriesNames = ref([]);
 const selectedDate = ref(dayjs().format('YYYY-MM-DD'));
@@ -77,6 +88,7 @@ const transactionDescription = ref('');
 const transactionAmount = ref('');
 const dateCalendarVisible = ref(false);
 const amountSign = ref(minusIcon);
+const amountColor = ref(minusColor);
 let amountOperator = -1;
 
 const api = useApi();
@@ -85,6 +97,14 @@ const progressDialog = useProgressDialogStore();
 const messageDialog = useMessageDialogStore();
 const { t: $t } = useI18n();
 
+const validationRules = {
+  required: (value) => !!value || $t('validation.required'),
+  number: (value) => {
+    const pattern = /^[0-9|,|.]+$/;
+    return pattern.test(value) || $t('validation.number');
+  },
+};
+
 const showDateCalendar = () => {
   dateCalendarVisible.value = true;
 };
@@ -92,9 +112,11 @@ const showDateCalendar = () => {
 const switchSign = () => {
   if (amountSign.value === minusIcon) {
     amountSign.value = plusIcon;
+    amountColor.value = plusColor;
     amountOperator = 1;
   } else {
     amountSign.value = minusIcon;
+    amountColor.value = minusColor;
     amountOperator = -1;
   }
 };
