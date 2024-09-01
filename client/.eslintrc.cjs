@@ -9,9 +9,7 @@ module.exports = {
     '@vue/eslint-config-prettier/skip-formatting',
   ],
 
-  plugins: [
-    'vue',
-  ],
+  plugins: ['vue'],
 
   rules: {
     'max-len': 0,
@@ -19,13 +17,17 @@ module.exports = {
     'no-underscore-dangle': 'off',
     'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    'import/extensions': ['error', 'always', {
-      js: 'never',
-      vue: 'never',
-    }],
+    'import/extensions': [
+      'error',
+      'always',
+      {
+        js: 'never',
+        vue: 'never',
+      },
+    ],
     'arrow-parens': ['error', 'always'],
-    "comma-dangle": ["error", "always-multiline"],
-    "semi": ["error", "always"],
+    'comma-dangle': ['error', 'always-multiline'],
+    semi: ['error', 'always'],
     'vue/component-name-in-template-casing': ['error', 'kebab-case'],
   },
   parserOptions: {

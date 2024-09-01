@@ -3,7 +3,6 @@
   "version": "0.0.1",
   "description": "Where's My Money - Backend",
   "private": true,
-  "type": "module",
   "main": "index.js",
   "author": "xcarolr@gmail.com",
   "license": "MIT",

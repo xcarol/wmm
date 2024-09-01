@@ -11,7 +11,15 @@ import ca from 'vuetify/lib/locale/ca.mjs';
 import en from 'vuetify/lib/locale/en.mjs';
 import es from 'vuetify/lib/locale/es.mjs';
 import colors from 'vuetify/lib/util/colors.mjs';
-import { mdiHome, mdiMagnify, mdiArrowLeft, mdiCalendarMonth, mdiOpenInNew, mdiMinusBox, mdiPlusBox } from '@mdi/js';
+import {
+  mdiHome,
+  mdiMagnify,
+  mdiArrowLeft,
+  mdiCalendarMonth,
+  mdiOpenInNew,
+  mdiMinusBox,
+  mdiPlusBox,
+} from '@mdi/js';
 
 const defaultTheme =
   import.meta.env.VITE_THEME ||
