@@ -5,7 +5,6 @@
         v-model="selectedDate"
         append-inner-icon="$calendar"
         :label="$t('addTransactionView.dateLabel')"
-        readonly
         @click:append-inner="showDateCalendar"
       />
       <v-select
@@ -53,13 +52,10 @@
       </v-btn>
     </v-card-actions>
   </v-card>
-  <v-dialog v-model="dateCalendarVisible">
-    <v-calendar
-      :attributes="dateCalendarAttributes"
-      is-dark="system"
-      @dayclick="onDateSelected"
-    />
-  </v-dialog>
+  <calendar-dialog
+    v-model="dateCalendarVisible"
+    @date-selected="onDateSelected"
+  />
 </template>
 
 <script setup>
@@ -72,8 +68,11 @@ import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
 import { useProgressDialogStore } from '../stores/progressDialog';
 import { useMessageDialogStore } from '../stores/messageDialog';
+import CalendarDialog from '../components/CalendarDialog.vue';
 
 dayjs.extend(customParseFormat);
+
+const DATE_FORMAT = 'YYYY-MM-DD';
 
 const minusIcon = '$minus';
 const minusColor = 'red';
@@ -81,7 +80,7 @@ const plusIcon = '$plus';
 const plusColor = 'green';
 const banksNames = ref([]);
 const categoriesNames = ref([]);
-const selectedDate = ref(dayjs().format('YYYY-MM-DD'));
+const selectedDate = ref(dayjs().format(DATE_FORMAT));
 const selectedBankName = ref('');
 const selectedCategory = ref('');
 const transactionDescription = ref('');
@@ -122,13 +121,10 @@ const switchSign = () => {
 };
 
 const onDateSelected = (date) => {
-  const dateFormatted = `${date.year}-${date.month}-${date.day}`;
-
   dateCalendarVisible.value = false;
-  selectedDate.value = dateFormatted;
+  selectedDate.value = dayjs(date).format(DATE_FORMAT);
 };
 
-const dateCalendarAttributes = computed(() => [{ highlight: true, dates: selectedDate.value }]);
 const descriptions = computed(() => appStore.addTransactionHistory);
 
 const notReadyToAdd = () => {

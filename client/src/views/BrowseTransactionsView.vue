@@ -24,14 +24,12 @@
         class="ml-4"
         :items="categoriesNames"
         :label="$t('browseTransactionsView.categoryLabel')"
-        @update:model-value="setCategorySelectedAttributes"
       />
       <v-text-field
         v-model="selectedMinDate"
         class="ml-4"
         append-inner-icon="$calendar"
         :label="$t('browseTransactionsView.startDateLabel')"
-        readonly
         @click:append-inner="showMinDateCalendar"
       />
       <v-text-field
@@ -39,7 +37,6 @@
         class="ml-4"
         append-inner-icon="$calendar"
         :label="$t('browseTransactionsView.endDateLabel')"
-        readonly
         @click:append-inner="showMaxDateCalendar"
       />
       <v-btn
@@ -66,26 +63,22 @@
       />
     </v-card-text>
   </v-card>
-  <v-dialog v-model="startDateCalendarVisible">
-    <v-calendar
-      :initial-page="initialStartPage"
-      :min-date="minBankDate"
-      :max-date="maxBankDate"
-      :attributes="startDateCalendarAttributes"
-      is-dark="system"
-      @dayclick="onStartDateSelected"
-    />
-  </v-dialog>
-  <v-dialog v-model="endDateCalendarVisible">
-    <v-calendar
-      :initial-page="initialEndPage"
-      :min-date="minBankDate"
-      :max-date="maxBankDate"
-      :attributes="endDateCalendarAttributes"
-      is-dark="system"
-      @dayclick="onEndDateSelected"
-    />
-  </v-dialog>
+  <calendar-dialog
+    v-model="startDateCalendarVisible"
+    :initial-page="initialStartPage"
+    :min-date="minBankDate"
+    :max-date="maxBankDate"
+    :attributes="startDateCalendarAttributes"
+    @date-selected="onStartDateSelected"
+  />
+  <calendar-dialog
+    v-model="endDateCalendarVisible"
+    :initial-page="initialEndPage"
+    :min-date="minBankDate"
+    :max-date="maxBankDate"
+    :attributes="endDateCalendarAttributes"
+    @date-selected="onEndDateSelected"
+  />
 </template>
 
 <script setup>
@@ -97,6 +90,9 @@ import 'dayjs/locale/es';
 import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
 import { useProgressDialogStore } from '../stores/progressDialog';
+import CalendarDialog from '../components/CalendarDialog.vue';
+
+const DATE_FORMAT = 'YYYY-MM-DD';
 
 const api = useApi();
 const route = useRoute();
@@ -111,6 +107,8 @@ const banksNames = ref([]);
 const bankDetails = ref([]);
 const minBankDate = ref('');
 const maxBankDate = ref('');
+const minAllBanksDate = ref('');
+const maxAllBanksDate = ref('');
 const categoriesNames = ref([]);
 const selectedMinDate = ref('');
 const selectedMaxDate = ref('');
@@ -172,7 +170,10 @@ const endDateCalendarAttributes = computed(() => [
   { highlight: true, dates: selectedMaxDate.value },
 ]);
 
-const notReadyToQuery = () => selectedMinDate.value === '' || selectedMaxDate.value === '';
+const notReadyToQuery = () =>
+  selectedMinDate.value === '' ||
+  selectedMaxDate.value === '' ||
+  Date.parse(selectedMinDate.value) > Date.parse(selectedMaxDate.value);
 
 const getBanksBrief = async () => {
   totalBanksAmount = 0.0;
@@ -191,14 +192,23 @@ const getBanksBrief = async () => {
 
     const allBalancePromises = [];
     for (let bankCount = 0; bankCount < banksNames.value.length; bankCount += 1) {
-      allBalancePromises.push(
-        api.bankBalance(banksNames.value.at(bankCount), minBankDate.value, maxBankDate.value),
-      );
+      allBalancePromises.push(api.bankBalance(banksNames.value.at(bankCount)));
     }
+
+    minAllBanksDate.value = dayjs().format(DATE_FORMAT);
+    maxAllBanksDate.value = '';
 
     retrievedBalances = await Promise.all(allBalancePromises);
     retrievedBalances.forEach(async (result) => {
       const { data: bankBalance } = result;
+
+      if (bankBalance.first_date < minAllBanksDate.value) {
+        minAllBanksDate.value = bankBalance.first_date;
+      }
+
+      if (bankBalance.latest_date > maxAllBanksDate.value) {
+        maxAllBanksDate.value = bankBalance.latest_date;
+      }
 
       banksBalances.value.push({
         bank: bankBalance.bank,
@@ -214,6 +224,9 @@ const getBanksBrief = async () => {
       bank: $t('browseTransactionsView.totalAmount'),
       balance: totalBanksAmount.toFixed(2),
     });
+
+    minBankDate.value = minAllBanksDate.value;
+    maxBankDate.value = maxAllBanksDate.value;
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }
@@ -221,12 +234,24 @@ const getBanksBrief = async () => {
   progressDialog.stopProgress();
 };
 
+const setDefaultSelectedDates = () => {
+  if (selectedMinDate.value === '') {
+    selectedMinDate.value = dayjs(maxAllBanksDate.value).subtract(1, 'month').format(DATE_FORMAT);
+  }
+
+  if (selectedMaxDate.value === '') {
+    selectedMaxDate.value = maxAllBanksDate.value;
+  }
+};
+
 const showMinDateCalendar = () => {
   startDateCalendarVisible.value = true;
+  setDefaultSelectedDates();
 };
 
 const showMaxDateCalendar = () => {
   endDateCalendarVisible.value = true;
+  setDefaultSelectedDates();
 };
 
 const bankTransactions = async () => {
@@ -287,33 +312,18 @@ const routeToData = () => {
   bankTransactions();
 };
 
-const setCategorySelectedAttributes = (categoryName) => {
-  if (categoryName === '' || retrievedBalances === null) {
-    return;
-  }
-
-  retrievedBalances.forEach((bankBalance) => {
-    const { data: balance } = bankBalance;
-    if (balance.bank === categoryName) {
-      const minDate = dayjs(balance.latest_date).subtract(1, 'month').format('YYYY-MM-DD');
-      selectedBankName.value = categoryName;
-      minBankDate.value = balance.first_date;
-      maxBankDate.value = balance.latest_date;
-      selectedMinDate.value = balance.first_date > minDate ? balance.first_date : minDate;
-      selectedMaxDate.value = balance.latest_date;
-    }
-  });
-};
-
 const setBankSelectedAttributes = (bankName) => {
-  if (bankName === '' || retrievedBalances === null) {
+  if (retrievedBalances === null) {
     return;
   }
+
+  minBankDate.value = '';
+  maxBankDate.value = '';
 
   retrievedBalances.forEach((bankBalance) => {
     const { data: balance } = bankBalance;
     if (balance.bank === bankName) {
-      const minDate = dayjs(balance.latest_date).subtract(1, 'month').format('YYYY-MM-DD');
+      const minDate = dayjs(balance.latest_date).subtract(1, 'month').format(DATE_FORMAT);
       selectedBankName.value = bankName;
       minBankDate.value = balance.first_date;
       maxBankDate.value = balance.latest_date;
@@ -321,26 +331,30 @@ const setBankSelectedAttributes = (bankName) => {
       selectedMaxDate.value = balance.latest_date;
     }
   });
+
+  if (minBankDate.value === '') {
+    minBankDate.value = dayjs(maxAllBanksDate.value).subtract(1, 'month').format(DATE_FORMAT);
+  }
+
+  if (maxBankDate.value === '') {
+    maxBankDate.value = maxAllBanksDate.value;
+  }
 };
 
 const onStartDateSelected = (date) => {
-  const dateFormatted = `${date.year}-${date.month}-${date.day}`;
-
-  if (Date.parse(dateFormatted) < Date.parse(minBankDate.value)) {
+  if (Date.parse(date) < Date.parse(minBankDate.value)) {
     return;
   }
   startDateCalendarVisible.value = false;
-  selectedMinDate.value = dateFormatted;
+  selectedMinDate.value = dayjs(date).format(DATE_FORMAT);
 };
 
 const onEndDateSelected = (date) => {
-  const dateFormatted = `${date.year}-${date.month}-${date.day}`;
-
-  if (Date.parse(dateFormatted) > Date.parse(maxBankDate.value)) {
+  if (Date.parse(date) > Date.parse(maxBankDate.value)) {
     return;
   }
   endDateCalendarVisible.value = false;
-  selectedMaxDate.value = dateFormatted;
+  selectedMaxDate.value = dayjs(date).format(DATE_FORMAT);
 };
 
 const parseParams = async () => {
