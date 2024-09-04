@@ -255,8 +255,6 @@ const applyCategory = () => {
     yes: async () => {
       await updateTransactions(selectedTransactions, category);
       selectedCategory.value = '';
-      filterText.value = '';
-      filterCategory.value = '';
       searchSelectedTransactions();
     },
     no: () => {},
