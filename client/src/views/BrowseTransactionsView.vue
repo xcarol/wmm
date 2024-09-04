@@ -47,7 +47,7 @@
         {{ $t('browseTransactionsView.searchButton') }}
       </v-btn>
     </v-card-actions>
-    <v-card-text>
+    <v-card-text v-resize="onResize">
       <div
         v-show="bankDetails.length"
         class="pl-4"
@@ -82,7 +82,7 @@
 </template>
 
 <script setup>
-import { computed, ref, onBeforeMount } from 'vue';
+import { computed, ref, onBeforeMount, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import dayjs from 'dayjs';
@@ -101,7 +101,6 @@ const { t: $t, locale } = useI18n();
 const appStore = useAppStore();
 const progressDialog = useProgressDialogStore();
 
-const adjustedHeight = ref(400); // TODO: adjust with the screen height
 const banksBalances = ref([]);
 const banksNames = ref([]);
 const bankDetails = ref([]);
@@ -138,6 +137,11 @@ const headerDetails = [
   { title: $t('browseTransactionsView.categoryLabel'), key: 'category' },
   { title: $t('browseTransactionsView.amountLabel'), key: 'amount', align: 'end' },
 ];
+
+const innerHeight = ref(0);
+const adjustedHeight = computed(() => {
+  return innerHeight.value - 220;
+});
 
 const transactionsBrief = computed(() => {
   const banks = [];
@@ -402,5 +406,10 @@ const beforeMount = async () => {
   parseParams();
 };
 
+const onResize = () => {
+  innerHeight.value = window.innerHeight;
+};
+
 onBeforeMount(() => beforeMount());
+onMounted(() => onResize());
 </script>

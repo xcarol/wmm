@@ -37,7 +37,7 @@
       <transaction-table
         :selected-items="selectedItems"
         :table-items="tableItems"
-        :height="autoHeight"
+        :height="adjustedHeight"
         @update-model-value="updateModelValue"
       />
     </v-card-text>
@@ -98,7 +98,7 @@ const categoryNames = ref(['']);
 const showNewFilterDialog = ref(false);
 const innerHeight = ref(0);
 
-const autoHeight = computed(() => {
+const adjustedHeight = computed(() => {
   return innerHeight.value - 290;
 });
 
