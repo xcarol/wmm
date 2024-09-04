@@ -87,7 +87,8 @@
     "applyWarningTitle": "Actualización a la categoría [%s]",
     "applyWarningMessageItem": "· %s (%d)\n",
     "applyFiltersWarningMessage": "ATENCIÓN: Se van a aplicar TODOS los filtros de TODAS las categorías.\nEsta operación puede consumir un tiempo considerable.\n¿Estás seguro?",
-    "searchTransactionDescription": "Buscalo en la web"
+    "searchTransactionDescription": "Buscalo en la web",
+    "applyAllFilters": "Aplica todos los filtros"
   },
   "filtersView": {
     "title": "Gestión de los filtros",
