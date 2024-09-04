@@ -87,7 +87,8 @@
     "applyWarningTitle": "Update to category [%s]",
     "applyWarningMessageItem": "· %s (%d)\n",
     "applyFiltersWarningMessage": "WARNING: You're about to apply ALL filters of ALL categories.\nThis is a time consuming operation.\nAre you sure?",
-    "searchTransactionDescription": "Search for it at the web"
+    "searchTransactionDescription": "Search for it at the web",
+    "applyAllFilters": "Apply all filters"
   },
   "filtersView": {
     "title": "Filter management",

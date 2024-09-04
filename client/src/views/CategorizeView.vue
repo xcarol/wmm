@@ -61,6 +61,12 @@
         @click.stop="showCreateFilterDialog"
         >{{ $t('categorizeView.createFilterButton') }}</v-btn
       >
+      <v-btn
+        class="mr-2"
+        :disabled="cannotApplyAllFilters"
+        @click.stop="applyAllFilters"
+        >{{ $t('categorizeView.applyAllFilters') }}</v-btn
+      >
     </v-card-actions>
   </v-card>
 </template>
@@ -115,6 +121,8 @@ const selectedItemToFilter = computed(() => {
 
   return '';
 });
+
+const cannotApplyAllFilters = computed(() => categoryNames.value.length === 0);
 
 const canApplyCategory = computed(() => {
   return !!(
@@ -253,6 +261,21 @@ const applyCategory = () => {
     },
     no: () => {},
   });
+};
+
+const applyAllFilters = async () => {
+  progressDialog.startProgress({
+    steps: 0,
+    description: $t('progress.updateProgress'),
+  });
+
+  try {
+    await api.applyFilters();
+  } catch (e) {
+    appStore.alertMessage = api.getErrorMessage(e);
+  }
+
+  progressDialog.stopProgress();
 };
 
 const showCreateFilterDialog = () => {

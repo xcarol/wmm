@@ -87,7 +87,8 @@
     "applyWarningTitle": "Actualització a la categoria [%s]",
     "applyWarningMessageItem": "· %s (%d)\n",
     "applyFiltersWarningMessage": "ATENCIÓ: Ets a punt d'aplicar TOTS els filtres de TOTES les categories.\nAquesta operació pot consumir un temps considerable.\nN'estàs segur?",
-    "searchTransactionDescription": "Cerca'l a la web"
+    "searchTransactionDescription": "Cerca'l a la web",
+    "applyAllFilters": "Aplica tots els filtres"
   },
   "filtersView": {
     "title": "Gestió dels filtres",
