@@ -34,7 +34,10 @@
         </v-btn>
       </v-row>
     </v-card-text>
-    <v-card-text v-show="selectedYear" v-resize="onResize">
+    <v-card-text
+      v-show="selectedYear"
+      v-resize="onResize"
+    >
       <v-row>
         <v-col cols="6">
           <v-data-table-virtual
@@ -51,7 +54,10 @@
             <template #[`header.data-table-select`]></template>
           </v-data-table-virtual>
         </v-col>
-        <v-col cols="6" align="center">
+        <v-col
+          cols="6"
+          align="center"
+        >
           <pie
             :data="chartData"
             :options="chartOptions"

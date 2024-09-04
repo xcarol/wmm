@@ -44,7 +44,9 @@ const props = defineProps({
   },
   attributes: {
     type: Array,
-    default() {return [{ highlight: true }];},
+    default() {
+      return [{ highlight: true }];
+    },
   },
 });
 
