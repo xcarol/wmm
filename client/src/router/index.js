@@ -9,6 +9,7 @@ import SqlView from '../views/SqlView.vue';
 import FiltersView from '../views/FiltersView.vue';
 import BrowseTransactionsView from '../views/BrowseTransactionsView.vue';
 import BrowseCategoriesView from '../views/BrowserCategoriesView.vue';
+import BrowseTimelineView from '../views/BrowseTimelineView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -65,6 +66,12 @@ const router = createRouter({
       name: 'browseCategories',
       component: BrowseCategoriesView,
       meta: { title: i18n.global.t('browseCategoriesView.title') },
+    },
+    {
+      path: '/browse/timeline',
+      name: 'browseTimeline',
+      component: BrowseTimelineView,
+      meta: { title: i18n.global.t('browseTimelineView.title') },
     },
   ],
 });
