@@ -115,6 +115,12 @@ let expenseItems = [];
 let incomeItems = [];
 const totalIncomes = ref(0.0);
 const totalExpenses = ref(0.0);
+const totalIncomesPerCent = computed(() =>
+  Math.round((totalIncomes.value * 100) / (totalIncomes.value + totalExpenses.value)),
+);
+const totalExpensesPerCent = computed(() =>
+  Math.round((totalExpenses.value * 100) / (totalIncomes.value + totalExpenses.value)),
+);
 
 const innerHeight = ref(0);
 const adjustedHeight = computed(() => {
@@ -163,12 +169,12 @@ const chartData = computed(() => {
     datasets: [
       {
         label: $t('browseCategoriesView.incomesLabel'),
-        data: [totalIncomes.value],
+        data: [totalIncomesPerCent.value],
         backgroundColor: 'rgba(255, 99, 132, 0.2)',
       },
       {
         label: $t('browseCategoriesView.expensesLabel'),
-        data: [totalExpenses.value],
+        data: [totalExpensesPerCent.value],
         backgroundColor: 'rgba(54, 162, 235, 0.2)',
       },
     ],
