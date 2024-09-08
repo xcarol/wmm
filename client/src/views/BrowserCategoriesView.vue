@@ -33,6 +33,15 @@
           {{ $t('browseCategoriesView.backToCategories') }}
         </v-btn>
       </v-row>
+      <v-row cols="12">
+        <div class="chart-container">
+          <chart
+            type="bar"
+            :data="chartData"
+            :options="chartOptions"
+          />
+        </div>
+      </v-row>
     </v-card-text>
     <v-card-text
       v-show="selectedYear"
@@ -59,8 +68,8 @@
           align="center"
         >
           <pie
-            :data="chartData"
-            :options="chartOptions"
+            :data="pieData"
+            :options="pieOptions"
           />
         </v-col>
       </v-row>
@@ -72,13 +81,21 @@
 import { ref, onBeforeMount, onBeforeUpdate, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
-import { Chart as ChartJS, ArcElement, Tooltip } from 'chart.js';
-import { Pie } from 'vue-chartjs';
+import {
+  Chart as ChartJS,
+  ArcElement,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+import { Pie, Chart } from 'vue-chartjs';
 import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
 import { useProgressDialogStore } from '../stores/progressDialog';
 
-ChartJS.register(ArcElement, Tooltip);
+ChartJS.register(ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 const api = useApi();
 const { t: $t, locale } = useI18n();
@@ -96,10 +113,72 @@ const categoryViewLevel = ref('category');
 
 let expenseItems = [];
 let incomeItems = [];
+const totalIncomes = ref(0.0);
+const totalExpenses = ref(0.0);
+const totalIncomesPerCent = computed(() =>
+  Math.round((totalIncomes.value * 100) / (totalIncomes.value + totalExpenses.value)),
+);
+const totalExpensesPerCent = computed(() =>
+  Math.round((totalExpenses.value * 100) / (totalIncomes.value + totalExpenses.value)),
+);
 
 const innerHeight = ref(0);
 const adjustedHeight = computed(() => {
   return innerHeight.value - 240;
+});
+
+const chartOptions = {
+  indexAxis: 'y',
+  barThickness: 10,
+  responsive: true,
+  maintainAspectRatio: false,
+  scales: {
+    x: {
+      beginAtZero: true,
+      stacked: true,
+      grid: {
+        display: false,
+      },
+      ticks: {
+        display: false,
+      },
+    },
+    y: {
+      stacked: true,
+      grid: {
+        display: false,
+      },
+      ticks: {
+        display: false,
+      },
+    },
+  },
+  plugins: {
+    legend: {
+      display: true,
+      labels: {
+        color: '#FFFFFF',
+      },
+    },
+  },
+};
+
+const chartData = computed(() => {
+  return {
+    labels: ['', ''],
+    datasets: [
+      {
+        label: $t('browseCategoriesView.incomesLabel'),
+        data: [totalIncomesPerCent.value],
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+      },
+      {
+        label: $t('browseCategoriesView.expensesLabel'),
+        data: [totalExpensesPerCent.value],
+        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+      },
+    ],
+  };
 });
 
 const headerDetails = computed(() => [
@@ -123,7 +202,7 @@ const randomColor = () => {
   return `#${red}${green}${blue}`;
 };
 
-const chartData = computed(() => {
+const pieData = computed(() => {
   const selected = selectedCategories.value;
   const categories = tableItems.value;
 
@@ -215,16 +294,23 @@ const updateView = () => {
 };
 
 const addTransactionsToLists = (transactions) => {
+  totalIncomes.value = 0.0;
+  totalExpenses.value = 0.0;
+
   transactions.forEach(async (result) => {
     const { data: transaction } = result;
     if (transaction.category) {
       if (transaction.balance >= 0) {
         addTransactionToCategoriesList(incomeItems, transaction);
+        totalIncomes.value += transaction.balance;
       } else {
         addTransactionToCategoriesList(expenseItems, transaction);
+        totalExpenses.value += transaction.balance;
       }
     }
   });
+
+  totalExpenses.value *= -1;
 };
 
 const requestCategoriesBalances = async (year) => {
@@ -359,9 +445,14 @@ const showExpenses = () => {
   refreshRoute();
 };
 
-const chartOptions = {
+const pieOptions = {
   interaction: {
     mode: 'index',
+  },
+  plugins: {
+    legend: {
+      position: '',
+    },
   },
   onClick: (e, item) => {
     if (!item.at(0)) {
@@ -422,3 +513,12 @@ onBeforeMount(() => beforeMount());
 onBeforeUpdate(() => parseParams());
 onMounted(() => onResize());
 </script>
+
+<style lang="css" scoped>
+.chart-container {
+  position: relative;
+  margin: auto;
+  height: 10vh;
+  width: 100%;
+}
+</style>
