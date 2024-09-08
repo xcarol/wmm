@@ -26,7 +26,8 @@
     "filters": "Filters",
     "browser": "Browse",
     "browseTransactions": "Transactions",
-    "browseCategories": "Categories"
+    "browseCategories": "Categories",
+    "browseTimeline": "Timeline"
   },
   "progress": {
     "title": "Operation in progress...",
@@ -135,6 +136,15 @@
     "incomesLabel": "Incomes",
     "expensesLabel": "Expenses",
     "backToCategories": "Categories"
+  },
+  "browseTimelineView": {
+    "title": "Browse timeline",
+    "categoryLabel": "Category",
+    "periodLabel": "Period",
+    "searchButton": "Search",
+    "yearLabel": "Anunal",
+    "monthLabel": "Mensual",
+    "dayLabel": "Daily"
   },
   "addTransactionView": {
     "title": "Add a transaction",

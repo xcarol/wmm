@@ -26,7 +26,8 @@
     "filters": "Filtres",
     "browse": "Explorar",
     "browseTransactions": "Transaccions",
-    "browseCategories": "Categories"
+    "browseCategories": "Categories",
+    "browseTimeline": "Cronologia"
   },
   "progress": {
     "title": "Operació en progress",
@@ -135,6 +136,15 @@
     "incomesLabel": "Ingressos",
     "expensesLabel": "Despeses",
     "backToCategories": "Categories"
+  },
+  "browseTimelineView": {
+    "title": "Exploració cronològica",
+    "categoryLabel": "Categoria",
+    "periodLabel": "Període",
+    "searchButton": "Cerca",
+    "yearLabel": "Anual",
+    "monthLabel": "Mensual",
+    "dayLabel": "Diari"
   },
   "addTransactionView": {
     "title": "Afegeix una transacció",

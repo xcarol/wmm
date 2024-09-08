@@ -26,7 +26,8 @@
     "filters": "Filtros",
     "browse": "Explorar",
     "browseTransactions": "Transacciones",
-    "browseCategories": "Categorías"
+    "browseCategories": "Categorías",
+    "browseTimeline": "Cronología"
   },
   "progress": {
     "title": "Operación en progreso",
@@ -135,6 +136,15 @@
     "incomesLabel": "Ingresos",
     "expensesLabel": "Gastos",
     "backToCategories": "Categorías"
+  },
+  "browseTimelineView": {
+    "title": "Exploración cronológica",
+    "categoryLabel": "Categoría",
+    "periodLabel": "Período",
+    "searchButton": "Busca",
+    "yearLabel": "Anual",
+    "monthLabel": "Mensual",
+    "dayLabel": "Diario"
   },
   "addTransactionView": {
     "title": "Añadir una transacción",
