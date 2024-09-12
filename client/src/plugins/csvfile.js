@@ -40,10 +40,10 @@ class CsvFile {
 
   parseRows(lines) {
     lines.forEach((line) => {
-      const fields = line.split('","');
+      const fields = line.split(',');
       const rowFields = [];
       fields.forEach((field) => {
-        rowFields.push(field.replace(/^"|"$|\\n$/, ''));
+        rowFields.push(field.replaceAll(/^"|"$|\\n$/g, ''));
       });
       if (rowFields.length > 1) {
         this.rows.push(rowFields);
