@@ -142,9 +142,10 @@
     "categoryLabel": "Category",
     "periodLabel": "Period",
     "searchButton": "Search",
-    "yearLabel": "Anunal",
-    "monthLabel": "Mensual",
-    "dayLabel": "Daily"
+    "yearLabel": "Yearly",
+    "monthLabel": "Monthly",
+    "dayLabel": "Daily",
+    "unitLabel": "Transaction"
   },
   "addTransactionView": {
     "title": "Add a transaction",

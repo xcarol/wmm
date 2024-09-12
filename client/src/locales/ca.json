@@ -144,7 +144,8 @@
     "searchButton": "Cerca",
     "yearLabel": "Anual",
     "monthLabel": "Mensual",
-    "dayLabel": "Diari"
+    "dayLabel": "Diari",
+    "unitLabel": "Transacció"
   },
   "addTransactionView": {
     "title": "Afegeix una transacció",

@@ -50,6 +50,7 @@ const periodsNames = ref([
   $t('browseTimelineView.yearLabel'),
   $t('browseTimelineView.monthLabel'),
   $t('browseTimelineView.dayLabel'),
+  $t('browseTimelineView.unitLabel'),
 ]);
 const selectedPeriod = ref('');
 const categoryBalances = ref([]);
@@ -84,7 +85,26 @@ const updateTransactions = async () => {
   });
 
   try {
-    const { data: balances } = await api.categoryBalance( selectedCategory.value, '1970-01-01', dayjs().format(DATE_FORMAT));
+    let period = 'unit';
+    switch (selectedPeriod.value) {
+      case periodsNames.value[0]:
+        period = 'year';
+        break;
+      case periodsNames.value[1]:
+        period = 'month';
+        break;
+      case periodsNames.value[2]:
+        period = 'day';
+        break;
+      default:
+        break;
+    }
+    const { data: balances } = await api.categoryTimeline(
+      selectedCategory.value,
+      period,
+      '1970-01-01',
+      dayjs().format(DATE_FORMAT),
+    );
 
     categoryBalances.value = balances;
   } catch (e) {

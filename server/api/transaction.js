@@ -7,6 +7,7 @@ const {
   getCategoryBalance,
   getCategoryFiltersBalance,
   getCategoryNonFiltersBalance,
+  getCategoryTimeline,
   getTransactions,
   getDuplicatedTransactions,
   getYears,
@@ -131,6 +132,16 @@ module.exports = (app) => {
           res.json(await getCategoryNonFiltersBalance(category, start, end));
         }
       }
+    } catch (err) {
+      res.status(err.sqlState ? 400 : 500).send(err);
+    }
+  });
+
+  app.get('/transactions/timeline', async (req, res) => {
+    try {
+      const { category, period, start, end } = req.query;
+
+      res.json(await getCategoryTimeline(category, period, start, end));
     } catch (err) {
       res.status(err.sqlState ? 400 : 500).send(err);
     }

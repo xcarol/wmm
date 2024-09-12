@@ -144,7 +144,8 @@
     "searchButton": "Busca",
     "yearLabel": "Anual",
     "monthLabel": "Mensual",
-    "dayLabel": "Diario"
+    "dayLabel": "Diario",
+    "unitLabel": "Transación"
   },
   "addTransactionView": {
     "title": "Añadir una transacción",
