@@ -21,18 +21,41 @@
         {{ $t('browseTimelineView.searchButton') }}
       </v-btn>
     </v-card-actions>
+    <v-card-text v-resize="onResize">
+      <v-row>
+        <v-col :style="{ height: `${adjustedHeight}px` }">
+          <chart
+            type="line"
+            :data="chartData"
+            :options="chartOptions"
+          />
+        </v-col>
+      </v-row>
+    </v-card-text>
   </v-card>
 </template>
 
 <script setup>
-import { ref, onBeforeMount, onBeforeUpdate, onMounted } from 'vue';
+import { ref, computed, onBeforeMount, onBeforeUpdate, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
+import {
+  Chart as ChartJS,
+  PointElement,
+  LineElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+import { Chart } from 'vue-chartjs';
 import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
 import { useProgressDialogStore } from '../stores/progressDialog';
+
+ChartJS.register(PointElement, LineElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 
@@ -44,6 +67,10 @@ const appStore = useAppStore();
 const progressDialog = useProgressDialogStore();
 
 const innerHeight = ref(0);
+const adjustedHeight = computed(() => {
+  return innerHeight.value - 180;
+});
+
 const categoriesNames = ref([]);
 const selectedCategory = ref('');
 const periodsNames = ref([
@@ -73,6 +100,48 @@ const getCategories = async () => {
 
   progressDialog.stopProgress();
 };
+
+const chartOptions = {
+  indexAxis: 'x',
+  responsive: true,
+  maintainAspectRatio: false,
+  scales: {
+    y: {
+      beginAtZero: true,
+    },
+  },
+  plugins: {
+    legend: {
+      display: true,
+      labels: {
+        color: '#FFFFFF',
+      },
+    },
+  },
+};
+
+const chartData = computed(() => {
+  const data = [];
+  const labels = [];
+
+  for (let index = 0; index < categoryBalances.value.length; index += 1) {
+    const element = categoryBalances.value[index];
+    data.push(element.total_amount * -1);
+    labels.push(element.transaction_count);
+  }
+  return {
+    labels,
+    datasets: [
+      {
+        label: 'My First Dataset',
+        data,
+        fill: false,
+        borderColor: 'rgb(75, 192, 192)',
+        tension: 0.1,
+      },
+    ],
+  };
+});
 
 const updateTransactions = async () => {
   if (selectedCategory.value === '' || selectedPeriod.value === '') {
