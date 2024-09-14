@@ -1,3 +1,5 @@
+import Papa from 'papaparse';
+
 /* eslint-disable no-param-reassign */
 class CsvFile {
   rows = [];
@@ -38,26 +40,16 @@ class CsvFile {
     return true;
   }
 
-  parseRows(lines) {
-    lines.forEach((line) => {
-      const fields = line.split(',');
-      const rowFields = [];
-      fields.forEach((field) => {
-        rowFields.push(field.replaceAll(/^"|"$|\\n$/g, ''));
-      });
-      if (rowFields.length > 1) {
-        this.rows.push(rowFields);
-      }
-    });
+  read(content) {
+    this.reset();
+
+    const {data} = Papa.parse(content);
+    this.rows = data;
+
     this.rowCount = this.rows.length;
     if (this.rowCount) {
       this.fieldCount = this.rows.at(0).length;
     }
-  }
-
-  read(content) {
-    this.reset();
-    this.parseRows(content.split(this.lineRegEx));
   }
 
   reset() {
