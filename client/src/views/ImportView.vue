@@ -203,14 +203,16 @@ const importFileToDatabase = async () => {
   for (; rowCount < appStore.csvfile.rowCount; rowCount += 1) {
     const csvRow = appStore.csvfile.rows.at(rowCount);
 
-    transactions.push({
-      date: csvDateToSql(csvRow.at(selectedColumn(selectedDateColumn.value))),
-      description: csvRow
-        .at(selectedColumn(selectedDescriptionColumn.value))
-        .slice(0, DESCRIPTION_LENGTH),
-      amount: csvAmountToSql(csvRow.at(selectedColumn(selectedAmountColumn.value))),
-      bank: selectedBankName.value.slice(0, BANK_LENGTH),
-    });
+    if (csvRow.length === appStore.csvfile.fieldCount) {
+      transactions.push({
+        date: csvDateToSql(csvRow.at(selectedColumn(selectedDateColumn.value))),
+        description: csvRow
+          .at(selectedColumn(selectedDescriptionColumn.value))
+          .slice(0, DESCRIPTION_LENGTH),
+        amount: csvAmountToSql(csvRow.at(selectedColumn(selectedAmountColumn.value))),
+        bank: selectedBankName.value.slice(0, BANK_LENGTH),
+      });
+    }
 
     if (progressDialog.progressIsCancelled) {
       break;
