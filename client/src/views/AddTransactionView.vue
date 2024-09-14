@@ -155,11 +155,41 @@ const getBanksAndCategories = async () => {
   progressDialog.stopProgress();
 };
 
+// TODO: move this logic to the server
+const csvAmountToSql = (amount) => {
+  let csvAmount = amount;
+  const comma = ',';
+  const point = '.';
+  const commaSeparator = amount.split(comma);
+  const pointSeparator = amount.split(point);
+
+  if (commaSeparator.length > 1) {
+    const pointIsDecimal = commaSeparator.at(commaSeparator.length - 1).split(point).length > 1;
+    const commaIsDecimal = pointSeparator.at(pointSeparator.length - 1).split(comma).length > 1;
+
+    if (pointIsDecimal) {
+      csvAmount = amount.replaceAll(',', '');
+    } else if (commaIsDecimal) {
+      csvAmount = amount.replaceAll('.', '').replaceAll(',', '.');
+    }
+  }
+
+  if (pointSeparator.length > 1) {
+    const commaIsDecimal = pointSeparator.at(pointSeparator.length - 1).split(comma).length > 1;
+
+    if (commaIsDecimal) {
+      csvAmount = amount.replaceAll('.', '').replaceAll(',', '.');
+    }
+  }
+
+  return parseFloat(csvAmount);
+};
+
 const addTransaction = async () => {
   const date = selectedDate.value;
   const bank = selectedBankName.value;
   const category = selectedCategory.value;
-  const amount = transactionAmount.value * amountOperator;
+  const amount = csvAmountToSql(transactionAmount.value) * amountOperator;
   const description = transactionDescription.value;
 
   appStore.addDescriptionToAddTransactionHistory(description);
@@ -169,19 +199,22 @@ const addTransaction = async () => {
     description: $t('progress.retrievingCategories'),
   });
 
+  let res = 0;
   try {
-    await api.addTransaction(date, bank, category, description, amount);
+    res = await api.addTransaction(date, bank, category, description, amount);
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
+  } finally {
+    progressDialog.stopProgress();
   }
 
-  progressDialog.stopProgress();
-
-  messageDialog.showMessage({
-    title: $t('dialog.Info'),
-    message: $t('addTransactionView.success'),
-    ok: () => {},
-  });
+  if (res) {
+    messageDialog.showMessage({
+      title: $t('dialog.Info'),
+      message: $t('addTransactionView.success'),
+      ok: () => {},
+    });
+  }
 };
 
 const beforeMount = async () => {
