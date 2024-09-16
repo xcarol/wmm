@@ -73,6 +73,8 @@ import CalendarDialog from '../components/CalendarDialog.vue';
 dayjs.extend(customParseFormat);
 
 const DATE_FORMAT = 'YYYY-MM-DD';
+const BANK_LENGTH = 200;
+const DESCRIPTION_LENGTH = 200;
 
 const minusIcon = '$minus';
 const minusColor = 'red';
@@ -201,7 +203,13 @@ const addTransaction = async () => {
 
   let res = 0;
   try {
-    res = await api.addTransaction(date, bank, category, description, amount);
+    res = await api.addTransaction(
+      date,
+      bank.slice(0, BANK_LENGTH),
+      category,
+      description.slice(0, DESCRIPTION_LENGTH),
+      amount,
+    );
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   } finally {
