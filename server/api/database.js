@@ -143,7 +143,30 @@ const queryRenameCategoryFilters = 'UPDATE filters SET category = ? WHERE catego
 
 const queryUpdateFilter = 'UPDATE filters SET filter = ?, label = ? WHERE id = ?';
 
-const queryCategoryBalancesTimelineYear =
+const queryBalancesTimelineByBankByYear =
+  'SELECT \
+    bank, \
+    YEAR(date) AS year, \
+    SUM(amount) AS total_amount, \
+    COUNT(*) AS transaction_count \
+  FROM transactions \
+  WHERE date >= ? \
+    AND date <= ? \
+  GROUP BY bank, YEAR(date)';
+
+const queryBalancesTimelineByBankByMonth =
+  'SELECT \
+    bank, \
+    YEAR(date) AS year, \
+    MONTH(date) AS month, \
+    SUM(amount) AS total_amount, \
+    COUNT(*) AS transaction_count \
+  FROM transactions \
+  WHERE date >= ? \
+    AND date <= ? \
+  GROUP BY bank, YEAR(date), MONTH(date)';
+
+const queryBalancesTimelineByCategoryByYear =
   'SELECT \
     category, \
     YEAR(date) AS year, \
@@ -155,7 +178,7 @@ const queryCategoryBalancesTimelineYear =
     AND date <= ? \
   GROUP BY YEAR(date)';
 
-const queryCategoryBalancesTimelineMonth =
+const queryBalancesTimelineByCategoryByMonth =
   'SELECT \
     category, \
     YEAR(date) AS year, \
@@ -168,7 +191,7 @@ const queryCategoryBalancesTimelineMonth =
     AND date <= ? \
   GROUP BY YEAR(date), MONTH(date)';
 
-const queryCategoryBalancesTimelineDay =
+const queryBalancesTimelineByCategoryByDay =
   'SELECT \
     category, \
     YEAR(date) AS year, \
@@ -182,7 +205,7 @@ const queryCategoryBalancesTimelineDay =
     AND date <= ? \
   GROUP BY YEAR(date), MONTH(date), DAY(date)';
 
-const queryCategoryBalancesTimelineUnit =
+const queryBalancesTimelineByCategoryByUnit =
   'SELECT \
     category, \
     YEAR(date) AS year, \
@@ -524,22 +547,51 @@ async function getCategoryNonFiltersBalance(category, start, end) {
   }
 }
 
-async function getCategoryTimeline(category, period, start, end) {
+async function getTimelineByBank(period, start, end) {
   let connection;
   let query;
 
   switch (period) {
     case 'year':
-      query = queryCategoryBalancesTimelineYear;
+      query = queryBalancesTimelineByBankByYear;
       break;
     case 'month':
-      query = queryCategoryBalancesTimelineMonth;
+      query = queryBalancesTimelineByBankByMonth;
+      break;
+    default:
+      throw `Unknown period [${period}]`;
+  }
+  try {
+    connection = await getConnection();
+    const result = await connection.query(query, [start, end]);
+    return result.at(0);
+  } catch (err) {
+    err.message = `Error [${err}] retrieving the bank timeline for period [${period}] start [${start}] end [${end}].`;
+    console.error(err);
+    throw err;
+  } finally {
+    if (connection) {
+      connection.close();
+    }
+  }
+}
+
+async function getTimelineByCategory(category, period, start, end) {
+  let connection;
+  let query;
+
+  switch (period) {
+    case 'year':
+      query = queryBalancesTimelineByCategoryByYear;
+      break;
+    case 'month':
+      query = queryBalancesTimelineByCategoryByMonth;
       break;
     case 'day':
-      query = queryCategoryBalancesTimelineDay;
+      query = queryBalancesTimelineByCategoryByDay;
       break;
     case 'unit':
-      query = queryCategoryBalancesTimelineUnit;
+      query = queryBalancesTimelineByCategoryByUnit;
       break;
     default:
       throw `Unknown period [${period}]`;
@@ -847,7 +899,8 @@ module.exports = {
   getCategoryFilters,
   getCategoryFiltersBalance,
   getCategoryNonFiltersBalance,
-  getCategoryTimeline,
+  getTimelineByBank,
+  getTimelineByCategory,
   getDuplicatedTransactions,
   getTransactions,
   getYears,
