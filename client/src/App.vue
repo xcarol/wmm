@@ -12,7 +12,7 @@
       :show="showDrawer"
       @on-option-selected="optionSelected"
     />
-    <v-main class="app-backgroud">
+    <v-main>
       <router-view />
     </v-main>
     <snack-bar />
@@ -36,14 +36,6 @@ const optionSelected = (optionTitle) => {
 </script>
 
 <style>
-.app-backgroud {
-  background-image: url('logo-semi.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  height: 100vh;
-}
-
 .v-btn--disabled {
   opacity: 0.5 !important;
 }
