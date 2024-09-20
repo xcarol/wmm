@@ -80,9 +80,12 @@ const periodsNames = ref([
   $t('browseTimelineView.unitLabel'),
 ]);
 const selectedPeriod = ref('');
-const categoryBalances = ref([]);
+const selectedBalances = ref([]);
+const yearsInBalances = ref([]);
+const monthsInBalances = ref([]);
+const banksInBalances = ref([]);
 
-const notReadyToQuery = () => selectedCategory.value === '' || selectedPeriod.value === '';
+const notReadyToQuery = () => selectedPeriod.value === '';
 
 const getCategories = async () => {
   progressDialog.startProgress({
@@ -102,7 +105,6 @@ const getCategories = async () => {
 };
 
 const chartOptions = {
-  indexAxis: 'x',
   responsive: true,
   maintainAspectRatio: false,
   scales: {
@@ -120,31 +122,135 @@ const chartOptions = {
   },
 };
 
-const chartData = computed(() => {
-  const data = [];
+const chartDataLabels = () => {
   const labels = [];
-
-  for (let index = 0; index < categoryBalances.value.length; index += 1) {
-    const element = categoryBalances.value[index];
-    data.push(element.total_amount * -1);
-    labels.push(element.transaction_count);
+  if (selectedBalances.value.length === 0) {
+    return labels;
   }
+
+  if (selectedBalances.value.at(0).month !== undefined) {
+    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].forEach((month) => {
+      labels.push(month);
+    });
+  } else {
+    for (let index = 0; index < selectedBalances.value.length; index += 1) {
+      const element = selectedBalances.value[index];
+
+      if (labels.includes(element.year) === false) {
+        labels.push(element.year);
+      }
+    }
+  }
+  
+  return labels;
+};
+
+const monthDataset = (year) => {
+  const dt = {
+    fill: false,
+    borderColor: `rgb(${Math.random() * 0xff}, ${Math.random() * 0xff}, ${Math.random() * 0xff})`,
+    tension: 0.1,
+  };
+
+  if (year) {
+    dt.label = `${year}`;
+    dt.data = Array(12).fill('');
+  }
+
+  return dt;
+};
+
+const yearDataset = () => {
+  const dt = {
+    label: '',
+    fill: false,
+    borderColor: `rgb(${Math.random() * 0xff}, ${Math.random() * 0xff}, ${Math.random() * 0xff})`,
+    tension: 0.1,
+  };
+
+  dt.data = Array(yearsInBalances.value.length).fill('');
+
+  return dt;
+};
+
+const chartDataDatasets = () => {
+  const monthlyDataset = [];
+  const yearlyDataset = [];
+  let datasets = [];
+
+  if (selectedBalances.value.length === 0) {
+    return datasets;
+  }
+
+  if (monthsInBalances.value.length > 0) {
+    yearsInBalances.value.forEach((year) => {
+      monthlyDataset.push(monthDataset(year));
+    });
+  } else if (banksInBalances.value.length > 0) {
+    banksInBalances.value.forEach((bank) => {
+      yearlyDataset.push(bank);
+    });
+  } else {
+    yearlyDataset.push(yearDataset());
+  }
+
+  if (monthsInBalances.value.length > 0) {
+    for (let index = 0; index < selectedBalances.value.length; index += 1) {
+      const element = selectedBalances.value[index];
+      const dt = monthlyDataset.find((mDataset) => {
+        return mDataset.label === element.year.toString();
+      });
+      dt.data[element.month - 1] = element.total_amount * -1;
+    }
+    datasets = monthlyDataset;
+  } else {
+    const dt = yearDataset();
+    for (let index = 0; index < selectedBalances.value.length; index += 1) {
+      const element = selectedBalances.value[index];
+      dt.data[element.year - selectedBalances.value[0].year] = element.total_amount * -1;
+    }
+    datasets = [dt];
+  }
+
+  return datasets;
+};
+
+const chartData = computed(() => {
   return {
-    labels,
-    datasets: [
-      {
-        label: 'My First Dataset',
-        data,
-        fill: false,
-        borderColor: 'rgb(75, 192, 192)',
-        tension: 0.1,
-      },
-    ],
+    labels: chartDataLabels(),
+    datasets: chartDataDatasets(),
   };
 });
 
+const setYearsInBalances = () => {
+  yearsInBalances.value.length = 0;
+  selectedBalances.value.forEach((balance) => {
+    if (yearsInBalances.value.includes(balance.year) === false) {
+      yearsInBalances.value.push(balance.year);
+    }
+  });
+};
+
+const setMonthsInBalances = () => {
+  monthsInBalances.value = [];
+  selectedBalances.value.forEach((balance) => {
+    if (balance.month && monthsInBalances.value.includes(balance.month) === false) {
+      monthsInBalances.value.push(balance.month);
+    }
+  });
+};
+
+const setBanksInBalances = () => {
+  banksInBalances.value = [];
+  selectedBalances.value.forEach((balance) => {
+    if (balance.bank && banksInBalances.value.includes(balance.bank) === false) {
+      banksInBalances.value.push(balance.bank);
+    }
+  });
+};
+
 const updateTransactions = async () => {
-  if (selectedCategory.value === '' || selectedPeriod.value === '') {
+  if (selectedPeriod.value === '') {
     return;
   }
 
@@ -168,14 +274,27 @@ const updateTransactions = async () => {
       default:
         break;
     }
-    const { data: balances } = await api.categoryTimeline(
-      selectedCategory.value,
-      period,
-      '1970-01-01',
-      dayjs().format(DATE_FORMAT),
-    );
 
-    categoryBalances.value = balances;
+    if (selectedCategory.value) {
+      const { data: balances } = await api.categoryTimeline(
+        selectedCategory.value,
+        period,
+        '1970-01-01',
+        dayjs().format(DATE_FORMAT),
+      );
+      selectedBalances.value = balances;
+    } else {
+      const { data: balances } = await api.bankTimeline(
+        period,
+        '1970-01-01',
+        dayjs().format(DATE_FORMAT),
+      );
+      selectedBalances.value = balances;
+    }
+
+    setYearsInBalances();
+    setMonthsInBalances();
+    setBanksInBalances();
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }
