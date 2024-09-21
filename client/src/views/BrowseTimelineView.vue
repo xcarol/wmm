@@ -13,7 +13,7 @@
       <v-row>
         <v-col :style="{ height: `${adjustedHeight}px` }">
           <chart
-            type="line"
+            type="bar"
             :data="chartData"
             :options="chartOptions"
           />
@@ -32,7 +32,7 @@ import 'dayjs/locale/es';
 import {
   Chart as ChartJS,
   PointElement,
-  LineElement,
+  BarElement,
   CategoryScale,
   LinearScale,
   Tooltip,
@@ -44,7 +44,7 @@ import { useAppStore } from '../stores/app';
 import { useProgressDialogStore } from '../stores/progressDialog';
 import TimelineDrawer from '../components/TimelineDrawer.vue';
 
-ChartJS.register(PointElement, LineElement, CategoryScale, LinearScale, Tooltip, Legend);
+ChartJS.register(PointElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 
@@ -74,6 +74,7 @@ const selectedBalances = ref([]);
 const yearsInBalances = ref([]);
 const monthsInBalances = ref([]);
 const banksInBalances = ref([]);
+const categoriesInBalances = ref([]);
 
 const closeDrawer = () => {
   showDrawer.value = false;
@@ -138,32 +139,32 @@ const chartDataLabels = () => {
   return labels;
 };
 
-const monthDataset = (year) => {
-  const dt = {
-    fill: false,
-    borderColor: `rgb(${Math.random() * 0xff}, ${Math.random() * 0xff}, ${Math.random() * 0xff})`,
-    tension: 0.1,
+const monthDataset = (label) => {
+  const red = Math.random() * 0xff;
+  const green = Math.random() * 0xff;
+  const blue = Math.random() * 0xff;
+  
+  return {
+    label: `${label}`,
+    backgroundColor: `rgba(${red}, ${green}, ${blue}, 0.2)`,
+    borderColor: `rgb(${red}, ${green}, ${blue})`,
+    borderWidth: 1,
+    data: Array(12).fill(''),
   };
-
-  if (year) {
-    dt.label = `${year}`;
-    dt.data = Array(12).fill('');
-  }
-
-  return dt;
 };
 
-const yearDataset = () => {
-  const dt = {
-    label: '',
-    fill: false,
-    borderColor: `rgb(${Math.random() * 0xff}, ${Math.random() * 0xff}, ${Math.random() * 0xff})`,
-    tension: 0.1,
+const yearDataset = (label) => {
+  const red = Math.random() * 0xff;
+  const green = Math.random() * 0xff;
+  const blue = Math.random() * 0xff;
+  
+  return {
+    label,
+    backgroundColor: `rgb(${red}, ${green}, ${blue}, 0.2)`,
+    borderColor: `rgb(${red}, ${green}, ${blue})`,
+    borderWidth: 1,
+    data: Array(yearsInBalances.value.length).fill(''),
   };
-
-  dt.data = Array(yearsInBalances.value.length).fill('');
-
-  return dt;
 };
 
 const chartDataDatasets = () => {
