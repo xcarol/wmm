@@ -6,6 +6,7 @@
       :period="selectedPeriod"
       :categories-names="categoriesNames"
       :periods-names="periodsNames"
+      @close-drawer="closeDrawer"
       @options-selected="updateOptions"
     />
     <v-card-text v-resize="onResize">
@@ -73,6 +74,11 @@ const selectedBalances = ref([]);
 const yearsInBalances = ref([]);
 const monthsInBalances = ref([]);
 const banksInBalances = ref([]);
+
+const closeDrawer = () => {
+  showDrawer.value = false;
+  appStore.showFab = true;
+};
 
 const getCategories = async () => {
   progressDialog.startProgress({
@@ -290,8 +296,7 @@ const updateTransactions = async () => {
 };
 
 const updateOptions = (options) => {
-  appStore.showFab = true;
-  showDrawer.value = false;
+  closeDrawer();
 
   selectedCategory.value = options.category;
   selectedPeriod.value = options.period;

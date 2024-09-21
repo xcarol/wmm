@@ -26,6 +26,12 @@
         >
           {{ $t('browseTimelineView.searchButton') }}
         </v-btn>
+        <v-btn
+          class="ml-4"
+          @click.stop="close"
+        >
+          {{ $t('global.close') }}
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-navigation-drawer>
@@ -37,7 +43,7 @@ import { useI18n } from 'vue-i18n';
 
 const { t: $t } = useI18n();
 
-const emits = defineEmits(['optionsSelected']);
+const emits = defineEmits(['optionsSelected', 'closeDrawer']);
 
 const props = defineProps({
   show: {
@@ -69,5 +75,9 @@ const notReadyToQuery = () => props.selectedPeriod === '';
 
 const optionSelected = () => {
   emits('optionsSelected', { category: selectedCategory.value, period: selectedPeriod.value });
+};
+
+const close = () => {
+  emits('closeDrawer');
 };
 </script>
