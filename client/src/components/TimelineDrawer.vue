@@ -6,23 +6,25 @@
     location="right"
   >
     <v-card>
-      <v-card-actions class="align-start mt-2 mr-2">
+      <v-card-text class="align-start mt-2 mr-2">
         <v-select
-          v-model="selectedCategory"
+          :model-value="selectedCategory"
           class="ml-2"
           :items="categoriesNames"
           :label="$t('browseTimelineView.categoryLabel')"
+          @update:model-value="categoryUpdated"
         />
         <v-select
-          v-model="selectedPeriod"
+          :model-value="selectedPeriod"
           class="ml-4"
           :items="periodsNames"
           :label="$t('browseTimelineView.periodLabel')"
+          @update:model-value="periodUpdated"
         />
         <v-btn
           class="ml-4"
           :disabled="notReadyToQuery()"
-          @click.stop="optionSelected"
+          @click.stop="search"
         >
           {{ $t('browseTimelineView.searchButton') }}
         </v-btn>
@@ -32,18 +34,24 @@
         >
           {{ $t('global.close') }}
         </v-btn>
-      </v-card-actions>
+      </v-card-text>
     </v-card>
   </v-navigation-drawer>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t: $t } = useI18n();
 
-const emits = defineEmits(['optionsSelected', 'closeDrawer']);
+const emits = defineEmits([
+  'categoryUpdated',
+  'periodUpdated',
+  'bankUpdated',
+  'update',
+  'close',
+]);
 
 const props = defineProps({
   show: {
@@ -69,15 +77,23 @@ const props = defineProps({
 });
 
 const showDrawer = computed(() => props.show);
-const selectedCategory = ref(props.category);
-const selectedPeriod = ref(props.period);
+const selectedCategory = computed(() => props.category);
+const selectedPeriod = computed(() => props.period);
 const notReadyToQuery = () => props.selectedPeriod === '';
 
-const optionSelected = () => {
-  emits('optionsSelected', { category: selectedCategory.value, period: selectedPeriod.value });
+const search = () => {
+  emits('update', { category: selectedCategory.value, period: selectedPeriod.value });
 };
 
 const close = () => {
-  emits('closeDrawer');
+  emits('close');
+};
+
+const categoryUpdated = (category) => {
+  emits('categoryUpdated', category);
+};
+
+const periodUpdated = (period) => {
+  emits('periodUpdated', period);
 };
 </script>
