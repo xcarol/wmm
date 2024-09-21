@@ -184,8 +184,12 @@ const chartDataDatasets = () => {
     banksInBalances.value.forEach((bank) => {
       yearlyDataset.push(bank);
     });
+  } else if (categoriesInBalances.value.length > 0) {
+    categoriesInBalances.value.forEach((category) => {
+      yearlyDataset.push(yearDataset(category));
+    });
   } else {
-    yearlyDataset.push(yearDataset());
+    return datasets;
   }
 
   if (monthsInBalances.value.length > 0) {
@@ -197,13 +201,24 @@ const chartDataDatasets = () => {
       dt.data[element.month - 1] = element.total_amount * -1;
     }
     datasets = monthlyDataset;
-  } else {
-    const dt = yearDataset();
+  } else if (categoriesInBalances.value.length > 0) {
     for (let index = 0; index < selectedBalances.value.length; index += 1) {
       const element = selectedBalances.value[index];
+      const dt = yearlyDataset.find((mDataset) => {
+        return mDataset.label === element.category;
+      });
       dt.data[element.year - selectedBalances.value[0].year] = element.total_amount * -1;
     }
-    datasets = [dt];
+    datasets = yearlyDataset;
+  } else {
+    for (let index = 0; index < selectedBalances.value.length; index += 1) {
+      const element = selectedBalances.value[index];
+      const dt = yearlyDataset.find((mDataset) => {
+        return mDataset.label === element.year.toString();
+      });
+      dt.data[element.year - selectedBalances.value[0].year] = element.total_amount * -1;
+    }
+    datasets = yearlyDataset;
   }
 
   return datasets;
@@ -239,6 +254,15 @@ const setBanksInBalances = () => {
   selectedBalances.value.forEach((balance) => {
     if (balance.bank && banksInBalances.value.includes(balance.bank) === false) {
       banksInBalances.value.push(balance.bank);
+    }
+  });
+};
+
+const setCategoriesInBalances = () => {
+  categoriesInBalances.value = [];
+  selectedBalances.value.forEach((balance) => {
+    if (balance.category && categoriesInBalances.value.includes(balance.category) === false) {
+      categoriesInBalances.value.push(balance.category);
     }
   });
 };
@@ -289,6 +313,7 @@ const updateTransactions = async () => {
     setYearsInBalances();
     setMonthsInBalances();
     setBanksInBalances();
+    setCategoriesInBalances();
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }
