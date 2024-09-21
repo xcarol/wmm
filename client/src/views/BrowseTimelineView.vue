@@ -1,26 +1,13 @@
 <template>
   <v-card>
-    <v-card-actions class="align-start mt-2 mr-2">
-      <v-select
-        v-model="selectedCategory"
-        class="ml-2"
-        :items="categoriesNames"
-        :label="$t('browseTimelineView.categoryLabel')"
-      />
-      <v-select
-        v-model="selectedPeriod"
-        class="ml-4"
-        :items="periodsNames"
-        :label="$t('browseTimelineView.periodLabel')"
-      />
-      <v-btn
-        class="ml-4"
-        :disabled="notReadyToQuery()"
-        @click.stop="routeToData"
-      >
-        {{ $t('browseTimelineView.searchButton') }}
-      </v-btn>
-    </v-card-actions>
+    <timeline-drawer
+      :show="showDrawer"
+      :category="selectedCategory"
+      :period="selectedPeriod"
+      :categories-names="categoriesNames"
+      :periods-names="periodsNames"
+      @options-selected="updateOptions"
+    />
     <v-card-text v-resize="onResize">
       <v-row>
         <v-col :style="{ height: `${adjustedHeight}px` }">
@@ -54,6 +41,7 @@ import { Chart } from 'vue-chartjs';
 import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
 import { useProgressDialogStore } from '../stores/progressDialog';
+import TimelineDrawer from '../components/TimelineDrawer.vue';
 
 ChartJS.register(PointElement, LineElement, CategoryScale, LinearScale, Tooltip, Legend);
 
@@ -71,6 +59,7 @@ const adjustedHeight = computed(() => {
   return innerHeight.value - 180;
 });
 
+const showDrawer = ref(false);
 const categoriesNames = ref([]);
 const selectedCategory = ref('');
 const periodsNames = ref([
@@ -84,8 +73,6 @@ const selectedBalances = ref([]);
 const yearsInBalances = ref([]);
 const monthsInBalances = ref([]);
 const banksInBalances = ref([]);
-
-const notReadyToQuery = () => selectedPeriod.value === '';
 
 const getCategories = async () => {
   progressDialog.startProgress({
@@ -141,7 +128,7 @@ const chartDataLabels = () => {
       }
     }
   }
-  
+
   return labels;
 };
 
@@ -302,7 +289,13 @@ const updateTransactions = async () => {
   progressDialog.stopProgress();
 };
 
-const routeToData = () => {
+const updateOptions = (options) => {
+  appStore.showFab = true;
+  showDrawer.value = false;
+
+  selectedCategory.value = options.category;
+  selectedPeriod.value = options.period;
+
   const query = {};
   if (selectedCategory.value) {
     query.category = selectedCategory.value;
@@ -335,9 +328,20 @@ const parseParams = async () => {
   }
 };
 
+const toggleDrawer = () => {
+  showDrawer.value = !showDrawer.value;
+  appStore.showFab = false;
+};
+
+const beforeUpdate = () => {
+  appStore.showFab = true;
+  appStore.fabClick = toggleDrawer;
+  parseParams();
+};
+
 const beforeMount = async () => {
   await getCategories();
-  parseParams();
+  beforeUpdate();
 };
 
 const onResize = () => {
@@ -345,6 +349,6 @@ const onResize = () => {
 };
 
 onBeforeMount(() => beforeMount());
-onBeforeUpdate(() => parseParams());
+onBeforeUpdate(() => beforeUpdate());
 onMounted(() => onResize());
 </script>
