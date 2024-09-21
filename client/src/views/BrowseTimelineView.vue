@@ -6,8 +6,10 @@
       :period="selectedPeriod"
       :categories-names="categoriesNames"
       :periods-names="periodsNames"
-      @close-drawer="closeDrawer"
-      @options-selected="updateOptions"
+      @category-updated="updateSelectedCategory"
+      @period-updated="updateSelectedPeriod"
+      @close="closeDrawer"
+      @update="updateChart"
     />
     <v-card-text v-resize="onResize">
       <v-row>
@@ -321,7 +323,7 @@ const updateTransactions = async () => {
   progressDialog.stopProgress();
 };
 
-const updateOptions = (options) => {
+const updateChart = (options) => {
   closeDrawer();
 
   selectedCategory.value = options.category;
@@ -338,6 +340,14 @@ const updateOptions = (options) => {
 
   router.replace({ query });
   updateTransactions();
+};
+
+const updateSelectedCategory = (category) => {
+  selectedCategory.value = category;
+};
+
+const updateSelectedPeriod = (period) => {
+  selectedPeriod.value = period;
 };
 
 const parseParams = async () => {
