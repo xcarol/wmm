@@ -16,23 +16,41 @@
       <router-view />
     </v-main>
     <snack-bar />
+    <v-fab
+      :active="showFab"
+      icon="$floating"
+      location="bottom end"
+      absolute
+      app
+      @click.stop="fabClick()"
+    />
   </v-app>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import AppDrawer from './components/AppDrawer.vue';
 import SnackBar from './components/SnackBar.vue';
 import ProgressDialog from './components/ProgressDialog.vue';
 import MessageDialog from './components/MessageDialog.vue';
+import { useAppStore } from './stores/app';
+
+const router = useRouter();
+const appStore = useAppStore();
 
 const showDrawer = ref(false);
+const showFab = computed(() => appStore.showFab);
+const fabClick = computed(() => appStore.fabClick);
 const title = ref("Where's My Money");
 
 const optionSelected = (optionTitle) => {
   showDrawer.value = false;
   title.value = optionTitle;
 };
+router.beforeEach(() => {
+  appStore.showFab = false;
+});
 </script>
 
 <style>
