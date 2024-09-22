@@ -2,28 +2,27 @@
   <v-app>
     <progress-dialog />
     <message-dialog />
-    <v-app-bar :elevation="24">
+    <v-app-bar :elevation="2">
       <template #prepend>
-        <v-app-bar-nav-icon @click.stop="showDrawer = !showDrawer"></v-app-bar-nav-icon>
+        <v-app-bar-nav-icon @click.stop="showAppDrawer = !showAppDrawer"></v-app-bar-nav-icon>
       </template>
       <v-app-bar-title>{{ title }}</v-app-bar-title>
+      <template #append>
+        <v-btn
+          v-show="showViewDrawerButton"
+          icon="$view-drawer"
+          @click.stop="toggleViewDrawer"
+        ></v-btn>
+      </template>
     </v-app-bar>
     <app-drawer
-      :show="showDrawer"
+      :show="showAppDrawer"
       @on-option-selected="optionSelected"
     />
     <v-main>
       <router-view />
     </v-main>
     <snack-bar />
-    <v-fab
-      :active="showFab"
-      icon="$floating"
-      location="bottom end"
-      absolute
-      app
-      @click.stop="fabClick()"
-    />
   </v-app>
 </template>
 
@@ -39,17 +38,21 @@ import { useAppStore } from './stores/app';
 const router = useRouter();
 const appStore = useAppStore();
 
-const showDrawer = ref(false);
-const showFab = computed(() => appStore.showFab);
-const fabClick = computed(() => appStore.fabClick);
+const showAppDrawer = ref(false);
+const showViewDrawerButton = computed(() => appStore.showViewDrawerButton);
 const title = ref("Where's My Money");
 
+const toggleViewDrawer = () => {
+  appStore.showViewDrawer = !appStore.showViewDrawer;
+};
+
 const optionSelected = (optionTitle) => {
-  showDrawer.value = false;
+  showAppDrawer.value = false;
   title.value = optionTitle;
 };
+
 router.beforeEach(() => {
-  appStore.showFab = false;
+  appStore.showViewDrawerButton = false;
 });
 </script>
 

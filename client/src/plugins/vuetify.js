@@ -18,7 +18,7 @@ import {
   mdiOpenInNew,
   mdiMinusBox,
   mdiPlusBox,
-  mdiMenu,
+  mdiDotsVertical,
 } from '@mdi/js';
 
 const defaultTheme =
@@ -69,7 +69,7 @@ const vuetify = createVuetify({
       'open-in-new': mdiOpenInNew,
       minus: mdiMinusBox,
       plus: mdiPlusBox,
-      floating: mdiMenu,
+      'view-drawer': mdiDotsVertical,
     },
     sets: {
       mdi,

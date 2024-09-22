@@ -62,7 +62,7 @@ const adjustedHeight = computed(() => {
   return innerHeight.value - 180;
 });
 
-const showDrawer = ref(false);
+const showDrawer = computed(() => appStore.showViewDrawer);
 const categoriesNames = ref([]);
 const selectedCategory = ref('');
 const periodsNames = ref([
@@ -79,8 +79,7 @@ const banksInBalances = ref([]);
 const categoriesInBalances = ref([]);
 
 const closeDrawer = () => {
-  showDrawer.value = false;
-  appStore.showFab = true;
+  appStore.showViewDrawer = false;
 };
 
 const getCategories = async () => {
@@ -369,14 +368,8 @@ const parseParams = async () => {
   }
 };
 
-const toggleDrawer = () => {
-  showDrawer.value = !showDrawer.value;
-  appStore.showFab = false;
-};
-
 const beforeUpdate = () => {
-  appStore.showFab = true;
-  appStore.fabClick = toggleDrawer;
+  appStore.showViewDrawerButton = true;
   parseParams();
 };
 

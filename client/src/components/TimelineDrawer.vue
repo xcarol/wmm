@@ -1,9 +1,10 @@
 <template>
   <v-navigation-drawer
-    v-model="showDrawer"
+    :model-value="showDrawer"
     :fixed="$vuetify.display.mdAndDown"
     :bottom="$vuetify.display.xs"
     location="right"
+    @update:model-value="close"
   >
     <v-card>
       <v-card-text class="align-start mt-2 mr-2">
@@ -27,12 +28,6 @@
           @click.stop="search"
         >
           {{ $t('browseTimelineView.searchButton') }}
-        </v-btn>
-        <v-btn
-          class="ml-4"
-          @click.stop="close"
-        >
-          {{ $t('global.close') }}
         </v-btn>
       </v-card-text>
     </v-card>
