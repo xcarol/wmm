@@ -5,7 +5,7 @@
       :categories="selectedCategories"
       :period="selectedPeriod"
       :categories-names="categoriesNames"
-      :periods-names="periodsNames"
+      :periods-names="periodNames"
       @update-categories="updateSelectedCategories"
       @update-period="updateSelectedPeriod"
       @close="closeDrawer"
@@ -65,12 +65,10 @@ const adjustedHeight = computed(() => {
 const showDrawer = computed(() => appStore.showViewDrawer);
 const categoriesNames = ref([]);
 const selectedCategories = ref([]);
-const periodsNames = ref([
-  $t('browseTimelineView.yearLabel'),
-  $t('browseTimelineView.monthLabel'),
-  $t('browseTimelineView.dayLabel'),
-  $t('browseTimelineView.unitLabel'),
-]);
+const allPeriodNames = [$t('browseTimelineView.yearLabel'), $t('browseTimelineView.monthLabel')];
+const allPeriodPositions = { year: 0, month: 1 };
+const yearPeriodName = [$t('browseTimelineView.yearLabel')];
+const periodNames = ref(allPeriodNames);
 const selectedPeriod = ref($t('browseTimelineView.yearLabel'));
 const selectedBalances = ref([]);
 const yearsInBalances = ref([]);
@@ -143,7 +141,7 @@ const monthDataset = (label) => {
   const red = Math.random() * 0xff;
   const green = Math.random() * 0xff;
   const blue = Math.random() * 0xff;
-  
+
   return {
     label: `${label}`,
     backgroundColor: `rgba(${red}, ${green}, ${blue}, 0.2)`,
@@ -157,7 +155,7 @@ const yearDataset = (label) => {
   const red = Math.random() * 0xff;
   const green = Math.random() * 0xff;
   const blue = Math.random() * 0xff;
-  
+
   return {
     label,
     backgroundColor: `rgb(${red}, ${green}, ${blue}, 0.2)`,
@@ -278,16 +276,12 @@ const updateTransactions = async () => {
   });
 
   try {
-    let period = 'unit';
+    let period = 'year';
+    const veryFirstDate = '1970-01-01';
+    
     switch (selectedPeriod.value) {
-      case periodsNames.value[0]:
-        period = 'year';
-        break;
-      case periodsNames.value[1]:
+      case allPeriodNames.at(allPeriodPositions.month):
         period = 'month';
-        break;
-      case periodsNames.value[2]:
-        period = 'day';
         break;
       default:
         break;
@@ -297,14 +291,14 @@ const updateTransactions = async () => {
       const { data: balances } = await api.categoryTimeline(
         selectedCategories.value[0],
         period,
-        '1970-01-01',
+        veryFirstDate,
         dayjs().format(DATE_FORMAT),
       );
       selectedBalances.value = balances;
     } else {
       const { data: balances } = await api.bankTimeline(
         period,
-        '1970-01-01',
+        veryFirstDate,
         dayjs().format(DATE_FORMAT),
       );
       selectedBalances.value = balances;
@@ -336,8 +330,18 @@ const updateChart = () => {
   router.replace({ query });
 };
 
+const updatePeriodNames = () => {
+  if (selectedCategories.value.length > 1) {
+    periodNames.value = yearPeriodName;
+    selectedPeriod.value = yearPeriodName.at(0);
+  } else {
+    periodNames.value = allPeriodNames;
+  }
+};
+
 const updateSelectedCategories = (categories) => {
   selectedCategories.value = categories;
+  updatePeriodNames();
 };
 
 const updateSelectedPeriod = (period) => {
@@ -350,6 +354,7 @@ const parseParams = async () => {
 
   if (category?.length > 0 && selectedCategories.value !== category) {
     selectedCategories.value = category;
+    updatePeriodNames();
     update = true;
   }
 
