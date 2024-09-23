@@ -15,7 +15,11 @@
             <v-list-item>
               <template #prepend>
                 <v-list-item-action start>
-                  <v-checkbox-btn v-model="selectedCategories[categoryItem]"></v-checkbox-btn>
+                  <v-checkbox-btn
+                    :model-value="selectedCategories"
+                    :value="categoryItem"
+                    @update:model-value="categoryUpdated"
+                  ></v-checkbox-btn>
                 </v-list-item-action>
               </template>
               <v-list-item-title>{{ categoryItem }}</v-list-item-title>
@@ -28,6 +32,7 @@
           :model-value="selectedPeriod"
           :items="periodsNames"
           :label="$t('browseTimelineView.periodLabel')"
+          @update:model-value="periodUpdated"
         />
         <v-btn
           :disabled="notReadyToQuery()"
@@ -46,7 +51,7 @@ import { useI18n } from 'vue-i18n';
 
 const { t: $t } = useI18n();
 
-const emits = defineEmits(['bankUpdated', 'update', 'close']);
+const emits = defineEmits(['updateCategories', 'updatePeriod', 'update', 'close']);
 
 const props = defineProps({
   show: {
@@ -76,7 +81,14 @@ const selectedCategories = computed(() => props.categories);
 const selectedPeriod = computed(() => props.period);
 const notReadyToQuery = () => props.selectedPeriod === '';
 
+const categoryUpdated = (categories) => {
+  emits('updateCategories', categories);
+};
+
+const periodUpdated = (period) => {
+  emits('updatePeriod', period);
+};
 const search = () => {
-  emits('update', { categories: Object.keys(selectedCategories.value), period: selectedPeriod.value });
+  emits('update');
 };
 </script>
