@@ -4,28 +4,34 @@
     :fixed="$vuetify.display.mdAndDown"
     :bottom="$vuetify.display.xs"
     location="right"
-    @update:model-value="close"
   >
     <v-card>
       <v-card-text class="align-start mt-2 mr-2">
-        <v-select
-          :model-value="selectedCategory"
-          class="ml-2"
-          :items="categoriesNames"
-          :label="$t('browseTimelineView.categoryLabel')"
-          @update:model-value="categoryUpdated"
-        />
+        <v-list>
+          <div
+            v-for="(categoryItem, index) in categoriesNames"
+            :key="index"
+          >
+            <v-list-item>
+              <template #prepend>
+                <v-list-item-action start>
+                  <v-checkbox-btn v-model="selectedCategories[categoryItem]"></v-checkbox-btn>
+                </v-list-item-action>
+              </template>
+              <v-list-item-title>{{ categoryItem }}</v-list-item-title>
+            </v-list-item>
+          </div>
+        </v-list>
+      </v-card-text>
+      <v-card-text class="align-start mt-2 mr-2">
         <v-select
           :model-value="selectedPeriod"
-          class="ml-4"
           :items="periodsNames"
           :label="$t('browseTimelineView.periodLabel')"
-          @update:model-value="periodUpdated"
         />
         <v-btn
-          class="ml-4"
           :disabled="notReadyToQuery()"
-          @click.stop="search"
+          @click.stop="search()"
         >
           {{ $t('browseTimelineView.searchButton') }}
         </v-btn>
@@ -40,21 +46,15 @@ import { useI18n } from 'vue-i18n';
 
 const { t: $t } = useI18n();
 
-const emits = defineEmits([
-  'categoryUpdated',
-  'periodUpdated',
-  'bankUpdated',
-  'update',
-  'close',
-]);
+const emits = defineEmits(['bankUpdated', 'update', 'close']);
 
 const props = defineProps({
   show: {
     type: Boolean,
     default: false,
   },
-  category: {
-    type: String,
+  categories: {
+    type: Array,
     required: true,
   },
   period: {
@@ -72,23 +72,11 @@ const props = defineProps({
 });
 
 const showDrawer = computed(() => props.show);
-const selectedCategory = computed(() => props.category);
+const selectedCategories = computed(() => props.categories);
 const selectedPeriod = computed(() => props.period);
 const notReadyToQuery = () => props.selectedPeriod === '';
 
 const search = () => {
-  emits('update', { category: selectedCategory.value, period: selectedPeriod.value });
-};
-
-const close = () => {
-  emits('close');
-};
-
-const categoryUpdated = (category) => {
-  emits('categoryUpdated', category);
-};
-
-const periodUpdated = (period) => {
-  emits('periodUpdated', period);
+  emits('update', { categories: Object.keys(selectedCategories.value), period: selectedPeriod.value });
 };
 </script>
