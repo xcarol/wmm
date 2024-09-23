@@ -2,12 +2,12 @@
   <v-card>
     <timeline-drawer
       :show="showDrawer"
-      :category="selectedCategory"
+      :categories="selectedCategories"
       :period="selectedPeriod"
       :categories-names="categoriesNames"
       :periods-names="periodsNames"
-      @category-updated="updateSelectedCategory"
-      @period-updated="updateSelectedPeriod"
+      @update-categories="updateSelectedCategories"
+      @update-period="updateSelectedPeriod"
       @close="closeDrawer"
       @update="updateChart"
     />
@@ -64,14 +64,14 @@ const adjustedHeight = computed(() => {
 
 const showDrawer = computed(() => appStore.showViewDrawer);
 const categoriesNames = ref([]);
-const selectedCategory = ref('');
+const selectedCategories = ref([]);
 const periodsNames = ref([
   $t('browseTimelineView.yearLabel'),
   $t('browseTimelineView.monthLabel'),
   $t('browseTimelineView.dayLabel'),
   $t('browseTimelineView.unitLabel'),
 ]);
-const selectedPeriod = ref('');
+const selectedPeriod = ref($t('browseTimelineView.yearLabel'));
 const selectedBalances = ref([]);
 const yearsInBalances = ref([]);
 const monthsInBalances = ref([]);
@@ -90,8 +90,7 @@ const getCategories = async () => {
 
   try {
     const { data: categories } = await api.categoriesNames();
-
-    categoriesNames.value = [''].concat(categories);
+    categoriesNames.value = categories;
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }
@@ -294,9 +293,9 @@ const updateTransactions = async () => {
         break;
     }
 
-    if (selectedCategory.value) {
+    if (selectedCategories.value) {
       const { data: balances } = await api.categoryTimeline(
-        selectedCategory.value,
+        selectedCategories.value[0],
         period,
         '1970-01-01',
         dayjs().format(DATE_FORMAT),
@@ -322,15 +321,12 @@ const updateTransactions = async () => {
   progressDialog.stopProgress();
 };
 
-const updateChart = (options) => {
+const updateChart = () => {
   closeDrawer();
 
-  selectedCategory.value = options.category;
-  selectedPeriod.value = options.period;
-
   const query = {};
-  if (selectedCategory.value) {
-    query.category = selectedCategory.value;
+  if (selectedCategories.value) {
+    query.category = selectedCategories.value;
   }
 
   if (selectedPeriod.value) {
@@ -338,11 +334,10 @@ const updateChart = (options) => {
   }
 
   router.replace({ query });
-  updateTransactions();
 };
 
-const updateSelectedCategory = (category) => {
-  selectedCategory.value = category;
+const updateSelectedCategories = (categories) => {
+  selectedCategories.value = categories;
 };
 
 const updateSelectedPeriod = (period) => {
@@ -353,8 +348,8 @@ const parseParams = async () => {
   let update = false;
   const { category, period } = route.query;
 
-  if (category?.length > 0 && selectedCategory.value !== category) {
-    selectedCategory.value = category;
+  if (category?.length > 0 && selectedCategories.value !== category) {
+    selectedCategories.value = category;
     update = true;
   }
 
