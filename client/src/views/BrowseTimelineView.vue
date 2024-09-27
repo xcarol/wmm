@@ -121,7 +121,20 @@ const chartDataLabels = () => {
   }
 
   if (selectedBalances.value.at(0).month !== undefined) {
-    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].forEach((month) => {
+    [
+      $t('global.january'),
+      $t('global.february'),
+      $t('global.march'),
+      $t('global.april'),
+      $t('global.may'),
+      $t('global.june'),
+      $t('global.july'),
+      $t('global.august'),
+      $t('global.september'),
+      $t('global.october'),
+      $t('global.november'),
+      $t('global.december'),
+    ].forEach((month) => {
       labels.push(month);
     });
   } else {
@@ -265,6 +278,26 @@ const setCategoriesInBalances = () => {
   });
 };
 
+const getCategoriesTimeline = async (period) => {
+  const veryFirstDate = '1970-01-01';
+  const awaits = [];
+  const categories = [];
+
+  for (let index = 0; index < selectedCategories.value.length; index += 1) {
+    const category = selectedCategories.value[index];
+    awaits.push(api.categoryTimeline(category, period, veryFirstDate, dayjs().format(DATE_FORMAT)));
+  }
+
+  const results = await Promise.all(awaits);
+
+  for (let index = 0; index < results.length; index += 1) {
+    const { data } = results[index];
+    categories.push(...data);
+  }
+
+  return categories.sort((c1, c2) => c1.year - c2.year);
+};
+
 const updateTransactions = async () => {
   if (selectedPeriod.value === '') {
     return;
@@ -278,7 +311,7 @@ const updateTransactions = async () => {
   try {
     let period = 'year';
     const veryFirstDate = '1970-01-01';
-    
+
     switch (selectedPeriod.value) {
       case allPeriodNames.at(allPeriodPositions.month):
         period = 'month';
@@ -288,13 +321,7 @@ const updateTransactions = async () => {
     }
 
     if (selectedCategories.value) {
-      const { data: balances } = await api.categoryTimeline(
-        selectedCategories.value[0],
-        period,
-        veryFirstDate,
-        dayjs().format(DATE_FORMAT),
-      );
-      selectedBalances.value = balances;
+      selectedBalances.value = await getCategoriesTimeline(period);
     } else {
       const { data: balances } = await api.bankTimeline(
         period,
@@ -321,6 +348,7 @@ const updateChart = () => {
   const query = {};
   if (selectedCategories.value) {
     query.category = selectedCategories.value;
+    selectedCategories.value = [];
   }
 
   if (selectedPeriod.value) {
@@ -330,7 +358,7 @@ const updateChart = () => {
   router.replace({ query });
 };
 
-const updatePeriodNames = () => {
+const updateAvailablePeriods = () => {
   if (selectedCategories.value.length > 1) {
     periodNames.value = yearPeriodName;
     selectedPeriod.value = yearPeriodName.at(0);
@@ -341,7 +369,7 @@ const updatePeriodNames = () => {
 
 const updateSelectedCategories = (categories) => {
   selectedCategories.value = categories;
-  updatePeriodNames();
+  updateAvailablePeriods();
 };
 
 const updateSelectedPeriod = (period) => {
@@ -352,9 +380,16 @@ const parseParams = async () => {
   let update = false;
   const { category, period } = route.query;
 
-  if (category?.length > 0 && selectedCategories.value !== category) {
-    selectedCategories.value = category;
-    updatePeriodNames();
+  if (
+    category?.length > 0 &&
+    JSON.stringify(selectedCategories.value) !== JSON.stringify(category)
+  ) {
+    if (typeof category === 'string') {
+      selectedCategories.value = [category];
+    } else {
+      selectedCategories.value = category;
+    }
+    updateAvailablePeriods();
     update = true;
   }
 
