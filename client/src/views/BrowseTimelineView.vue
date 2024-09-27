@@ -110,6 +110,9 @@ const chartOptions = {
       labels: {
         color: '#FFFFFF',
       },
+      title: {
+        text: '',
+      },
     },
   },
 };
@@ -120,7 +123,13 @@ const chartDataLabels = () => {
     return labels;
   }
 
+  chartOptions.plugins.legend.title.display = false;
+  chartOptions.plugins.legend.title.text = '';
+
   if (selectedBalances.value.at(0).month !== undefined) {
+    chartOptions.plugins.legend.title.display = true;
+    chartOptions.plugins.legend.title.text = selectedBalances.value.at(0).category;
+
     [
       $t('global.january'),
       $t('global.february'),
