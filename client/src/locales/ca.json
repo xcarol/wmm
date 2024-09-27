@@ -11,7 +11,19 @@
   },
   "global": {
     "close": "Tanca",
-    "cancel": "Cancel·lar"
+    "cancel": "Cancel·lar",
+    "january": "Gener",
+    "february": "Febrer",
+    "march": "Març",
+    "april": "Abril",
+    "may": "Maig",
+    "june": "Juny",
+    "july": "Juliol",
+    "august": "Agost",
+    "september": "Setembre",
+    "october": "Octubre",
+    "november": "Novembre",
+    "december": "Decembre"
   },
   "validation": {
     "required": "Requerit",
