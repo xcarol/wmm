@@ -64,6 +64,7 @@ const adjustedHeight = computed(() => {
 
 const showDrawer = computed(() => appStore.showViewDrawer);
 const categoriesNames = ref([]);
+const banksNames = ref([]);
 const selectedCategories = ref([]);
 const allPeriodNames = [$t('browseTimelineView.yearLabel'), $t('browseTimelineView.monthLabel')];
 const allPeriodPositions = { year: 0, month: 1 };
@@ -89,6 +90,22 @@ const getCategories = async () => {
   try {
     const { data: categories } = await api.categoriesNames();
     categoriesNames.value = categories;
+  } catch (e) {
+    appStore.alertMessage = api.getErrorMessage(e);
+  }
+
+  progressDialog.stopProgress();
+};
+
+const getBanks = async () => {
+  progressDialog.startProgress({
+    steps: 0,
+    description: $t('progress.retrievingTransactions'),
+  });
+
+  try {
+    const { data: banks } = await api.banksNames();
+    banksNames.value = banks;
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }
@@ -419,6 +436,7 @@ const beforeUpdate = () => {
 
 const beforeMount = async () => {
   await getCategories();
+  await getBanks();
   beforeUpdate();
 };
 
