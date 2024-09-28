@@ -11,7 +11,19 @@
   },
   "global": {
     "close": "Tanca",
-    "cancel": "Cancel·lar"
+    "cancel": "Cancel·lar",
+    "january": "Gener",
+    "february": "Febrer",
+    "march": "Març",
+    "april": "Abril",
+    "may": "Maig",
+    "june": "Juny",
+    "july": "Juliol",
+    "august": "Agost",
+    "september": "Setembre",
+    "october": "Octubre",
+    "november": "Novembre",
+    "december": "Decembre"
   },
   "validation": {
     "required": "Requerit",
@@ -26,7 +38,8 @@
     "filters": "Filtres",
     "browse": "Explorar",
     "browseTransactions": "Transaccions",
-    "browseCategories": "Categories"
+    "browseCategories": "Categories",
+    "browseTimeline": "Cronologia"
   },
   "progress": {
     "title": "Operació en progress",
@@ -135,6 +148,16 @@
     "incomesLabel": "Ingressos",
     "expensesLabel": "Despeses",
     "backToCategories": "Categories"
+  },
+  "browseTimelineView": {
+    "title": "Exploració cronològica",
+    "categoryLabel": "Categoria",
+    "periodLabel": "Període",
+    "searchButton": "Cerca",
+    "yearLabel": "Anual",
+    "monthLabel": "Mensual",
+    "dayLabel": "Diari",
+    "unitLabel": "Transacció"
   },
   "addTransactionView": {
     "title": "Afegeix una transacció",

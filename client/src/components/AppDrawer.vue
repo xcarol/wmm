@@ -90,6 +90,11 @@ const menuOptions = [
         value: '/browse/categories',
         barTitle: $t('browseCategoriesView.title'),
       },
+      {
+        title: $t('mainDrawer.browseTimeline'),
+        value: '/browse/timeline',
+        barTitle: $t('browseTimelineView.title'),
+      },
     ],
   },
 ];

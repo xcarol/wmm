@@ -12,13 +12,13 @@ import en from 'vuetify/lib/locale/en.mjs';
 import es from 'vuetify/lib/locale/es.mjs';
 import colors from 'vuetify/lib/util/colors.mjs';
 import {
-  mdiHome,
   mdiMagnify,
   mdiArrowLeft,
   mdiCalendarMonth,
   mdiOpenInNew,
   mdiMinusBox,
   mdiPlusBox,
+  mdiDotsVertical,
 } from '@mdi/js';
 
 const defaultTheme =
@@ -63,13 +63,13 @@ const vuetify = createVuetify({
     defaultSet: 'mdi',
     aliases: {
       ...aliases,
-      home: mdiHome,
       search: mdiMagnify,
       back: mdiArrowLeft,
       calendar: mdiCalendarMonth,
       'open-in-new': mdiOpenInNew,
       minus: mdiMinusBox,
       plus: mdiPlusBox,
+      'view-drawer': mdiDotsVertical,
     },
     sets: {
       mdi,

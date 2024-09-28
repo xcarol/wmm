@@ -11,7 +11,19 @@
   },
   "global": {
     "close": "Cerrar",
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+    "january": "Enero",
+    "february": "Febrero",
+    "march": "Marzo",
+    "april": "Abril",
+    "may": "Mayo",
+    "june": "Junio",
+    "july": "Julio",
+    "august": "Agosto",
+    "september": "Septiembre",
+    "october": "Octubre",
+    "november": "Noviembre",
+    "december": "Deciembre"
   },
   "validation": {
     "required": "Requerido",
@@ -26,7 +38,8 @@
     "filters": "Filtros",
     "browse": "Explorar",
     "browseTransactions": "Transacciones",
-    "browseCategories": "Categorías"
+    "browseCategories": "Categorías",
+    "browseTimeline": "Cronología"
   },
   "progress": {
     "title": "Operación en progreso",
@@ -135,6 +148,16 @@
     "incomesLabel": "Ingresos",
     "expensesLabel": "Gastos",
     "backToCategories": "Categorías"
+  },
+  "browseTimelineView": {
+    "title": "Exploración cronológica",
+    "categoryLabel": "Categoría",
+    "periodLabel": "Período",
+    "searchButton": "Busca",
+    "yearLabel": "Anual",
+    "monthLabel": "Mensual",
+    "dayLabel": "Diario",
+    "unitLabel": "Transación"
   },
   "addTransactionView": {
     "title": "Añadir una transacción",

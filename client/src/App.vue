@@ -2,17 +2,24 @@
   <v-app>
     <progress-dialog />
     <message-dialog />
-    <v-app-bar :elevation="24">
+    <v-app-bar :elevation="2">
       <template #prepend>
-        <v-app-bar-nav-icon @click.stop="showDrawer = !showDrawer"></v-app-bar-nav-icon>
+        <v-app-bar-nav-icon @click.stop="showAppDrawer = !showAppDrawer"></v-app-bar-nav-icon>
       </template>
       <v-app-bar-title>{{ title }}</v-app-bar-title>
+      <template #append>
+        <v-btn
+          v-show="showViewDrawerButton"
+          icon="$view-drawer"
+          @click.stop="toggleViewDrawer"
+        ></v-btn>
+      </template>
     </v-app-bar>
     <app-drawer
-      :show="showDrawer"
+      :show="showAppDrawer"
       @on-option-selected="optionSelected"
     />
-    <v-main class="app-backgroud">
+    <v-main>
       <router-view />
     </v-main>
     <snack-bar />
@@ -20,30 +27,36 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import AppDrawer from './components/AppDrawer.vue';
 import SnackBar from './components/SnackBar.vue';
 import ProgressDialog from './components/ProgressDialog.vue';
 import MessageDialog from './components/MessageDialog.vue';
+import { useAppStore } from './stores/app';
 
-const showDrawer = ref(false);
+const router = useRouter();
+const appStore = useAppStore();
+
+const showAppDrawer = ref(false);
+const showViewDrawerButton = computed(() => appStore.showViewDrawerButton);
 const title = ref("Where's My Money");
 
+const toggleViewDrawer = () => {
+  appStore.showViewDrawer = !appStore.showViewDrawer;
+};
+
 const optionSelected = (optionTitle) => {
-  showDrawer.value = false;
+  showAppDrawer.value = false;
   title.value = optionTitle;
 };
+
+router.beforeEach(() => {
+  appStore.showViewDrawerButton = false;
+});
 </script>
 
 <style>
-.app-backgroud {
-  background-image: url('logo-semi.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  height: 100vh;
-}
-
 .v-btn--disabled {
   opacity: 0.5 !important;
 }

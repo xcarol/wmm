@@ -5,6 +5,8 @@ import { useCsvFile } from '../plugins/csvfile';
 
 export const useAppStore = defineStore('app', {
   state: () => ({
+    showViewDrawerButton: ref(false),
+    showViewDrawer: ref(false),
     categorySearchHistory: useLocalStorage('app_categorySearchHistory', []),
     addTransactionHistory: useLocalStorage('app_addTransactionHistory', []),
     sqlHistory: useLocalStorage('app_sqlHistory', []),

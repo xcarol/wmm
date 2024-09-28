@@ -269,6 +269,7 @@ const applyAllFilters = async () => {
 
   try {
     await api.applyFilters();
+    searchSelectedTransactions();
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }
