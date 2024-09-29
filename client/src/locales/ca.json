@@ -157,7 +157,9 @@
     "yearLabel": "Anual",
     "monthLabel": "Mensual",
     "dayLabel": "Diari",
-    "unitLabel": "Transacció"
+    "unitLabel": "Transacció",
+    "banksLabel": "Bancs",
+    "categoriesLabel": "Categories"
   },
   "addTransactionView": {
     "title": "Afegeix una transacció",

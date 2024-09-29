@@ -140,12 +140,12 @@ module.exports = (app) => {
 
   app.get('/transactions/timeline', async (req, res) => {
     try {
-      const { category, period, start, end } = req.query;
+      const { bank, category, period, start, end } = req.query;
 
       if (category) {
         res.json(await getTimelineByCategory(category, period, start, end));
       } else {
-        res.json(await getTimelineByBank(period, start, end));
+        res.json(await getTimelineByBank(bank, period, start, end));
       }
     } catch (err) {
       res.status(err.sqlState ? 400 : 500).send(err);

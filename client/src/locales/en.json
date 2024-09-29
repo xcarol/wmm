@@ -157,7 +157,9 @@
     "yearLabel": "Yearly",
     "monthLabel": "Monthly",
     "dayLabel": "Daily",
-    "unitLabel": "Transaction"
+    "unitLabel": "Transaction",
+    "banksLabel": "Banks",
+    "categoriesLabel": "Categories"
   },
   "addTransactionView": {
     "title": "Add a transaction",
