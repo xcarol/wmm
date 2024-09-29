@@ -159,7 +159,9 @@
     "dayLabel": "Daily",
     "unitLabel": "Transaction",
     "banksLabel": "Banks",
-    "categoriesLabel": "Categories"
+    "categoriesLabel": "Categories",
+    "barStyle": "Bars",
+    "lineStyle": "Lines"
   },
   "addTransactionView": {
     "title": "Add a transaction",

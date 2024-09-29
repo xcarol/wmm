@@ -15,9 +15,32 @@
     />
     <v-card-text v-resize="onResize">
       <v-row>
+        <v-radio-group
+          :model-value="chartStyle"
+          inline
+          @update:model-value="changeChartStyle"
+        >
+          <v-radio
+            :label="$t('browseTimelineView.lineStyle')"
+            :value="CHART_STYLE_LINES"
+          ></v-radio>
+          <v-radio
+          :label="$t('browseTimelineView.barStyle')"
+          :value="CHART_STYLE_BARS"
+          ></v-radio>
+        </v-radio-group>
+      </v-row>
+      <v-row>
         <v-col :style="{ height: `${adjustedHeight}px` }">
           <chart
+            v-if="chartStyle === CHART_STYLE_BARS"
             type="bar"
+            :data="chartData"
+            :options="chartOptions"
+          />
+          <chart
+            v-if="chartStyle === CHART_STYLE_LINES"
+            type="line"
             :data="chartData"
             :options="chartOptions"
           />
@@ -37,6 +60,7 @@ import {
   Chart as ChartJS,
   PointElement,
   BarElement,
+  LineElement,
   CategoryScale,
   LinearScale,
   Tooltip,
@@ -48,11 +72,21 @@ import { useAppStore } from '../stores/app';
 import { useProgressDialogStore } from '../stores/progressDialog';
 import TimelineDrawer from '../components/TimelineDrawer.vue';
 
-ChartJS.register(PointElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
+ChartJS.register(
+  PointElement,
+  BarElement,
+  LineElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Legend,
+);
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 const CHART_TYPE_BANKS = 0;
 const CHART_TYPE_CATEGORIES = 1;
+const CHART_STYLE_BARS = 'bar';
+const CHART_STYLE_LINES = 'line';
 
 const route = useRoute();
 const { t: $t } = useI18n();
@@ -68,6 +102,7 @@ const adjustedHeight = computed(() => {
 
 const showDrawer = computed(() => appStore.showViewDrawer);
 const chartType = ref(CHART_TYPE_BANKS);
+const chartStyle = ref('');
 const namesForSelection = ref([]);
 const categoriesNames = ref([]);
 const banksNames = ref([]);
@@ -194,6 +229,8 @@ const monthDataset = (label) => {
   const blue = Math.random() * 0xff;
 
   return {
+    fill: false,
+    tension: 0.1,
     label: `${label}`,
     backgroundColor: `rgba(${red}, ${green}, ${blue}, 0.2)`,
     borderColor: `rgb(${red}, ${green}, ${blue})`,
@@ -208,6 +245,8 @@ const yearDataset = (label) => {
   const blue = Math.random() * 0xff;
 
   return {
+    fill: false,
+    tension: 0.1,
     label,
     backgroundColor: `rgb(${red}, ${green}, ${blue}, 0.2)`,
     borderColor: `rgb(${red}, ${green}, ${blue})`,
@@ -464,6 +503,8 @@ const updateChart = () => {
     query.period = selectedPeriod.value;
   }
 
+  query.style = chartStyle.value;
+
   router.replace({ query });
 };
 
@@ -504,9 +545,13 @@ const updateSelectedPeriod = (period) => {
   selectedPeriod.value = period;
 };
 
+const changeChartStyle = (type) => {
+  chartStyle.value = type;
+};
+
 const parseParams = async () => {
   let update = false;
-  const { bank, category, period } = route.query;
+  const { bank, category, period, style } = route.query;
 
   if (category?.length > 0 && JSON.stringify(selectedNames.value) !== JSON.stringify(category)) {
     if (typeof category === 'string') {
@@ -531,6 +576,10 @@ const parseParams = async () => {
   if (period?.length > 0 && selectedPeriod.value !== period) {
     selectedPeriod.value = period;
     update = true;
+  }
+
+  if (style?.length > 0) {
+    chartStyle.value = style;
   }
 
   if (update) {

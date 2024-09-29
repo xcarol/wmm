@@ -159,7 +159,9 @@
     "dayLabel": "Diari",
     "unitLabel": "Transacció",
     "banksLabel": "Bancs",
-    "categoriesLabel": "Categories"
+    "categoriesLabel": "Categories",
+    "barStyle": "Barres",
+    "lineStyle": "Línies"
   },
   "addTransactionView": {
     "title": "Afegeix una transacció",
