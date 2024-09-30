@@ -35,6 +35,7 @@
     "categorize": "Categorizar",
     "duplicates": "Buscar duplicados",
     "sql": "Comandos SQL",
+    "banks": "Configuración de bancos",
     "filters": "Filtros",
     "browse": "Explorar",
     "browseTransactions": "Transacciones",
@@ -49,6 +50,9 @@
     "deletedCategoriesMessage": "Se han eliminado %d filtros y se han actualizado % transacciones.",
     "retrievingTransactions": "Obteniendo las transacciones...",
     "retrievingCategories": "Obteniendo las categorías..."
+  },
+  "banksView": {
+    "title": "Configuración de bancos"
   },
   "importView": {
     "title": "Importa un archivo CSV",

@@ -10,6 +10,7 @@ import FiltersView from '../views/FiltersView.vue';
 import BrowseTransactionsView from '../views/BrowseTransactionsView.vue';
 import BrowseCategoriesView from '../views/BrowserCategoriesView.vue';
 import BrowseTimelineView from '../views/BrowseTimelineView.vue';
+import BanksView from '../views/BanksView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -30,6 +31,12 @@ const router = createRouter({
       name: 'addTransaction',
       component: AddTransactionView,
       meta: { title: i18n.global.t('addTransactionView.title') },
+    },
+    {
+      path: '/banks',
+      name: 'banks',
+      component: BanksView,
+      meta: { title: i18n.global.t('banksView.title') },
     },
     {
       path: '/categorize',

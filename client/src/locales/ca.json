@@ -35,6 +35,7 @@
     "categorize": "Categoritzar",
     "duplicates": "Cercar duplicats",
     "sql": "Comandes SQL",
+    "banks": "Configuració de bancs",
     "filters": "Filtres",
     "browse": "Explorar",
     "browseTransactions": "Transaccions",
@@ -49,6 +50,9 @@
     "deletedCategoriesMessage": "S'han eliminat %d filtres i s'han actualitzat %d transaccions.",
     "retrievingTransactions": "Obtenint les transaccions...",
     "retrievingCategories": "Obtenint les categories..."
+  },
+  "banksView": {
+    "title": "Configuració de bancs"
   },
   "importView": {
     "title": "Importa un arxiu CSV",
