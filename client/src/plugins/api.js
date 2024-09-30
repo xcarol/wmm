@@ -2,6 +2,7 @@
 class Api {
   endpoints = {
     banksNames: '/banks/names',
+    bankInstitutions: '/banks/institutions',
     banksBalance: '/banks/balance?bank={1}&start={2}&end={3}',
     categoriesNames: '/categories/names',
     filters: '/categories/filters?category={1}',
@@ -246,6 +247,11 @@ class Api {
 
   bankTimeline(bank, period, start, end) {
     const url = Api.endpoint(this.endpoints.transactionsBankTimeline, bank, period, start, end);
+    return this.axios.get(url);
+  }
+
+  bankInstitutions() {
+    const url = Api.endpoint(this.endpoints.bankInstitutions);
     return this.axios.get(url);
   }
 }

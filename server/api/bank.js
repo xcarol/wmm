@@ -1,6 +1,20 @@
 const { getBankNames, getBankBalance } = require('./database');
+const NordigenClient = require('nordigen-node');
+
+const COUNTRY = process.env.COUNTRY || 'ES';
 
 module.exports = (app) => {
+  app.get('/banks/institutions', async (req, res) => {
+    const client = new NordigenClient({
+      secretId: process.env.SECRET_ID,
+      secretKey: process.env.SECRET_KEY,
+    });
+
+    await client.generateToken();
+
+    res.json(await client.institution.getInstitutions({ country: COUNTRY }));
+  });
+
   app.get('/banks/names', async (req, res) => {
     try {
       res.json(await getBankNames());
