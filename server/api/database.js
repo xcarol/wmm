@@ -150,9 +150,11 @@ const queryBalancesTimelineByBankByYear =
     SUM(amount) AS total_amount, \
     COUNT(*) AS transaction_count \
   FROM transactions \
-  WHERE date >= ? \
+  WHERE bank = ? \
+    AND date >= ? \
     AND date <= ? \
-  GROUP BY bank, YEAR(date)';
+  GROUP BY bank, YEAR(date) \
+  ORDER BY YEAR(date) ASC';
 
 const queryBalancesTimelineByBankByMonth =
   'SELECT \
@@ -162,7 +164,8 @@ const queryBalancesTimelineByBankByMonth =
     SUM(amount) AS total_amount, \
     COUNT(*) AS transaction_count \
   FROM transactions \
-  WHERE date >= ? \
+  WHERE bank = ? \
+    AND date >= ? \
     AND date <= ? \
   GROUP BY bank, YEAR(date), MONTH(date)';
 
@@ -547,7 +550,7 @@ async function getCategoryNonFiltersBalance(category, start, end) {
   }
 }
 
-async function getTimelineByBank(period, start, end) {
+async function getTimelineByBank(bank, period, start, end) {
   let connection;
   let query;
 
@@ -563,7 +566,7 @@ async function getTimelineByBank(period, start, end) {
   }
   try {
     connection = await getConnection();
-    const result = await connection.query(query, [start, end]);
+    const result = await connection.query(query, [bank, start, end]);
     return result.at(0);
   } catch (err) {
     err.message = `Error [${err}] retrieving the bank timeline for period [${period}] start [${start}] end [${end}].`;

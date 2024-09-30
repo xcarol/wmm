@@ -7,9 +7,17 @@
   >
     <v-card>
       <v-card-text class="align-start mt-2 mr-2">
+        <v-btn-toggle :model-value="chartType" @update:model-value="typeChanged">
+          <v-btn>
+            {{ $t('browseTimelineView.banksLabel') }}
+          </v-btn>
+          <v-btn>
+            {{ $t('browseTimelineView.categoriesLabel') }}
+          </v-btn>
+        </v-btn-toggle>
         <v-list>
           <div
-            v-for="(categoryItem, index) in categoriesNames"
+            v-for="(categoryItem, index) in selectableNames"
             :key="index"
           >
             <v-list-item>
@@ -18,7 +26,7 @@
                   <v-checkbox-btn
                     :model-value="selectedCategories"
                     :value="categoryItem"
-                    @update:model-value="categoryUpdated"
+                    @update:model-value="selectedUpdated"
                   ></v-checkbox-btn>
                 </v-list-item-action>
               </template>
@@ -51,22 +59,26 @@ import { useI18n } from 'vue-i18n';
 
 const { t: $t } = useI18n();
 
-const emits = defineEmits(['updateCategories', 'updatePeriod', 'update', 'close']);
+const emits = defineEmits(['typeChanged','updateSelected', 'updatePeriod', 'update', 'close']);
 
 const props = defineProps({
   show: {
     type: Boolean,
     default: false,
   },
-  categories: {
+  chartType: {
+    type: Number,
+    default: 0,
+  },
+  selectedNames: {
     type: Array,
     required: true,
   },
-  period: {
+  selectedPeriod: {
     type: String,
     required: true,
   },
-  categoriesNames: {
+  selectableNames: {
     type: Array,
     required: true,
   },
@@ -77,17 +89,22 @@ const props = defineProps({
 });
 
 const showDrawer = computed(() => props.show);
-const selectedCategories = computed(() => props.categories);
-const selectedPeriod = computed(() => props.period);
+const selectedCategories = computed(() => props.selectedNames);
+const selectedPeriod = computed(() => props.selectedPeriod);
 const notReadyToQuery = () => props.selectedPeriod === '';
 
-const categoryUpdated = (categories) => {
-  emits('updateCategories', categories);
+const typeChanged = (type) => {
+  emits('typeChanged',type);
+};
+
+const selectedUpdated = (selectedItems) => {
+  emits('updateSelected', selectedItems);
 };
 
 const periodUpdated = (period) => {
   emits('updatePeriod', period);
 };
+
 const search = () => {
   emits('update');
 };

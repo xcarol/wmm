@@ -157,7 +157,11 @@
     "yearLabel": "Anual",
     "monthLabel": "Mensual",
     "dayLabel": "Diario",
-    "unitLabel": "Transación"
+    "unitLabel": "Transación",
+    "banksLabel": "Bancos",
+    "categoriesLabel": "Categorías",
+    "barStyle": "Barras",
+    "lineStyle": "Líneas"
   },
   "addTransactionView": {
     "title": "Añadir una transacción",
