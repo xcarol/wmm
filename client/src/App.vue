@@ -2,6 +2,10 @@
   <v-app>
     <progress-dialog />
     <message-dialog />
+    <app-drawer
+      :show="showAppDrawer"
+      @on-option-selected="optionSelected"
+    />
     <v-app-bar :elevation="2">
       <template #prepend>
         <v-app-bar-nav-icon @click.stop="showAppDrawer = !showAppDrawer"></v-app-bar-nav-icon>
@@ -15,10 +19,6 @@
         ></v-btn>
       </template>
     </v-app-bar>
-    <app-drawer
-      :show="showAppDrawer"
-      @on-option-selected="optionSelected"
-    />
     <v-main>
       <router-view />
     </v-main>
