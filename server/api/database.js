@@ -127,6 +127,8 @@ const queryYears = 'SELECT DISTINCT YEAR(date) as year FROM transactions';
 
 const queryAddCategoryFilter = 'INSERT INTO filters (category, filter, label) VALUES (?, ?, ?)';
 
+const queryAddBank = 'INSERT INTO banks (institutionId, requisitionId) VALUES (?, ?)';
+
 const queryDeleteCategory = 'DELETE FROM filters WHERE category = ?';
 
 const queryDeleteFilter = 'DELETE FROM filters WHERE id = ?';
@@ -249,6 +251,29 @@ async function applyFilters() {
     return affectedRows;
   } catch (err) {
     err.message = `Error [${err}] applying filters.`;
+    console.error(err);
+    throw err;
+  } finally {
+    if (connection) {
+      connection.close();
+    }
+  }
+}
+
+async function addBank(institutionId, requisitionId) {
+  let connection;
+
+  try {
+    connection = await getConnection();
+
+    const result = await connection.query(queryAddBank, [
+      institutionId.slice(0, MAX_LEN),
+      requisitionId.slice(0, MAX_LEN),
+    ]);
+
+    return result;
+  } catch (err) {
+    err.message = `Error [${err}] adding bank ${institutionId} with requisitionId ${requisitionId}.`;
     console.error(err);
     throw err;
   } finally {
@@ -885,6 +910,7 @@ async function updateTransactionsAsNotDuplicated(transactions) {
 }
 
 module.exports = {
+  addBank,
   addFilter,
   addTransaction,
   addTransactions,

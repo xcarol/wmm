@@ -32,7 +32,7 @@
 
 <script setup>
 import { computed, ref, onBeforeMount, onBeforeUpdate } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
 import { useBanksStore } from '../stores/banks';
@@ -40,6 +40,7 @@ import { useBanksStore } from '../stores/banks';
 const api = useApi();
 const appStore = useAppStore();
 const route = useRoute();
+const router = useRouter();
 const banksStore = useBanksStore();
 const banks = ref([]);
 
@@ -62,7 +63,7 @@ const selectBank = async (institutionId) => {
   try {
     const { data } = await api.bankRegisterInit(institutionId, REDIRECT_URL);
     banksStore.requisitionId = data.requisitionId;
-    window.open(data.link, "_self");
+    window.open(data.link, '_self');
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }
@@ -70,17 +71,20 @@ const selectBank = async (institutionId) => {
 
 const parseParams = async () => {
   const { ref: nordigenRef } = route.query;
-
+  
   if (nordigenRef) {
-    const result = await api.bankRegisterComplete(banksStore.requisitionId);
-    console.log(result);
+    try {
+      await api.bankRegisterComplete(banksStore.requisitionId);
+      router.push('/banks');
+    } catch (e) {
+      appStore.alertMessage = api.getErrorMessage(e);
+    }
   }
 };
 
 onBeforeUpdate(async () => parseParams());
 onBeforeMount(async () => {
-  console.log(banksStore.requisitionId);
-    try {
+  try {
     const { data: institutions } = await api.bankInstitutions();
     institutions.forEach((institution) => {
       const { id, logo, name } = institution;

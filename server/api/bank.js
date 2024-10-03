@@ -1,5 +1,5 @@
 const { randomUUID } = require('crypto');
-const { getBankNames, getBankBalance } = require('./database');
+const { addBank, getBankNames, getBankBalance } = require('./database');
 const NordigenClient = require('nordigen-node');
 
 const COUNTRY = process.env.COUNTRY || 'ES';
@@ -61,6 +61,8 @@ module.exports = (app) => {
       const account = client.account(accountId);
 
       const metadata = await account.getMetadata();
+
+      await addBank(metadata.institution_id, requisitionId);
       res.json(metadata);
     } catch (err) {
       res.status(err.code).send(err);
