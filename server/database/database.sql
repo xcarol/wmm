@@ -22,10 +22,11 @@ DROP TABLE IF EXISTS `banks`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `banks` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(200) NOT NULL,
-  `logo` varchar(200) NOT NULL,
+  `institutionId` varchar(200) NOT NULL,
   `requisitionId` varchar(200) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `institutionId` (`institutionId`),
+  KEY `requisitionId` (`requisitionId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
