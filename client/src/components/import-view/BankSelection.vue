@@ -11,7 +11,7 @@
 <script setup>
 import { computed, onBeforeUpdate, onBeforeMount } from 'vue';
 import { useAppStore } from '../../stores/app';
-import { banksStore } from '../../stores/banks';
+import { useBanksStore } from '../../stores/banks';
 
 const emits = defineEmits(['selectedBank']);
 
@@ -22,7 +22,7 @@ defineProps({
   },
 });
 
-const banks = banksStore();
+const banks = useBanksStore();
 const appStore = useAppStore();
 
 const noFileLoaded = computed(() => appStore.csvfile.rowCount === 0);
