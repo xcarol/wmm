@@ -1,14 +1,10 @@
 <template>
-  <v-row
-    class="flex-grow-1 d-flex flex-column my-box"
-  >
+  <v-row class="flex-grow-1 d-flex flex-column my-box">
     <v-col
       cols="6"
       class="flex-grow-1 d-flex flex-column my-box"
     >
-      <v-card
-        class="flex-grow-1 d-flex flex-column mybox"
-      >
+      <v-card class="flex-grow-1 d-flex flex-column mybox">
         <v-card-title>Select bank to configure</v-card-title>
         <v-text-field
           class="pl-4"
@@ -25,7 +21,7 @@
             :prepend-avatar="bank.logo"
             :title="bank.name"
             style="cursor: pointer"
-            @click.stop="selectBank"
+            @click.stop="selectBank(bank.id)"
           >
           </v-list-item>
         </v-list>
@@ -36,10 +32,18 @@
 
 <script setup>
 import { computed, ref, onBeforeMount, onBeforeUpdate } from 'vue';
+import { useRoute } from 'vue-router';
 import { useApi } from '../plugins/api';
+import { useAppStore } from '../stores/app';
+import { useBanksStore } from '../stores/banks';
 
 const api = useApi();
+const appStore = useAppStore();
+const route = useRoute();
+const banksStore = useBanksStore();
 const banks = ref([]);
+
+const REDIRECT_URL = window.location.href;
 
 const filter = ref('');
 
@@ -54,15 +58,38 @@ const filteredBanks = computed(() => {
   });
 });
 
-const selectBank = () => {};
+const selectBank = async (institutionId) => {
+  try {
+    const { data } = await api.bankRegisterInit(institutionId, REDIRECT_URL);
+    banksStore.requisitionId = data.requisitionId;
+    window.open(data.link, "_self");
+  } catch (e) {
+    appStore.alertMessage = api.getErrorMessage(e);
+  }
+};
 
-onBeforeUpdate();
+const parseParams = async () => {
+  const { ref: nordigenRef } = route.query;
+
+  if (nordigenRef) {
+    const result = await api.bankRegisterComplete(banksStore.requisitionId);
+    console.log(result);
+  }
+};
+
+onBeforeUpdate(async () => parseParams());
 onBeforeMount(async () => {
-  const { data: institutions } = await api.bankInstitutions();
-  institutions.forEach((institution) => {
-    const { id, logo, name } = institution;
-    banks.value.push({ id, logo, name });
-  });
+  console.log(banksStore.requisitionId);
+    try {
+    const { data: institutions } = await api.bankInstitutions();
+    institutions.forEach((institution) => {
+      const { id, logo, name } = institution;
+      banks.value.push({ id, logo, name });
+    });
+    await parseParams();
+  } catch (e) {
+    appStore.alertMessage = api.getErrorMessage(e);
+  }
 });
 </script>
 

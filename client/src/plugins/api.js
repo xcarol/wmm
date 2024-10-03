@@ -3,6 +3,8 @@ class Api {
   endpoints = {
     banksNames: '/banks/names',
     bankInstitutions: '/banks/institutions',
+    bankRegisterInit: '/banks/register/init?institutionId={1}&redirectUrl={2}',
+    bankRegisterComplete: '/banks/register/complete?requisitionId={1}',
     banksBalance: '/banks/balance?bank={1}&start={2}&end={3}',
     categoriesNames: '/categories/names',
     filters: '/categories/filters?category={1}',
@@ -252,6 +254,16 @@ class Api {
 
   bankInstitutions() {
     const url = Api.endpoint(this.endpoints.bankInstitutions);
+    return this.axios.get(url);
+  }
+
+  bankRegisterInit(id, link) {
+    const url = Api.endpoint(this.endpoints.bankRegisterInit, id, link);
+    return this.axios.get(url);
+  }
+
+  bankRegisterComplete(requisitionId) {
+    const url = Api.endpoint(this.endpoints.bankRegisterComplete, requisitionId);
     return this.axios.get(url);
   }
 }

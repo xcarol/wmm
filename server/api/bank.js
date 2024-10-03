@@ -1,18 +1,70 @@
+const { randomUUID } = require('crypto');
 const { getBankNames, getBankBalance } = require('./database');
 const NordigenClient = require('nordigen-node');
 
 const COUNTRY = process.env.COUNTRY || 'ES';
 
-module.exports = (app) => {
-  app.get('/banks/institutions', async (req, res) => {
-    const client = new NordigenClient({
+let nordigenClient = null;
+let nordigenToken;
+
+const getNordigenClient = async () => {
+  if (nordigenClient === null) {
+    nordigenClient = new NordigenClient({
       secretId: process.env.SECRET_ID,
       secretKey: process.env.SECRET_KEY,
     });
 
-    await client.generateToken();
+    nordigenToken = await nordigenClient.generateToken();
+    nordigenClient.token = nordigenToken.access;
+  }
 
-    res.json(await client.institution.getInstitutions({ country: COUNTRY }));
+  return nordigenClient;
+};
+
+module.exports = (app) => {
+  app.get('/banks/institutions', async (req, res) => {
+    try {
+      const client = await getNordigenClient();
+      res.json(await client.institution.getInstitutions({ country: COUNTRY }));
+    } catch (err) {
+      res.status(err.code).send(err);
+    }
+  });
+
+  app.get('/banks/register/init', async (req, res) => {
+    try {
+      const { institutionId, redirectUrl } = req.query;
+      const client = await getNordigenClient();
+
+      const init = await client.initSession({
+        redirectUrl,
+        institutionId,
+        referenceId: randomUUID(),
+      });
+
+      res.json({
+        link: init.link,
+        requisitionId: init.id,
+      });
+    } catch (err) {
+      res.status(err.code).send(err);
+    }
+  });
+
+  app.get('/banks/register/complete', async (req, res) => {
+    try {
+      const { requisitionId } = req.query;
+
+      const client = await getNordigenClient();
+      const requisitionData = await client.requisition.getRequisitionById(requisitionId);
+      const accountId = requisitionData.accounts[0];
+      const account = client.account(accountId);
+
+      const metadata = await account.getMetadata();
+      res.json(metadata);
+    } catch (err) {
+      res.status(err.code).send(err);
+    }
   });
 
   app.get('/banks/names', async (req, res) => {
