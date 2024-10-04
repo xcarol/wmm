@@ -3,6 +3,7 @@ class Api {
   endpoints = {
     banksNames: '/banks/names',
     bankInstitutions: '/banks/institutions',
+    registeredBanks: '/banks/registered',
     bankRegisterInit: '/banks/register/init?institutionId={1}&redirectUrl={2}',
     bankRegisterComplete: '/banks/register/complete?requisitionId={1}',
     banksBalance: '/banks/balance?bank={1}&start={2}&end={3}',
@@ -264,6 +265,11 @@ class Api {
 
   bankRegisterComplete(requisitionId) {
     const url = Api.endpoint(this.endpoints.bankRegisterComplete, requisitionId);
+    return this.axios.get(url);
+  }
+
+  registeredBanks() {
+    const url = Api.endpoint(this.endpoints.registeredBanks);
     return this.axios.get(url);
   }
 }

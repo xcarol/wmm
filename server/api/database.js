@@ -132,6 +132,8 @@ const queryAddCategoryFilter = 'INSERT INTO filters (category, filter, label) VA
 
 const queryAddBank = 'INSERT INTO banks (name, institutionId, requisitionId) VALUES (?, ?, ?)';
 
+const queryRegisteredBanks = 'SELECT name, institutionId, requisitionId FROM banks';
+
 const queryDeleteCategory = 'DELETE FROM filters WHERE category = ?';
 
 const queryDeleteFilter = 'DELETE FROM filters WHERE id = ?';
@@ -358,6 +360,24 @@ async function renameCategory(oldName, newName) {
     return result;
   } catch (err) {
     err.message = `Error [${err}] renaming category [${oldName}] to new name [${newName}].`;
+    console.error(err);
+    throw err;
+  } finally {
+    if (connection) {
+      connection.close();
+    }
+  }
+}
+
+async function getRegisteredBanks() {
+  let connection;
+
+  try {
+    connection = await getConnection();
+    const result = await connection.query(queryRegisteredBanks);
+    return result.at(0);
+  } catch (err) {
+    err.message = `Error [${err}] retrieving registered banks.`;
     console.error(err);
     throw err;
   } finally {
@@ -943,6 +963,7 @@ module.exports = {
   getTimelineByBank,
   getTimelineByCategory,
   getDuplicatedTransactions,
+  getRegisteredBanks,
   getTransactions,
   getYears,
   renameCategory,

@@ -52,7 +52,9 @@
     "retrievingCategories": "Obtenint les categories..."
   },
   "banksView": {
-    "title": "Configuració de bancs"
+    "title": "Configuració de bancs",
+    "configBank": "Configurar un banc",
+    "useBank": "Operar amb un banc"
   },
   "importView": {
     "title": "Importa un arxiu CSV",

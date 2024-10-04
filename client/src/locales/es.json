@@ -52,7 +52,9 @@
     "retrievingCategories": "Obteniendo las categorías..."
   },
   "banksView": {
-    "title": "Configuración de bancos"
+    "title": "Configuración de bancos",
+    "configBank": "Configurar un banco",
+    "useBank": "Operar con un banco"
   },
   "importView": {
     "title": "Importa un archivo CSV",
