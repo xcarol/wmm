@@ -54,7 +54,9 @@
   "banksView": {
     "title": "Configuración de bancos",
     "configBank": "Configurar un banco",
-    "useBank": "Operar con un banco"
+    "useBank": "Operar con un banco",
+    "registerInit": "Serás redirigido a ob.gocardless.com para realizar el registro. ¿Estás de acuerdo?",
+    "registerSuccess": "El banco se ha estat registrado correctamente."
   },
   "importView": {
     "title": "Importa un archivo CSV",

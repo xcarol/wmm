@@ -54,7 +54,9 @@
   "banksView": {
     "title": "Configuració de bancs",
     "configBank": "Configurar un banc",
-    "useBank": "Operar amb un banc"
+    "useBank": "Operar amb un banc",
+    "registerInit": "Seràs redirigit a ob.gocardless.com per realitzar el registre. D'acord?",
+    "registerSuccess": "El banc ha estat enregistrat correctament."
   },
   "importView": {
     "title": "Importa un arxiu CSV",

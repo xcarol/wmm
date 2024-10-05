@@ -54,7 +54,9 @@
   "banksView": {
     "title": "Banks Configuration",
     "configBank": "Configure a bank",
-    "useBank": "Operate with a bank"
+    "useBank": "Operate with a bank",
+    "registerInit": "You will be redirected to ob.gocardless.com to continue with the registration. Is that ok?",
+    "registerSuccess": "The bank has been successfully registered."
   },
   "importView": {
     "title": "Import CSV File",
