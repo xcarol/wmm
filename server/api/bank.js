@@ -65,7 +65,7 @@ module.exports = (app) => {
       await addBank(metadata.institution_id, requisitionId);
       res.json(metadata);
     } catch (err) {
-      res.status(err.code).send(err);
+      res.status(err.sqlState ? 400 : 500).send(err);
     }
   });
 
