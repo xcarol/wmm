@@ -61,9 +61,8 @@ module.exports = (app) => {
       const account = client.account(accountId);
 
       const metadata = await account.getMetadata();
-      const details = await account.getDetails();
 
-      await addBank(details.account.displayName, metadata.institution_id, requisitionId);
+      await addBank(metadata.institution_id, requisitionId);
       res.json(metadata);
     } catch (err) {
       res.status(err.code).send(err);
