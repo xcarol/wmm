@@ -1,5 +1,11 @@
 const { randomUUID } = require('crypto');
-const { addBank, getBankNames, getBankBalance, getRegisteredBanks } = require('./database');
+const {
+  addBank,
+  deleteBank,
+  getBankNames,
+  getBankBalance,
+  getRegisteredBanks,
+} = require('./database');
 const NordigenClient = require('nordigen-node');
 
 const COUNTRY = process.env.COUNTRY || 'ES';
@@ -64,6 +70,15 @@ module.exports = (app) => {
 
       await addBank(metadata.institution_id, requisition_id, agreement.access_valid_for_days);
       res.json(metadata);
+    } catch (err) {
+      res.status(err.sqlState ? 400 : 500).send(err);
+    }
+  });
+
+  app.get('/banks/delete', async (req, res) => {
+    try {
+      const { bank_id } = req.query;
+      res.json(await deleteBank(bank_id));
     } catch (err) {
       res.status(err.sqlState ? 400 : 500).send(err);
     }

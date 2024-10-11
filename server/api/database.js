@@ -133,6 +133,8 @@ const queryAddBank =
 
 const queryRegisteredBanks = 'SELECT institution_id, requisition_id, validity_date FROM banks';
 
+const queryDeleteBank = 'DELETE FROM banks WHERE institution_id = ?';
+
 const queryDeleteCategory = 'DELETE FROM filters WHERE category = ?';
 
 const queryDeleteFilter = 'DELETE FROM filters WHERE id = ?';
@@ -288,6 +290,24 @@ async function addBank(institution_id, requisition_id, accessDays) {
     return result;
   } catch (err) {
     err.message = `Error [${err}] adding bank ${institution_id} with requisition_id ${requisition_id}.`;
+    console.error(err);
+    throw err;
+  } finally {
+    if (connection) {
+      connection.close();
+    }
+  }
+}
+
+async function deleteBank(bank_id) {
+  let connection;
+
+  try {
+    connection = await getConnection();
+
+    return connection.query(queryDeleteBank, [bank_id]);
+  } catch (err) {
+    err.message = `Error [${err}] deleting bank with institution_id ${bank_id}.`;
     console.error(err);
     throw err;
   } finally {
@@ -948,6 +968,7 @@ module.exports = {
   addTransactions,
   applyFilters,
   backupDatabase,
+  deleteBank,
   deleteCategory,
   deleteFilter,
   deleteTransactions,
