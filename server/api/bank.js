@@ -59,10 +59,10 @@ module.exports = (app) => {
       const requisitionData = await client.requisition.getRequisitionById(requisition_id);
       const accountId = requisitionData.accounts[0];
       const account = client.account(accountId);
-
+      const agreement = await client.agreement.getAgreementById(requisitionData.agreement);
       const metadata = await account.getMetadata();
 
-      await addBank(metadata.institution_id, requisition_id);
+      await addBank(metadata.institution_id, requisition_id, agreement.access_valid_for_days);
       res.json(metadata);
     } catch (err) {
       res.status(err.sqlState ? 400 : 500).send(err);

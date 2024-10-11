@@ -24,6 +24,7 @@ CREATE TABLE `banks` (
   `id` int NOT NULL AUTO_INCREMENT,
   `institution_id` varchar(200) NOT NULL,
   `requisition_id` varchar(200) NOT NULL,
+  `validity_date` date NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `institution_id` (`institution_id`),
   KEY `requisition_id` (`requisition_id`)

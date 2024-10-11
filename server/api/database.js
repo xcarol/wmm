@@ -1,5 +1,6 @@
 const mysql = require('mysql2/promise');
 const path = require('path');
+const dayjs = require('dayjs');
 const { execSync } = require('child_process');
 
 const MAX_LEN = 200;
@@ -263,7 +264,7 @@ async function applyFilters() {
   }
 }
 
-async function addBank(institution_id, requisition_id) {
+async function addBank(institution_id, requisition_id, accessDays) {
   let connection;
 
   try {
@@ -277,7 +278,12 @@ async function addBank(institution_id, requisition_id) {
       throw new Error(`requisition_id: [${requisition_id}] is longer than ${MAX_LEN}`);
     }
 
-    const result = await connection.query(queryAddBank, [institution_id, requisition_id]);
+    const dateAccessDays = dayjs().add(accessDays, 'days').format('YYYY-MM-DD');
+    const result = await connection.query(queryAddBank, [
+      institution_id,
+      requisition_id,
+      dateAccessDays,
+    ]);
 
     return result;
   } catch (err) {
