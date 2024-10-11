@@ -127,9 +127,10 @@ const queryYears = 'SELECT DISTINCT YEAR(date) as year FROM transactions';
 
 const queryAddCategoryFilter = 'INSERT INTO filters (category, filter, label) VALUES (?, ?, ?)';
 
-const queryAddBank = 'INSERT INTO banks (institutionId, requisitionId) VALUES (?, ?)';
+const queryAddBank =
+  'INSERT INTO banks (institution_id, requisition_id, validity_date) VALUES (?, ?, ?)';
 
-const queryRegisteredBanks = 'SELECT institutionId, requisitionId FROM banks';
+const queryRegisteredBanks = 'SELECT institution_id, requisition_id, validity_date FROM banks';
 
 const queryDeleteCategory = 'DELETE FROM filters WHERE category = ?';
 
@@ -262,25 +263,25 @@ async function applyFilters() {
   }
 }
 
-async function addBank(institutionId, requisitionId) {
+async function addBank(institution_id, requisition_id) {
   let connection;
 
   try {
     connection = await getConnection();
 
-    if (institutionId.length > MAX_LEN) {
-      throw new Error(`institutionId: [${institutionId}] is longer than ${MAX_LEN}`);
+    if (institution_id.length > MAX_LEN) {
+      throw new Error(`institution_id: [${institution_id}] is longer than ${MAX_LEN}`);
     }
 
-    if (requisitionId.length > MAX_LEN) {
-      throw new Error(`requisitionId: [${requisitionId}] is longer than ${MAX_LEN}`);
+    if (requisition_id.length > MAX_LEN) {
+      throw new Error(`requisition_id: [${requisition_id}] is longer than ${MAX_LEN}`);
     }
 
-    const result = await connection.query(queryAddBank, [institutionId, requisitionId]);
+    const result = await connection.query(queryAddBank, [institution_id, requisition_id]);
 
     return result;
   } catch (err) {
-    err.message = `Error [${err}] adding bank ${institutionId} with requisitionId ${requisitionId}.`;
+    err.message = `Error [${err}] adding bank ${institution_id} with requisition_id ${requisition_id}.`;
     console.error(err);
     throw err;
   } finally {

@@ -33,18 +33,18 @@ module.exports = (app) => {
 
   app.get('/banks/register/init', async (req, res) => {
     try {
-      const { institutionId, redirectUrl } = req.query;
+      const { institution_id, redirect_url } = req.query;
       const client = await getNordigenClient();
 
       const init = await client.initSession({
-        redirectUrl,
-        institutionId,
+        redirectUrl: redirect_url,
+        institutionId: institution_id,
         referenceId: randomUUID(),
       });
 
       res.json({
         link: init.link,
-        requisitionId: init.id,
+        requisition_id: init.id,
       });
     } catch (err) {
       res.status(err.code).send(err);
@@ -53,16 +53,16 @@ module.exports = (app) => {
 
   app.get('/banks/register/complete', async (req, res) => {
     try {
-      const { requisitionId } = req.query;
+      const { requisition_id } = req.query;
 
       const client = await getNordigenClient();
-      const requisitionData = await client.requisition.getRequisitionById(requisitionId);
+      const requisitionData = await client.requisition.getRequisitionById(requisition_id);
       const accountId = requisitionData.accounts[0];
       const account = client.account(accountId);
 
       const metadata = await account.getMetadata();
 
-      await addBank(metadata.institution_id, requisitionId);
+      await addBank(metadata.institution_id, requisition_id);
       res.json(metadata);
     } catch (err) {
       res.status(err.sqlState ? 400 : 500).send(err);
