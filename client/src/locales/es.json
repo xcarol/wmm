@@ -56,7 +56,8 @@
     "configBank": "Configurar un banco",
     "useBank": "Operar con un banco",
     "registerInit": "Serás redirigido a ob.gocardless.com para realizar el registro. ¿Estás de acuerdo?",
-    "registerSuccess": "El banco se ha estat registrado correctamente."
+    "registerSuccess": "El banco se ha estat registrado correctamente.",
+    "deleteBank": "Estás a punto de borrar el banco: %s.\n¿Estás seguro?"
   },
   "importView": {
     "title": "Importa un archivo CSV",
@@ -80,8 +81,8 @@
     "searchButton": "Busca",
     "markButton": "Marca como NO duplicados",
     "deleteButton": "Elimina las transacciones",
-    "markWarningMessage": "Estás a punto de marcar %d transacciones como NO duplicadas\nEsatás seguro?",
-    "deleteWarningMessage": "Estás a punto de borrar %d transacciones\nEsatás seguro?"
+    "markWarningMessage": "Estás a punto de marcar %d transacciones como NO duplicadas\n¿Estás seguro?",
+    "deleteWarningMessage": "Estás a punto de borrar %d transacciones\n¿Estás seguro?"
   },
   "sqlView": {
     "title": "Ejecuta comandos SQL",

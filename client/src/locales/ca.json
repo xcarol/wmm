@@ -56,7 +56,8 @@
     "configBank": "Configurar un banc",
     "useBank": "Operar amb un banc",
     "registerInit": "Seràs redirigit a ob.gocardless.com per realitzar el registre. D'acord?",
-    "registerSuccess": "El banc ha estat enregistrat correctament."
+    "registerSuccess": "El banc ha estat enregistrat correctament.",
+    "deleteBank": "Et's a punt d'esborrar el banc: %s.\nN'estàs segur?"
   },
   "importView": {
     "title": "Importa un arxiu CSV",

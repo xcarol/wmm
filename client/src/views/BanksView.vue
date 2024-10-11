@@ -46,12 +46,12 @@
             <template #append>
               <v-icon
                 icon="$refresh"
-                @click="refresh(bank.id)"
+                @click="refreshBank(bank.id)"
               >
               </v-icon>
               <v-icon
                 icon="$remove"
-                @click="remove(bank.id)"
+                @click="deleteBank(bank.name, bank.id)"
               >
               </v-icon>
             </template>
@@ -96,15 +96,52 @@ const filteredBanks = computed(() => {
     .filter((bank) => {
       return regex.test(bank.name);
     })
-    .filter((fbank) => registeredBanks.value.filter((rbank) => fbank.id !== rbank.id).length > 0);
+    .filter((fbank) => {
+      return registeredBanks.value.length
+        ? registeredBanks.value.filter((rbank) => fbank.id !== rbank.id).length > 0
+        : true;
+    });
 });
 
-const refresh = (id) => {
-  console.log(`collonut ${id}`);
+const getInstitutions = async () => {
+  banks.value = [];
+  const { data: institutions } = await api.bankInstitutions();
+  institutions.forEach((institution) => {
+    const { id, logo, name } = institution;
+    banks.value.push({ id, logo, name });
+  });
 };
 
-const remove = (id) => {
-  console.log(`collonut ${id}`);
+const getRegisteredBanks = async () => {
+  registeredBanks.value = [];
+  const { data: dbRegisteredBanks } = await api.registeredBanks();
+  dbRegisteredBanks.forEach((registeredBank) => {
+    const bankData = banks.value.find((bank) => bank.id === registeredBank.institution_id);
+    if (bankData) {
+      const { id, logo, name } = bankData;
+      registeredBanks.value.push({ id, logo, name });
+    }
+  });
+};
+
+const refreshBank = (requisitionId) => {
+  console.log(`collonut ${requisitionId}`);
+};
+
+const deleteBank = (bankName, bankId) => {
+  messageDialog.showMessage({
+    title: $t('dialog.Question'),
+    message: $t('banksView.deleteBank').replace('%s', bankName),
+    yes: async () => {
+      try {
+        await api.deleteBank(bankId);
+        await getRegisteredBanks();
+      } catch (e) {
+        appStore.alertMessage = api.getErrorMessage(e);
+      }
+    },
+    no: () => {},
+  });
 };
 
 const selectBank = async (institutionId) => {
@@ -114,7 +151,7 @@ const selectBank = async (institutionId) => {
       message: $t('banksView.registerInit'),
       yes: async () => {
         const { data } = await api.bankRegisterInit(institutionId, REDIRECT_URL);
-        banksStore.requisitionId = data.requisitionId;
+        banksStore.requisitionId = data.requisition_id;
         window.open(data.link, '_self');
       },
       no: () => {},
@@ -122,25 +159,6 @@ const selectBank = async (institutionId) => {
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }
-};
-
-const getInstitutions = async () => {
-  const { data: institutions } = await api.bankInstitutions();
-  institutions.forEach((institution) => {
-    const { id, logo, name } = institution;
-    banks.value.push({ id, logo, name });
-  });
-};
-
-const getRegisteredBanks = async () => {
-  const { data: dbRegisteredBanks } = await api.registeredBanks();
-  dbRegisteredBanks.forEach((registeredBank) => {
-    const bankData = banks.value.find((bank) => bank.id === registeredBank.institutionId);
-    if (bankData) {
-      const { id, logo, name } = bankData;
-      registeredBanks.value.push({ id, logo, name });
-    }
-  });
 };
 
 const parseParams = async () => {
