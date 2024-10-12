@@ -129,7 +129,7 @@ const queryYears = 'SELECT DISTINCT YEAR(date) as year FROM transactions';
 const queryAddCategoryFilter = 'INSERT INTO filters (category, filter, label) VALUES (?, ?, ?)';
 
 const queryAddBank =
-  'INSERT INTO banks (institution_id, requisition_id, validity_date) VALUES (?, ?, ?)';
+  'INSERT INTO banks (name, institution_id, requisition_id, validity_date) VALUES (?, ?, ?, ?)';
 
 const queryRegisteredBanks = 'SELECT institution_id, requisition_id, validity_date FROM banks';
 
@@ -266,11 +266,15 @@ async function applyFilters() {
   }
 }
 
-async function addBank(institution_id, requisition_id, accessDays) {
+async function addBank(institution_name, institution_id, requisition_id, accessDays) {
   let connection;
 
   try {
     connection = await getConnection();
+
+    if (institution_name.length > MAX_LEN) {
+      throw new Error(`name: [${institution_name}] is longer than ${MAX_LEN}`);
+    }
 
     if (institution_id.length > MAX_LEN) {
       throw new Error(`institution_id: [${institution_id}] is longer than ${MAX_LEN}`);
@@ -282,6 +286,7 @@ async function addBank(institution_id, requisition_id, accessDays) {
 
     const dateAccessDays = dayjs().add(accessDays, 'days').format('YYYY-MM-DD');
     const result = await connection.query(queryAddBank, [
+      institution_name,
       institution_id,
       requisition_id,
       dateAccessDays,
