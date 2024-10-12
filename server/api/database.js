@@ -128,10 +128,17 @@ const queryYears = 'SELECT DISTINCT YEAR(date) as year FROM transactions';
 
 const queryAddCategoryFilter = 'INSERT INTO filters (category, filter, label) VALUES (?, ?, ?)';
 
+const queryBankById =
+  'SELECT name, institution_id, requisition_id, validity_date FROM banks where institution_id = ?';
+
+const queryBankLastestTransactionDate =
+  'SELECT date FROM transactions WHERE bank = ? ORDER BY date DESC LIMIT 1';
+
 const queryAddBank =
   'INSERT INTO banks (name, institution_id, requisition_id, validity_date) VALUES (?, ?, ?, ?)';
 
-const queryRegisteredBanks = 'SELECT institution_id, requisition_id, validity_date FROM banks';
+const queryRegisteredBanks =
+  'SELECT name, institution_id, requisition_id, validity_date FROM banks';
 
 const queryDeleteBank = 'DELETE FROM banks WHERE institution_id = ?';
 
@@ -313,6 +320,43 @@ async function deleteBank(bank_id) {
     return connection.query(queryDeleteBank, [bank_id]);
   } catch (err) {
     err.message = `Error [${err}] deleting bank with institution_id ${bank_id}.`;
+    console.error(err);
+    throw err;
+  } finally {
+    if (connection) {
+      connection.close();
+    }
+  }
+}
+
+async function getBankById(bank_id) {
+  let connection;
+
+  try {
+    connection = await getConnection();
+    const result = await connection.query(queryBankById, [bank_id]);
+    return result.at(0).at(0);
+  } catch (err) {
+    err.message = `Error [${err}] searching bank with institution_id ${bank_id}.`;
+    console.error(err);
+    throw err;
+  } finally {
+    if (connection) {
+      connection.close();
+    }
+  }
+}
+
+async function getBankLatestDate(bank_name) {
+  let connection;
+
+  try {
+    connection = await getConnection();
+
+    const result = await connection.query(queryBankLastestTransactionDate, [bank_name]);
+    return result.at(0).at(0);
+  } catch (err) {
+    err.message = `Error [${err}] searching for latest transaction of bank: ${bank_name}.`;
     console.error(err);
     throw err;
   } finally {
@@ -979,7 +1023,9 @@ module.exports = {
   deleteTransactions,
   deleteNewerTransactions,
   executeSql,
+  getBankById,
   getBankBalance,
+  getBankLatestDate,
   getBankNames,
   getCategories,
   getCategoryBalance,
