@@ -5,6 +5,7 @@ class Api {
     bankInstitutions: '/banks/institutions',
     registeredBanks: '/banks/registered',
     deleteBank: '/banks/delete?bank_id={1}',
+    refreshBank: '/banks/refresh?bank_id={1}',
     bankRegisterInit: '/banks/register/init?institution_id={1}&redirect_url={2}',
     bankRegisterComplete: '/banks/register/complete?requisition_id={1}',
     banksBalance: '/banks/balance?bank={1}&start={2}&end={3}',
@@ -276,6 +277,11 @@ class Api {
 
   deleteBank(bankId) {
     const url = Api.endpoint(this.endpoints.deleteBank, bankId);
+    return this.axios.get(url);
+  }
+
+  refreshBank(bankId) {
+    const url = Api.endpoint(this.endpoints.refreshBank, bankId);
     return this.axios.get(url);
   }
 }

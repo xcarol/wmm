@@ -2,11 +2,15 @@ const { randomUUID } = require('crypto');
 const {
   addBank,
   deleteBank,
+  getBankById,
+  getBankLatestDate,
   getBankNames,
   getBankBalance,
   getRegisteredBanks,
+  addTransactions,
 } = require('./database');
 const NordigenClient = require('nordigen-node');
+const dayjs = require('dayjs');
 
 const COUNTRY = process.env.COUNTRY || 'ES';
 
@@ -33,7 +37,7 @@ module.exports = (app) => {
       const client = await getNordigenClient();
       res.json(await client.institution.getInstitutions({ country: COUNTRY }));
     } catch (err) {
-      res.status(err.code).send(err);
+      res.status(err.response.status).send(err.response.data);
     }
   });
 
@@ -53,7 +57,7 @@ module.exports = (app) => {
         requisition_id: init.id,
       });
     } catch (err) {
-      res.status(err.code).send(err);
+      res.status(err.response.status).send(err.response.data);
     }
   });
 
@@ -77,7 +81,9 @@ module.exports = (app) => {
       );
       res.json(metadata);
     } catch (err) {
-      res.status(err.sqlState ? 400 : 500).send(err);
+      res
+        .status(err.sqlState ? 400 : err.response ? err.response.status : 500)
+        .send(err.response.data);
     }
   });
 
@@ -87,6 +93,42 @@ module.exports = (app) => {
       res.json(await deleteBank(bank_id));
     } catch (err) {
       res.status(err.sqlState ? 400 : 500).send(err);
+    }
+  });
+
+  app.get('/banks/refresh', async (req, res) => {
+    try {
+      const { bank_id } = req.query;
+      const bank = await getBankById(bank_id);
+      const { date: latestDate } = await getBankLatestDate(bank.name);
+      const client = await getNordigenClient();
+      const requisitionData = await client.requisition.getRequisitionById(bank.requisition_id);
+      const accountId = requisitionData.accounts[0];
+      const account = client.account(accountId);
+      const {
+        transactions: { booked },
+      } = await account.getTransactions({
+        dateFrom: latestDate ? dayjs(latestDate).add(1, 'day').format('YYYY-MM-DD') : '1970-01-01',
+        dateTo: dayjs().format('YYYY-MM-DD'),
+      });
+      res.json(
+        booked.length
+          ? await addTransactions(
+              booked.map((transaction) => {
+                return {
+                  bank: bank.name,
+                  date: transaction.valueDate,
+                  description: transaction.remittanceInformationUnstructured,
+                  amount: transaction.transactionAmount.amount,
+                };
+              }),
+            )
+          : '',
+      );
+    } catch (err) {
+      res
+        .status(err.sqlState ? 400 : err.response ? err.response.status : 500)
+        .send(err.response.data);
     }
   });
 

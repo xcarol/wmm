@@ -46,7 +46,7 @@
             <template #append>
               <v-icon
                 icon="$refresh"
-                @click="refreshBank(bank.id)"
+                @click="refreshBank(bank.name, bank.id)"
               >
               </v-icon>
               <v-icon
@@ -124,8 +124,19 @@ const getRegisteredBanks = async () => {
   });
 };
 
-const refreshBank = (requisitionId) => {
-  console.log(`collonut ${requisitionId}`);
+const refreshBank = (bankName, bankId) => {
+  messageDialog.showMessage({
+    title: $t('dialog.Question'),
+    message: $t('banksView.refreshBank').replace('%s', bankName),
+    yes: async () => {
+      try {
+        await api.refreshBank(bankId);
+      } catch (e) {
+        appStore.alertMessage = api.getErrorMessage(e);
+      }
+    },
+    no: () => {},
+  });
 };
 
 const deleteBank = (bankName, bankId) => {
@@ -145,20 +156,20 @@ const deleteBank = (bankName, bankId) => {
 };
 
 const selectBank = async (institutionId) => {
-  try {
-    messageDialog.showMessage({
-      title: $t('dialog.Question'),
-      message: $t('banksView.registerInit'),
-      yes: async () => {
+  messageDialog.showMessage({
+    title: $t('dialog.Question'),
+    message: $t('banksView.registerInit'),
+    yes: async () => {
+      try {
         const { data } = await api.bankRegisterInit(institutionId, REDIRECT_URL);
         banksStore.requisitionId = data.requisition_id;
         window.open(data.link, '_self');
-      },
-      no: () => {},
-    });
-  } catch (e) {
-    appStore.alertMessage = api.getErrorMessage(e);
-  }
+      } catch (e) {
+        appStore.alertMessage = api.getErrorMessage(e);
+      }
+    },
+    no: () => {},
+  });
 };
 
 const parseParams = async () => {

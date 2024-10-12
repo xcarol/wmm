@@ -57,7 +57,8 @@
     "useBank": "Operate with a bank",
     "registerInit": "You will be redirected to ob.gocardless.com to continue with the registration. Is that ok?",
     "registerSuccess": "The bank has been successfully registered.",
-    "deleteBank": "You're about to delete bank: %s.\nAre you sure?"
+    "deleteBank": "You're about to delete bank: %s.\nAre you sure?",
+    "refreshBank": "You're about to update bank: %s.\nAre you sure?"
   },
   "importView": {
     "title": "Import CSV File",
