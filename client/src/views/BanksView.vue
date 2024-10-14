@@ -70,6 +70,7 @@ import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
 import { useBanksStore } from '../stores/banks';
 import { useMessageDialogStore } from '../stores/messageDialog';
+import { useProgressDialogStore } from '../stores/progressDialog';
 
 const api = useApi();
 const appStore = useAppStore();
@@ -77,6 +78,7 @@ const route = useRoute();
 const router = useRouter();
 const banksStore = useBanksStore();
 const messageDialog = useMessageDialogStore();
+const progressDialog = useProgressDialogStore();
 const { t: $t } = useI18n();
 
 const banks = ref([]);
@@ -124,19 +126,27 @@ const getRegisteredBanks = async () => {
   });
 };
 
-const refreshBank = (bankName, bankId) => {
-  messageDialog.showMessage({
-    title: $t('dialog.Question'),
-    message: $t('banksView.refreshBank').replace('%s', bankName),
-    yes: async () => {
-      try {
-        await api.refreshBank(bankId);
-      } catch (e) {
-        appStore.alertMessage = api.getErrorMessage(e);
-      }
-    },
-    no: () => {},
+const refreshBank = async (bankName, bankId) => {
+  progressDialog.startProgress({
+    steps: 0,
+    description: $t('progress.updateProgress'),
   });
+
+  try {
+    const {
+      data: { affectedRows },
+    } = await api.refreshBank(bankId);
+    
+    messageDialog.showMessage({
+      title: $t('dialog.Info'),
+      message: $t('importView.importedRows').replace('%d', affectedRows),
+      ok: () => {},
+    });
+  } catch (e) {
+    appStore.alertMessage = api.getErrorMessage(e);
+  }
+
+  progressDialog.stopProgress();
 };
 
 const deleteBank = (bankName, bankId) => {
