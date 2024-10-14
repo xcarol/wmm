@@ -81,9 +81,7 @@ module.exports = (app) => {
       );
       res.json(metadata);
     } catch (err) {
-      res
-        .status(err.sqlState ? 400 : err.response ? err.response.status : 500)
-        .send(err.response.data);
+      res.status(err.sqlState ? 400 : err.response ? err.response.status : 500).send(err);
     }
   });
 
@@ -126,9 +124,7 @@ module.exports = (app) => {
           : '',
       );
     } catch (err) {
-      res
-        .status(err.sqlState ? 400 : err.response ? err.response.status : 500)
-        .send(err.response.data);
+      res.status(err.sqlState ? 400 : err.response ? err.response.status : 500).send(err);
     }
   });
 
