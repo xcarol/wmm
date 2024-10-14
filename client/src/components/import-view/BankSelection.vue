@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-import { computed, onBeforeUpdate, onBeforeMount } from 'vue';
+import { computed } from 'vue';
 import { useAppStore } from '../../stores/app';
 import { useBanksStore } from '../../stores/banks';
 
@@ -31,7 +31,4 @@ const bankNames = computed(() => banks.bankNames);
 const bankSelected = (value) => {
   emits('selectedBank', value);
 };
-
-onBeforeUpdate(() => banks.fetchBanks());
-onBeforeMount(() => banks.fetchBanks());
 </script>
