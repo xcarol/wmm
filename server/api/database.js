@@ -360,7 +360,7 @@ async function getBankLatestDate(bank_name) {
     if (result.at(0).length) {
       return result.at(0).at(0);
     }
-    return [];
+    return {};
   } catch (err) {
     err.message = `Error [${err}] searching for latest transaction of bank: ${bank_name}.`;
     console.error(err);
