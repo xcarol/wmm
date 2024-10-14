@@ -5,7 +5,7 @@ import { useAppStore } from './app';
 
 const api = useApi();
 
-export const banksStore = defineStore('banks', {
+export const useBanksStore = defineStore('banks', {
   state: () => ({
     bankNames: ref([]),
   }),
@@ -22,4 +22,4 @@ export const banksStore = defineStore('banks', {
   },
 });
 
-export default banksStore;
+export default useBanksStore;

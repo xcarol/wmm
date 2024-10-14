@@ -61,7 +61,7 @@
 <script setup>
 import { computed } from 'vue';
 import { useAppStore } from '../../stores/app';
-import { banksStore } from '../../stores/banks';
+import { useBanksStore } from '../../stores/banks';
 
 import BankSelection from './BankSelection.vue';
 
@@ -102,7 +102,7 @@ const emits = defineEmits([
 ]);
 
 const appStore = useAppStore();
-const banks = banksStore();
+const banks = useBanksStore();
 
 const columnItems = () => {
   const items = [''];
