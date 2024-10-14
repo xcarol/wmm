@@ -20,6 +20,9 @@ const queryAddTransaction =
 const queryInsertTransactions =
   'INSERT INTO transactions (bank, date, description, amount) VALUES ';
 
+const queryInsertTransactionsWithId =
+  'INSERT IGNORE INTO transactions (bank, date, description, amount, transaction_id) VALUES ';
+
 const queryBankNames = 'SELECT DISTINCT bank FROM transactions';
 
 const queryCategoryNames =
@@ -805,18 +808,37 @@ async function addTransactions(transactions) {
 
   try {
     connection = await getConnection();
-    let query = queryInsertTransactions;
+    let query;
     const parameters = [];
 
-    transactions.forEach((transaction) => {
-      query += ' (?, ?, ?, ?),';
-      parameters.push(
-        transaction.bank,
-        transaction.date,
-        transaction.description,
-        transaction.amount,
-      );
-    });
+    if (transactions === undefined || transactions.length === 0) {
+      return { affectedRows: 0 };
+    }
+
+    if (transactions[0].transactionId) {
+      query = queryInsertTransactionsWithId;
+      transactions.forEach((transaction) => {
+        query += ' (?, ?, ?, ?, ?),';
+        parameters.push(
+          transaction.bank,
+          transaction.date,
+          transaction.description,
+          transaction.amount,
+          transaction.transactionId,
+        );
+      });
+    } else {
+      query = queryInsertTransactions;
+      transactions.forEach((transaction) => {
+        query += ' (?, ?, ?, ?),';
+        parameters.push(
+          transaction.bank,
+          transaction.date,
+          transaction.description,
+          transaction.amount,
+        );
+      });
+    }
     query = query.slice(0, -1);
 
     const result = await connection.query(query, parameters);

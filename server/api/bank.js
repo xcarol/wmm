@@ -118,6 +118,7 @@ module.exports = (app) => {
                   date: transaction.valueDate,
                   description: transaction.remittanceInformationUnstructured,
                   amount: transaction.transactionAmount.amount,
+                  transactionId: transaction.internalTransactionId,
                 };
               }),
             )
