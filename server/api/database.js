@@ -357,7 +357,10 @@ async function getBankLatestDate(bank_name) {
     connection = await getConnection();
 
     const result = await connection.query(queryBankLastestTransactionDate, [bank_name]);
-    return result.at(0).at(0);
+    if (result.at(0).length) {
+      return result.at(0).at(0);
+    }
+    return [];
   } catch (err) {
     err.message = `Error [${err}] searching for latest transaction of bank: ${bank_name}.`;
     console.error(err);
