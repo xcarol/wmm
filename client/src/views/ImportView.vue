@@ -254,6 +254,7 @@ const importFile = async () => {
 
   if (importedRows > 0) {
     await applyFiltersToDatabase();
+    await banksStore.fetchBanks();
 
     messageDialog.showMessage({
       title: $t('dialog.Info'),
