@@ -98,6 +98,12 @@ module.exports = (app) => {
       const { bank_id } = req.query;
       const bank = await getBankById(bank_id);
       const { date: latestDate } = await getBankLatestDate(bank.name);
+
+      if (dayjs(latestDate).format('YYYY-MM-DD') >= dayjs().format('YYYY-MM-DD')) {
+        res.json({ affectedRows: 0 });
+        return;
+      }
+
       const client = await getNordigenClient();
       const requisitionData = await client.requisition.getRequisitionById(bank.requisition_id);
       const accountId = requisitionData.accounts[0];
