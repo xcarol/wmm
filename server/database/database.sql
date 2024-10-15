@@ -14,6 +14,26 @@ CREATE DATABASE `wmm`;
 USE `wmm`;
 
 --
+-- Table structure for table `banks`
+--
+
+DROP TABLE IF EXISTS `banks`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `banks` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(200) NOT NULL,
+  `institution_id` varchar(200) NOT NULL,
+  `requisition_id` varchar(200) NOT NULL,
+  `validity_date` date NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`),
+  UNIQUE KEY `institution_id` (`institution_id`),
+  UNIQUE KEY `requisition_id` (`requisition_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `transactions`
 --
 
@@ -27,6 +47,7 @@ CREATE TABLE `transactions` (
   `description` varchar(200) NOT NULL,
   `category` varchar(200) DEFAULT '',
   `amount` double NOT NULL,
+  `transaction_id` varchar(200) DEFAULT NULL UNIQUE,
   `not_duplicate` bool DEFAULT FALSE,
   `filter_id` int,
   PRIMARY KEY (`id`),
@@ -34,6 +55,7 @@ CREATE TABLE `transactions` (
   KEY `description` (`description`),
   KEY `category` (`category`),
   KEY `amount` (`amount`),
+  KEY `transaction_id` (`transaction_id`),
   KEY `not_duplicate_idx` (`not_duplicate`),
   CONSTRAINT fk_transactions_filters FOREIGN KEY (filter_id) REFERENCES filters(id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

@@ -1,13 +1,16 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
+import { useLocalStorage } from '@vueuse/core';
 import { useApi } from '../plugins/api';
 import { useAppStore } from './app';
 
 const api = useApi();
 
-export const banksStore = defineStore('banks', {
+export const useBanksStore = defineStore('banks', {
   state: () => ({
     bankNames: ref([]),
+    requisitionId: ref(useLocalStorage('bank_requisitionId', '')),
+    requisitionName: ref(useLocalStorage('bank_requisitionName', '')),
   }),
   actions: {
     async fetchBanks() {
@@ -22,4 +25,4 @@ export const banksStore = defineStore('banks', {
   },
 });
 
-export default banksStore;
+export default useBanksStore;

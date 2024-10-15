@@ -1,5 +1,6 @@
 const mysql = require('mysql2/promise');
 const path = require('path');
+const dayjs = require('dayjs');
 const { execSync } = require('child_process');
 
 const MAX_LEN = 200;
@@ -18,6 +19,9 @@ const queryAddTransaction =
 
 const queryInsertTransactions =
   'INSERT INTO transactions (bank, date, description, amount) VALUES ';
+
+const queryInsertTransactionsWithId =
+  'INSERT IGNORE INTO transactions (bank, date, description, amount, transaction_id) VALUES ';
 
 const queryBankNames = 'SELECT DISTINCT bank FROM transactions';
 
@@ -126,6 +130,20 @@ const queryMarkNotDuplicateRows = 'UPDATE transactions SET not_duplicate = TRUE 
 const queryYears = 'SELECT DISTINCT YEAR(date) as year FROM transactions';
 
 const queryAddCategoryFilter = 'INSERT INTO filters (category, filter, label) VALUES (?, ?, ?)';
+
+const queryBankById =
+  'SELECT name, institution_id, requisition_id, validity_date FROM banks where institution_id = ?';
+
+const queryBankLastestTransactionDate =
+  'SELECT date FROM transactions WHERE bank = ? ORDER BY date DESC LIMIT 1';
+
+const queryAddBank =
+  'INSERT INTO banks (name, institution_id, requisition_id, validity_date) VALUES (?, ?, ?, ?)';
+
+const queryRegisteredBanks =
+  'SELECT name, institution_id, requisition_id, validity_date FROM banks';
+
+const queryDeleteBank = 'DELETE FROM banks WHERE institution_id = ?';
 
 const queryDeleteCategory = 'DELETE FROM filters WHERE category = ?';
 
@@ -258,6 +276,102 @@ async function applyFilters() {
   }
 }
 
+async function addBank(institution_name, institution_id, requisition_id, accessDays) {
+  let connection;
+
+  try {
+    connection = await getConnection();
+
+    if (institution_name.length > MAX_LEN) {
+      throw new Error(`name: [${institution_name}] is longer than ${MAX_LEN}`);
+    }
+
+    if (institution_id.length > MAX_LEN) {
+      throw new Error(`institution_id: [${institution_id}] is longer than ${MAX_LEN}`);
+    }
+
+    if (requisition_id.length > MAX_LEN) {
+      throw new Error(`requisition_id: [${requisition_id}] is longer than ${MAX_LEN}`);
+    }
+
+    const dateAccessDays = dayjs().add(accessDays, 'days').format('YYYY-MM-DD');
+    const result = await connection.query(queryAddBank, [
+      institution_name,
+      institution_id,
+      requisition_id,
+      dateAccessDays,
+    ]);
+
+    return result;
+  } catch (err) {
+    err.message = `Error [${err}] adding bank ${institution_id} with requisition_id ${requisition_id}.`;
+    console.error(err);
+    throw err;
+  } finally {
+    if (connection) {
+      connection.close();
+    }
+  }
+}
+
+async function deleteBank(bank_id) {
+  let connection;
+
+  try {
+    connection = await getConnection();
+
+    return connection.query(queryDeleteBank, [bank_id]);
+  } catch (err) {
+    err.message = `Error [${err}] deleting bank with institution_id ${bank_id}.`;
+    console.error(err);
+    throw err;
+  } finally {
+    if (connection) {
+      connection.close();
+    }
+  }
+}
+
+async function getBankById(bank_id) {
+  let connection;
+
+  try {
+    connection = await getConnection();
+    const result = await connection.query(queryBankById, [bank_id]);
+    return result.at(0).at(0);
+  } catch (err) {
+    err.message = `Error [${err}] searching bank with institution_id ${bank_id}.`;
+    console.error(err);
+    throw err;
+  } finally {
+    if (connection) {
+      connection.close();
+    }
+  }
+}
+
+async function getBankLatestDate(bank_name) {
+  let connection;
+
+  try {
+    connection = await getConnection();
+
+    const result = await connection.query(queryBankLastestTransactionDate, [bank_name]);
+    if (result.at(0).length) {
+      return result.at(0).at(0);
+    }
+    return {};
+  } catch (err) {
+    err.message = `Error [${err}] searching for latest transaction of bank: ${bank_name}.`;
+    console.error(err);
+    throw err;
+  } finally {
+    if (connection) {
+      connection.close();
+    }
+  }
+}
+
 async function addFilter(category, filter, label) {
   let connection;
 
@@ -321,6 +435,24 @@ async function renameCategory(oldName, newName) {
     return result;
   } catch (err) {
     err.message = `Error [${err}] renaming category [${oldName}] to new name [${newName}].`;
+    console.error(err);
+    throw err;
+  } finally {
+    if (connection) {
+      connection.close();
+    }
+  }
+}
+
+async function getRegisteredBanks() {
+  let connection;
+
+  try {
+    connection = await getConnection();
+    const result = await connection.query(queryRegisteredBanks);
+    return result.at(0);
+  } catch (err) {
+    err.message = `Error [${err}] retrieving registered banks.`;
     console.error(err);
     throw err;
   } finally {
@@ -679,18 +811,33 @@ async function addTransactions(transactions) {
 
   try {
     connection = await getConnection();
-    let query = queryInsertTransactions;
+    let query;
     const parameters = [];
 
-    transactions.forEach((transaction) => {
-      query += ' (?, ?, ?, ?),';
-      parameters.push(
-        transaction.bank,
-        transaction.date,
-        transaction.description,
-        transaction.amount,
-      );
-    });
+    if (transactions[0].transactionId) {
+      query = queryInsertTransactionsWithId;
+      transactions.forEach((transaction) => {
+        query += ' (?, ?, ?, ?, ?),';
+        parameters.push(
+          transaction.bank,
+          transaction.date,
+          transaction.description,
+          transaction.amount,
+          transaction.transactionId,
+        );
+      });
+    } else {
+      query = queryInsertTransactions;
+      transactions.forEach((transaction) => {
+        query += ' (?, ?, ?, ?),';
+        parameters.push(
+          transaction.bank,
+          transaction.date,
+          transaction.description,
+          transaction.amount,
+        );
+      });
+    }
     query = query.slice(0, -1);
 
     const result = await connection.query(query, parameters);
@@ -885,17 +1032,21 @@ async function updateTransactionsAsNotDuplicated(transactions) {
 }
 
 module.exports = {
+  addBank,
   addFilter,
   addTransaction,
   addTransactions,
   applyFilters,
   backupDatabase,
+  deleteBank,
   deleteCategory,
   deleteFilter,
   deleteTransactions,
   deleteNewerTransactions,
   executeSql,
+  getBankById,
   getBankBalance,
+  getBankLatestDate,
   getBankNames,
   getCategories,
   getCategoryBalance,
@@ -905,6 +1056,7 @@ module.exports = {
   getTimelineByBank,
   getTimelineByCategory,
   getDuplicatedTransactions,
+  getRegisteredBanks,
   getTransactions,
   getYears,
   renameCategory,

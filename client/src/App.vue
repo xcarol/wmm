@@ -2,6 +2,10 @@
   <v-app>
     <progress-dialog />
     <message-dialog />
+    <app-drawer
+      :show="showAppDrawer"
+      @on-option-selected="optionSelected"
+    />
     <v-app-bar :elevation="2">
       <template #prepend>
         <v-app-bar-nav-icon @click.stop="showAppDrawer = !showAppDrawer"></v-app-bar-nav-icon>
@@ -15,12 +19,22 @@
         ></v-btn>
       </template>
     </v-app-bar>
-    <app-drawer
-      :show="showAppDrawer"
-      @on-option-selected="optionSelected"
-    />
     <v-main>
-      <router-view />
+      <!-- 64px is the fixed height of <v-app-bar> -->
+      <v-container
+        fluid
+        style="height: calc(100vh - 64px)"
+      >
+        <v-row style="height: 100%">
+          <v-col
+            cols="12"
+            class="d-flex flex-column"
+            style="height: 100%"
+          >
+            <router-view />
+          </v-col>
+        </v-row>
+      </v-container>
     </v-main>
     <snack-bar />
   </v-app>

@@ -502,7 +502,7 @@ const parseParams = async () => {
 
 const beforeMount = async () => {
   await updateYears();
-  parseParams();
+  await parseParams();
 };
 
 const onResize = () => {

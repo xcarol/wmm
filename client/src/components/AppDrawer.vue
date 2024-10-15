@@ -73,6 +73,11 @@ const menuOptions = [
     barTitle: $t('sqlView.title'),
   },
   {
+    title: $t('mainDrawer.banks'),
+    value: '/banks',
+    barTitle: $t('banksView.title'),
+  },
+  {
     title: $t('mainDrawer.filters'),
     value: '/filters',
     barTitle: $t('filtersView.title'),
