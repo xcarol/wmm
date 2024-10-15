@@ -814,10 +814,6 @@ async function addTransactions(transactions) {
     let query;
     const parameters = [];
 
-    if (transactions === undefined || transactions.length === 0) {
-      return { affectedRows: 0 };
-    }
-
     if (transactions[0].transactionId) {
       query = queryInsertTransactionsWithId;
       transactions.forEach((transaction) => {
