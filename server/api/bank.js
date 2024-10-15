@@ -115,7 +115,8 @@ module.exports = (app) => {
                 return {
                   bank: bank.name,
                   date: transaction.valueDate,
-                  description: transaction.remittanceInformationUnstructured,
+                  description:
+                    transaction.creditorName ?? transaction.remittanceInformationUnstructured,
                   amount: transaction.transactionAmount.amount,
                   transactionId: transaction.internalTransactionId,
                 };
