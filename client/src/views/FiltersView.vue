@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-container>
-      <v-row v-resize="onResize">
+      <v-row>
         <v-col cols="6">
           <v-card>
             <v-card-text>
@@ -100,7 +100,7 @@
 </template>
 
 <script setup>
-import { computed, onBeforeMount, onMounted, ref } from 'vue';
+import { computed, onBeforeMount, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
@@ -128,11 +128,8 @@ const showEditFilter = ref(false);
 const editFilterCategoryName = ref('');
 const editFilterName = ref('');
 const editFilterLabel = ref('');
-const innerHeight = ref(0);
 
-const adjustedHeight = computed(() => {
-  return innerHeight.value - 220;
-});
+const adjustedHeight = computed(() => appStore.viewHeight - 220);
 
 const noCategorySelected = computed(() => {
   return selectedCategories.value.length === 0;
@@ -387,10 +384,6 @@ const deleteFilter = () => {
   });
 };
 
-const onResize = () => {
-  innerHeight.value = window.innerHeight;
-};
-
 const applyFilters = () => {
   messageDialog.showMessage({
     title: $t('dialog.Warning'),
@@ -414,5 +407,4 @@ const applyFilters = () => {
 };
 
 onBeforeMount(() => getCategories());
-onMounted(() => onResize());
 </script>

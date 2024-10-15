@@ -1,5 +1,8 @@
 <template>
-  <v-table density="compact">
+  <v-table
+    :height="adjustedHeight"
+    density="compact"
+  >
     <thead>
       <tr>
         <th
@@ -39,6 +42,8 @@ const props = defineProps({
 });
 
 const appStore = useAppStore();
+
+const adjustedHeight = computed(() => appStore.viewHeight - 450);
 
 const tableRowsItems = () => {
   const items = [];

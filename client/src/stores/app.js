@@ -12,6 +12,7 @@ export const useAppStore = defineStore('app', {
     sqlHistory: useLocalStorage('app_sqlHistory', []),
     alertMessage: ref(''),
     csvfile: useCsvFile(),
+    viewHeight: ref(0),
   }),
   actions: {
     addSearchToCategoryHistory(search) {

@@ -45,7 +45,6 @@
     </v-card-text>
     <v-card-text
       v-show="selectedYear"
-      v-resize="onResize"
     >
       <v-row>
         <v-col cols="6">
@@ -78,7 +77,7 @@
 </template>
 
 <script setup>
-import { ref, onBeforeMount, onBeforeUpdate, computed, onMounted } from 'vue';
+import { ref, onBeforeMount, onBeforeUpdate, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import {
@@ -122,10 +121,7 @@ const totalExpensesPerCent = computed(() =>
   Math.round((totalExpenses.value * 100) / (totalIncomes.value + totalExpenses.value)),
 );
 
-const innerHeight = ref(0);
-const adjustedHeight = computed(() => {
-  return innerHeight.value - 240;
-});
+const adjustedHeight = computed(() => appStore.viewHeight - 240);
 
 const chartOptions = {
   indexAxis: 'y',
@@ -505,13 +501,8 @@ const beforeMount = async () => {
   await parseParams();
 };
 
-const onResize = () => {
-  innerHeight.value = window.innerHeight;
-};
-
 onBeforeMount(() => beforeMount());
 onBeforeUpdate(() => parseParams());
-onMounted(() => onResize());
 </script>
 
 <style lang="css" scoped>

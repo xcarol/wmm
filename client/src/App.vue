@@ -19,22 +19,8 @@
         ></v-btn>
       </template>
     </v-app-bar>
-    <v-main>
-      <!-- 64px is the fixed height of <v-app-bar> -->
-      <v-container
-        fluid
-        style="height: calc(100vh - 64px)"
-      >
-        <v-row style="height: 100%">
-          <v-col
-            cols="12"
-            class="d-flex flex-column"
-            style="height: 100%"
-          >
-            <router-view />
-          </v-col>
-        </v-row>
-      </v-container>
+    <v-main v-resize="onResize">
+      <router-view />
     </v-main>
     <snack-bar />
   </v-app>
@@ -58,6 +44,10 @@ const title = ref("Where's My Money");
 
 const toggleViewDrawer = () => {
   appStore.showViewDrawer = !appStore.showViewDrawer;
+};
+
+const onResize = () => {
+  appStore.viewHeight = window.innerHeight;
 };
 
 const optionSelected = (optionTitle) => {

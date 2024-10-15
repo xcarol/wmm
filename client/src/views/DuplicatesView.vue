@@ -4,7 +4,7 @@
       <v-btn @click.stop="searchTransactions">{{ $t('duplicatesView.searchButton') }}</v-btn>
       <v-spacer />
     </v-card-text>
-    <v-card-text v-resize="onResize">
+    <v-card-text>
       <v-data-table-virtual
         v-model="selectedItems"
         :items="tableItems"
@@ -31,7 +31,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
@@ -46,11 +46,8 @@ const progressDialog = useProgressDialogStore();
 
 const tableItems = ref([]);
 const selectedItems = ref([]);
-const innerHeight = ref(0);
 
-const adjustedHeight = computed(() => {
-  return innerHeight.value - 220;
-});
+const adjustedHeight = computed(() => appStore.viewHeight - 220);
 
 const noTransactionSelected = computed(() => {
   return !!(selectedItems.value.length === 0);
@@ -138,10 +135,4 @@ const deleteTransactions = async () => {
     appStore.alertMessage = api.getErrorMessage(e);
   }
 };
-
-const onResize = () => {
-  innerHeight.value = window.innerHeight;
-};
-
-onMounted(() => onResize());
 </script>

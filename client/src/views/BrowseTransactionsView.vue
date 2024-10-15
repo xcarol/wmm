@@ -47,7 +47,7 @@
         {{ $t('browseTransactionsView.searchButton') }}
       </v-btn>
     </v-card-actions>
-    <v-card-text v-resize="onResize">
+    <v-card-text>
       <div
         v-show="bankDetails.length"
         class="pl-4"
@@ -82,7 +82,7 @@
 </template>
 
 <script setup>
-import { computed, ref, onBeforeMount, onMounted } from 'vue';
+import { computed, ref, onBeforeMount } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import dayjs from 'dayjs';
@@ -138,11 +138,7 @@ const headerDetails = [
   { title: $t('browseTransactionsView.amountLabel'), key: 'amount', align: 'end' },
 ];
 
-const innerHeight = ref(0);
-const adjustedHeight = computed(() => {
-  return innerHeight.value - 220;
-});
-
+const adjustedHeight = computed(() => appStore.viewHeight - 220);
 const transactionsBrief = computed(() => {
   const banks = [];
   const transactions = bankDetails.value;
@@ -406,10 +402,5 @@ const beforeMount = async () => {
   parseParams();
 };
 
-const onResize = () => {
-  innerHeight.value = window.innerHeight;
-};
-
 onBeforeMount(() => beforeMount());
-onMounted(() => onResize());
 </script>

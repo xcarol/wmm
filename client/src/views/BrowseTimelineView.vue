@@ -13,7 +13,7 @@
       @close="closeDrawer"
       @update="updateChart"
     />
-    <v-card-text v-resize="onResize">
+    <v-card-text>
       <v-row>
         <v-radio-group
           :model-value="chartStyle"
@@ -51,7 +51,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onBeforeMount, onBeforeUpdate, onMounted } from 'vue';
+import { ref, computed, onBeforeMount, onBeforeUpdate } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import dayjs from 'dayjs';
@@ -95,11 +95,7 @@ const api = useApi();
 const appStore = useAppStore();
 const progressDialog = useProgressDialogStore();
 
-const innerHeight = ref(0);
-const adjustedHeight = computed(() => {
-  return innerHeight.value - 180;
-});
-
+const adjustedHeight = computed(() => appStore.viewHeight - 180);
 const showDrawer = computed(() => appStore.showViewDrawer);
 const chartType = ref(CHART_TYPE_BANKS);
 const chartStyle = ref('');
@@ -600,11 +596,6 @@ const beforeMount = async () => {
   beforeUpdate();
 };
 
-const onResize = () => {
-  innerHeight.value = window.innerHeight;
-};
-
 onBeforeMount(() => beforeMount());
 onBeforeUpdate(() => beforeUpdate());
-onMounted(() => onResize());
 </script>

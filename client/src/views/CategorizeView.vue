@@ -33,7 +33,7 @@
       </v-row>
       {{ filterMessage }}
     </v-card-text>
-    <v-card-text v-resize="onResize">
+    <v-card-text>
       <transaction-table
         :selected-items="selectedItems"
         :table-items="tableItems"
@@ -102,12 +102,8 @@ const filterMessage = ref('');
 const selectedCategory = ref('');
 const categoryNames = ref(['']);
 const showNewFilterDialog = ref(false);
-const innerHeight = ref(0);
 
-const adjustedHeight = computed(() => {
-  return innerHeight.value - 290;
-});
-
+const adjustedHeight = computed(() => appStore.viewHeight - 290);
 const selectedItemToFilter = computed(() => {
   if (selectedItems.value.length === 0) {
     return '';
@@ -299,13 +295,7 @@ const createNewFilter = async ({ category, filter, label }) => {
   }
 };
 
-const onResize = () => {
-  innerHeight.value = window.innerHeight;
-};
-
 const beforeUpdate = () => {
-  onResize();
-
   const { category: qcategory, filter: qfilter } = route.query;
 
   if (routeChanged() || tableItems.value.length === 0) {
