@@ -126,6 +126,22 @@ const getRegisteredBanks = async () => {
   });
 };
 
+const applyFilters = () => {
+  messageDialog.showMessage({
+    title: $t('dialog.Question'),
+    message: $t('banksView.applyFilters'),
+    no: () => {},
+    yes: async () => {
+      progressDialog.startProgress({
+        steps: 0,
+        description: $t('progress.updateProgress'),
+      });
+      await api.applyFilters();
+      progressDialog.stopProgress();
+    },
+  });
+};
+
 const refreshBank = async (bankName, bankId) => {
   progressDialog.startProgress({
     steps: 0,
@@ -136,10 +152,17 @@ const refreshBank = async (bankName, bankId) => {
     const {
       data: { affectedRows },
     } = await api.refreshBank(bankId);
+
     messageDialog.showMessage({
       title: $t('dialog.Info'),
-      message: $t('importView.importedRows').replace('%d', affectedRows),
-      ok: () => {},
+      message: affectedRows
+        ? $t('importView.importedRows').replace('%d', affectedRows)
+        : $t('importView.noImportedRows'),
+      ok: () => {
+        if (affectedRows) {
+          applyFilters();
+        }
+      },
     });
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
