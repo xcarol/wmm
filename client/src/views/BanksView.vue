@@ -21,7 +21,7 @@
             :prepend-avatar="bank.logo"
             :title="bank.name"
             style="cursor: pointer"
-            @click.stop="selectBank(bank.id)"
+            @click.stop="selectBank(bank.name, bank.id)"
           >
           </v-list-item>
         </v-list>
@@ -136,7 +136,6 @@ const refreshBank = async (bankName, bankId) => {
     const {
       data: { affectedRows },
     } = await api.refreshBank(bankId);
-    
     messageDialog.showMessage({
       title: $t('dialog.Info'),
       message: $t('importView.importedRows').replace('%d', affectedRows),
@@ -165,7 +164,7 @@ const deleteBank = (bankName, bankId) => {
   });
 };
 
-const selectBank = async (institutionId) => {
+const selectBank = async (institutionName, institutionId) => {
   messageDialog.showMessage({
     title: $t('dialog.Question'),
     message: $t('banksView.registerInit'),
@@ -173,6 +172,7 @@ const selectBank = async (institutionId) => {
       try {
         const { data } = await api.bankRegisterInit(institutionId, REDIRECT_URL);
         banksStore.requisitionId = data.requisition_id;
+        banksStore.requisitionName = institutionName;
         window.open(data.link, '_self');
       } catch (e) {
         appStore.alertMessage = api.getErrorMessage(e);
@@ -187,11 +187,14 @@ const parseParams = async () => {
 
   if (nordigenRef) {
     try {
-      await api.bankRegisterComplete(banksStore.requisitionId);
+      await api.bankRegisterComplete(banksStore.requisitionName, banksStore.requisitionId);
       messageDialog.showMessage({
         title: $t('dialog.Info'),
         message: $t('banksView.registerSuccess'),
-        ok: () => {},
+        ok: () => {
+          banksStore.requisitionId = '';
+          banksStore.requisitionName = '';
+        },
       });
       router.push('/banks');
     } catch (e) {

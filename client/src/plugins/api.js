@@ -7,7 +7,7 @@ class Api {
     deleteBank: '/banks/delete?bank_id={1}',
     refreshBank: '/banks/refresh?bank_id={1}',
     bankRegisterInit: '/banks/register/init?institution_id={1}&redirect_url={2}',
-    bankRegisterComplete: '/banks/register/complete?requisition_id={1}',
+    bankRegisterComplete: '/banks/register/complete?requisition_id={1}&requisition_name={2}',
     banksBalance: '/banks/balance?bank={1}&start={2}&end={3}',
     categoriesNames: '/categories/names',
     filters: '/categories/filters?category={1}',
@@ -265,8 +265,8 @@ class Api {
     return this.axios.get(url);
   }
 
-  bankRegisterComplete(requisitionId) {
-    const url = Api.endpoint(this.endpoints.bankRegisterComplete, requisitionId);
+  bankRegisterComplete(requisitionName, requisitionId) {
+    const url = Api.endpoint(this.endpoints.bankRegisterComplete, requisitionId, requisitionName);
     return this.axios.get(url);
   }
 

@@ -10,6 +10,7 @@ export const useBanksStore = defineStore('banks', {
   state: () => ({
     bankNames: ref([]),
     requisitionId: ref(useLocalStorage('bank_requisitionId', '')),
+    requisitionName: ref(useLocalStorage('bank_requisitionName', '')),
   }),
   actions: {
     async fetchBanks() {

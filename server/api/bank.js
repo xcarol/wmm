@@ -63,7 +63,7 @@ module.exports = (app) => {
 
   app.get('/banks/register/complete', async (req, res) => {
     try {
-      const { requisition_id } = req.query;
+      const { requisition_name, requisition_id } = req.query;
 
       const client = await getNordigenClient();
       const requisitionData = await client.requisition.getRequisitionById(requisition_id);
@@ -71,10 +71,9 @@ module.exports = (app) => {
       const account = client.account(accountId);
       const agreement = await client.agreement.getAgreementById(requisitionData.agreement);
       const metadata = await account.getMetadata();
-      const details = await account.getDetails();
 
       await addBank(
-        details.account.displayName,
+        requisition_name,
         metadata.institution_id,
         requisition_id,
         agreement.access_valid_for_days,
