@@ -19,6 +19,8 @@ import {
   mdiMinusBox,
   mdiPlusBox,
   mdiDotsVertical,
+  mdiTrashCanOutline,
+  mdiRefresh,
 } from '@mdi/js';
 
 const defaultTheme =
@@ -70,6 +72,8 @@ const vuetify = createVuetify({
       minus: mdiMinusBox,
       plus: mdiPlusBox,
       'view-drawer': mdiDotsVertical,
+      remove: mdiTrashCanOutline,
+      refresh: mdiRefresh,
     },
     sets: {
       mdi,

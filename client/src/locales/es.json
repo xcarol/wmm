@@ -35,6 +35,7 @@
     "categorize": "Categorizar",
     "duplicates": "Buscar duplicados",
     "sql": "Comandos SQL",
+    "banks": "Configuración de bancos",
     "filters": "Filtros",
     "browse": "Explorar",
     "browseTransactions": "Transacciones",
@@ -50,6 +51,16 @@
     "retrievingTransactions": "Obteniendo las transacciones...",
     "retrievingCategories": "Obteniendo las categorías..."
   },
+  "banksView": {
+    "title": "Configuración de bancos",
+    "configBank": "Configurar un banco",
+    "useBank": "Operar con un banco",
+    "registerInit": "Serás redirigido a ob.gocardless.com para realizar el registro. ¿Estás de acuerdo?",
+    "registerSuccess": "El banco se ha estat registrado correctamente.",
+    "deleteBank": "Estás a punto de borrar el banco: %s.\n¿Estás seguro?",
+    "refreshBank": "Estás a punto de actualizar el banco: %s.\n¿Estás seguro?",
+    "applyFilters": "Quieres aplicar los filtros ahora?"
+  },
   "importView": {
     "title": "Importa un archivo CSV",
     "importFileInputLabel": "Selecciona un archivo CSV",
@@ -62,6 +73,7 @@
     "bankLabel": "Nombre del banco",
     "importButtonLabel": "Importar",
     "importedRows": "La importación se ha realizado correctamente.\nSe han importado %d transacciones.",
+    "noImportedRows": "No havía transacciones a importar.",
     "importError": "Error: %d en la línea: %d",
     "importingRows": "Importando las transacciones...",
     "initialAmountLabel": "Cantidad inicial de la cuenta",
@@ -72,8 +84,8 @@
     "searchButton": "Busca",
     "markButton": "Marca como NO duplicados",
     "deleteButton": "Elimina las transacciones",
-    "markWarningMessage": "Estás a punto de marcar %d transacciones como NO duplicadas\nEsatás seguro?",
-    "deleteWarningMessage": "Estás a punto de borrar %d transacciones\nEsatás seguro?"
+    "markWarningMessage": "Estás a punto de marcar %d transacciones como NO duplicadas\n¿Estás seguro?",
+    "deleteWarningMessage": "Estás a punto de borrar %d transacciones\n¿Estás seguro?"
   },
   "sqlView": {
     "title": "Ejecuta comandos SQL",

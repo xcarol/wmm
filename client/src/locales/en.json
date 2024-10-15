@@ -35,6 +35,7 @@
     "categorize": "Categorize",
     "duplicates": "Find duplicates",
     "sql": "SQL Commands",
+    "banks": "Banks Configuration",
     "filters": "Filters",
     "browser": "Browse",
     "browseTransactions": "Transactions",
@@ -50,6 +51,16 @@
     "retrievingTransactions": "Retrieving transaccions...",
     "retrievingCategories": "Retrieving categories..."
   },
+  "banksView": {
+    "title": "Banks Configuration",
+    "configBank": "Configure a bank",
+    "useBank": "Operate with a bank",
+    "registerInit": "You will be redirected to ob.gocardless.com to continue with the registration. Is that ok?",
+    "registerSuccess": "The bank has been successfully registered.",
+    "deleteBank": "You're about to delete bank: %s.\nAre you sure?",
+    "refreshBank": "You're about to update bank: %s.\nAre you sure?",
+    "applyFilters": "Do you want to apply the filters now?"
+  },
   "importView": {
     "title": "Import CSV File",
     "importFileInputLabel": "Select a CSV file",
@@ -62,6 +73,7 @@
     "bankLabel": "Bank name",
     "importButtonLabel": "Import",
     "importedRows": "Transactions have been imported successfully.\n%d transaccions imported.",
+    "noImportedRows": "There was no transactions to import.",
     "importError": "Error: '%d' at line: %d",
     "importingRows": "Import process in progress...",
     "initialAmountLabel": "Account initial amount",

@@ -2,6 +2,12 @@
 class Api {
   endpoints = {
     banksNames: '/banks/names',
+    bankInstitutions: '/banks/institutions',
+    registeredBanks: '/banks/registered',
+    deleteBank: '/banks/delete?bank_id={1}',
+    refreshBank: '/banks/refresh?bank_id={1}',
+    bankRegisterInit: '/banks/register/init?institution_id={1}&redirect_url={2}',
+    bankRegisterComplete: '/banks/register/complete?requisition_id={1}&requisition_name={2}',
     banksBalance: '/banks/balance?bank={1}&start={2}&end={3}',
     categoriesNames: '/categories/names',
     filters: '/categories/filters?category={1}',
@@ -246,6 +252,36 @@ class Api {
 
   bankTimeline(bank, period, start, end) {
     const url = Api.endpoint(this.endpoints.transactionsBankTimeline, bank, period, start, end);
+    return this.axios.get(url);
+  }
+
+  bankInstitutions() {
+    const url = Api.endpoint(this.endpoints.bankInstitutions);
+    return this.axios.get(url);
+  }
+
+  bankRegisterInit(id, link) {
+    const url = Api.endpoint(this.endpoints.bankRegisterInit, id, link);
+    return this.axios.get(url);
+  }
+
+  bankRegisterComplete(requisitionName, requisitionId) {
+    const url = Api.endpoint(this.endpoints.bankRegisterComplete, requisitionId, requisitionName);
+    return this.axios.get(url);
+  }
+
+  registeredBanks() {
+    const url = Api.endpoint(this.endpoints.registeredBanks);
+    return this.axios.get(url);
+  }
+
+  deleteBank(bankId) {
+    const url = Api.endpoint(this.endpoints.deleteBank, bankId);
+    return this.axios.get(url);
+  }
+
+  refreshBank(bankId) {
+    const url = Api.endpoint(this.endpoints.refreshBank, bankId);
     return this.axios.get(url);
   }
 }

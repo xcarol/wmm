@@ -35,6 +35,7 @@
     "categorize": "Categoritzar",
     "duplicates": "Cercar duplicats",
     "sql": "Comandes SQL",
+    "banks": "Configuració de bancs",
     "filters": "Filtres",
     "browse": "Explorar",
     "browseTransactions": "Transaccions",
@@ -50,6 +51,16 @@
     "retrievingTransactions": "Obtenint les transaccions...",
     "retrievingCategories": "Obtenint les categories..."
   },
+  "banksView": {
+    "title": "Configuració de bancs",
+    "configBank": "Configurar un banc",
+    "useBank": "Operar amb un banc",
+    "registerInit": "Seràs redirigit a ob.gocardless.com per realitzar el registre. D'acord?",
+    "registerSuccess": "El banc ha estat enregistrat correctament.",
+    "deleteBank": "Et's a punt d'esborrar el banc: %s.\nN'estàs segur?",
+    "refreshBank": "Et's a punt d'actualitzar el banc: %s.\nN'estàs segur?",
+    "applyFilters": "Vols aplicar els filtres ara?"
+  },
   "importView": {
     "title": "Importa un arxiu CSV",
     "importFileInputLabel": "Selecciona un arxiu CSV",
@@ -62,6 +73,7 @@
     "bankLabel": "Nom del banc",
     "importButtonLabel": "Importar",
     "importedRows": "La importació s'ha realitzat amb èxit.\nS'han importat %d transaccions.",
+    "noImportedRows": "No hi havia transaccions a importar.",
     "importError": "Error: '%d' a la línia: %d",
     "importingRows": "Important les transaccions...",
     "initialAmountLabel": "Quantitat inicial del compte",
