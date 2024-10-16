@@ -15,9 +15,7 @@ A Personal 'Fintech' Application
 Database is located in the _server_ directory.
 
 The _sqlserver.sh_ script uses the _docker-compose.yml_ file, located in the _database_ directory, to create a local mysql database.  
-This database will be created under the directory _mysql_ and can be accessed at [http://localhost:8080](http://localhost:8080)  
-
-At the very first run you will need to use the [adminer](http://localhost:8080) to create the `wmm`database.
+This database will reside in the _mysql_ directory under the _server_ directory of the project.  
 
 ## Backup / Restore
 
@@ -43,3 +41,10 @@ Third approach
 Transactions must be added in bulk operations. Any 'conflicting' transactions will be deleted before the import. 'Conflicting' transactions are those already in the database whose date falls within the date range of the bulk transactions being imported.
 
 It is IMPORTANT to import transactions for full days. If you perform an import in the afternoon and then make a purchase in the evening, that transaction could be lost if the next import does not include the last day of the previous import. It is ADVISED to always re-import the last day of the previous import to avoid losing these transactions.   
+
+### GoCardless
+
+With this integration, transactions are retrieved directly from the bank. This indeed eliminates the "Duplicates problem" and obsoletes the CSV Import method.
+
+CSV Import is still maintained in case the GoCardless solution doesn't is an option.
+
