@@ -8,6 +8,22 @@ services:
     volumes:
       - "${PWD}/mysql:/var/lib/mysql"
     environment:
-      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
       - 3306:3306
+
+  server:
+    image: xcarol/wmm-server:latest
+    environment:
+      SECRET_ID: ${SECRET_ID}
+      SECRET_KEY: ${SECRET_KEY}
+      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - 3000:3000
+
+  client:
+    image: xcarol/wmm-client:latest
+    environment:
+      - VITE_API_URL=http://localhost:3000
+  ports:
+    - 8080:8080
