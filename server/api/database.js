@@ -6,10 +6,10 @@ const { execSync } = require('child_process');
 const MAX_LEN = 200;
 
 const connectionSettings = {
-  host: 'localhost',
-  user: 'root',
-  password: 'secret',
-  database: 'wmm',
+  host: process.env.DB_HOST ?? 'localhost',
+  user: process.env.DB_USER ?? 'root',
+  password: process.env.DB_PASSWORD ?? 'secret',
+  database: process.env.DB_NAME ?? 'wmm',
   multipleStatements: true,
   dateStrings: true,
 };
