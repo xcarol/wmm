@@ -48,3 +48,31 @@ With this integration, transactions are retrieved directly from the bank. This i
 
 CSV Import is still maintained in case the GoCardless solution doesn't is an option.
 
+## Production environment
+
+The docker directory at the system directory contains the files needed to set up the production environment using docker.
+
+Use the _docker-setup.sh_ shell script to build the docker images, push them to your dockerhub repo and delete locally created images. Just type `$ ./docker-setup.sh` to get the help page.
+
+### docker-setup.sh
+
+This script is used to operate with both projects, client and server. If it is not specified in the command line it will be prompted. It will also ask for the _dockerhub_ username if it is not specified in the command line. These parameter are always required.
+
+To get the system ready for production, follow these steps:
+```
+$ ./docker-setup.sh -u dockerhub_username -t server -b
+$ ./docker-setup.sh -u dockerhub_username -t server -p
+$ ./docker-setup.sh -u dockerhub_username -t client -b
+$ ./docker-setup.sh -u dockerhub_username -t client -p
+```
+
+In your production environment
+* Install git, docker and docker-compose  
+
+Then
+```
+$ git clone git@github.com:xcarol/wmm.git
+$ cd wmm/system/docker
+$ docker-compose up &
+```
+
