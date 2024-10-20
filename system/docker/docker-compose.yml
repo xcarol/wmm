@@ -16,6 +16,7 @@ services:
     environment:
       SECRET_ID: ${SECRET_ID}
       SECRET_KEY: ${SECRET_KEY}
+      DB_HOST: db
       DB_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
       - 3000:3000
@@ -23,6 +24,6 @@ services:
   client:
     image: xcarol/wmm-client:latest
     environment:
-      - VITE_API_URL=http://localhost:3000
+      - VITE_API_URL=http://server:3000
     ports:
       - 8080:8080
