@@ -4,6 +4,8 @@
 TARGET=""
 DOCKERFILE=""
 REPO=""
+USERNAME=""
+VERSION=""
 
 # Funció per obtenir la versió del package.json en la ruta especificada
 get_version() {
@@ -18,8 +20,12 @@ get_version() {
 
 # Funció per definir quin Dockerfile i quin repositori utilitzar
 select_target() {
-    echo "Selecciona l'objectiu (server/client): "
-    read TARGET
+    echo "DEBUG: Valor de TARGET abans de comprovar: '$TARGET'"
+
+    if [ -z "$TARGET" ]; then
+        echo "Selecciona l'objectiu (server/client): "
+        read TARGET
+    fi
 
     if [ "$TARGET" == "server" ]; then
         DOCKERFILE="Dockerfile.server"
@@ -41,8 +47,12 @@ select_target() {
 # Funció per construir la imatge
 build_image() {
     select_target
-    echo "Introdueix el teu usuari de Docker Hub: "
-    read USERNAME
+
+    if [ -z "$USERNAME" ]; then
+        echo "Introdueix el teu usuari de Docker Hub: "
+        read USERNAME
+    fi
+
     IMAGE_NAME="$USERNAME/$REPO:$VERSION"
 
     echo "Construint la imatge Docker $IMAGE_NAME utilitzant $DOCKERFILE..."
@@ -69,8 +79,12 @@ build_image() {
 # Funció per fer el push de la imatge a Docker Hub
 push_image() {
     select_target
-    echo "Introdueix el teu usuari de Docker Hub: "
-    read USERNAME
+
+    if [ -z "$USERNAME" ]; then
+        echo "Introdueix el teu usuari de Docker Hub: "
+        read USERNAME
+    fi
+
     IMAGE_NAME="$USERNAME/$REPO:$VERSION"
     LATEST_IMAGE="$USERNAME/$REPO:latest"
 
@@ -102,8 +116,12 @@ push_image() {
 # Funció per eliminar la imatge Docker
 delete_image() {
     select_target
-    echo "Introdueix el teu usuari de Docker Hub: "
-    read USERNAME
+
+    if [ -z "$USERNAME" ]; then
+        echo "Introdueix el teu usuari de Docker Hub: "
+        read USERNAME
+    fi
+
     IMAGE_NAME="$USERNAME/$REPO:$VERSION"
     LATEST_IMAGE="$USERNAME/$REPO:latest"
 
@@ -126,20 +144,26 @@ show_help() {
     echo "  -b  Construir la imatge Docker"
     echo "  -p  Fer push de la imatge a Docker Hub"
     echo "  -d  Eliminar la imatge Docker localment"
+    echo "  -u  Especificar el nom d'usuari de Docker Hub"
+    echo "  -i  Especificar la versió de la imatge"
+    echo "  -t  Especificar si s'usa el 'server' o 'client'"
     echo "  -h  Mostrar aquesta ajuda"
 }
 
-# Gestionar les opcions
-while getopts "bpdh" opt; do
+# Primer processem les opcions necessàries
+while getopts ":u:i:t:bpdh" opt; do
     case $opt in
-        b)
-            build_image
+        u)
+            USERNAME=$OPTARG
             ;;
-        p)
-            push_image
+        i)
+            VERSION=$OPTARG
             ;;
-        d)
-            delete_image
+        t)
+            TARGET=$OPTARG
+            ;;
+        b|p|d)
+            ACTION=$opt
             ;;
         h)
             show_help
@@ -150,8 +174,29 @@ while getopts "bpdh" opt; do
             show_help
             exit 1
             ;;
+        :)
+            echo "L'opció -$OPTARG requereix un argument." >&2
+            show_help
+            exit 1
+            ;;
     esac
 done
+
+# Llavors executem l'acció corresponent
+case $ACTION in
+    b)
+        build_image
+        ;;
+    p)
+        push_image
+        ;;
+    d)
+        delete_image
+        ;;
+    *)
+        show_help
+        ;;
+esac
 
 # Si no es proporciona cap opció, mostrar ajuda
 if [ $OPTIND -eq 1 ]; then
