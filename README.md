@@ -46,7 +46,9 @@ It is IMPORTANT to import transactions for full days. If you perform an import i
 
 With this integration, transactions are retrieved directly from the bank. This indeed eliminates the "Duplicates problem" and obsoletes the CSV Import method.
 
-CSV Import is still maintained in case the GoCardless solution doesn't is an option.
+CSV Import is still maintained in case the GoCardless solution is not an option.
+
+Go to [GoCardless](https://bankaccountdata.gocardless.com/login) sign-in/sign-up and create your key to operate with GoCardless and be able to import the transactions directly from your bank.
 
 ## Production environment
 
@@ -73,6 +75,9 @@ Then
 ```
 $ git clone git@github.com:xcarol/wmm.git
 $ cd wmm/system/docker
+```
+* Edit the .env file to set your GoCardless secret id and key.
+```
 $ docker-compose up &
 ```
 
