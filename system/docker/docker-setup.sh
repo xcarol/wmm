@@ -56,7 +56,7 @@ build_image() {
     IMAGE_NAME="$USERNAME/$REPO:$VERSION"
 
     echo "Construint la imatge Docker $IMAGE_NAME utilitzant $DOCKERFILE..."
-    docker build -f $DOCKERFILE -t $IMAGE_NAME .
+    docker build -f $DOCKERFILE -t $IMAGE_NAME ../../
 
     if [ $? -ne 0 ]; then
         echo "Error durant la construcció de la imatge Docker"
