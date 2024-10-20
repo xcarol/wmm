@@ -8,6 +8,9 @@ services:
       - "${PWD}/mysql:/var/lib/mysql"
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: wmm
+      MYSQL_USER: wmm
+      MYSQL_PASSWORD: wmm
     ports:
       - 3306:3306
 
@@ -17,7 +20,9 @@ services:
       SECRET_ID: ${SECRET_ID}
       SECRET_KEY: ${SECRET_KEY}
       DB_HOST: db
-      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      DB_USER: wmm
+      DB_PASSWORD: wmm
+      DB_NAME: wmm
     ports:
       - 3000:3000
 
