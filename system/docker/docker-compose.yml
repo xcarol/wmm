@@ -29,6 +29,6 @@ services:
   client:
     image: xcarol/wmm-client:latest
     environment:
-      - VITE_API_URL=http://server:3000
+      VITE_API_URL: http://server:3000
     ports:
       - 8080:8080
