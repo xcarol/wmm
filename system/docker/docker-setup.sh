@@ -20,8 +20,6 @@ get_version() {
 
 # Funció per definir quin Dockerfile i quin repositori utilitzar
 select_target() {
-    echo "DEBUG: Valor de TARGET abans de comprovar: '$TARGET'"
-
     if [ -z "$TARGET" ]; then
         echo "Selecciona l'objectiu (server/client): "
         read TARGET
@@ -197,9 +195,3 @@ case $ACTION in
         show_help
         ;;
 esac
-
-# Si no es proporciona cap opció, mostrar ajuda
-if [ $OPTIND -eq 1 ]; then
-    show_help
-    exit 1
-fi
