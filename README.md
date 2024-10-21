@@ -87,10 +87,14 @@ In your production environment
 * Create a _.env_ file in the same directory and add:
 ```
 MYSQL_ROOT_PASSWORD=secret_mysql
+DB_DATABASE=database_name
+DB_USER=user_name
+DB_PASSWORD=user_password
 SECRET_ID=secret_id
 SECRET_KEY=secret_key
 ```
 * where 'secret_mysql' is the password you choose for the database root user
+* 'database_name', 'user_name' and 'user_password' are... well, I guess you kown
 * and 'secret_id' and 'secret_key' are your GoCardless secret id and key
 
 Once you have the system ready, start it with:
