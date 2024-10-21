@@ -6,6 +6,7 @@ DOCKERFILE=""
 REPO=""
 USERNAME=""
 VERSION=""
+ARCHITECTURES="linux/amd64,linux/arm64"
 
 # Funció per obtenir la versió del package.json en la ruta especificada
 get_version() {
@@ -42,40 +43,8 @@ select_target() {
     get_version "$PACKAGE_PATH"
 }
 
-# Funció per construir la imatge
-build_image() {
-    select_target
-
-    if [ -z "$USERNAME" ]; then
-        echo "Introdueix el teu usuari de Docker Hub: "
-        read USERNAME
-    fi
-
-    IMAGE_NAME="$USERNAME/$REPO:$VERSION"
-
-    echo "Construint la imatge Docker $IMAGE_NAME utilitzant $DOCKERFILE..."
-    docker build -f $DOCKERFILE -t $IMAGE_NAME ../../
-
-    if [ $? -ne 0 ]; then
-        echo "Error durant la construcció de la imatge Docker"
-        exit 1
-    fi
-
-    # Etiquetar la imatge com a 'latest'
-    LATEST_IMAGE="$USERNAME/$REPO:latest"
-    echo "Etiquetant la imatge com a 'latest' ($LATEST_IMAGE)..."
-    docker tag $IMAGE_NAME $LATEST_IMAGE
-
-    if [ $? -ne 0 ]; then
-        echo "Error durant l'etiquetatge de la imatge Docker com 'latest'"
-        exit 1
-    fi
-
-    echo "Imatge $IMAGE_NAME (versió) i $LATEST_IMAGE (latest) construïdes correctament."
-}
-
-# Funció per fer el push de la imatge a Docker Hub
-push_image() {
+# Funció per construir i pujar la imatge
+build_and_push_image() {
     select_target
 
     if [ -z "$USERNAME" ]; then
@@ -96,52 +65,24 @@ push_image() {
         exit 1
     fi
 
-    echo "Pujant la imatge $IMAGE_NAME a Docker Hub..."
-    docker push $IMAGE_NAME
-
-    echo "Pujant la imatge $LATEST_IMAGE a Docker Hub..."
-    docker push $LATEST_IMAGE
+    echo "Construint i pujant la imatge Docker $IMAGE_NAME utilitzant $DOCKERFILE..."
+    
+    # Construir la imatge amb buildx i especificar arquitectures
+    docker buildx build -f $DOCKERFILE -t $IMAGE_NAME -t $LATEST_IMAGE --push --platform $ARCHITECTURES ../../
 
     if [ $? -ne 0 ]; then
-        echo "Error durant el push de la imatge a Docker Hub"
+        echo "Error durant la construcció i pujada de la imatge Docker"
         exit 1
     fi
 
-    echo "Imatges $IMAGE_NAME (versió) i $LATEST_IMAGE (latest) pujades correctament."
-    docker logout
-}
-
-# Funció per eliminar la imatge Docker
-delete_image() {
-    select_target
-
-    if [ -z "$USERNAME" ]; then
-        echo "Introdueix el teu usuari de Docker Hub: "
-        read USERNAME
-    fi
-
-    IMAGE_NAME="$USERNAME/$REPO:$VERSION"
-    LATEST_IMAGE="$USERNAME/$REPO:latest"
-
-    echo "Eliminant la imatge Docker $IMAGE_NAME i $LATEST_IMAGE localment..."
-    docker rmi $IMAGE_NAME
-    docker rmi $LATEST_IMAGE
-
-    if [ $? -ne 0 ]; then
-        echo "Error durant l'eliminació de les imatges Docker"
-        exit 1
-    fi
-
-    echo "Imatges $IMAGE_NAME (versió) i $LATEST_IMAGE (latest) eliminades correctament."
+    echo "Imatge $IMAGE_NAME (versió) i $LATEST_IMAGE (latest) pujades correctament."
 }
 
 # Funció per mostrar l'ajuda
 show_help() {
     echo "Ús: ./build_and_push.sh [opció]"
     echo "Opcions:"
-    echo "  -b  Construir la imatge Docker"
-    echo "  -p  Fer push de la imatge a Docker Hub"
-    echo "  -d  Eliminar la imatge Docker localment"
+    echo "  -b  Construir i pujar la imatge Docker"
     echo "  -u  Especificar el nom d'usuari de Docker Hub"
     echo "  -i  Especificar la versió de la imatge"
     echo "  -t  Especificar si s'usa el 'server' o 'client'"
@@ -149,7 +90,7 @@ show_help() {
 }
 
 # Primer processem les opcions necessàries
-while getopts ":u:i:t:bpdh" opt; do
+while getopts ":u:i:t:a:bh" opt; do
     case $opt in
         u)
             USERNAME=$OPTARG
@@ -160,8 +101,8 @@ while getopts ":u:i:t:bpdh" opt; do
         t)
             TARGET=$OPTARG
             ;;
-        b|p|d)
-            ACTION=$opt
+        b)
+            ACTION="build"
             ;;
         h)
             show_help
@@ -181,17 +122,8 @@ while getopts ":u:i:t:bpdh" opt; do
 done
 
 # Llavors executem l'acció corresponent
-case $ACTION in
-    b)
-        build_image
-        ;;
-    p)
-        push_image
-        ;;
-    d)
-        delete_image
-        ;;
-    *)
-        show_help
-        ;;
-esac
+if [ "$ACTION" == "build" ]; then
+    build_and_push_image
+else
+    show_help
+fi
