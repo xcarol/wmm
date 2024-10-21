@@ -2,6 +2,7 @@ services:
 
   db:
     image: mysql
+    container_name: database
     volumes:
       - "${PWD}/mysql:/var/lib/mysql"
     environment:
@@ -14,6 +15,7 @@ services:
 
   server:
     image: xcarol/wmm-server:latest
+    container_name: server
     environment:
       SECRET_ID: ${SECRET_ID}
       SECRET_KEY: ${SECRET_KEY}
@@ -26,6 +28,7 @@ services:
 
   client:
     image: xcarol/wmm-client:latest
+    container_name: client
     environment:
       VITE_API_URL: http://server:3000
     ports:
