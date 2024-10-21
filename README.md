@@ -52,32 +52,49 @@ Go to [GoCardless](https://bankaccountdata.gocardless.com/login) sign-in/sign-up
 
 ## Production environment
 
-The docker directory at the system directory contains the files needed to set up the production environment using docker.
+The docker directory, inside the system directory, contains the files needed to set up the production environment using docker.
 
-Use the _docker-setup.sh_ shell script to build the docker images, push them to your dockerhub repo and delete locally created images. Just type `$ ./docker-setup.sh` to get the help page.
+Use the _docker-setup.sh_ shell script to build the docker images, push them to your Docker Hub repo and delete locally created images.  
+Just type `$ ./docker-setup.sh` to get the help message.
 
 ### docker-setup.sh
 
-This script is used to operate with both projects, client and server. If it is not specified in the command line it will be prompted. It will also ask for the _dockerhub_ username if it is not specified in the command line. These parameter are always required.
+This script is used to operate with both projects, client and server. If it is not specified in the command line it will be prompted when you run the script.  
+It is also needed your Docker Hub username and if it is not specified in the command line it will be prompted when you run the script.  
+
+__Project type and username are always required__
+
+Use the action parameters: -b -p -d to build, push and delete images respectively.
 
 To get the system ready for production, follow these steps:
 ```
-$ ./docker-setup.sh -u dockerhub_username -t server -b
-$ ./docker-setup.sh -u dockerhub_username -t server -p
-$ ./docker-setup.sh -u dockerhub_username -t client -b
-$ ./docker-setup.sh -u dockerhub_username -t client -p
+./docker-setup.sh -u dockerhub_username -t server -b
+./docker-setup.sh -u dockerhub_username -t server -p
+./docker-setup.sh -u dockerhub_username -t client -b
+./docker-setup.sh -u dockerhub_username -t client -p
+```
+Replace __dockerhub_username__ with your real Docker Hub username.
+
+Now you can delete your local images if you like with:
+```
+./docker-setup.sh -u dockerhub_username -t server -d
+./docker-setup.sh -u dockerhub_username -t client -d
 ```
 
 In your production environment
-* Install git, docker and docker-compose  
+* Install docker with _docker-compose-plugin_  
+* Copy the _docker-compose.yml_ file to a directory of your choice.
+* Create a _.env_ file in the same directory and add:
+```
+MYSQL_ROOT_PASSWORD=secret_mysql
+SECRET_ID=secret_id
+SECRET_KEY=secret_key
+```
+* where 'secret_mysql' is the password you choose for the database root user
+* and 'secret_id' and 'secret_key' are your GoCardless secret id and key
 
-Then
+Once you have the system ready, start it with:
 ```
-$ git clone git@github.com:xcarol/wmm.git
-$ cd wmm/system/docker
-```
-* Edit the .env file to set your GoCardless secret id and key.
-```
-$ docker-compose up &
+$ docker compose up -d
 ```
 
