@@ -15,9 +15,7 @@ A Personal 'Fintech' Application
 Database is located in the _server_ directory.
 
 The _sqlserver.sh_ script uses the _docker-compose.yml_ file, located in the _database_ directory, to create a local mysql database.  
-This database will be created under the directory _mysql_ and can be accessed at [http://localhost:8080](http://localhost:8080)  
-
-At the very first run you will need to use the [adminer](http://localhost:8080) to create the `wmm`database.
+This database will reside in the _mysql_ directory under the _server_ directory of the project.  
 
 ## Backup / Restore
 
@@ -43,3 +41,64 @@ Third approach
 Transactions must be added in bulk operations. Any 'conflicting' transactions will be deleted before the import. 'Conflicting' transactions are those already in the database whose date falls within the date range of the bulk transactions being imported.
 
 It is IMPORTANT to import transactions for full days. If you perform an import in the afternoon and then make a purchase in the evening, that transaction could be lost if the next import does not include the last day of the previous import. It is ADVISED to always re-import the last day of the previous import to avoid losing these transactions.   
+
+### GoCardless
+
+With this integration, transactions are retrieved directly from the bank. This indeed eliminates the "Duplicates problem" and obsoletes the CSV Import method.
+
+CSV Import is still maintained in case the GoCardless solution is not an option.
+
+Go to [GoCardless](https://bankaccountdata.gocardless.com/login) sign-in/sign-up and create your key to operate with GoCardless and be able to import the transactions directly from your bank.
+
+## Production environment
+
+The docker directory, inside the system directory, contains the files needed to set up the production environment using docker.
+
+Use the _docker-setup.sh_ shell script to build the docker images, push them to your Docker Hub repo and delete locally created images.  
+Just type `$ ./docker-setup.sh` to get the help message.
+
+### docker-setup.sh
+
+This script is used to operate with both projects, client and server. If it is not specified in the command line it will be prompted when you run the script.  
+It is also needed your Docker Hub username and if it is not specified in the command line it will be prompted when you run the script.  
+
+__Project type and username are always required__
+
+Use the action parameters: -b -p -d to build, push and delete images respectively.
+
+To get the system ready for production, follow these steps:
+```
+./docker-setup.sh -u dockerhub_username -t server -b
+./docker-setup.sh -u dockerhub_username -t server -p
+./docker-setup.sh -u dockerhub_username -t client -b
+./docker-setup.sh -u dockerhub_username -t client -p
+```
+Replace __dockerhub_username__ with your real Docker Hub username.
+
+Now you can delete your local images if you like with:
+```
+./docker-setup.sh -u dockerhub_username -t server -d
+./docker-setup.sh -u dockerhub_username -t client -d
+```
+
+In your production environment
+* Install docker with _docker-compose-plugin_  
+* Copy the _docker-compose.yml_ file to a directory of your choice.
+* Create a _.env_ file in the same directory and add:
+```
+MYSQL_ROOT_PASSWORD=secret_mysql
+DB_DATABASE=database_name
+DB_USER=user_name
+DB_PASSWORD=user_password
+SECRET_ID=secret_id
+SECRET_KEY=secret_key
+```
+* where 'secret_mysql' is the password you choose for the database root user
+* 'database_name', 'user_name' and 'user_password' are... well, I guess you kown
+* and 'secret_id' and 'secret_key' are your GoCardless secret id and key
+
+Once you have the system ready, start it with:
+```
+$ docker compose up -d
+```
+

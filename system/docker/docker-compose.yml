@@ -1,0 +1,35 @@
+services:
+
+  db:
+    image: mysql
+    container_name: database
+    volumes:
+      - "${PWD}/mysql:/var/lib/mysql"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - 3306:3306
+
+  server:
+    image: xcarol/wmm-server:latest
+    container_name: server
+    environment:
+      SECRET_ID: ${SECRET_ID}
+      SECRET_KEY: ${SECRET_KEY}
+      DB_HOST: db
+      DB_NAME:  ${DB_DATABASE}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - 3000:3000
+
+  client:
+    image: xcarol/wmm-client:latest
+    container_name: client
+    environment:
+      VITE_API_URL: http://server:3000
+    ports:
+      - 8080:8080
