@@ -26,6 +26,8 @@ Make sure _mysqldump_ is installed and accessible by _$PATH_.
 
 ### Duplicates
 
+**(jump to GoCardless unless you will import transactions manually with CSV files)**
+
 ~~What are duplicate transactions?~~
 
 ~~When you import new transactions, some of the first ones might already be in the database because they were the last transactions from the previous import. In this case, when searching for duplicates, you can manually delete the duplicated transactions.~~
@@ -52,34 +54,22 @@ Go to [GoCardless](https://bankaccountdata.gocardless.com/login) sign-in/sign-up
 
 ## Production environment
 
-The docker directory, inside the system directory, contains the files needed to set up the production environment using docker.
-
-Use the _docker-setup.sh_ shell script to build the docker images, push them to your Docker Hub repo and delete locally created images.  
-Just type `$ ./docker-setup.sh` to get the help message.
+The ./system/docker directory contains the files needed to set up the production environment using docker.
 
 ### docker-setup.sh
 
-This script is used to operate with both projects, client and server. If it is not specified in the command line it will be prompted when you run the script.  
-It is also needed your Docker Hub username and if it is not specified in the command line it will be prompted when you run the script.  
+Use the _docker-setup.sh_ tool to build the docker images and push them to your Docker Hub account.  
+Just type `$ ./docker-setup.sh` to get the help message.
 
-__Project type and username are always required__
+This tool is used to operate with both projects, client and server. It accepts the parameters in the command line, but if not specified, they will be asked interactivelly.
 
-Use the action parameters: -b -p -d to build, push and delete images respectively.
+What's needed:
+- -t to select between client or server project
+- -u to set the docker hub user name (password is always asked interactivelly)
+- -v to set the URL for the client to access the server (This is the VITE_API_URL variable in the client project)
 
-To get the system ready for production, follow these steps:
-```
-./docker-setup.sh -u dockerhub_username -t server -b
-./docker-setup.sh -u dockerhub_username -t server -p
-./docker-setup.sh -u dockerhub_username -t client -b
-./docker-setup.sh -u dockerhub_username -t client -p
-```
-Replace __dockerhub_username__ with your real Docker Hub username.
-
-Now you can delete your local images if you like with:
-```
-./docker-setup.sh -u dockerhub_username -t server -d
-./docker-setup.sh -u dockerhub_username -t client -d
-```
+A tipical call to build the server would be: `./docker-setup.sh -u xcarol -t server`  
+A tipical call to build the client would be: `./docker-setup.sh -u xcarol -t client -v http://192.168.1.201:3000` here _192.168.1.201_ is the production server IP.  
 
 In your production environment
 * Install docker with _docker-compose-plugin_  
@@ -94,11 +84,16 @@ SECRET_ID=secret_id
 SECRET_KEY=secret_key
 ```
 * where 'secret_mysql' is the password you choose for the database root user
-* 'database_name', 'user_name' and 'user_password' are... well, I guess you kown
-* and 'secret_id' and 'secret_key' are your GoCardless secret id and key
+* 'database_name', 'user_name' and 'user_password' are... well, I guess you'll kown
+* and 'secret_id' and 'secret_key' are your [GoCardless](#gocardless) secret id and key
 
 Once you have the system ready, start it with:
 ```
 $ docker compose up -d
+```
+
+And stop it with:
+```
+$ docker compose down
 ```
 
