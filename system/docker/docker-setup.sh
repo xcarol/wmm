@@ -1,11 +1,15 @@
 #!/bin/bash
 
-# Variables globals per gestionar quin Dockerfile usar i quin repositori usar
+# Build with help of (ehem I mean coomanding) CHatGPTv4
+
+# Variables globals
 TARGET=""
 DOCKERFILE=""
 REPO=""
 USERNAME=""
 VERSION=""
+ARCHITECTURES="linux/amd64,linux/arm64"
+VITE_API_URL=""
 
 # Funció per obtenir la versió del package.json en la ruta especificada
 get_version() {
@@ -42,40 +46,26 @@ select_target() {
     get_version "$PACKAGE_PATH"
 }
 
-# Funció per construir la imatge
-build_image() {
-    select_target
-
-    if [ -z "$USERNAME" ]; then
-        echo "Introdueix el teu usuari de Docker Hub: "
-        read USERNAME
+# Funció per configurar VITE_API_URL i crear el fitxer .env
+setup_env() {
+    if [ -z "$VITE_API_URL" ]; then
+        echo "Introdueix URL del servidor (p.e. http://localhost:3000): "
+        read VITE_API_URL
     fi
-
-    IMAGE_NAME="$USERNAME/$REPO:$VERSION"
-
-    echo "Construint la imatge Docker $IMAGE_NAME utilitzant $DOCKERFILE..."
-    docker build -f $DOCKERFILE -t $IMAGE_NAME ../../
-
-    if [ $? -ne 0 ]; then
-        echo "Error durant la construcció de la imatge Docker"
-        exit 1
-    fi
-
-    # Etiquetar la imatge com a 'latest'
-    LATEST_IMAGE="$USERNAME/$REPO:latest"
-    echo "Etiquetant la imatge com a 'latest' ($LATEST_IMAGE)..."
-    docker tag $IMAGE_NAME $LATEST_IMAGE
-
-    if [ $? -ne 0 ]; then
-        echo "Error durant l'etiquetatge de la imatge Docker com 'latest'"
-        exit 1
-    fi
-
-    echo "Imatge $IMAGE_NAME (versió) i $LATEST_IMAGE (latest) construïdes correctament."
+    echo "VITE_API_URL=$VITE_API_URL" > "$PACKAGE_PATH/.env"
+    echo "Fitxer .env creat amb VITE_API_URL=$VITE_API_URL"
 }
 
-# Funció per fer el push de la imatge a Docker Hub
-push_image() {
+# Funció per eliminar el fitxer .env després del build
+cleanup_env() {
+    if [ -f "$PACKAGE_PATH/.env" ]; then
+        rm "$PACKAGE_PATH/.env"
+        echo "Fitxer .env eliminat."
+    fi
+}
+
+# Funció per construir i pujar la imatge
+build_and_push_image() {
     select_target
 
     if [ -z "$USERNAME" ]; then
@@ -96,72 +86,49 @@ push_image() {
         exit 1
     fi
 
-    echo "Pujant la imatge $IMAGE_NAME a Docker Hub..."
-    docker push $IMAGE_NAME
+    # Si estem treballant amb el client, configurem l'arxiu .env
+    if [ "$TARGET" == "client" ]; then
+        setup_env
+    fi
 
-    echo "Pujant la imatge $LATEST_IMAGE a Docker Hub..."
-    docker push $LATEST_IMAGE
+    echo "Construint i pujant la imatge Docker $IMAGE_NAME utilitzant $DOCKERFILE..."
+    
+    docker buildx build -f $DOCKERFILE -t $IMAGE_NAME -t $LATEST_IMAGE --push --platform $ARCHITECTURES ../../
 
     if [ $? -ne 0 ]; then
-        echo "Error durant el push de la imatge a Docker Hub"
+        echo "Error durant la construcció i pujada de la imatge Docker"
         exit 1
     fi
 
-    echo "Imatges $IMAGE_NAME (versió) i $LATEST_IMAGE (latest) pujades correctament."
-    docker logout
-}
-
-# Funció per eliminar la imatge Docker
-delete_image() {
-    select_target
-
-    if [ -z "$USERNAME" ]; then
-        echo "Introdueix el teu usuari de Docker Hub: "
-        read USERNAME
+    # Eliminar el fitxer .env després del build
+    if [ "$TARGET" == "client" ]; then
+        cleanup_env
     fi
 
-    IMAGE_NAME="$USERNAME/$REPO:$VERSION"
-    LATEST_IMAGE="$USERNAME/$REPO:latest"
-
-    echo "Eliminant la imatge Docker $IMAGE_NAME i $LATEST_IMAGE localment..."
-    docker rmi $IMAGE_NAME
-    docker rmi $LATEST_IMAGE
-
-    if [ $? -ne 0 ]; then
-        echo "Error durant l'eliminació de les imatges Docker"
-        exit 1
-    fi
-
-    echo "Imatges $IMAGE_NAME (versió) i $LATEST_IMAGE (latest) eliminades correctament."
+    echo "Imatge $IMAGE_NAME (versió) i $LATEST_IMAGE (latest) pujades correctament."
 }
 
 # Funció per mostrar l'ajuda
 show_help() {
-    echo "Ús: ./build_and_push.sh [opció]"
+    echo "Ús: $0 [opcions]"
     echo "Opcions:"
-    echo "  -b  Construir la imatge Docker"
-    echo "  -p  Fer push de la imatge a Docker Hub"
-    echo "  -d  Eliminar la imatge Docker localment"
-    echo "  -u  Especificar el nom d'usuari de Docker Hub"
-    echo "  -i  Especificar la versió de la imatge"
     echo "  -t  Especificar si s'usa el 'server' o 'client'"
+    echo "  -u  Especificar el nom d'usuari de Docker Hub"
+    echo "  -v  Especificar la URL del servidor de destí (p.e. http://localhost:3000)"
     echo "  -h  Mostrar aquesta ajuda"
 }
 
-# Primer processem les opcions necessàries
-while getopts ":u:i:t:bpdh" opt; do
+# Processar les opcions necessàries
+while getopts ":u:t:v:h" opt; do
     case $opt in
         u)
             USERNAME=$OPTARG
             ;;
-        i)
-            VERSION=$OPTARG
-            ;;
         t)
             TARGET=$OPTARG
             ;;
-        b|p|d)
-            ACTION=$opt
+        v)
+            VITE_API_URL=$OPTARG
             ;;
         h)
             show_help
@@ -180,18 +147,5 @@ while getopts ":u:i:t:bpdh" opt; do
     esac
 done
 
-# Llavors executem l'acció corresponent
-case $ACTION in
-    b)
-        build_image
-        ;;
-    p)
-        push_image
-        ;;
-    d)
-        delete_image
-        ;;
-    *)
-        show_help
-        ;;
-esac
+show_help
+build_and_push_image

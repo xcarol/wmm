@@ -947,7 +947,13 @@ async function backupDatabase() {
   const filePath = path.join(__dirname, 'wmm.sql');
 
   try {
-    execSync(`/usr/bin/mysqldump --host=127.0.0.1 --user=root --password=secret wmm > ${filePath}`);
+    execSync(
+      `/usr/bin/mysqldump \
+      --host=${process.env.DB_HOST} \
+      --user=root \
+      --password=${process.env.MYSQL_ROOT_PASSWORD} \
+      ${process.env.DB_NAME} > ${filePath}`,
+    );
     return filePath;
   } catch (err) {
     err.message = `Error [${err}] creating a backup to the file [${filePath}].`;
