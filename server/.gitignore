@@ -14,8 +14,6 @@ pids
 *.pid
 *.seed
 *.pid.lock
-/mysql/*
-!/mysql/.gitkeep
 locales/dev.missing.json
 uploads/*
 

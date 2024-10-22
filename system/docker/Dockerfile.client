@@ -1,0 +1,8 @@
+# syntax=docker/dockerfile:1.7-labs
+FROM node:20
+
+COPY --exclude=node_modules ./client/ . 
+RUN npm install
+RUN npm run build
+
+CMD ["npm", "start"]

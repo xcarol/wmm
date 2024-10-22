@@ -21,13 +21,13 @@ function ajuda() {
 function iniciar() {
   echo "Iniciant servei..."
   mkdir -p ./mysql
-  docker-compose -f ./database/docker-compose.yml up -d
+  docker-compose -f ./docker/docker-compose.yml up -d
   echo "Servei iniciat correctament."
 }
 
 function aturar() {
   echo "Aturant servei..."
-  docker-compose -f ./database/docker-compose.yml down
+  docker-compose -f ./docker/docker-compose.yml down
   echo "Servei aturat correctament."
 }
 
@@ -38,7 +38,7 @@ function reiniciar() {
 
 function estat() {
   echo "Mostrant l'estat del servei..."
-  docker-compose -f ./database/docker-compose.yml ps
+  docker-compose -f ./docker/docker-compose.yml ps
 }
 
 # Validació arguments

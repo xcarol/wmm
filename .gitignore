@@ -1,3 +1,10 @@
 .vscode
+
+# this is the result of the backup method
 server/api/*.sql
+
+# Ignore database directories
+/**/mysql/*
+!/**/mysql/.gitkeep
+
 *.txt

@@ -6,10 +6,10 @@ const { execSync } = require('child_process');
 const MAX_LEN = 200;
 
 const connectionSettings = {
-  host: 'localhost',
-  user: 'root',
-  password: 'secret',
-  database: 'wmm',
+  host: process.env.DB_HOST ?? 'localhost',
+  user: process.env.DB_USER ?? 'root',
+  password: process.env.DB_PASSWORD ?? 'secret',
+  database: process.env.DB_NAME ?? 'wmm',
   multipleStatements: true,
   dateStrings: true,
 };
@@ -947,7 +947,13 @@ async function backupDatabase() {
   const filePath = path.join(__dirname, 'wmm.sql');
 
   try {
-    execSync(`/usr/bin/mysqldump --host=127.0.0.1 --user=root --password=secret wmm > ${filePath}`);
+    execSync(
+      `/usr/bin/mysqldump \
+      --host=${process.env.DB_HOST} \
+      --user=root \
+      --password=${process.env.MYSQL_ROOT_PASSWORD} \
+      ${process.env.DB_NAME} > ${filePath}`,
+    );
     return filePath;
   } catch (err) {
     err.message = `Error [${err}] creating a backup to the file [${filePath}].`;
