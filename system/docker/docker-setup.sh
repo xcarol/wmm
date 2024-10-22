@@ -1,12 +1,15 @@
 #!/bin/bash
 
-# Variables globals per gestionar quin Dockerfile usar i quin repositori usar
+# Build with help of (ehem I mean coomanding) CHatGPTv4
+
+# Variables globals
 TARGET=""
 DOCKERFILE=""
 REPO=""
 USERNAME=""
 VERSION=""
 ARCHITECTURES="linux/amd64,linux/arm64"
+VITE_API_URL=""
 
 # Funció per obtenir la versió del package.json en la ruta especificada
 get_version() {
@@ -43,6 +46,24 @@ select_target() {
     get_version "$PACKAGE_PATH"
 }
 
+# Funció per configurar VITE_API_URL i crear el fitxer .env
+setup_env() {
+    if [ -z "$VITE_API_URL" ]; then
+        echo "Introdueix URL del servidor (p.e. http://localhost:3000): "
+        read VITE_API_URL
+    fi
+    echo "VITE_API_URL=$VITE_API_URL" > "$PACKAGE_PATH/.env"
+    echo "Fitxer .env creat amb VITE_API_URL=$VITE_API_URL"
+}
+
+# Funció per eliminar el fitxer .env després del build
+cleanup_env() {
+    if [ -f "$PACKAGE_PATH/.env" ]; then
+        rm "$PACKAGE_PATH/.env"
+        echo "Fitxer .env eliminat."
+    fi
+}
+
 # Funció per construir i pujar la imatge
 build_and_push_image() {
     select_target
@@ -65,9 +86,13 @@ build_and_push_image() {
         exit 1
     fi
 
+    # Si estem treballant amb el client, configurem l'arxiu .env
+    if [ "$TARGET" == "client" ]; then
+        setup_env
+    fi
+
     echo "Construint i pujant la imatge Docker $IMAGE_NAME utilitzant $DOCKERFILE..."
     
-    # Construir la imatge amb buildx i especificar arquitectures
     docker buildx build -f $DOCKERFILE -t $IMAGE_NAME -t $LATEST_IMAGE --push --platform $ARCHITECTURES ../../
 
     if [ $? -ne 0 ]; then
@@ -75,34 +100,35 @@ build_and_push_image() {
         exit 1
     fi
 
+    # Eliminar el fitxer .env després del build
+    if [ "$TARGET" == "client" ]; then
+        cleanup_env
+    fi
+
     echo "Imatge $IMAGE_NAME (versió) i $LATEST_IMAGE (latest) pujades correctament."
 }
 
 # Funció per mostrar l'ajuda
 show_help() {
-    echo "Ús: ./build_and_push.sh [opció]"
+    echo "Ús: $0 [opcions]"
     echo "Opcions:"
-    echo "  -b  Construir i pujar la imatge Docker"
-    echo "  -u  Especificar el nom d'usuari de Docker Hub"
-    echo "  -i  Especificar la versió de la imatge"
     echo "  -t  Especificar si s'usa el 'server' o 'client'"
+    echo "  -u  Especificar el nom d'usuari de Docker Hub"
+    echo "  -v  Especificar la URL del servidor de destí (p.e. http://localhost:3000)"
     echo "  -h  Mostrar aquesta ajuda"
 }
 
-# Primer processem les opcions necessàries
-while getopts ":u:i:t:a:bh" opt; do
+# Processar les opcions necessàries
+while getopts ":u:t:v:h" opt; do
     case $opt in
         u)
             USERNAME=$OPTARG
             ;;
-        i)
-            VERSION=$OPTARG
-            ;;
         t)
             TARGET=$OPTARG
             ;;
-        b)
-            ACTION="build"
+        v)
+            VITE_API_URL=$OPTARG
             ;;
         h)
             show_help
@@ -121,9 +147,5 @@ while getopts ":u:i:t:a:bh" opt; do
     esac
 done
 
-# Llavors executem l'acció corresponent
-if [ "$ACTION" == "build" ]; then
-    build_and_push_image
-else
-    show_help
-fi
+show_help
+build_and_push_image
