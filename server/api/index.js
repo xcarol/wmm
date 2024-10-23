@@ -1,11 +1,11 @@
 const express = require('express');
 const cors = require('cors');
+require('dotenv').config();
+
 const categoriesRouter = require('./filter');
 const banksRouter = require('./bank');
 const transactionsRouter = require('./transaction');
 const sqlRouter = require('./sqlaccess');
-
-require('dotenv').config();
 
 const app = express();
 app.use(express.json({ limit: '5mb' }));
