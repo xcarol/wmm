@@ -8,3 +8,9 @@ server/api/*.sql
 !/**/mysql/.gitkeep
 
 *.txt
+
+# Globally ignore dotenv environment variables files
+.env
+.env.test
+.env.local
+.env.*.local
