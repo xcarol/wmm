@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card flat>
     <v-card-text>
       <file-input
         :file-name="fileName"

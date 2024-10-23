@@ -1,6 +1,5 @@
 <template>
   <v-table
-    :height="adjustedHeight"
     density="compact"
   >
     <thead>
@@ -42,8 +41,6 @@ const props = defineProps({
 });
 
 const appStore = useAppStore();
-
-const adjustedHeight = computed(() => appStore.viewHeight - 450);
 
 const tableRowsItems = () => {
   const items = [];
@@ -87,7 +84,7 @@ const tableItems = computed(() => (appStore.csvfile.rowCount === 0 ? [] : tableR
 
 <style scoped>
 .truncate {
-  max-width: 1px;
+  max-width: 1000px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
