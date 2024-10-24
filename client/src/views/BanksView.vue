@@ -1,42 +1,9 @@
 <template>
-  <v-row class="flex-grow-1 d-flex flex-column my-box">
-    <v-col
-      cols="6"
-      class="flex-grow-1 d-flex flex-column my-box"
-    >
-      <v-card class="flex-grow-1 d-flex flex-column mybox">
-        <v-card-title>{{ $t('banksView.configBank') }}</v-card-title>
-        <v-text-field
-          class="pl-4"
-          :model-value="filter"
-          @update:model-value="updateFilter"
-        ></v-text-field>
-        <v-list
-          class="flex-grow-1"
-          style="overflow-y: auto; height: 100%; margin: 0; padding: 0; box-sizing: border-box"
-        >
-          <v-list-item
-            v-for="bank in filteredBanks"
-            :key="bank.id"
-            :prepend-avatar="bank.logo"
-            :title="bank.name"
-            style="cursor: pointer"
-            @click.stop="selectBank(bank.name, bank.id)"
-          >
-          </v-list-item>
-        </v-list>
-      </v-card>
-    </v-col>
-    <v-col
-      cols="6"
-      class="flex-grow-1 d-flex flex-column my-box"
-    >
-      <v-card class="flex-grow-1 d-flex flex-column mybox">
+  <v-row>
+    <v-col sm="6" cols="12">
+      <v-card flat>
         <v-card-title>{{ $t('banksView.useBank') }}</v-card-title>
-        <v-list
-          class="flex-grow-1"
-          style="overflow-y: auto; height: 100%; margin: 0; padding: 0; box-sizing: border-box"
-        >
+        <v-list>
           <v-list-item
             v-for="bank in registeredBanks"
             :key="bank.id"
@@ -55,6 +22,27 @@
               >
               </v-icon>
             </template>
+          </v-list-item>
+        </v-list>
+      </v-card>
+    </v-col>
+    <v-col sm="6" cols="12">
+      <v-card flat>
+        <v-card-title>{{ $t('banksView.configBank') }}</v-card-title>
+        <v-text-field
+          class="mx-4"
+          :model-value="filter"
+          @update:model-value="updateFilter"
+        ></v-text-field>
+        <v-list>
+          <v-list-item
+            v-for="bank in filteredBanks"
+            :key="bank.id"
+            :prepend-avatar="bank.logo"
+            :title="bank.name"
+            style="cursor: pointer"
+            @click.stop="selectBank(bank.name, bank.id)"
+          >
           </v-list-item>
         </v-list>
       </v-card>
