@@ -1,82 +1,105 @@
 <template>
-  <v-card>
-    <v-container>
-      <v-row>
-        <v-col cols="6">
-          <v-card>
-            <v-card-text>
-              <v-data-table-virtual
-                v-model="selectedCategories"
-                :items="tableCategories"
-                show-select
-                class="elevation-1"
-                fixed-header
-                :headers="headerCategories"
-                :height="adjustedHeight"
-                @update:model-value="onUpdateCategoryModelValue"
-              >
-                <template #[`header.data-table-select`]></template>
-              </v-data-table-virtual>
-            </v-card-text>
-            <v-card-actions>
-              <v-spacer />
+  <v-row>
+    <v-col
+      cols="12"
+      sm="6"
+    >
+      <v-card flat>
+        <v-card-title>{{ $t('filtersView.categoriesLabel') }}</v-card-title>
+        <v-card-text>
+          <v-row justify="end">
+            <v-col cols="auto">
               <v-btn
                 :disabled="noCategorySelected"
                 @click.stop="showRenameCategoryDialog"
                 >{{ $t('filtersView.renameCategoryButton') }}</v-btn
               >
+            </v-col>
+            <v-col cols="auto">
               <v-btn
                 :disabled="noCategorySelected"
                 @click.stop="deleteCategories"
                 >{{ $t('filtersView.deleteCategoryButton') }}</v-btn
               >
-            </v-card-actions>
-          </v-card>
-        </v-col>
-        <v-col cols="6">
-          <v-card>
-            <v-card-text>
-              <v-data-table-virtual
-                v-model="selectedFilters"
-                :items="tableFilters"
-                show-select
-                class="elevation-1"
-                hidden-header
-                :headers="headerFilters"
-                :height="adjustedHeight"
-                @update:model-value="onUpdateFilterModelValue"
-              >
-                <template #[`header.data-table-select`]></template>
-              </v-data-table-virtual>
-            </v-card-text>
-            <v-card-actions>
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-card-text>
+          <v-data-table-virtual
+            v-model="selectedCategories"
+            :items="tableCategories"
+            show-select
+            hide-default-header
+            class="elevation-1"
+            :height="tableHeight"
+            @update:model-value="onUpdateCategoryModelValue"
+          >
+            <template #[`header.data-table-select`]></template>
+          </v-data-table-virtual>
+        </v-card-text>
+      </v-card>
+    </v-col>
+    <v-col
+      cols="12"
+      sm="6"
+    >
+      <v-card flat>
+        <v-card-title>{{ headerFilters[0].title }}</v-card-title>
+        <v-card-text>
+          <v-row justify="end">
+            <v-col cols="auto">
               <v-btn
                 class="ml-2"
                 @click.stop="applyFilters"
                 >{{ $t('filtersView.applyFiltersButton') }}</v-btn
               >
+            </v-col>
+            <v-col
+              cols="12"
+              lg="auto"
+              class="flex-grow-1"
+            >
               <v-spacer />
+            </v-col>
+            <v-col cols="auto">
               <v-btn
                 :disabled="noCategorySelected"
                 @click.stop="showNewFilterDialog"
                 >{{ $t('filtersView.newFilterButton') }}</v-btn
               >
+            </v-col>
+            <v-col cols="auto">
               <v-btn
                 :disabled="noFilterSelected"
                 @click.stop="showEditFilterDialog"
                 >{{ $t('filtersView.editFilterButton') }}</v-btn
               >
+            </v-col>
+            <v-col cols="auto">
               <v-btn
                 :disabled="noFilterSelected"
                 @click.stop="deleteFilter"
                 >{{ $t('filtersView.deleteFilterButton') }}</v-btn
               >
-            </v-card-actions>
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-container>
-  </v-card>
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-card-text>
+          <v-data-table-virtual
+            v-model="selectedFilters"
+            :items="tableFilters"
+            show-select
+            class="elevation-1"
+            hidden-header
+            :headers="headerFilters"
+            @update:model-value="onUpdateFilterModelValue"
+          >
+            <template #[`header.data-table-select`]></template>
+          </v-data-table-virtual>
+        </v-card-text>
+      </v-card>
+    </v-col>
+  </v-row>
   <rename-category-dialog
     :show="showRenameCategory"
     :category="renameCategoryName"
@@ -102,6 +125,7 @@
 <script setup>
 import { computed, onBeforeMount, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useDisplay } from 'vuetify';
 import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
 import { useMessageDialogStore } from '../stores/messageDialog';
@@ -109,6 +133,7 @@ import { useProgressDialogStore } from '../stores/progressDialog';
 import RenameCategoryDialog from '../components/filters-view/RenameCategoryDialog.vue';
 import NewFilterDialog from '../components/categorize-view/NewFilterDialog.vue';
 
+const display = useDisplay();
 const api = useApi();
 const { t: $t } = useI18n();
 const appStore = useAppStore();
@@ -128,8 +153,11 @@ const showEditFilter = ref(false);
 const editFilterCategoryName = ref('');
 const editFilterName = ref('');
 const editFilterLabel = ref('');
+const displayRef = ref(display);
 
-const adjustedHeight = computed(() => appStore.viewHeight - 220);
+const tableHeight = computed(() => {
+  return displayRef.value.smAndUp ? '' : '200px';
+});
 
 const noCategorySelected = computed(() => {
   return selectedCategories.value.length === 0;
@@ -139,7 +167,6 @@ const noFilterSelected = computed(() => {
   return selectedFilters.value.length === 0;
 });
 
-const headerCategories = [{ title: $t('filtersView.categoriesLabel'), key: 'id' }];
 const headerFilters = [
   { title: $t('filtersView.filtersName'), key: 'id' },
   { title: $t('filtersView.filtersLabel'), key: 'label' },
