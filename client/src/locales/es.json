@@ -106,7 +106,7 @@
     "transactionsFound": "Se han encontrado %d transacciones",
     "transactionsFoundFilter": " con el siguiente criterio: [%s]",
     "transactionsFoundCategory": " de la categoría [%s]",
-    "categoryLabel": "Busca la categoría o añade una nueva...",
+    "categoryLabel": "Selecciona la categoría o añade una nueva...",
     "applyButton": "Aplica",
     "createFilterButton": "Crea un filtro",
     "applyWarningTitle": "Actualización a la categoría [%s]",

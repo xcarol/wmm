@@ -106,7 +106,7 @@
     "transactionsFound": "S'han trobat %d transaccions",
     "transactionsFoundFilter": " amb el següent criteri: [%s]",
     "transactionsFoundCategory": " de la categoria [%s]",
-    "categoryLabel": "Cerca la categoria o afegeix-ne una de nova...",
+    "categoryLabel": "Selecciona la categoria o afegeix-ne una de nova...",
     "applyButton": "Aplica",
     "createFilterButton": "Crea un filtre",
     "applyWarningTitle": "Actualització a la categoria [%s]",
