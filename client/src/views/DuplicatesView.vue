@@ -1,8 +1,28 @@
 <template>
-  <v-card>
+  <v-card flat>
     <v-card-text>
-      <v-btn @click.stop="searchTransactions">{{ $t('duplicatesView.searchButton') }}</v-btn>
-      <v-spacer />
+      <v-row>
+        <v-col>
+          <v-btn @click.stop="searchTransactions">{{ $t('duplicatesView.searchButton') }}</v-btn>
+        </v-col>
+        <v-col>
+          <v-spacer />
+        </v-col>
+        <v-col>
+          <v-btn
+            :disabled="noTransactionSelected"
+            @click.stop="deleteTransactions"
+            >{{ $t('duplicatesView.deleteButton') }}</v-btn
+          >
+        </v-col>
+        <v-col>
+          <v-btn
+            :disabled="noTransactionSelected"
+            @click.stop="markAsNotDuplicates"
+            >{{ $t('duplicatesView.markButton') }}</v-btn
+          >
+        </v-col>
+      </v-row>
     </v-card-text>
     <v-card-text>
       <v-data-table-virtual
@@ -11,22 +31,8 @@
         show-select
         class="elevation-1"
         fixed-header
-        :height="adjustedHeight"
       ></v-data-table-virtual>
     </v-card-text>
-    <v-card-actions>
-      <v-spacer />
-      <v-btn
-        :disabled="noTransactionSelected"
-        @click.stop="deleteTransactions"
-        >{{ $t('duplicatesView.deleteButton') }}</v-btn
-      >
-      <v-btn
-        :disabled="noTransactionSelected"
-        @click.stop="markAsNotDuplicates"
-        >{{ $t('duplicatesView.markButton') }}</v-btn
-      >
-    </v-card-actions>
   </v-card>
 </template>
 
@@ -46,8 +52,6 @@ const progressDialog = useProgressDialogStore();
 
 const tableItems = ref([]);
 const selectedItems = ref([]);
-
-const adjustedHeight = computed(() => appStore.viewHeight - 220);
 
 const noTransactionSelected = computed(() => {
   return !!(selectedItems.value.length === 0);
