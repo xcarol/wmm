@@ -7,10 +7,13 @@
     @on-ok="createNewFilter"
     @on-cancel="hideNewFilterDialog"
   />
-  <v-card>
+  <v-card flat>
     <v-card-text>
       <v-row>
-        <v-col cols="8">
+        <v-col
+          cols="12"
+          sm="8"
+        >
           <v-combobox
             v-model="filterText"
             :label="$t('categorizeView.filterLabel')"
@@ -19,7 +22,10 @@
             @keydown="keyDown"
           />
         </v-col>
-        <v-col cols="4">
+        <v-col
+          cols="12"
+          sm="4"
+        >
           <v-combobox
             v-model="filterCategory"
             :label="$t('categorizeView.filterCategoryLabel')"
@@ -37,37 +43,64 @@
       <transaction-table
         :selected-items="selectedItems"
         :table-items="tableItems"
-        :height="adjustedHeight"
         @update-model-value="updateModelValue"
       />
     </v-card-text>
-    <v-card-actions class="align-start">
-      <v-combobox
-        v-model="selectedCategory"
-        class="ml-2"
-        :label="$t('categorizeView.categoryLabel')"
-        :items="categoryNames"
-        clearable
-      />
-      <v-btn
-        class="ml-2"
-        :disabled="canApplyCategory"
-        @click.stop="applyCategory"
-        >{{ $t('categorizeView.applyButton') }}</v-btn
+
+    <v-card-text>
+      <v-row no-gutters>
+        <v-col
+          class="flex-grow-1"
+          cols="1"
+          style="max-width: 100%"
+        >
+          <v-combobox
+            v-model="selectedCategory"
+            class="mx-2"
+            :label="$t('categorizeView.categoryLabel')"
+            :items="categoryNames"
+            clearable
+          />
+        </v-col>
+
+        <v-col
+          class="flex-shrink-1"
+          cols="auto"
+        >
+          <v-btn
+            :disabled="canApplyCategory"
+            @click.stop="applyCategory"
+          >
+            {{ $t('categorizeView.applyButton') }}
+          </v-btn>
+        </v-col>
+      </v-row>
+
+      <v-row
+        no-gutters
+        justify="end"
       >
-      <v-btn
-        class="mr-2"
-        :disabled="canCreateCategory"
-        @click.stop="showCreateFilterDialog"
-        >{{ $t('categorizeView.createFilterButton') }}</v-btn
-      >
-      <v-btn
-        class="mr-2"
-        :disabled="cannotApplyAllFilters"
-        @click.stop="applyAllFilters"
-        >{{ $t('categorizeView.applyAllFilters') }}</v-btn
-      >
-    </v-card-actions>
+        <v-col cols="auto">
+          <v-btn
+            class="mb-2"
+            :disabled="canCreateCategory"
+            @click.stop="showCreateFilterDialog"
+            >{{ $t('categorizeView.createFilterButton') }}</v-btn
+          >
+        </v-col>
+
+        <v-col
+          cols="auto"
+          class="ml-2"
+        >
+          <v-btn
+            :disabled="cannotApplyAllFilters"
+            @click.stop="applyAllFilters"
+            >{{ $t('categorizeView.applyAllFilters') }}</v-btn
+          >
+        </v-col>
+      </v-row>
+    </v-card-text>
   </v-card>
 </template>
 
@@ -103,7 +136,6 @@ const selectedCategory = ref('');
 const categoryNames = ref(['']);
 const showNewFilterDialog = ref(false);
 
-const adjustedHeight = computed(() => appStore.viewHeight - 290);
 const selectedItemToFilter = computed(() => {
   if (selectedItems.value.length === 0) {
     return '';
