@@ -54,7 +54,6 @@
           cols="12"
           md="2"
           sm="6"
-          justify="end"
         >
           <v-text-field
             v-model="selectedMaxDate"
