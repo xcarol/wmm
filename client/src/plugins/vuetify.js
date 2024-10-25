@@ -18,7 +18,7 @@ import {
   mdiOpenInNew,
   mdiMinusBox,
   mdiPlusBox,
-  mdiDotsVertical,
+  mdiInvoiceTextArrowRightOutline,
   mdiTrashCanOutline,
   mdiRefresh,
 } from '@mdi/js';
@@ -71,7 +71,7 @@ const vuetify = createVuetify({
       'open-in-new': mdiOpenInNew,
       minus: mdiMinusBox,
       plus: mdiPlusBox,
-      'view-drawer': mdiDotsVertical,
+      'show-drawer': mdiInvoiceTextArrowRightOutline,
       remove: mdiTrashCanOutline,
       refresh: mdiRefresh,
     },

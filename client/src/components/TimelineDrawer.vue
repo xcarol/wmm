@@ -3,11 +3,16 @@
     :model-value="showDrawer"
     :fixed="$vuetify.display.mdAndDown"
     :bottom="$vuetify.display.xs"
-    location="right"
+    location="left"
+    @update:model-value="modelChanged"
   >
     <v-card>
-      <v-card-text class="align-start mt-2 mr-2">
-        <v-btn-toggle :model-value="chartType" @update:model-value="typeChanged">
+      <v-card-text class="align-start">
+        <v-btn-toggle
+          elevation="2"
+          :model-value="chartType"
+          @update:model-value="typeChanged"
+        >
           <v-btn>
             {{ $t('browseTimelineView.banksLabel') }}
           </v-btn>
@@ -15,27 +20,25 @@
             {{ $t('browseTimelineView.categoriesLabel') }}
           </v-btn>
         </v-btn-toggle>
-        <v-list>
-          <div
-            v-for="(categoryItem, index) in selectableNames"
-            :key="index"
-          >
-            <v-list-item>
+        <v-virtual-scroll
+          class="my-4"
+          :items="selectableNames"
+          :height="adjustedHeight"
+        >
+          <template #default="{ item }">
+            <v-list-item :title="`${item}`">
               <template #prepend>
                 <v-list-item-action start>
                   <v-checkbox-btn
                     :model-value="selectedCategories"
-                    :value="categoryItem"
+                    :value="item"
                     @update:model-value="selectedUpdated"
                   ></v-checkbox-btn>
                 </v-list-item-action>
               </template>
-              <v-list-item-title>{{ categoryItem }}</v-list-item-title>
             </v-list-item>
-          </div>
-        </v-list>
-      </v-card-text>
-      <v-card-text class="align-start mt-2 mr-2">
+          </template>
+        </v-virtual-scroll>
         <v-select
           :model-value="selectedPeriod"
           :items="periodsNames"
@@ -56,10 +59,19 @@
 <script setup>
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useAppStore } from '../stores/app';
 
 const { t: $t } = useI18n();
+const appStore = useAppStore();
 
-const emits = defineEmits(['typeChanged','updateSelected', 'updatePeriod', 'update', 'close']);
+const emits = defineEmits([
+  'modelChanged',
+  'typeChanged',
+  'updateSelected',
+  'updatePeriod',
+  'update',
+  'close',
+]);
 
 const props = defineProps({
   show: {
@@ -88,13 +100,18 @@ const props = defineProps({
   },
 });
 
+const adjustedHeight = computed(() => appStore.viewHeight - 280);
 const showDrawer = computed(() => props.show);
 const selectedCategories = computed(() => props.selectedNames);
 const selectedPeriod = computed(() => props.selectedPeriod);
 const notReadyToQuery = () => props.selectedPeriod === '';
 
+const modelChanged = (model) => {
+  emits('modelChanged', model);
+};
+
 const typeChanged = (type) => {
-  emits('typeChanged',type);
+  emits('typeChanged', type);
 };
 
 const selectedUpdated = (selectedItems) => {
