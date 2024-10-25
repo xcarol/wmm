@@ -1,37 +1,38 @@
 <template>
-  <v-card>
+  <v-card flat>
     <v-card-text>
-      <v-select
-        v-model="selectedYear"
-        :label="$t('browseCategoriesView.yearLabel')"
-        :items="yearItems"
-        @update:model-value="refreshRoute"
-      />
-      <v-row class="pl-4 pr-4">
-        <v-radio-group
-          :model-value="balanceView"
-          inline
+      <v-row>
+        <v-col cols="auto">
+          <v-radio-group
+            :model-value="balanceView"
+            inline
+          >
+            <v-radio
+              value="incomes"
+              :label="$t('browseCategoriesView.incomesLabel')"
+              :disabled="selectedYear === '' || categoryViewLevel !== 'category'"
+              @click.stop="showIncomes"
+            />
+            <v-radio
+              value="expenses"
+              :label="$t('browseCategoriesView.expensesLabel')"
+              :disabled="selectedYear === '' || categoryViewLevel !== 'category'"
+              @click.stop="showExpenses"
+            />
+          </v-radio-group>
+        </v-col>
+        <v-col
+          cols="12"
+          sm="3"
+          md="2"
         >
-          <v-radio
-            value="incomes"
-            :label="$t('browseCategoriesView.incomesLabel')"
-            :disabled="selectedYear === '' || categoryViewLevel !== 'category'"
-            @click.stop="showIncomes"
+          <v-select
+            v-model="selectedYear"
+            :label="$t('browseCategoriesView.yearLabel')"
+            :items="yearItems"
+            @update:model-value="refreshRoute"
           />
-          <v-radio
-            value="expenses"
-            :label="$t('browseCategoriesView.expensesLabel')"
-            :disabled="selectedYear === '' || categoryViewLevel !== 'category'"
-            @click.stop="showExpenses"
-          />
-        </v-radio-group>
-        <v-btn
-          :disabled="categoryViewLevel === 'category'"
-          prepend-icon="$back"
-          @click.stop="router.back()"
-        >
-          {{ $t('browseCategoriesView.backToCategories') }}
-        </v-btn>
+        </v-col>
       </v-row>
       <v-row cols="12">
         <div class="chart-container">
@@ -43,9 +44,7 @@
         </div>
       </v-row>
     </v-card-text>
-    <v-card-text
-      v-show="selectedYear"
-    >
+    <v-card-text v-show="selectedYear">
       <v-row>
         <v-col cols="6">
           <v-data-table-virtual
@@ -121,7 +120,7 @@ const totalExpensesPerCent = computed(() =>
   Math.round((totalExpenses.value * 100) / (totalIncomes.value + totalExpenses.value)),
 );
 
-const adjustedHeight = computed(() => appStore.viewHeight - 240);
+const adjustedHeight = computed(() => appStore.viewHeight - 270);
 
 const chartOptions = {
   indexAxis: 'y',
