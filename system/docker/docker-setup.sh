@@ -112,6 +112,8 @@ build_and_push_image() {
     build_command="docker buildx build -f $DOCKERFILE -t $IMAGE_NAME -t $LATEST_IMAGE --platform $ARCHITECTURES ../../"
     if [ "$PUSH_OPTION" == "Docker Hub" ]; then
         build_command="$build_command --push"
+    else
+        build_command="$build_command --load"
     fi
     $build_command
 
