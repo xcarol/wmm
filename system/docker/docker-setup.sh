@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# Build with help of (ehem I mean coomanding) CHatGPTv4
-
 # Variables globals
 TARGET=""
 DOCKERFILE=""
@@ -10,6 +8,7 @@ USERNAME=""
 VERSION=""
 ARCHITECTURES="linux/amd64,linux/arm64"
 VITE_API_URL=""
+PUSH_OPTION=""
 
 # Funció per obtenir la versió del package.json en la ruta especificada
 get_version() {
@@ -64,26 +63,43 @@ cleanup_env() {
     fi
 }
 
-# Funció per construir i pujar la imatge
+# Funció per seleccionar si pujar o no la imatge a Docker Hub
+select_push_option() {
+    echo "Selecciona opció de pujada (Local/Docker Hub): "
+    read PUSH_OPTION
+
+    if [ "$PUSH_OPTION" != "Local" ] && [ "$PUSH_OPTION" != "Docker Hub" ]; then
+        echo "Opció no vàlida. Tria 'Local' o 'Docker Hub'."
+        exit 1
+    fi
+}
+
+# Funció per construir i, si s'ha seleccionat, pujar la imatge
 build_and_push_image() {
     select_target
+    select_push_option
 
-    if [ -z "$USERNAME" ]; then
-        echo "Introdueix el teu usuari de Docker Hub: "
-        read USERNAME
-    fi
+    if [ "$PUSH_OPTION" == "Docker Hub" ]; then
+        if [ -z "$USERNAME" ]; then
+            echo "Introdueix el teu usuari de Docker Hub: "
+            read USERNAME
+        fi
 
-    IMAGE_NAME="$USERNAME/$REPO:$VERSION"
-    LATEST_IMAGE="$USERNAME/$REPO:latest"
+        IMAGE_NAME="$USERNAME/$REPO:$VERSION"
+        LATEST_IMAGE="$USERNAME/$REPO:latest"
 
-    echo "Iniciant sessió a Docker Hub..."
-    read -sp "Introdueix la teva contrasenya de Docker Hub: " PASSWORD
-    echo
-    echo "$PASSWORD" | docker login --username "$USERNAME" --password-stdin
+        echo "Iniciant sessió a Docker Hub..."
+        read -sp "Introdueix la teva contrasenya de Docker Hub: " PASSWORD
+        echo
+        echo "$PASSWORD" | docker login --username "$USERNAME" --password-stdin
 
-    if [ $? -ne 0 ]; then
-        echo "Error durant l'inici de sessió a Docker Hub"
-        exit 1
+        if [ $? -ne 0 ]; then
+            echo "Error durant l'inici de sessió a Docker Hub"
+            exit 1
+        fi
+    else
+        IMAGE_NAME="$REPO:$VERSION"
+        LATEST_IMAGE="$REPO:latest"
     fi
 
     # Si estem treballant amb el client, configurem l'arxiu .env
@@ -91,12 +107,16 @@ build_and_push_image() {
         setup_env
     fi
 
-    echo "Construint i pujant la imatge Docker $IMAGE_NAME utilitzant $DOCKERFILE..."
-    
-    docker buildx build -f $DOCKERFILE -t $IMAGE_NAME -t $LATEST_IMAGE --push --platform $ARCHITECTURES ../../
+    echo "Construint la imatge Docker $IMAGE_NAME utilitzant $DOCKERFILE..."
+
+    build_command="docker buildx build -f $DOCKERFILE -t $IMAGE_NAME -t $LATEST_IMAGE --platform $ARCHITECTURES ../../"
+    if [ "$PUSH_OPTION" == "Docker Hub" ]; then
+        build_command="$build_command --push"
+    fi
+    $build_command
 
     if [ $? -ne 0 ]; then
-        echo "Error durant la construcció i pujada de la imatge Docker"
+        echo "Error durant la construcció de la imatge Docker"
         exit 1
     fi
 
@@ -105,7 +125,10 @@ build_and_push_image() {
         cleanup_env
     fi
 
-    echo "Imatge $IMAGE_NAME (versió) i $LATEST_IMAGE (latest) pujades correctament."
+    echo "Imatge $IMAGE_NAME construïda correctament."
+    if [ "$PUSH_OPTION" == "Docker Hub" ]; then
+        echo "Imatge $IMAGE_NAME (versió) i $LATEST_IMAGE (latest) pujades a Docker Hub."
+    fi
 }
 
 # Funció per mostrar l'ajuda
