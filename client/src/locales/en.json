@@ -37,7 +37,7 @@
     "sql": "SQL Commands",
     "banks": "Banks Configuration",
     "filters": "Filters",
-    "browser": "Browse",
+    "browse": "Browse",
     "browseTransactions": "Transactions",
     "browseCategories": "Categories",
     "browseTimeline": "Timeline"
