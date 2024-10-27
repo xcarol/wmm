@@ -65,11 +65,11 @@ cleanup_env() {
 
 # Funció per seleccionar si pujar o no la imatge a Docker Hub
 select_push_option() {
-    echo "Selecciona opció de pujada (Local/Docker Hub): "
+    echo "Selecciona opció de pujada (local/dockerhub): "
     read PUSH_OPTION
 
-    if [ "$PUSH_OPTION" != "Local" ] && [ "$PUSH_OPTION" != "Docker Hub" ]; then
-        echo "Opció no vàlida. Tria 'Local' o 'Docker Hub'."
+    if [ "$PUSH_OPTION" != "local" ] && [ "$PUSH_OPTION" != "dockerhub" ]; then
+        echo "Opció no vàlida. Tria 'local' o 'dockerhub'."
         exit 1
     fi
 }
@@ -79,7 +79,7 @@ build_and_push_image() {
     select_target
     select_push_option
 
-    if [ "$PUSH_OPTION" == "Docker Hub" ]; then
+    if [ "$PUSH_OPTION" == "dockerhub" ]; then
         if [ -z "$USERNAME" ]; then
             echo "Introdueix el teu usuari de Docker Hub: "
             read USERNAME
@@ -110,7 +110,7 @@ build_and_push_image() {
     echo "Construint la imatge Docker $IMAGE_NAME utilitzant $DOCKERFILE..."
 
     build_command="docker buildx build -f $DOCKERFILE -t $IMAGE_NAME -t $LATEST_IMAGE --platform $ARCHITECTURES ../../"
-    if [ "$PUSH_OPTION" == "Docker Hub" ]; then
+    if [ "$PUSH_OPTION" == "dockerhub" ]; then
         build_command="$build_command --push"
     else
         build_command="$build_command --load"
@@ -128,7 +128,7 @@ build_and_push_image() {
     fi
 
     echo "Imatge $IMAGE_NAME construïda correctament."
-    if [ "$PUSH_OPTION" == "Docker Hub" ]; then
+    if [ "$PUSH_OPTION" == "dockerhub" ]; then
         echo "Imatge $IMAGE_NAME (versió) i $LATEST_IMAGE (latest) pujades a Docker Hub."
     fi
 }
