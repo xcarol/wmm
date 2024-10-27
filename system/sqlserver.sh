@@ -16,18 +16,20 @@ function ajuda() {
   echo "$0 -d"
   echo "$0 -r"
   echo "$0 -s"
+  echo ""
+  echo "AVIS! Si al executar aquest script apareix un error de docker indicant que no reconeix la commanda 'compose' cal instal·lat el paquet 'docker-compose-v2' amb apt-get."
 }
 
 function iniciar() {
   echo "Iniciant servei..."
   mkdir -p ./mysql
-  docker-compose -f ./docker/docker-compose.yml up -d
+  docker compose -f ./docker/docker-compose.yml up -d db
   echo "Servei iniciat correctament."
 }
 
 function aturar() {
   echo "Aturant servei..."
-  docker-compose -f ./docker/docker-compose.yml down
+  docker compose -f ./docker/docker-compose.yml down
   echo "Servei aturat correctament."
 }
 
@@ -38,7 +40,7 @@ function reiniciar() {
 
 function estat() {
   echo "Mostrant l'estat del servei..."
-  docker-compose -f ./docker/docker-compose.yml ps
+  docker compose -f ./docker/docker-compose.yml ps
 }
 
 # Validació arguments

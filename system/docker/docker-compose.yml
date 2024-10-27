@@ -1,5 +1,4 @@
 services:
-
   db:
     image: mysql
     container_name: database
@@ -20,7 +19,7 @@ services:
       SECRET_ID: ${SECRET_ID}
       SECRET_KEY: ${SECRET_KEY}
       DB_HOST: db
-      DB_NAME:  ${DB_DATABASE}
+      DB_NAME: ${DB_DATABASE}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}

@@ -7,14 +7,22 @@
       :selectable-names="namesForSelection"
       :periods-names="periodNames"
       :chart-type="chartType"
+      @model-changed="showDrawer = !showDrawer"
       @type-changed="timelineTypeChange"
       @update-selected="updateSelectedItems"
       @update-period="updateSelectedPeriod"
       @close="closeDrawer"
       @update="updateChart"
     />
-    <v-card-text v-resize="onResize">
+    <v-card-text>
       <v-row>
+        <v-btn
+          class="ma-1"
+          @click="showDrawer = !showDrawer"
+        >
+          <v-icon icon="$show-drawer" />
+        </v-btn>
+
         <v-radio-group
           :model-value="chartStyle"
           inline
@@ -25,8 +33,8 @@
             :value="CHART_STYLE_LINES"
           ></v-radio>
           <v-radio
-          :label="$t('browseTimelineView.barStyle')"
-          :value="CHART_STYLE_BARS"
+            :label="$t('browseTimelineView.barStyle')"
+            :value="CHART_STYLE_BARS"
           ></v-radio>
         </v-radio-group>
       </v-row>
@@ -51,8 +59,9 @@
 </template>
 
 <script setup>
-import { ref, computed, onBeforeMount, onBeforeUpdate, onMounted } from 'vue';
+import { ref, computed, onBeforeMount, onBeforeUpdate } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useDisplay } from 'vuetify';
 import { useRoute, useRouter } from 'vue-router';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
@@ -92,17 +101,14 @@ const route = useRoute();
 const { t: $t } = useI18n();
 const router = useRouter();
 const api = useApi();
+const display = useDisplay();
 const appStore = useAppStore();
 const progressDialog = useProgressDialogStore();
 
-const innerHeight = ref(0);
-const adjustedHeight = computed(() => {
-  return innerHeight.value - 180;
-});
-
-const showDrawer = computed(() => appStore.showViewDrawer);
+const adjustedHeight = computed(() => appStore.viewHeight - 180);
+const showDrawer = ref(false);
 const chartType = ref(CHART_TYPE_BANKS);
-const chartStyle = ref('');
+const chartStyle = ref(CHART_STYLE_LINES);
 const namesForSelection = ref([]);
 const categoriesNames = ref([]);
 const banksNames = ref([]);
@@ -583,14 +589,19 @@ const parseParams = async () => {
   }
 
   if (update) {
+    if (display.mdAndDown === true) {
+      showDrawer.value = false;
+    }
     updateDrawerSettings();
     updateAvailablePeriods();
     updateTransactions();
   }
+
+  timelineTypeChange(category?.length > 0 ? CHART_TYPE_CATEGORIES : CHART_TYPE_BANKS);
 };
 
 const beforeUpdate = () => {
-  appStore.showViewDrawerButton = true;
+  showDrawer.value = true;
   parseParams();
 };
 
@@ -600,11 +611,6 @@ const beforeMount = async () => {
   beforeUpdate();
 };
 
-const onResize = () => {
-  innerHeight.value = window.innerHeight;
-};
-
 onBeforeMount(() => beforeMount());
 onBeforeUpdate(() => beforeUpdate());
-onMounted(() => onResize());
 </script>

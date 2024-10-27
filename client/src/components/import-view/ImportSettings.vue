@@ -1,7 +1,7 @@
 <template>
   <v-col>
     <v-row align="baseline">
-      <v-col cols="4">
+      <v-col cols="12" sm="4">
         <v-checkbox
           :model-value="hasHeader"
           :label="$t('importView.firstRowIsAHeader')"
@@ -9,7 +9,7 @@
           @update:model-value="notifyCheckState"
         />
       </v-col>
-      <v-col cols="4">
+      <v-col cols="12" sm="4">
         <bank-selection
           flat
           :bank-name="bankName"
@@ -17,7 +17,7 @@
           @selected-bank="notifySelectedBank"
         />
       </v-col>
-      <v-col cols="4">
+      <v-col cols="12" sm="4">
         <v-text-field
           :value="initialAmount"
           :label="$t('importView.initialAmountLabel')"
@@ -27,7 +27,7 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="4">
+      <v-col cols="12" sm="4">
         <v-select
           :model-value="dateColumn"
           :label="$t('importView.dateColumnLabel')"
@@ -36,7 +36,7 @@
           @update:model-value="notifyDateColumnSelected"
         />
       </v-col>
-      <v-col cols="4">
+      <v-col cols="12" sm="4">
         <v-select
           :model-value="descriptionColumn"
           :label="$t('importView.descriptionColumnLabel')"
@@ -45,7 +45,7 @@
           @update:model-value="notifyDescriptionColumnSelected"
         />
       </v-col>
-      <v-col cols="4">
+      <v-col cols="12" sm="4">
         <v-select
           :model-value="amountColumn"
           :label="$t('importView.amountColumnLabel')"

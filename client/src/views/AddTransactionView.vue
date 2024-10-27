@@ -1,56 +1,95 @@
 <template>
-  <v-card class="pt-5">
-    <v-card-actions class="align-start ml-4 mr-4">
-      <v-text-field
-        v-model="selectedDate"
-        append-inner-icon="$calendar"
-        :label="$t('addTransactionView.dateLabel')"
-        @click:append-inner="showDateCalendar"
-      />
-      <v-select
-        v-model="selectedBankName"
-        class="ml-4"
-        :items="banksNames"
-        :rules="[validationRules.required]"
-        :label="$t('addTransactionView.bankNameLabel')"
-      />
-      <v-select
-        v-model="selectedCategory"
-        class="ml-4"
-        :items="categoriesNames"
-        :label="$t('addTransactionView.categoryLabel')"
-      />
-      <v-text-field
-        v-model="transactionAmount"
-        class="ml-4"
-        :rules="[validationRules.required, validationRules.number]"
-        :label="$t('addTransactionView.amountLabel')"
-      >
-        <template #prepend-inner>
-          <v-icon
-            :color="amountColor"
-            @click.stop="switchSign"
-            >{{ amountSign }}</v-icon
+  <v-card
+    flat
+    class="pt-5"
+  >
+    <v-card-text>
+      <v-row>
+        <v-col
+          cols="12"
+          sm="3"
+          md="2"
+        >
+          <v-text-field
+            v-model="selectedDate"
+            append-inner-icon="$calendar"
+            :label="$t('addTransactionView.dateLabel')"
+            @click:append-inner="showDateCalendar"
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          sm="3"
+          md="3"
+        >
+          <v-select
+            v-model="selectedBankName"
+            :items="banksNames"
+            :rules="[validationRules.required]"
+            :label="$t('addTransactionView.bankNameLabel')"
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          sm="3"
+          md="4"
+        >
+          <v-select
+            v-model="selectedCategory"
+            :items="categoriesNames"
+            :label="$t('addTransactionView.categoryLabel')"
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          sm="3"
+          md="3"
+        >
+          <v-text-field
+            v-model="transactionAmount"
+            :rules="[validationRules.required, validationRules.number]"
+            :label="$t('addTransactionView.amountLabel')"
           >
-        </template>
-      </v-text-field>
-    </v-card-actions>
-    <v-card-actions class="align-start ml-4 mr-4">
-      <v-combobox
-        v-model="transactionDescription"
-        :items="descriptions"
-        :rules="[validationRules.required]"
-        :label="$t('addTransactionView.descriptionLabel')"
-        clearable
-      />
-      <v-btn
-        class="ml-4"
-        :disabled="notReadyToAdd()"
-        @click.stop="addTransaction"
-      >
-        {{ $t('addTransactionView.addButton') }}
-      </v-btn>
-    </v-card-actions>
+            <template #prepend-inner>
+              <v-icon
+                :color="amountColor"
+                @click.stop="switchSign"
+                >{{ amountSign }}</v-icon
+              >
+            </template>
+          </v-text-field>
+        </v-col>
+      </v-row>
+    </v-card-text>
+    <v-card-text>
+      <v-row>
+        <v-col
+          class="flex-grow-1"
+          cols="12"
+          sm="1"
+          style="max-width: 100%"
+        >
+          <v-combobox
+            v-model="transactionDescription"
+            :items="descriptions"
+            :rules="[validationRules.required]"
+            :label="$t('addTransactionView.descriptionLabel')"
+            clearable
+          />
+        </v-col>
+        <v-col
+          class="flex-shrink-1"
+          cols="auto"
+        >
+          <v-btn
+            :disabled="notReadyToAdd()"
+            @click.stop="addTransaction"
+          >
+            {{ $t('addTransactionView.addButton') }}
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-card-text>
   </v-card>
   <calendar-dialog
     v-model="dateCalendarVisible"

@@ -1,19 +1,23 @@
 <template>
-  <v-card class="text-end">
+  <v-card flat>
     <v-card-text>
+      {{ $t('sqlView.queryAreaLabel') }}
       <v-textarea
         v-model="sqlQueryText"
-        :label="$t('sqlView.queryAreaLabel')"
+        class="mt-2"
         @keyup="keyPressed"
       />
     </v-card-text>
-    <v-card-actions>
+    <v-card-actions class="mx-2">
       <backup-response @operation-status="backupResponseStatus" />
       <v-spacer />
       <v-btn @click.stop="executeQuery">{{ $t('sqlView.queryButton') }}</v-btn>
     </v-card-actions>
   </v-card>
-  <v-card v-show="sqlQueryResponse">
+  <v-card
+    v-show="sqlQueryResponse"
+    flat
+  >
     <v-card-text>
       <v-textarea
         v-model="sqlQueryResponse"

@@ -4,7 +4,7 @@
     :items="tableItems"
     show-select
     fixed-header
-    :height="height"
+    class="table-height"
     @update:model-value="updateModelValue"
   >
     <template #[`item.description`]="{ item }">
@@ -60,10 +60,6 @@ defineProps({
     type: Array,
     required: true,
   },
-  height: {
-    type: Number,
-    default: 200,
-  },
 });
 
 const { t: $t } = useI18n();
@@ -83,3 +79,9 @@ const updateModelValue = (modelValue) => {
   emits('updateModelValue', modelValue);
 };
 </script>
+
+<style scoped>
+.table-height {
+  max-height: 50vh;
+}
+</style>

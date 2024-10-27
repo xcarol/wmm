@@ -12,42 +12,70 @@
       />
     </v-card-text>
     <v-card-title>{{ $t('browseTransactionsView.bankDetail') }}</v-card-title>
-    <v-card-actions class="align-start ml-4 mr-4">
-      <v-select
-        v-model="selectedBankName"
-        :items="banksNames"
-        :label="$t('browseTransactionsView.bankNameLabel')"
-        @update:model-value="setBankSelectedAttributes"
-      />
-      <v-select
-        v-model="selectedCategory"
-        class="ml-4"
-        :items="categoriesNames"
-        :label="$t('browseTransactionsView.categoryLabel')"
-      />
-      <v-text-field
-        v-model="selectedMinDate"
-        class="ml-4"
-        append-inner-icon="$calendar"
-        :label="$t('browseTransactionsView.startDateLabel')"
-        @click:append-inner="showMinDateCalendar"
-      />
-      <v-text-field
-        v-model="selectedMaxDate"
-        class="ml-4"
-        append-inner-icon="$calendar"
-        :label="$t('browseTransactionsView.endDateLabel')"
-        @click:append-inner="showMaxDateCalendar"
-      />
-      <v-btn
-        class="ml-4"
-        :disabled="notReadyToQuery()"
-        @click.stop="routeToData"
-      >
-        {{ $t('browseTransactionsView.searchButton') }}
-      </v-btn>
-    </v-card-actions>
-    <v-card-text v-resize="onResize">
+    <v-card-text>
+      <v-row>
+        <v-col
+          cols="12"
+          sm="6"
+          md="3"
+        >
+          <v-select
+            v-model="selectedBankName"
+            :items="banksNames"
+            :label="$t('browseTransactionsView.bankNameLabel')"
+            @update:model-value="setBankSelectedAttributes"
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          class="flex-grow-1"
+          sm="6"
+          md="auto"
+        >
+          <v-select
+            v-model="selectedCategory"
+            :items="categoriesNames"
+            :label="$t('browseTransactionsView.categoryLabel')"
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          sm="6"
+          md="2"
+        >
+          <v-text-field
+            v-model="selectedMinDate"
+            append-inner-icon="$calendar"
+            :label="$t('browseTransactionsView.startDateLabel')"
+            @click:append-inner="showMinDateCalendar"
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          md="2"
+          sm="6"
+        >
+          <v-text-field
+            v-model="selectedMaxDate"
+            append-inner-icon="$calendar"
+            :label="$t('browseTransactionsView.endDateLabel')"
+            @click:append-inner="showMaxDateCalendar"
+          />
+        </v-col>
+        <v-col
+          md="auto"
+        >
+          <v-btn
+          block
+            :disabled="notReadyToQuery()"
+            @click.stop="routeToData"
+          >
+            {{ $t('browseTransactionsView.searchButton') }}
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-card-text>
+    <v-card-text>
       <div
         v-show="bankDetails.length"
         class="pl-4"
@@ -59,7 +87,6 @@
         :headers="headerDetails"
         class="elevation-1"
         fixed-header
-        :height="adjustedHeight"
       />
     </v-card-text>
   </v-card>
@@ -82,7 +109,7 @@
 </template>
 
 <script setup>
-import { computed, ref, onBeforeMount, onMounted } from 'vue';
+import { computed, ref, onBeforeMount } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import dayjs from 'dayjs';
@@ -137,11 +164,6 @@ const headerDetails = [
   { title: $t('browseTransactionsView.categoryLabel'), key: 'category' },
   { title: $t('browseTransactionsView.amountLabel'), key: 'amount', align: 'end' },
 ];
-
-const innerHeight = ref(0);
-const adjustedHeight = computed(() => {
-  return innerHeight.value - 220;
-});
 
 const transactionsBrief = computed(() => {
   const banks = [];
@@ -406,10 +428,5 @@ const beforeMount = async () => {
   parseParams();
 };
 
-const onResize = () => {
-  innerHeight.value = window.innerHeight;
-};
-
 onBeforeMount(() => beforeMount());
-onMounted(() => onResize());
 </script>

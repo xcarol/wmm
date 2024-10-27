@@ -44,3 +44,12 @@ const props = defineProps({
 const headers = computed(() => props.tableHeaders);
 const rows = computed(() => props.tableRows);
 </script>
+
+<style scoped>
+.truncate {
+  max-width: 1000px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+</style>

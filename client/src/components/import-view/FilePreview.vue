@@ -1,5 +1,7 @@
 <template>
-  <v-table density="compact">
+  <v-table
+    density="compact"
+  >
     <thead>
       <tr>
         <th
@@ -82,7 +84,7 @@ const tableItems = computed(() => (appStore.csvfile.rowCount === 0 ? [] : tableR
 
 <style scoped>
 .truncate {
-  max-width: 1px;
+  max-width: 1000px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

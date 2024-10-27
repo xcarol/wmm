@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card flat>
     <v-card-text>
       <file-input
         :file-name="fileName"
@@ -39,6 +39,7 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { ref, computed, onBeforeMount } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useAppStore } from '../stores/app';
+import { useBanksStore } from '../stores/banks';
 import { useProgressDialogStore } from '../stores/progressDialog';
 import { useMessageDialogStore } from '../stores/messageDialog';
 import { useApi } from '../plugins/api';
@@ -50,6 +51,7 @@ dayjs.extend(customParseFormat);
 
 const { t: $t } = useI18n();
 const appStore = useAppStore();
+const banksStore = useBanksStore();
 const progressDialog = useProgressDialogStore();
 const messageDialog = useMessageDialogStore();
 const api = useApi();
@@ -252,6 +254,7 @@ const importFile = async () => {
 
   if (importedRows > 0) {
     await applyFiltersToDatabase();
+    await banksStore.fetchBanks();
 
     messageDialog.showMessage({
       title: $t('dialog.Info'),
@@ -263,5 +266,8 @@ const importFile = async () => {
   }
 };
 
-onBeforeMount(() => appStore.csvfile.reset());
+onBeforeMount(() => {
+  appStore.csvfile.reset();
+  banksStore.fetchBanks();
+});
 </script>
