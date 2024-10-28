@@ -57,14 +57,41 @@ SECRET_KEY=secret_key
 * 'database_name', 'user_name' and 'user_password' are... well, I guess you'll kown
 * and 'secret_id' and 'secret_key' are your [GoCardless](#gocardless) secret id and key
 
-Once you have the system ready, start it with:
+### systemd
+
+Follow these steps to setup the wmm system service.  
+
+Copy the file named _./system/wmm.service_ to _/etc/systemd/system/wmm.service_ in the production server.  
+Set your installation path at the _WorkingDirectory_ and _Environment_ variables.  
+
+Load new service file 
 ```
-$ docker compose up -d
+$ sudo systemctl daemon-reload
 ```
 
-And stop it with:
+Enable the service
 ```
-$ docker compose down
+$ sudo systemctl enable wmm.service
+```
+
+Start the service
+```
+$ sudo systemctl start wmm.service
+```
+
+Stop the service
+```
+$ sudo systemctl stop wmm.service
+```
+
+Check the service status
+```
+$ sudo systemctl status wmm.service
+```
+
+Watch the service logs
+```
+$ sudo journalctl -u wmm.service -p debug -xe
 ```
 
 ### GoCardless
