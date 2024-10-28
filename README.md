@@ -37,9 +37,10 @@ What's needed:
 - -t to select between client or server project
 - -u to set the docker hub user name (password is always asked interactivelly)
 - -v to set the URL for the client to access the server (This is the VITE_API_URL variable in the client project)
+- -m to select between Local or Docker Hub to push the images
 
-A tipical call to build the server would be: `./docker-setup.sh -u xcarol -t server`  
-A tipical call to build the client would be: `./docker-setup.sh -u xcarol -t client -v http://192.168.1.201:3000` here _192.168.1.201_ is the production server IP.  
+A typical call to build the server would be: `./docker-setup.sh -u xcarol -t server -m local`  
+A typical call to build the client would be: `./docker-setup.sh -u xcarol -t client -m local -v http://192.168.1.201:3000` here _192.168.1.201_ is the production server IP.  
 
 In your production environment
 * Install docker with _docker-compose-plugin_  
