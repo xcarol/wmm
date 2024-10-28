@@ -63,11 +63,12 @@ cleanup_env() {
     fi
 }
 
-# Funció per seleccionar si pujar o no la imatge a Docker Hub
+# Funció per seleccionar entre Docker Hub i Local
 select_push_option() {
-    echo "Selecciona opció de pujada (local/dockerhub): "
-    read PUSH_OPTION
-
+    if [ -z "$PUSH_OPTION" ]; then
+        echo "Selecciona on pujar les imatges (local/dockerhub): "
+        read PUSH_OPTION
+    fi
     if [ "$PUSH_OPTION" != "local" ] && [ "$PUSH_OPTION" != "dockerhub" ]; then
         echo "Opció no vàlida. Tria 'local' o 'dockerhub'."
         exit 1
@@ -130,6 +131,8 @@ build_and_push_image() {
     echo "Imatge $IMAGE_NAME construïda correctament."
     if [ "$PUSH_OPTION" == "dockerhub" ]; then
         echo "Imatge $IMAGE_NAME (versió) i $LATEST_IMAGE (latest) pujades a Docker Hub."
+    else
+        echo "Imatge $IMAGE_NAME disponible localment."
     fi
 }
 
@@ -139,12 +142,13 @@ show_help() {
     echo "Opcions:"
     echo "  -t  Especificar si s'usa el 'server' o 'client'"
     echo "  -u  Especificar el nom d'usuari de Docker Hub"
-    echo "  -v  Especificar la URL del servidor de destí (p.e. http://localhost:3000)"
+    echo "  -v  Especificar la URL del servidor de destí (p.e. http://192.168.1.39:3000)"
+    echo "  -m  Mode de construcció (local/Docker Hub)"
     echo "  -h  Mostrar aquesta ajuda"
 }
 
 # Processar les opcions necessàries
-while getopts ":u:t:v:h" opt; do
+while getopts ":u:t:v:m:h" opt; do
     case $opt in
         u)
             USERNAME=$OPTARG
@@ -154,6 +158,9 @@ while getopts ":u:t:v:h" opt; do
             ;;
         v)
             VITE_API_URL=$OPTARG
+            ;;
+        m)
+            PUSH_OPTION=$OPTARG
             ;;
         h)
             show_help
