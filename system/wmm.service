@@ -1,0 +1,14 @@
+[Unit]
+Description=Where's My Money Service
+After=docker.service
+Requires=docker.service
+
+[Service]
+WorkingDirectory=/path/to/wmm
+Environment=PWD=/path/to/wmm
+ExecStart=/usr/bin/docker compose up
+ExecStop=/usr/bin/docker compose down
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
