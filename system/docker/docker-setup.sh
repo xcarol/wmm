@@ -143,7 +143,7 @@ show_help() {
     echo "  -t  Especificar si s'usa el 'server' o 'client'"
     echo "  -u  Especificar el nom d'usuari de Docker Hub"
     echo "  -v  Especificar la URL del servidor de destí (p.e. http://192.168.1.39:3000)"
-    echo "  -m  Mode de construcció (local/Docker Hub)"
+    echo "  -m  Mode de construcció (local/dockerhub)"
     echo "  -h  Mostrar aquesta ajuda"
 }
 
