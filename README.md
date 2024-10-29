@@ -6,18 +6,18 @@ A Personal 'Fintech' Application
 
 ## Development environment
 
-## Vs Code
+### Vs Code
 
 [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
 
-## MySql Server
+### MySql Server
 
 Database is located in the _server_ directory.
 
 The _sqlserver.sh_ script uses the _docker-compose.yml_ file, located in the _database_ directory, to create a local mysql database.  
 This database will reside in the _mysql_ directory under the _server_ directory of the project.  
 
-## Backup / Restore
+### Backup / Restore
 
 This application relies in the _mysqldump_ application to restore the database.  
 Make sure _mysqldump_ is installed and accessible by _$PATH_.  
@@ -43,9 +43,11 @@ A typical call to build the server would be: `./docker-setup.sh -u xcarol -t ser
 A typical call to build the client would be: `./docker-setup.sh -u xcarol -t client -m local -v http://192.168.1.201:3000` here _192.168.1.201_ is the production server IP.  
 
 In your production environment
-* Install docker with _docker-compose-plugin_  
-* Copy the _docker-compose.yml_ file to a directory of your choice.
-* Create a _.env_ file in the same directory and add:
+
+- Install docker with _docker-compose-plugin_  
+- Copy the _docker-compose.yml_ file to a directory of your choice.
+- Create a _.env_ file in the same directory and add:
+
 ```
 MYSQL_ROOT_PASSWORD=secret_mysql
 DB_DATABASE=database_name
@@ -54,9 +56,9 @@ DB_PASSWORD=user_password
 SECRET_ID=secret_id
 SECRET_KEY=secret_key
 ```
-* where 'secret_mysql' is the password you choose for the database root user
-* 'database_name', 'user_name' and 'user_password' are... well, I guess you'll kown
-* and 'secret_id' and 'secret_key' are your [GoCardless](#gocardless) secret id and key
+- where 'secret_mysql' is the password you choose for the database root user
+- 'database_name', 'user_name' and 'user_password' are... well, I guess you'll kown
+- and 'secret_id' and 'secret_key' are your [GoCardless](#gocardless) secret id and key
 
 ### systemd
 
@@ -67,32 +69,32 @@ Set your installation path at the _WorkingDirectory_ and _Environment_ variables
 
 Load new service file 
 ```
-$ sudo systemctl daemon-reload
+sudo systemctl daemon-reload
 ```
 
 Enable the service
 ```
-$ sudo systemctl enable wmm.service
+sudo systemctl enable wmm.service
 ```
 
 Start the service
 ```
-$ sudo systemctl start wmm.service
+sudo systemctl start wmm.service
 ```
 
 Stop the service
 ```
-$ sudo systemctl stop wmm.service
+sudo systemctl stop wmm.service
 ```
 
 Check the service status
 ```
-$ sudo systemctl status wmm.service
+sudo systemctl status wmm.service
 ```
 
 Watch the service logs
 ```
-$ sudo journalctl -u wmm.service -p debug -xe
+sudo journalctl -u wmm.service -p debug -xe
 ```
 
 ### GoCardless
@@ -103,7 +105,7 @@ CSV Import is still maintained in case the GoCardless solution is not an option.
 
 Go to [GoCardless](https://bankaccountdata.gocardless.com/login) sign-in/sign-up and create your keys to operate with GoCardless and be able to import the transactions directly from your bank.
 
-# User Guide
+## User Guide
 
 After importing transactions, you will need to categorize them to enable flexible data browsing.
 
@@ -127,7 +129,7 @@ The **_SQL Commands_** view provides an open window to the database, allowing yo
 
 Use the **_Browse_** submenu options to view your data as transactions, categories, or in a timeline.
 
-# Historic
+## Historic
 
 ### Duplicates
 
