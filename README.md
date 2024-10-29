@@ -56,6 +56,7 @@ DB_PASSWORD=user_password
 SECRET_ID=secret_id
 SECRET_KEY=secret_key
 ```
+
 - where 'secret_mysql' is the password you choose for the database root user
 - 'database_name', 'user_name' and 'user_password' are... well, I guess you'll kown
 - and 'secret_id' and 'secret_key' are your [GoCardless](#gocardless) secret id and key
