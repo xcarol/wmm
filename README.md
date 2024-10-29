@@ -34,6 +34,7 @@ Just type `$ ./docker-setup.sh` to get the help message.
 This tool is used to operate with both projects, client and server. It accepts the parameters in the command line, but if not specified, they will be asked interactivelly.
 
 What's needed:
+
 - -t to select between client or server project
 - -u to set the docker hub user name (password is always asked interactivelly)
 - -v to set the URL for the client to access the server (This is the VITE_API_URL variable in the client project)
@@ -147,8 +148,8 @@ Use the **_Browse_** submenu options to view your data as transactions, categori
 ~~Second approach~~
 ~~The duplicates problem is solved by omitting yesterday's and today's transactions from the import. These transactions will be consolidated and imported in full the following day, ensuring complete data for all time zones. This approach reduces data freshness but improves system robustness.~~  
 
-Third approach
-Transactions must be added in bulk operations. Any 'conflicting' transactions will be deleted before the import. 'Conflicting' transactions are those already in the database whose date falls within the date range of the bulk transactions being imported.
+#### Third approach
+Transactions must be added in bulk operations. Any 'conflicting' transactions will be deleted before the import. 'Conflicting' transactions are those already in the database whose date falls within the date range of the bulk transactions being imported.  
 
 It is IMPORTANT to import transactions for full days. If you perform an import in the afternoon and then make a purchase in the evening, that transaction could be lost if the next import does not include the last day of the previous import. It is ADVISED to always re-import the last day of the previous import to avoid losing these transactions.   
 
