@@ -11,6 +11,15 @@ module.exports = {
 
   plugins: ['vue'],
 
+  settings: {
+    'import/extensions': ['.js', '.jsx'],
+    'import/resolver': {
+      node: {
+        extensions: ['.js', '.jsx'],
+      },
+    },
+  },
+
   rules: {
     'max-len': 0,
     'vue/max-len': 0,
