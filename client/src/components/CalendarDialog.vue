@@ -21,7 +21,13 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, defineAsyncComponent } from 'vue';
+// eslint-disable-next-line import/no-unresolved
+import 'v-calendar/style.css';
+
+const VCalendar = defineAsyncComponent(() =>
+  import('v-calendar').then((module) => module.Calendar),
+);
 
 const emits = defineEmits(['dateSelected']);
 
