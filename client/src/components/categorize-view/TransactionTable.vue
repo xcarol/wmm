@@ -46,7 +46,7 @@
 <script setup>
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
-import { truncate } from 'lodash';
+import { truncate } from 'lodash/truncate';
 import { categorizeUrlPath } from '../../helpers/categorize';
 
 const emits = defineEmits(['updateModelValue']);

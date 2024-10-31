@@ -108,7 +108,7 @@
 import { computed, ref, onBeforeMount, onBeforeUpdate } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
-import { toString } from 'lodash';
+import { toString } from 'lodash/toString';
 import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
 import { useMessageDialogStore } from '../stores/messageDialog';
