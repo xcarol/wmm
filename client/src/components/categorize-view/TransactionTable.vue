@@ -46,7 +46,7 @@
 <script setup>
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
-import { _ } from 'lodash';
+import { truncate } from 'lodash';
 import { categorizeUrlPath } from '../../helpers/categorize';
 
 const emits = defineEmits(['updateModelValue']);
@@ -68,7 +68,7 @@ const router = useRouter();
 const searchTheWeb = (search) => window.open(`https://www.google.com/search?q=${search}`, '_blank');
 
 const truncated = (text) =>
-  _.truncate(text, { options: { length: 50, omission: '...', separator: ' ' } });
+  truncate(text, { options: { length: 50, omission: '...', separator: ' ' } });
 
 const categorizeFilter = (transaction) => {
   const { description, category } = transaction;
