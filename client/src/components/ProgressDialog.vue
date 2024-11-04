@@ -41,6 +41,19 @@
 
 <script setup>
 import { computed } from 'vue';
+import {
+  VBtn,
+  VCard,
+  VCardActions,
+  VCardText,
+  VCardTitle,
+  VCol,
+  VContainer,
+  VDialog,
+  VProgressLinear,
+  VRow,
+  VSpacer,
+} from 'vuetify/lib/components/index.mjs';
 import { useProgressDialogStore } from '../stores/progressDialog';
 
 const store = useProgressDialogStore();

@@ -44,9 +44,12 @@
 </template>
 
 <script setup>
+import {
+  VDataTableVirtual, VTooltip, VIcon,
+} from 'vuetify/lib/components/index.mjs';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
-import { truncate } from 'lodash/truncate';
+import truncate from 'lodash/truncate';
 import { categorizeUrlPath } from '../../helpers/categorize';
 
 const emits = defineEmits(['updateModelValue']);

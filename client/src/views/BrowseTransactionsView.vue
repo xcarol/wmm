@@ -110,6 +110,18 @@
 
 <script setup>
 import { computed, ref, onBeforeMount } from 'vue';
+import {
+  VBtn,
+  VCard,
+  VCardText,
+  VCardTitle,
+  VCol,
+  VDataTable,
+  VDataTableVirtual,
+  VRow,
+  VSelect,
+  VTextField,
+} from 'vuetify/lib/components/index.mjs';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import dayjs from 'dayjs';

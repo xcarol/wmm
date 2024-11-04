@@ -12,6 +12,7 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+import { VFileInput, VFooter } from 'vuetify/lib/components/index.mjs';
 import { useI18n } from 'vue-i18n';
 import { useAppStore } from '../../stores/app';
 

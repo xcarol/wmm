@@ -38,6 +38,15 @@
 
 <script setup>
 import { computed, ref } from 'vue';
+import {
+  VBtn,
+  VCard,
+  VCardText,
+  VCol,
+  VDataTableVirtual,
+  VRow,
+  VSpacer,
+} from 'vuetify/lib/components/index.mjs';
 import { useI18n } from 'vue-i18n';
 import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';

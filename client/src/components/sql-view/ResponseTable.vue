@@ -29,6 +29,7 @@
 
 <script setup>
 import { computed } from 'vue';
+import { VTable } from 'vuetify/lib/components/index.mjs';
 
 const props = defineProps({
   tableHeaders: {

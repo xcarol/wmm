@@ -1,36 +1,5 @@
 // eslint-disable-next-line import/extensions, import/no-unresolved
 import 'vuetify/styles';
-
-import {
-  VApp,
-  VAppBar,
-  VAppBarNavIcon,
-  VAppBarTitle,
-  VBtn,
-  VCard,
-  VCardActions,
-  VCardItem,
-  VCardText,
-  VCardTitle,
-  VCol,
-  VContainer,
-  VDataTable,
-  VDataTableVirtual,
-  VDialog,
-  VList,
-  VListGroup,
-  VListItem,
-  VMain,
-  VNavigationDrawer,
-  VProgressLinear,
-  VRow,
-  VSelect,
-  VSnackbar,
-  VSpacer,
-  VTextarea,
-  VTextField,
-  // eslint-disable-next-line import/extensions, import/no-unresolved
-} from 'vuetify/components';
 // eslint-disable-next-line import/extensions, import/no-unresolved
 import * as directives from 'vuetify/directives';
 // eslint-disable-next-line import/extensions, import/no-unresolved
@@ -88,35 +57,6 @@ const defaults = {
 };
 
 const vuetify = createVuetify({
-  components: {
-    VApp,
-    VAppBar,
-    VAppBarNavIcon,
-    VAppBarTitle,
-    VBtn,
-    VCard,
-    VCardActions,
-    VCardItem,
-    VCardText,
-    VCardTitle,
-    VCol,
-    VContainer,
-    VDataTable,
-    VDataTableVirtual,
-    VDialog,
-    VList,
-    VListGroup,
-    VListItem,
-    VMain,
-    VNavigationDrawer,
-    VProgressLinear,
-    VRow,
-    VSelect,
-    VSnackbar,
-    VSpacer,
-    VTextarea,
-    VTextField,
-  },
   directives,
   icons: {
     defaultSet: 'mdi',

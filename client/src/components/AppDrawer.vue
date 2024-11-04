@@ -40,6 +40,12 @@
 
 <script setup>
 import { computed } from 'vue';
+import {
+  VList,
+  VListGroup,
+  VListItem,
+  VNavigationDrawer,
+} from 'vuetify/lib/components/index.mjs';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 

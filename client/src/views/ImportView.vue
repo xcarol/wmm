@@ -37,6 +37,13 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/es';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { ref, computed, onBeforeMount } from 'vue';
+import {
+  VBtn,
+  VCard,
+  VCardActions,
+  VCardText,
+  VSpacer,
+} from 'vuetify/lib/components/index.mjs';
 import { useI18n } from 'vue-i18n';
 import { useAppStore } from '../stores/app';
 import { useBanksStore } from '../stores/banks';

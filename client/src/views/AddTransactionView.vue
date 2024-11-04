@@ -102,6 +102,17 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/es';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { ref, onBeforeMount, computed } from 'vue';
+import {
+  VBtn,
+  VCard,
+  VCardText,
+  VCol,
+  VCombobox,
+  VIcon,
+  VRow,
+  VSelect,
+  VTextField,
+} from 'vuetify/lib/components/index.mjs';
 import { useI18n } from 'vue-i18n';
 import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';

@@ -52,6 +52,16 @@
 
 <script setup>
 import { computed, ref, onBeforeMount, onBeforeUpdate } from 'vue';
+import {
+  VCard,
+  VCardTitle,
+  VCol,
+  VIcon,
+  VList,
+  VListItem,
+  VRow,
+  VTextField,
+} from 'vuetify/lib/components/index.mjs';
 import { useRoute, useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { useApi } from '../plugins/api';

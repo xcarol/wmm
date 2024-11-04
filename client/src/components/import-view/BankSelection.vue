@@ -10,6 +10,7 @@
 
 <script setup>
 import { computed } from 'vue';
+import { VCombobox } from 'vuetify/lib/components/index.mjs';
 import { useAppStore } from '../../stores/app';
 import { useBanksStore } from '../../stores/banks';
 

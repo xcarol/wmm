@@ -60,6 +60,16 @@
 
 <script setup>
 import { ref, computed, onBeforeMount, onBeforeUpdate } from 'vue';
+import {
+  VBtn,
+  VCard,
+  VCardText,
+  VCol,
+  VIcon,
+  VRadio,
+  VRadioGroup,
+  VRow,
+} from 'vuetify/lib/components/index.mjs';
 import { useI18n } from 'vue-i18n';
 import { useDisplay } from 'vuetify';
 import { useRoute, useRouter } from 'vue-router';

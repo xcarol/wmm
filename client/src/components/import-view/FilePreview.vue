@@ -1,7 +1,5 @@
 <template>
-  <v-table
-    density="compact"
-  >
+  <v-table density="compact">
     <thead>
       <tr>
         <th
@@ -31,6 +29,7 @@
 
 <script setup>
 import { computed } from 'vue';
+import { VTable } from 'vuetify/lib/components/index.mjs';
 import { useAppStore } from '../../stores/app';
 
 const props = defineProps({

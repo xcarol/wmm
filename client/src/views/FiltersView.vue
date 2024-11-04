@@ -124,6 +124,16 @@
 
 <script setup>
 import { computed, onBeforeMount, ref } from 'vue';
+import {
+  VBtn,
+  VCard,
+  VCardText,
+  VCardTitle,
+  VCol,
+  VDataTableVirtual,
+  VRow,
+  VSpacer,
+} from 'vuetify/lib/components/index.mjs';
 import { useI18n } from 'vue-i18n';
 import { useDisplay } from 'vuetify';
 import { useApi } from '../plugins/api';

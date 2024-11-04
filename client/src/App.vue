@@ -21,6 +21,13 @@
 
 <script setup>
 import { ref } from 'vue';
+import {
+  VApp,
+  VAppBar,
+  VMain,
+  VAppBarTitle,
+  VAppBarNavIcon,
+} from 'vuetify/lib/components/index.mjs';
 import AppDrawer from './components/AppDrawer.vue';
 import SnackBar from './components/SnackBar.vue';
 import ProgressDialog from './components/ProgressDialog.vue';

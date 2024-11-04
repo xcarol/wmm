@@ -34,6 +34,15 @@
 
 <script setup>
 import { ref, computed, watch, onBeforeUpdate } from 'vue';
+import {
+  VBtn,
+  VCard,
+  VCardActions,
+  VCardText,
+  VCardTitle,
+  VDialog,
+  VTextField,
+} from 'vuetify/lib/components/index.mjs';
 
 const emits = defineEmits(['onOk', 'onCancel']);
 

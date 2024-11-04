@@ -9,3 +9,11 @@
     >
   </v-card>
 </template>
+
+<script setup>
+import {
+  VCard,
+  VCardText,
+  VCardTitle,
+} from 'vuetify/lib/components/index.mjs';
+</script>

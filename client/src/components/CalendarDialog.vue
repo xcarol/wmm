@@ -22,6 +22,12 @@
 
 <script setup>
 import { computed, defineAsyncComponent } from 'vue';
+import {
+  VCard,
+  VCardActions,
+  VDialog,
+} from 'vuetify/lib/components/index.mjs';
+
 // eslint-disable-next-line import/no-unresolved
 import 'v-calendar/style.css';
 

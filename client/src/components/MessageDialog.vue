@@ -51,6 +51,15 @@
 
 <script setup>
 import { computed } from 'vue';
+import {
+  VBtn,
+  VCard,
+  VCardActions,
+  VCardText,
+  VCardTitle,
+  VDialog,
+  VTextarea,
+} from 'vuetify/lib/components/index.mjs';
 import { useMessageDialogStore } from '../stores/messageDialog';
 
 const store = useMessageDialogStore();
