@@ -611,7 +611,7 @@ async function getCategoryBalance(category, start, end) {
     const result = await connection.query(queryCategoryBalance, [category, start, end]);
     return result.at(0).at(0);
   } catch (err) {
-    err.message = `Error [${err}] retrieving category balance.`;
+    err.message = `Error [${err}] retrieving balance of ctaegories.`;
     console.error(err);
     throw err;
   } finally {
@@ -634,7 +634,7 @@ async function getCategoryFiltersBalance(category, filter, start, end) {
     ]);
     return result.at(0).at(0);
   } catch (err) {
-    err.message = `Error [${err}] retrieving category balance.`;
+    err.message = `Error [${err}] retrieving balance of categories by filter.`;
     console.error(err);
     throw err;
   } finally {
@@ -672,7 +672,7 @@ async function getCategoryNonFiltersBalance(category, start, end) {
 
     return balances;
   } catch (err) {
-    err.message = `Error [${err}] retrieving category balance.`;
+    err.message = `Error [${err}] retrieving balance of categories without a filter.`;
     console.error(err);
     throw err;
   } finally {
