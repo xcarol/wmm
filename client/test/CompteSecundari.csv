@@ -1,0 +1,4 @@
+"Booking Date","Value Date","Partner Name","Partner Iban",Type,"Payment Reference","Account Name","Amount (EUR)","Original Amount","Original Currency","Exchange Rate"
+2024-10-22,2024-10-21,"Google",,Presentment,,"Compte Principal",-22.34,22.34,EUR,1
+2024-10-22,2024-10-21,"Mac Donalds",,Presentment,,"Compte Principal",-32.87,32.87,EUR,1
+2024-10-22,2024-10-22,"Security Alarm",,Presentment,,"Compte Principal",-34.23,34.23,EUR,1
