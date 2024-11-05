@@ -3,7 +3,7 @@
     <thead>
       <tr>
         <th
-          v-for="header in headers"
+          v-for="header in props.tableHeaders"
           :key="header"
         >
           {{ header }}
@@ -12,7 +12,7 @@
     </thead>
     <tbody>
       <tr
-        v-for="row in rows"
+        v-for="row in props.tableRows"
         :key="row"
       >
         <td
@@ -28,7 +28,6 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
 import { VTable } from 'vuetify/lib/components/index.mjs';
 
 const props = defineProps({
@@ -41,9 +40,6 @@ const props = defineProps({
     default: () => [],
   },
 });
-
-const headers = computed(() => props.tableHeaders);
-const rows = computed(() => props.tableRows);
 </script>
 
 <style scoped>

@@ -1,36 +1,14 @@
 <template>
-  <v-table density="compact">
-    <thead>
-      <tr>
-        <th
-          v-for="header in tableHeaders"
-          :key="header"
-        >
-          {{ header }}
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr
-        v-for="item in tableItems"
-        :key="item"
-      >
-        <td
-          v-for="cell in item"
-          :key="cell"
-          class="truncate"
-        >
-          {{ cell }}
-        </td>
-      </tr>
-    </tbody>
-  </v-table>
+  <custom-v-table
+    :table-headers="tableHeaders"
+    :table-rows="tableItems"
+  />
 </template>
 
 <script setup>
 import { computed } from 'vue';
-import { VTable } from 'vuetify/lib/components/index.mjs';
 import { useAppStore } from '../../stores/app';
+import CustomVTable from '../CustomVTable.vue';
 
 const props = defineProps({
   hasHeader: {
@@ -80,12 +58,3 @@ const tableHeaderItems = () => {
 const tableHeaders = computed(() => (appStore.csvfile.rowCount === 0 ? [] : tableHeaderItems()));
 const tableItems = computed(() => (appStore.csvfile.rowCount === 0 ? [] : tableRowsItems()));
 </script>
-
-<style scoped>
-.truncate {
-  max-width: 1000px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-</style>
