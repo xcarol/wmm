@@ -1,4 +1,4 @@
-const { executeSql, backupDatabase } = require('./database');
+const { executeSql, backupDatabase, sqlStatus } = require('./database');
 
 module.exports = (app) => {
   app.post('/sql', async (req, res) => {
@@ -9,7 +9,7 @@ module.exports = (app) => {
       const queryResult = await executeSql(query);
       res.json(queryResult);
     } catch (err) {
-      res.status(err.sqlState ? 400 : 500).send(err);
+      res.status(sqlStatus(err)).send(err);
     }
   });
 
@@ -18,7 +18,7 @@ module.exports = (app) => {
       res.sendFile(await backupDatabase());
       res.status(201);
     } catch (err) {
-      res.status(err.sqlState ? 400 : 500).send(err);
+      res.status(sqlStatus(err)).send(err);
     }
   });
 };

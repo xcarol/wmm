@@ -238,6 +238,10 @@ const queryBalancesTimelineByCategoryByUnit =
     AND date >= ? \
     AND date <= ?';
 
+const sqlStatus = (err) => {
+  return err.sqlState ? 400 : err.response ? err.response.status : 500;
+};
+
 async function getConnection() {
   return await mysql.createConnection(connectionSettings);
 }
@@ -1068,6 +1072,7 @@ module.exports = {
   renameCategory,
   resetTransactionsCategory,
   resetTransactionsCategoryForAFilter,
+  sqlStatus,
   updateFilter,
   updateTransactionsAsNotDuplicated,
   updateTransactionsCategory,

@@ -7,6 +7,7 @@ const {
   renameCategory,
   deleteFilter,
   resetTransactionsCategoryForAFilter,
+  sqlStatus,
 } = require('./database');
 
 const MIN_FILTER_LENGTH = 4;
@@ -16,7 +17,7 @@ module.exports = (app) => {
     try {
       res.json(await getCategories());
     } catch (err) {
-      res.status(err.sqlState ? 400 : 500).send(err);
+      res.status(sqlStatus(err)).send(err);
     }
   });
 
@@ -25,7 +26,7 @@ module.exports = (app) => {
       const category = req.query.category;
       res.json(await deleteCategory(category));
     } catch (err) {
-      res.status(err.sqlState ? 400 : 500).send(err);
+      res.status(sqlStatus(err)).send(err);
     }
   });
 
@@ -36,7 +37,7 @@ module.exports = (app) => {
       category = req.query.category;
       res.json(await getCategoryFilters(category));
     } catch (err) {
-      res.status(err.sqlState ? 400 : 500).send(err);
+      res.status(sqlStatus(err)).send(err);
     }
   });
 
@@ -52,7 +53,7 @@ module.exports = (app) => {
       res.json(await addFilter(category, filter, label));
       res.status(201);
     } catch (err) {
-      res.status(err.sqlState ? 400 : 500).send(err);
+      res.status(sqlStatus(err)).send(err);
     }
   });
 
@@ -61,7 +62,7 @@ module.exports = (app) => {
       const { filterId, filter, label } = req.body;
       res.json(await updateFilter(filterId, filter, label));
     } catch (err) {
-      res.status(err.sqlState ? 400 : 500).send(err);
+      res.status(sqlStatus(err)).send(err);
     }
   });
 
@@ -72,7 +73,7 @@ module.exports = (app) => {
       await deleteFilter(filter);
       res.json(result);
     } catch (err) {
-      res.status(err.sqlState ? 400 : 500).send(err);
+      res.status(sqlStatus(err)).send(err);
     }
   });
 
@@ -85,7 +86,7 @@ module.exports = (app) => {
       oldName = req.body.oldName;
       res.json(await renameCategory(oldName, newName));
     } catch (err) {
-      res.status(err.sqlState ? 400 : 500).send(err);
+      res.status(sqlStatus(err)).send(err);
     }
   });
 };
