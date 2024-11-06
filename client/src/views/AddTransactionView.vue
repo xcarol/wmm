@@ -248,7 +248,7 @@ const addTransaction = async () => {
 
   progressDialog.startProgress({
     steps: 0,
-    description: $t('progress.retrievingCategories'),
+    description: $t('progress.updateProgress'),
   });
 
   let res = 0;

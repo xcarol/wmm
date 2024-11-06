@@ -45,11 +45,13 @@
   "progress": {
     "title": "Operació en progress",
     "updateProgress": "Actualitzant les transaccions...",
+    "updateCategories": "Actualitzant les categories...",
     "updatedTransactionsMessage": "S'han actualitzat %d transaccions.",
     "deletedTransactionsMessage": "S'han eliminat %d transaccions.",
     "deletedCategoriesMessage": "S'han eliminat %d filtres i s'han actualitzat %d transaccions.",
     "retrievingTransactions": "Obtenint les transaccions...",
-    "retrievingCategories": "Obtenint les categories..."
+    "retrievingCategories": "Obtenint les categories...",
+    "retrievingBanks": "Obtenint els bancs..."
   },
   "banksView": {
     "title": "Configuració de bancs",

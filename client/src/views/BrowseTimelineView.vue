@@ -159,7 +159,7 @@ const getCategories = async () => {
 const getBanks = async () => {
   progressDialog.startProgress({
     steps: 0,
-    description: $t('progress.retrievingTransactions'),
+    description: $t('progress.retrievingBanks'),
   });
 
   try {

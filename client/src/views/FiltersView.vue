@@ -289,7 +289,7 @@ const renameCategory = (value) => {
     yes: async () => {
       progressDialog.startProgress({
         steps: 0,
-        description: $t('progress.updateProgress'),
+        description: $t('progress.updateCategories'),
       });
 
       try {
@@ -326,7 +326,7 @@ const deleteCategories = async () => {
     yes: async () => {
       progressDialog.startProgress({
         steps: 0,
-        description: $t('progress.updateProgress'),
+        description: $t('progress.updateCategories'),
       });
 
       try {
@@ -358,7 +358,7 @@ const newFilter = async (value) => {
 
   progressDialog.startProgress({
     steps: 0,
-    description: $t('progress.updateProgress'),
+    description: $t('progress.updateCategories'),
   });
 
   try {
@@ -376,7 +376,7 @@ const updateFilter = async (value) => {
 
   progressDialog.startProgress({
     steps: 0,
-    description: $t('progress.updateProgress'),
+    description: $t('progress.updateCategories'),
   });
 
   try {
@@ -396,7 +396,7 @@ const deleteFilter = () => {
     yes: async () => {
       progressDialog.startProgress({
         steps: 0,
-        description: $t('progress.updateProgress'),
+        description: $t('progress.updateCategories'),
       });
 
       try {
