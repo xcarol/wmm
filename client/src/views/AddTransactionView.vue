@@ -260,6 +260,7 @@ const addTransaction = async () => {
       description.slice(0, DESCRIPTION_LENGTH),
       amount,
     );
+    await api.applyFilters();
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   } finally {
