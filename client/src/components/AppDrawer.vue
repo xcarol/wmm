@@ -69,11 +69,6 @@ const menuOptions = [
     barTitle: $t('addTransactionView.title'),
   },
   {
-    title: $t('mainDrawer.duplicates'),
-    value: '/duplicates',
-    barTitle: $t('duplicatesView.title'),
-  },
-  {
     title: $t('mainDrawer.sql'),
     value: '/sql',
     barTitle: $t('sqlView.title'),
