@@ -6,7 +6,7 @@ services:
       - "${PWD}/mysql:/var/lib/mysql"
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_DATABASE: ${DB_NAME}
       MYSQL_USER: ${DB_USER}
       MYSQL_PASSWORD: ${DB_PASSWORD}
     ports:
@@ -19,7 +19,7 @@ services:
       SECRET_ID: ${SECRET_ID}
       SECRET_KEY: ${SECRET_KEY}
       DB_HOST: db
-      DB_NAME: ${DB_DATABASE}
+      DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
