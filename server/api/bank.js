@@ -100,7 +100,7 @@ module.exports = (app) => {
       const bank = await getBankById(bank_id);
       const { date: latestDate } = await getBankLatestDate(bank.name);
 
-      if (dayjs(latestDate).format('YYYY-MM-DD') >= dayjs().format('YYYY-MM-DD')) {
+      if (latestDate && dayjs(latestDate).format('YYYY-MM-DD') >= dayjs().format('YYYY-MM-DD')) {
         res.json({ affectedRows: 0 });
         return;
       }
