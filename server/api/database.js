@@ -219,11 +219,12 @@ async function getTransactions(bankName, startDate, endDate, category, filter) {
 }
 
 async function getDuplicatedTransactions() {
-  return queryDatabase(
+  const result = await queryDatabase(
     queries.queryDuplicateRows,
     [],
     (err) => `Error [${err}] retrieving duplicated transactions.`,
   );
+  return result.at(0);
 }
 
 async function getYears() {
