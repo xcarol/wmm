@@ -58,6 +58,18 @@
 
 <script setup>
 import { computed } from 'vue';
+import {
+  VBtn,
+  VBtnToggle,
+  VCard,
+  VCardText,
+  VCheckboxBtn,
+  VListItem,
+  VListItemAction,
+  VNavigationDrawer,
+  VSelect,
+  VVirtualScroll,
+} from 'vuetify/lib/components/index.mjs';
 import { useI18n } from 'vue-i18n';
 import { useAppStore } from '../stores/app';
 

@@ -106,9 +106,17 @@
 
 <script setup>
 import { computed, ref, onBeforeMount, onBeforeUpdate } from 'vue';
+import {
+  VBtn,
+  VCard,
+  VCardText,
+  VCol,
+  VRow,
+  VCombobox,
+} from 'vuetify/lib/components/index.mjs';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
-import { _ } from 'lodash';
+import toString from 'lodash/toString';
 import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
 import { useMessageDialogStore } from '../stores/messageDialog';
@@ -187,8 +195,8 @@ const routeChanged = () => {
   const { category: qcategory, filter: qfilter } = route.query;
 
   if (
-    _.toString(filterText.value) !== _.toString(qfilter) ||
-    _.toString(filterCategory.value) !== _.toString(qcategory)
+    toString(filterText.value) !== toString(qfilter) ||
+    toString(filterCategory.value) !== toString(qcategory)
   ) {
     return true;
   }

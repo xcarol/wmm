@@ -26,7 +26,7 @@
       />
     </v-card-text>
     <v-card-text>
-      <response-table
+      <custom-v-table
         :table-headers="tableHeaders"
         :table-rows="tableItems"
       />
@@ -36,11 +36,19 @@
 
 <script setup>
 import { computed, ref } from 'vue';
+import {
+  VBtn,
+  VCard,
+  VCardActions,
+  VCardText,
+  VSpacer,
+  VTextarea,
+} from 'vuetify/lib/components/index.mjs';
 import { useI18n } from 'vue-i18n';
 import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
 import { useProgressDialogStore } from '../stores/progressDialog';
-import ResponseTable from '../components/sql-view/ResponseTable.vue';
+import CustomVTable from '../components/CustomVTable.vue';
 import BackupResponse from '../components/sql-view/BackupRestore.vue';
 
 const { t: $t } = useI18n();

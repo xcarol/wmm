@@ -1,8 +1,6 @@
 // eslint-disable-next-line import/extensions, import/no-unresolved
 import 'vuetify/styles';
 // eslint-disable-next-line import/extensions, import/no-unresolved
-import * as components from 'vuetify/components';
-// eslint-disable-next-line import/extensions, import/no-unresolved
 import * as directives from 'vuetify/directives';
 // eslint-disable-next-line import/extensions, import/no-unresolved
 import { aliases, mdi } from 'vuetify/iconsets/mdi-svg';
@@ -59,7 +57,6 @@ const defaults = {
 };
 
 const vuetify = createVuetify({
-  components,
   directives,
   icons: {
     defaultSet: 'mdi',

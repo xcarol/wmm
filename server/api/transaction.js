@@ -15,6 +15,7 @@ const {
   resetTransactionsCategory,
   updateTransactionsCategory,
   updateTransactionsAsNotDuplicated,
+  sqlStatus,
 } = require('./database');
 
 const prepareTransactions = async (transactions) => {
@@ -34,7 +35,7 @@ module.exports = (app) => {
       res.json(await addTransactions(transactions));
       res.status(201);
     } catch (err) {
-      res.status(err.sqlState ? 400 : 500).send(err);
+      res.status(sqlStatus(err)).send(err);
     }
   });
 
@@ -45,7 +46,7 @@ module.exports = (app) => {
       transactions = req.body.transactions;
       res.json(await deleteTransactions(transactions));
     } catch (err) {
-      res.status(err.sqlState ? 400 : 500).send(err);
+      res.status(sqlStatus(err)).send(err);
     }
   });
 
@@ -68,7 +69,7 @@ module.exports = (app) => {
       }
     } catch (err) {
       console.error(err);
-      res.status(err.sqlState ? 400 : 500).send(err);
+      res.status(sqlStatus(err)).send(err);
     }
   });
 
@@ -77,7 +78,7 @@ module.exports = (app) => {
       const { date, bank, category, description, amount } = req.query;
       res.json(await addTransaction(date, bank, category ?? '', description, amount));
     } catch (err) {
-      res.status(err.sqlState ? 400 : 500).send(err);
+      res.status(sqlStatus(err)).send(err);
     }
   });
 
@@ -85,7 +86,7 @@ module.exports = (app) => {
     try {
       res.json(await getDuplicatedTransactions());
     } catch (err) {
-      res.status(err.sqlState ? 400 : 500).send(err);
+      res.status(sqlStatus(err)).send(err);
     }
   });
 
@@ -96,7 +97,7 @@ module.exports = (app) => {
       transactions = req.body.transactions;
       res.json(await updateTransactionsAsNotDuplicated(transactions));
     } catch (err) {
-      res.status(err.sqlState ? 400 : 500).send(err);
+      res.status(sqlStatus(err)).send(err);
     }
   });
 
@@ -105,7 +106,7 @@ module.exports = (app) => {
       const { bank, start, end, category, filter } = req.query;
       res.json(await getTransactions(bank, start, end, category, filter));
     } catch (err) {
-      res.status(err.sqlState ? 400 : 500).send(err);
+      res.status(sqlStatus(err)).send(err);
     }
   });
 
@@ -113,7 +114,7 @@ module.exports = (app) => {
     try {
       res.json(await getYears());
     } catch (err) {
-      res.status(err.sqlState ? 400 : 500).send(err);
+      res.status(sqlStatus(err)).send(err);
     }
   });
 
@@ -134,7 +135,7 @@ module.exports = (app) => {
         }
       }
     } catch (err) {
-      res.status(err.sqlState ? 400 : 500).send(err);
+      res.status(sqlStatus(err)).send(err);
     }
   });
 
@@ -148,7 +149,7 @@ module.exports = (app) => {
         res.json(await getTimelineByBank(bank, period, start, end));
       }
     } catch (err) {
-      res.status(err.sqlState ? 400 : 500).send(err);
+      res.status(sqlStatus(err)).send(err);
     }
   });
 };

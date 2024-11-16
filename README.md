@@ -51,7 +51,8 @@ In your production environment
 
 ```
 MYSQL_ROOT_PASSWORD=secret_mysql
-DB_DATABASE=database_name
+DB_HOST=127.0.0.1 (localhost won't work because of default mysql binding)
+DB_NAME=database_name
 DB_USER=user_name
 DB_PASSWORD=user_password
 SECRET_ID=secret_id

@@ -40,6 +40,12 @@
 
 <script setup>
 import { computed } from 'vue';
+import {
+  VList,
+  VListGroup,
+  VListItem,
+  VNavigationDrawer,
+} from 'vuetify/lib/components/index.mjs';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 
@@ -61,11 +67,6 @@ const menuOptions = [
     title: $t('mainDrawer.addTransaction'),
     value: '/add-transaction',
     barTitle: $t('addTransactionView.title'),
-  },
-  {
-    title: $t('mainDrawer.duplicates'),
-    value: '/duplicates',
-    barTitle: $t('duplicatesView.title'),
   },
   {
     title: $t('mainDrawer.sql'),

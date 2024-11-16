@@ -1,0 +1,4 @@
+"Booking Date","Value Date","Partner Name","Partner Iban",Type,"Payment Reference","Account Name","Amount (EUR)","Original Amount","Original Currency","Exchange Rate"
+2024-10-22,2024-10-21,"Amazon",,Presentment,,"Compte Principal",-11.95,11.95,EUR,1
+2024-10-22,2024-10-22,"Paypal",,"Debit Transfer",,"Compte Principal",-60.00,60.00,EUR,1
+2024-10-22,2024-10-22,"Netflix",,Presentment,,"Compte Principal",-16.16,16.16,EUR,1

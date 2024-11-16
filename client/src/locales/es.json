@@ -45,11 +45,13 @@
   "progress": {
     "title": "Operación en progreso",
     "updateProgress": "Actualizando las transacciones...",
+    "updateCategories": "Actualizando las categorías...",
     "updatedTransactionsMessage": "Se han actualizado %d transacciones.",
     "deletedTransactionsMessage": "Se han eliminado %d transacciones.",
     "deletedCategoriesMessage": "Se han eliminado %d filtros y se han actualizado % transacciones.",
     "retrievingTransactions": "Obteniendo las transacciones...",
-    "retrievingCategories": "Obteniendo las categorías..."
+    "retrievingCategories": "Obteniendo las categorías...",
+    "retrievingBanks": "Obteniendo los bancos..."
   },
   "banksView": {
     "title": "Configuración de bancos",

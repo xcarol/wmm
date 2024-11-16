@@ -8,6 +8,7 @@ const {
   getBankBalance,
   getRegisteredBanks,
   addTransactions,
+  sqlStatus,
 } = require('./database');
 const NordigenClient = require('nordigen-node');
 const dayjs = require('dayjs');
@@ -80,7 +81,7 @@ module.exports = (app) => {
       );
       res.json(metadata);
     } catch (err) {
-      res.status(err.sqlState ? 400 : err.response ? err.response.status : 500).send(err);
+      res.status(sqlStatus(err)).send(err);
     }
   });
 
@@ -89,7 +90,7 @@ module.exports = (app) => {
       const { bank_id } = req.query;
       res.json(await deleteBank(bank_id));
     } catch (err) {
-      res.status(err.sqlState ? 400 : 500).send(err);
+      res.status(sqlStatus(err)).send(err);
     }
   });
 
@@ -131,7 +132,7 @@ module.exports = (app) => {
           : '',
       );
     } catch (err) {
-      res.status(err.sqlState ? 400 : err.response ? err.response.status : 500).send(err);
+      res.status(sqlStatus(err)).send(err);
     }
   });
 
@@ -139,7 +140,7 @@ module.exports = (app) => {
     try {
       res.json(await getRegisteredBanks());
     } catch (err) {
-      res.status(err.sqlState ? 400 : 500).send(err);
+      res.status(sqlStatus(err)).send(err);
     }
   });
 
@@ -147,7 +148,7 @@ module.exports = (app) => {
     try {
       res.json(await getBankNames());
     } catch (err) {
-      res.status(err.sqlState ? 400 : 500).send(err);
+      res.status(sqlStatus(err)).send(err);
     }
   });
 
@@ -163,7 +164,7 @@ module.exports = (app) => {
 
       res.json(await getBankBalance(bank, startDate, endDate));
     } catch (err) {
-      res.status(err.sqlState ? 400 : 500).send(err);
+      res.status(sqlStatus(err)).send(err);
     }
   });
 };

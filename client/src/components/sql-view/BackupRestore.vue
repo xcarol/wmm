@@ -10,6 +10,7 @@
 </template>
 
 <script setup>
+import { VBtn } from 'vuetify/lib/components/index.mjs';
 import { useI18n } from 'vue-i18n';
 import { useApi } from '../../plugins/api';
 import { useProgressDialogStore } from '../../stores/progressDialog';

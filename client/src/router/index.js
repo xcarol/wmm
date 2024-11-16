@@ -1,16 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import i18n from '../plugins/i18n';
-import HomeView from '../views/HomeView.vue';
-import ImportView from '../views/ImportView.vue';
-import AddTransactionView from '../views/AddTransactionView.vue';
-import CategorizeView from '../views/CategorizeView.vue';
-import DuplicatesView from '../views/DuplicatesView.vue';
-import SqlView from '../views/SqlView.vue';
-import FiltersView from '../views/FiltersView.vue';
-import BrowseTransactionsView from '../views/BrowseTransactionsView.vue';
-import BrowseCategoriesView from '../views/BrowserCategoriesView.vue';
-import BrowseTimelineView from '../views/BrowseTimelineView.vue';
-import BanksView from '../views/BanksView.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -18,66 +7,66 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView,
+      component: () => import('../views/HomeView.vue'),
     },
     {
       path: '/import',
       name: 'import',
-      component: ImportView,
+      component: () => import('../views/ImportView.vue'),
       meta: { title: i18n.global.t('importView.title') },
     },
     {
       path: '/add-transaction',
       name: 'addTransaction',
-      component: AddTransactionView,
+      component: () => import('../views/AddTransactionView.vue'),
       meta: { title: i18n.global.t('addTransactionView.title') },
     },
     {
       path: '/banks',
       name: 'banks',
-      component: BanksView,
+      component: () => import('../views/BanksView.vue'),
       meta: { title: i18n.global.t('banksView.title') },
     },
     {
       path: '/categorize',
       name: 'categorize',
-      component: CategorizeView,
+      component: () => import('../views/CategorizeView.vue'),
       meta: { title: i18n.global.t('categorizeView.title') },
     },
     {
       path: '/duplicates',
       name: 'duplicates',
-      component: DuplicatesView,
+      component: () => import('../views/DuplicatesView.vue'),
       meta: { title: i18n.global.t('duplicatesView.title') },
     },
     {
       path: '/sql',
       name: 'sql',
-      component: SqlView,
+      component: () => import('../views/SqlView.vue'),
       meta: { title: i18n.global.t('sqlView.title') },
     },
     {
       path: '/filters',
       name: 'filters',
-      component: FiltersView,
+      component: () => import('../views/FiltersView.vue'),
       meta: { title: i18n.global.t('filtersView.title') },
     },
     {
       path: '/browse/transactions',
       name: 'browseTransactions',
-      component: BrowseTransactionsView,
+      component: () => import('../views/BrowseTransactionsView.vue'),
       meta: { title: i18n.global.t('browseTransactionsView.title') },
     },
     {
       path: '/browse/categories',
       name: 'browseCategories',
-      component: BrowseCategoriesView,
+      component: () => import('../views/BrowserCategoriesView.vue'),
       meta: { title: i18n.global.t('browseCategoriesView.title') },
     },
     {
       path: '/browse/timeline',
       name: 'browseTimeline',
-      component: BrowseTimelineView,
+      component: () => import('../views/BrowseTimelineView.vue'),
       meta: { title: i18n.global.t('browseTimelineView.title') },
     },
   ],

@@ -77,6 +77,16 @@
 
 <script setup>
 import { ref, onBeforeMount, onBeforeUpdate, computed } from 'vue';
+import {
+  VCard,
+  VCardText,
+  VCol,
+  VDataTableVirtual,
+  VRadio,
+  VRadioGroup,
+  VRow,
+  VSelect,
+} from 'vuetify/lib/components/index.mjs';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import {

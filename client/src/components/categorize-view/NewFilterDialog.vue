@@ -38,6 +38,16 @@
 
 <script setup>
 import { ref, computed, watch, onBeforeUpdate } from 'vue';
+import {
+  VBtn,
+  VCard,
+  VCardActions,
+  VCardText,
+  VCardTitle,
+  VCombobox,
+  VDialog,
+  VTextField,
+} from 'vuetify/lib/components/index.mjs';
 import { getCategoriesNames } from '../../helpers/filters';
 
 const emits = defineEmits(['onOk', 'onCancel']);
