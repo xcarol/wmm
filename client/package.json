@@ -1,6 +1,6 @@
 {
   "name": "wmm",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Where's My Money - Personal 'Fintech' Application",
   "private": true,
   "type": "module",
