@@ -3,7 +3,6 @@ const {
   addBank,
   deleteBank,
   getBankById,
-  getBankLatestDate,
   getBankNames,
   getBankBalance,
   getRegisteredBanks,
@@ -78,6 +77,7 @@ module.exports = (app) => {
         metadata.institution_id,
         requisition_id,
         agreement.access_valid_for_days,
+        agreement.max_historical_days,
       );
       res.json(metadata);
     } catch (err) {
@@ -98,23 +98,16 @@ module.exports = (app) => {
     try {
       const { bank_id } = req.query;
       const bank = await getBankById(bank_id);
-      const { date: latestDate } = await getBankLatestDate(bank.name);
-
-      if (latestDate && dayjs(latestDate).format('YYYY-MM-DD') >= dayjs().format('YYYY-MM-DD')) {
-        res.json({ affectedRows: 0 });
-        return;
-      }
 
       const client = await getNordigenClient();
       const requisitionData = await client.requisition.getRequisitionById(bank.requisition_id);
       const accountId = requisitionData.accounts[0];
       const account = client.account(accountId);
+      const dateFrom = dayjs().subtract(bank.max_historical_days, 'day').format('YYYY-MM-DD');
+      const dateTo = dayjs().format('YYYY-MM-DD');
       const {
         transactions: { booked },
-      } = await account.getTransactions({
-        dateFrom: latestDate ? dayjs(latestDate).add(1, 'day').format('YYYY-MM-DD') : '1970-01-01',
-        dateTo: dayjs().format('YYYY-MM-DD'),
-      });
+      } = await account.getTransactions({ dateFrom, dateTo });
       res.json(
         booked.length
           ? await addTransactions(
