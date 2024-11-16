@@ -73,7 +73,13 @@ async function applyFilters() {
   return affectedRows;
 }
 
-async function addBank(institution_name, institution_id, requisition_id, accessDays) {
+async function addBank(
+  institution_name,
+  institution_id,
+  requisition_id,
+  accessDays,
+  historicalDays,
+) {
   if (institution_name.length > MAX_LEN) {
     throw new Error(`name: [${institution_name}] is longer than ${MAX_LEN}`);
   }
@@ -89,7 +95,7 @@ async function addBank(institution_name, institution_id, requisition_id, accessD
   const dateAccessDays = dayjs().add(accessDays, 'days').format('YYYY-MM-DD');
   return queryDatabase(
     queries.queryAddBank,
-    [institution_name, institution_id, requisition_id, dateAccessDays],
+    [institution_name, institution_id, requisition_id, dateAccessDays, historicalDays],
     (err) => `Error [${err}] adding bank ${institution_id} with requisition_id ${requisition_id}.`,
   );
 }
@@ -109,18 +115,6 @@ async function getBankById(bank_id) {
     (err) => `Error [${err}] searching bank with institution_id ${bank_id}.`,
   );
   return result.at(0).at(0);
-}
-
-async function getBankLatestDate(bank_name) {
-  const result = await queryDatabase(
-    queries.queryBankLastestTransactionDate,
-    [bank_name],
-    (err) => `Error [${err}] searching for latest transaction of bank: ${bank_name}.`,
-  );
-  if (result.at(0).length) {
-    return result.at(0).at(0);
-  }
-  return {};
 }
 
 async function addFilter(category, filter, label) {
@@ -225,11 +219,12 @@ async function getTransactions(bankName, startDate, endDate, category, filter) {
 }
 
 async function getDuplicatedTransactions() {
-  return queryDatabase(
+  const result = await queryDatabase(
     queries.queryDuplicateRows,
     [],
     (err) => `Error [${err}] retrieving duplicated transactions.`,
   );
+  return result.at(0);
 }
 
 async function getYears() {
@@ -521,7 +516,6 @@ module.exports = {
   executeSql,
   getBankById,
   getBankBalance,
-  getBankLatestDate,
   getBankNames,
   getCategories,
   getCategoryBalance,

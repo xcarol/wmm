@@ -26,6 +26,7 @@ CREATE TABLE `banks` (
   `institution_id` varchar(200) NOT NULL,
   `requisition_id` varchar(200) NOT NULL,
   `validity_date` date NOT NULL,
+  `max_historical_days` int NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`),
   UNIQUE KEY `institution_id` (`institution_id`),
