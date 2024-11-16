@@ -51,12 +51,12 @@ async function applyFilters() {
     (err) => `Error [${err}] applying filters.`,
   );
 
-  const operations = [];
+  const results = [];
 
   for (let index = 0; index < filters.length; index++) {
     const filter = filters[index];
-    operations.push(
-      queryDatabase(
+    results.push(
+      await queryDatabase(
         queries.queryApplyFilter,
         [filter.category, filter.id, filter.filter],
         (err) => `Error [${err}] applying filters.`,
@@ -64,7 +64,6 @@ async function applyFilters() {
     );
   }
 
-  const results = await Promise.all(operations);
   let affectedRows = 0;
   for (let index = 0; index < results.length; index++) {
     const [result] = results[index];
@@ -104,11 +103,12 @@ async function deleteBank(bank_id) {
 }
 
 async function getBankById(bank_id) {
-  return queryDatabase(
+  const result = await queryDatabase(
     queries.queryBankById,
     [bank_id],
     (err) => `Error [${err}] searching bank with institution_id ${bank_id}.`,
   );
+  return result.at(0).at(0);
 }
 
 async function getBankLatestDate(bank_name) {
@@ -349,11 +349,13 @@ async function getTimelineByCategory(category, period, start, end) {
 }
 
 async function getCategoryFilters(category) {
-  return queryDatabase(
+  const result = await queryDatabase(
     queries.queryCategoryFilters,
     [category],
     (err) => `Error [${err}] retrieving filters for the category [${category}].`,
   );
+
+  return result.at(0);
 }
 
 async function getBankNames() {
@@ -366,12 +368,14 @@ async function getBankNames() {
 }
 
 async function addTransaction(date, bank, category, description, amount) {
-  return queryDatabase(
+  const result = await queryDatabase(
     queries.queryAddTransaction,
     [date, bank, category, description, amount],
     (err) =>
       `Error [${err}] adding a transaction with date: ${date}, bank: ${bank}, category: ${category}, description: ${description}, amount: ${amount}.`,
   );
+
+  return result.at(0);
 }
 
 async function addTransactions(transactions) {
@@ -403,14 +407,15 @@ async function addTransactions(transactions) {
     });
   }
 
-  // Remove last comma
   query = query.slice(0, -1);
 
-  return queryDatabase(
+  const result = await queryDatabase(
     query,
     parameters,
     (err) => `Error [${err}] adding transactions: [${JSON.stringify(transactions)}].`,
   );
+
+  return result.at(0);
 }
 
 async function deleteCategory(category) {
