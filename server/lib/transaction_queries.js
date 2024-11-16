@@ -116,13 +116,10 @@ const queryYears = 'SELECT DISTINCT YEAR(date) as year FROM transactions';
 const queryAddCategoryFilter = 'INSERT INTO filters (category, filter, label) VALUES (?, ?, ?)';
 
 const queryBankById =
-  'SELECT name, institution_id, requisition_id, validity_date FROM banks where institution_id = ?';
-
-const queryBankLastestTransactionDate =
-  'SELECT date FROM transactions WHERE bank = ? ORDER BY date DESC LIMIT 1';
+  'SELECT name, institution_id, requisition_id, validity_date, max_historical_days FROM banks where institution_id = ?';
 
 const queryAddBank =
-  'INSERT INTO banks (name, institution_id, requisition_id, validity_date) VALUES (?, ?, ?, ?)';
+  'INSERT INTO banks (name, institution_id, requisition_id, validity_date, max_historical_days) VALUES (?, ?, ?, ?, ?)';
 
 const queryRegisteredBanks =
   'SELECT name, institution_id, requisition_id, validity_date FROM banks';
@@ -246,7 +243,6 @@ module.exports = {
   queryYears,
   queryAddCategoryFilter,
   queryBankById,
-  queryBankLastestTransactionDate,
   queryAddBank,
   queryRegisteredBanks,
   queryDeleteBank,
