@@ -24,8 +24,9 @@ get_version() {
 # Funció per definir quin Dockerfile i quin repositori utilitzar
 select_target() {
     if [ -z "$TARGET" ]; then
-        echo "Selecciona l'objectiu (server/client): "
-        read TARGET
+        echo "Falta l'objectiu (server/client)"
+        show_help
+        exit
     fi
 
     if [ "$TARGET" == "server" ]; then
@@ -48,8 +49,9 @@ select_target() {
 # Funció per configurar VITE_API_URL i crear el fitxer .env
 setup_env() {
     if [ -z "$VITE_API_URL" ]; then
-        echo "Introdueix URL del servidor (p.e. http://localhost:3000): "
-        read VITE_API_URL
+        echo "Falta la URL del servidor de wmm"
+        show_help
+        exit
     fi
     echo "VITE_API_URL=$VITE_API_URL" > "$PACKAGE_PATH/.env"
     echo "Fitxer .env creat amb VITE_API_URL=$VITE_API_URL"
@@ -66,8 +68,9 @@ cleanup_env() {
 # Funció per seleccionar entre Docker Hub i Local
 select_push_option() {
     if [ -z "$PUSH_OPTION" ]; then
-        echo "Selecciona on pujar les imatges (local/dockerhub): "
-        read PUSH_OPTION
+        echo "Falta el destí de les imatges (local/dockerhub)"
+        show_help
+        exit
     fi
     if [ "$PUSH_OPTION" != "local" ] && [ "$PUSH_OPTION" != "dockerhub" ]; then
         echo "Opció no vàlida. Tria 'local' o 'dockerhub'."
