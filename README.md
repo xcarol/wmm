@@ -22,26 +22,42 @@ This database will reside in the _mysql_ directory under the _server_ directory 
 This application relies in the _mysqldump_ application to restore the database.  
 Make sure _mysqldump_ is installed and accessible by _$PATH_.  
 
-## Production environment
+## Deployment
 
 The ./system/docker directory contains the files needed to set up the production environment using docker.
 
+At the time of writting you need to install docker.io, docker-compose-v2 & docker-buildx packages (who knows how it will be next week).  
+
+Run the docker-setuc
+
 ### docker-setup.sh
+## UPDATE
+# Use the _docker-setup.sh_ tool to build the docker images and push them to your Docker Hub account.  
+# Just type `$ ./docker-setup.sh` to get the help message.
+# 
+# This tool is used to operate with both projects, client and server. It accepts the parameters in the command line, but if not specified, they will be asked interactivelly.
+# 
+# What's needed:
+# 
+# - -t to select between client or server project
+# - -u to set the docker hub user name (password is always asked interactivelly)
+# - -v to set the URL for the client to access the server (This is the VITE_API_URL variable in the client project)
+# - -m to select between Local or Docker Hub to push the images
+# 
+# A typical call to build the server would be: `./docker-setup.sh -u xcarol -t server -m local`  
+# A typical call to build the client would be: `./docker-setup.sh -u xcarol -t client -m local -v http://192.168.1.201:3000` here _192.168.1.201_ is the production server IP.  
 
-Use the _docker-setup.sh_ tool to build the docker images and push them to your Docker Hub account.  
-Just type `$ ./docker-setup.sh` to get the help message.
+ERROR: Multi-platform build is not supported for the docker driver.
+Switch to a different driver, or turn on the containerd image store, and try again.
+docker buildx create --name multiarch-builder --driver docker-container
+docker buildx inspect --bootstrap
 
-This tool is used to operate with both projects, client and server. It accepts the parameters in the command line, but if not specified, they will be asked interactivelly.
+# UPDATE
+sudo docker pull xcarol/wmm-client
+sudo systemctl restart wmm-service
 
-What's needed:
 
-- -t to select between client or server project
-- -u to set the docker hub user name (password is always asked interactivelly)
-- -v to set the URL for the client to access the server (This is the VITE_API_URL variable in the client project)
-- -m to select between Local or Docker Hub to push the images
-
-A typical call to build the server would be: `./docker-setup.sh -u xcarol -t server -m local`  
-A typical call to build the client would be: `./docker-setup.sh -u xcarol -t client -m local -v http://192.168.1.201:3000` here _192.168.1.201_ is the production server IP.  
+# DEPLOYMENT (2?)
 
 In your production environment
 
@@ -97,7 +113,7 @@ sudo systemctl status wmm.service
 
 Watch the service logs
 ```
-sudo journalctl -u wmm.service -p debug -xe
+journalctl -u wmm.service -p debug -xe
 ```
 
 ### GoCardless
