@@ -1,55 +1,84 @@
 #!/bin/bash
 
 # Variables globals
-TARGET=""
+COMPONENT=""
 DOCKERFILE=""
 REPO=""
 USERNAME=""
 VERSION=""
-ARCHITECTURES="linux/amd64,linux/arm64"
+LOCAL_ARCHITECTURE=""
+ARCHITECTURES=""
 VITE_API_URL=""
-PUSH_OPTION=""
+TARGET=""
+
+get_out() {
+    local message=$1
+
+    if [ "$message" = "" ]; then
+        exit 0
+    fi
+
+    echo $message
+    show_help
+    exit 1
+}
 
 # Funció per obtenir la versió del package.json en la ruta especificada
 get_version() {
     local path=$1
     VERSION=$(grep '"version":' "$path/package.json" | sed -E 's/.*"([0-9]+\.[0-9]+\.[0-9]+)".*/\1/')
     if [ -z "$VERSION" ]; then
-        echo "No s'ha trobat la versió al $path/package.json"
-        exit 1
+        get_out "No s'ha trobat la versió al $path/package.json"
     fi
     echo "Versió trobada: $VERSION"
 }
 
-# Funció per definir quin Dockerfile i quin repositori utilitzar
-select_target() {
-    if [ -z "$TARGET" ]; then
-        echo "Selecciona l'objectiu (server/client): "
-        read TARGET
+get_local_architecture() {
+    ARCH=`uname -m`
+    echo "Arquitectura trobada: $ARCH"
+
+    if [ "$ARCH" = "x86_64" ]; then
+        LOCAL_ARCHITECTURE="linux/amd64"
     fi
 
-    if [ "$TARGET" == "server" ]; then
+    if [ "$ARCH" = "armv7l" ]; then
+        LOCAL_ARCHITECTURE="linux/arm/v7"
+    fi
+
+    if [ "$ARCH" = "aarch64" ]; then
+        LOCAL_ARCHITECTURE="linux/arm64"
+    fi
+
+    if [ "$LOCAL_ARCHITECTURE" = "" ]; then
+        get_out "Arquitectura $ARCH no suportada."
+    fi
+}
+
+# Funció per definir quin Dockerfile i quin repositori utilitzar
+select_component() {
+    if [ -z "$COMPONENT" ]; then
+        get_out "Falta el component (server/client)"
+    fi
+
+    if [ "$COMPONENT" == "server" ]; then
         DOCKERFILE="Dockerfile.server"
         REPO="wmm-server"
         PACKAGE_PATH="../../server"
-    elif [ "$TARGET" == "client" ]; then
+    elif [ "$COMPONENT" == "client" ]; then
         DOCKERFILE="Dockerfile.client"
         REPO="wmm-client"
         PACKAGE_PATH="../../client"
     else
-        echo "Objectiu no vàlid. Tria 'server' o 'client'."
-        exit 1
+        get_out "Objectiu no vàlid. Tria 'server' o 'client'."
     fi
 
-    echo "Operant amb $TARGET, utilitzant $DOCKERFILE i repositori $REPO."
     get_version "$PACKAGE_PATH"
 }
 
 # Funció per configurar VITE_API_URL i crear el fitxer .env
 setup_env() {
     if [ -z "$VITE_API_URL" ]; then
-        echo "Introdueix URL del servidor (p.e. http://localhost:3000): "
-        read VITE_API_URL
+        get_out "Falta la URL del servidor de wmm"
     fi
     echo "VITE_API_URL=$VITE_API_URL" > "$PACKAGE_PATH/.env"
     echo "Fitxer .env creat amb VITE_API_URL=$VITE_API_URL"
@@ -64,23 +93,32 @@ cleanup_env() {
 }
 
 # Funció per seleccionar entre Docker Hub i Local
-select_push_option() {
-    if [ -z "$PUSH_OPTION" ]; then
-        echo "Selecciona on pujar les imatges (local/dockerhub): "
-        read PUSH_OPTION
+select_target() {
+    if [ -z "$TARGET" ]; then
+        get_out "Falta el destí de les imatges (local/dockerhub)"
     fi
-    if [ "$PUSH_OPTION" != "local" ] && [ "$PUSH_OPTION" != "dockerhub" ]; then
-        echo "Opció no vàlida. Tria 'local' o 'dockerhub'."
-        exit 1
+    if [ "$TARGET" != "local" ] && [ "$TARGET" != "dockerhub" ]; then
+        get_out "Opció no vàlida. Tria 'local' o 'dockerhub'."
+    fi
+}
+
+# Funció per seleccionar l'arquitectura
+select_architecture() {
+    if [ "$TARGET" = "dockerhub" ]; then
+        ARCHITECTURES="linux/amd64,linux/arm64"
+    elif [ "$TARGET" = "local" ]; then
+        get_local_architecture
+        ARCHITECTURES="$LOCAL_ARCHITECTURE"
     fi
 }
 
 # Funció per construir i, si s'ha seleccionat, pujar la imatge
 build_and_push_image() {
+    select_component
     select_target
-    select_push_option
+    select_architecture
 
-    if [ "$PUSH_OPTION" == "dockerhub" ]; then
+    if [ "$TARGET" == "dockerhub" ]; then
         if [ -z "$USERNAME" ]; then
             echo "Introdueix el teu usuari de Docker Hub: "
             read USERNAME
@@ -95,8 +133,7 @@ build_and_push_image() {
         echo "$PASSWORD" | docker login --username "$USERNAME" --password-stdin
 
         if [ $? -ne 0 ]; then
-            echo "Error durant l'inici de sessió a Docker Hub"
-            exit 1
+            get_out "Error durant l'inici de sessió a Docker Hub"
         fi
     else
         IMAGE_NAME="$REPO:$VERSION"
@@ -104,14 +141,14 @@ build_and_push_image() {
     fi
 
     # Si estem treballant amb el client, configurem l'arxiu .env
-    if [ "$TARGET" == "client" ]; then
+    if [ "$COMPONENT" == "client" ]; then
         setup_env
     fi
 
     echo "Construint la imatge Docker $IMAGE_NAME utilitzant $DOCKERFILE..."
 
     build_command="docker buildx build -f $DOCKERFILE -t $IMAGE_NAME -t $LATEST_IMAGE --platform $ARCHITECTURES ../../"
-    if [ "$PUSH_OPTION" == "dockerhub" ]; then
+    if [ "$TARGET" == "dockerhub" ]; then
         build_command="$build_command --push"
     else
         build_command="$build_command --load"
@@ -119,17 +156,16 @@ build_and_push_image() {
     $build_command
 
     if [ $? -ne 0 ]; then
-        echo "Error durant la construcció de la imatge Docker"
-        exit 1
+        get_out "Error durant la construcció de la imatge Docker"
     fi
 
     # Eliminar el fitxer .env després del build
-    if [ "$TARGET" == "client" ]; then
+    if [ "$COMPONENT" == "client" ]; then
         cleanup_env
     fi
 
     echo "Imatge $IMAGE_NAME construïda correctament."
-    if [ "$PUSH_OPTION" == "dockerhub" ]; then
+    if [ "$TARGET" == "dockerhub" ]; then
         echo "Imatge $IMAGE_NAME (versió) i $LATEST_IMAGE (latest) pujades a Docker Hub."
     else
         echo "Imatge $IMAGE_NAME disponible localment."
@@ -140,44 +176,40 @@ build_and_push_image() {
 show_help() {
     echo "Ús: $0 [opcions]"
     echo "Opcions:"
-    echo "  -t  Especificar si s'usa el 'server' o 'client'"
-    echo "  -u  Especificar el nom d'usuari de Docker Hub"
-    echo "  -v  Especificar la URL del servidor de destí (p.e. http://192.168.1.39:3000)"
-    echo "  -m  Mode de construcció (local/dockerhub)"
+    echo "  -c  Especifica el component 'server' o 'client'"
+    echo "  -t  Especifica el destí (local/dockerhub)"
+    echo "  -u  Especifica el nom d'usuari de Docker Hub (només si -t dockerhub)"
+    echo "  -v  Especifica la URL del servidor de wmm (només si -t client)"
+    echo "        exemple: http://192.168.1.39:3000"
     echo "  -h  Mostrar aquesta ajuda"
 }
 
 # Processar les opcions necessàries
-while getopts ":u:t:v:m:h" opt; do
+while getopts ":u:c:v:t:h" opt; do
     case $opt in
         u)
             USERNAME=$OPTARG
             ;;
-        t)
-            TARGET=$OPTARG
+        c)
+            COMPONENT=$OPTARG
             ;;
         v)
             VITE_API_URL=$OPTARG
             ;;
-        m)
-            PUSH_OPTION=$OPTARG
+        t)
+            TARGET=$OPTARG
             ;;
         h)
             show_help
             exit 0
             ;;
         \?)
-            echo "Opció no vàlida: -$OPTARG" >&2
-            show_help
-            exit 1
+            get_out "Opció no vàlida: -$OPTARG" >&2
             ;;
         :)
-            echo "L'opció -$OPTARG requereix un argument." >&2
-            show_help
-            exit 1
+            get_out "L'opció -$OPTARG requereix un argument." >&2
             ;;
     esac
 done
 
-show_help
 build_and_push_image
