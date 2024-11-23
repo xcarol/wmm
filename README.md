@@ -110,11 +110,11 @@ SECRET_ID=secret_id
 SECRET_KEY=secret_key
 ```
 
-- where 'secret_mysql' is the password you choose for the database root user
+- where _secret\_mysql_ is the password you choose for the database root user
 - 'database_name', 'user_name' and 'user_password' are... well, I guess you'll kown
 - and 'secret_id' and 'secret_key' are your [GoCardless](#gocardless) secret id and key
 
-\* if you want to use Mysql Docker set 127.0.0.1 to DB_HOST. localhost won't work because of default mysql binding.
+\* if you want to use [Mysql Docker](https://hub.docker.com/_/mysql) set 127.0.0.1 to DB_HOST. localhost won't work because of default mysql binding.
 
 ### systemd
 
