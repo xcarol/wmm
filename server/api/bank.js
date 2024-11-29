@@ -18,7 +18,10 @@ let nordigenClient = null;
 let nordigenToken;
 
 const getNordigenClient = async () => {
-  if (nordigenClient === null) {
+  if (
+    nordigenClient === null ||
+    (nordigenToken.expire_date && dayjs() >= dayjs(nordigenToken.expire_date))
+  ) {
     nordigenClient = new NordigenClient({
       secretId: process.env.SECRET_ID,
       secretKey: process.env.SECRET_KEY,
@@ -26,6 +29,9 @@ const getNordigenClient = async () => {
 
     nordigenToken = await nordigenClient.generateToken();
     nordigenClient.token = nordigenToken.access;
+    nordigenToken.expire_date = dayjs()
+      .add(nordigenToken.access_expires, 'minutes')
+      .format('YYYY-MM-DD HH:mm:ss');
   }
 
   return nordigenClient;
