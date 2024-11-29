@@ -61,7 +61,8 @@
     "registerSuccess": "The bank has been successfully registered.",
     "deleteBank": "You're about to delete bank: %s.\nAre you sure?",
     "refreshBank": "You're about to update bank: %s.\nAre you sure?",
-    "applyFilters": "Do you want to apply the filters now?"
+    "applyFilters": "Do you want to apply the filters now?",
+    "reconnect": "You will be redirected to ob.gocardless.com to continue with the reconnection. Is that ok?"
   },
   "importView": {
     "title": "Import CSV File",

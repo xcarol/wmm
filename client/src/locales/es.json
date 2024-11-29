@@ -61,7 +61,8 @@
     "registerSuccess": "El banco se ha estat registrado correctamente.",
     "deleteBank": "Estás a punto de borrar el banco: %s.\n¿Estás seguro?",
     "refreshBank": "Estás a punto de actualizar el banco: %s.\n¿Estás seguro?",
-    "applyFilters": "Quieres aplicar los filtros ahora?"
+    "applyFilters": "Quieres aplicar los filtros ahora?",
+    "reconnect": "Serás redirigido a ob.gocardless.com para realizar la reconexión. ¿Estás de acuerdo?"
   },
   "importView": {
     "title": "Importa un archivo CSV",

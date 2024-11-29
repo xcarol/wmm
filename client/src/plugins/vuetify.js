@@ -19,6 +19,7 @@ import {
   mdiInvoiceTextArrowRightOutline,
   mdiTrashCanOutline,
   mdiRefresh,
+  mdiConnection,
 } from '@mdi/js';
 
 const defaultTheme =
@@ -71,6 +72,7 @@ const vuetify = createVuetify({
       'show-drawer': mdiInvoiceTextArrowRightOutline,
       remove: mdiTrashCanOutline,
       refresh: mdiRefresh,
+      reconnect: mdiConnection,
     },
     sets: {
       mdi,

@@ -1,6 +1,9 @@
 <template>
   <v-row>
-    <v-col sm="6" cols="12">
+    <v-col
+      sm="6"
+      cols="12"
+    >
       <v-card flat>
         <v-card-title>{{ $t('banksView.useBank') }}</v-card-title>
         <v-list>
@@ -12,21 +15,30 @@
           >
             <template #append>
               <v-icon
+                :disabled="!outdated(bank.date)"
+                :color="reconnectColor(bank.date)"
+                icon="$reconnect"
+                @click="reconnectBank(bank.name, bank.id)"
+              />
+              <v-icon
+                :disabled="outdated(bank.date)"
+                :color="refreshColor(bank.date)"
                 icon="$refresh"
                 @click="refreshBank(bank.name, bank.id)"
-              >
-              </v-icon>
+              />
               <v-icon
                 icon="$remove"
                 @click="deleteBank(bank.name, bank.id)"
-              >
-              </v-icon>
+              />
             </template>
           </v-list-item>
         </v-list>
       </v-card>
     </v-col>
-    <v-col sm="6" cols="12">
+    <v-col
+      sm="6"
+      cols="12"
+    >
       <v-card flat>
         <v-card-title>{{ $t('banksView.configBank') }}</v-card-title>
         <v-text-field
@@ -64,6 +76,7 @@ import {
 } from 'vuetify/lib/components/index.mjs';
 import { useRoute, useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
+import dayjs from 'dayjs';
 import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
 import { useBanksStore } from '../stores/banks';
@@ -103,6 +116,20 @@ const filteredBanks = computed(() => {
     });
 });
 
+const outdated = (date) => {
+  const today = dayjs();
+  const dateToCheck = dayjs(date);
+  return dateToCheck <= today;
+};
+
+const reconnectColor = (date) => {
+  return outdated(date) ? '' : 'grey';
+};
+
+const refreshColor = (date) => {
+  return outdated(date) ? 'grey' : '';
+};
+
 const getInstitutions = async () => {
   banks.value = [];
   const { data: institutions } = await api.bankInstitutions();
@@ -119,9 +146,20 @@ const getRegisteredBanks = async () => {
     const bankData = banks.value.find((bank) => bank.id === registeredBank.institution_id);
     if (bankData) {
       const { id, logo, name } = bankData;
-      registeredBanks.value.push({ id, logo, name });
+      registeredBanks.value.push({ id, logo, name, date: registeredBank.validity_date });
     }
   });
+};
+
+const registerBank = async (institutionName, institutionId) => {
+  try {
+    const { data } = await api.bankRegisterInit(institutionId, REDIRECT_URL);
+    banksStore.requisitionId = data.requisition_id;
+    banksStore.requisitionName = institutionName;
+    window.open(data.link, '_self');
+  } catch (e) {
+    appStore.alertMessage = api.getErrorMessage(e);
+  }
 };
 
 const applyFilters = () => {
@@ -137,6 +175,17 @@ const applyFilters = () => {
       await api.applyFilters();
       progressDialog.stopProgress();
     },
+  });
+};
+
+const reconnectBank = async (institutionName, institutionId) => {
+  messageDialog.showMessage({
+    title: $t('dialog.Question'),
+    message: $t('banksView.reconnect'),
+    yes: async () => {
+      await registerBank(institutionName, institutionId);
+    },
+    no: () => {},
   });
 };
 
@@ -190,14 +239,7 @@ const selectBank = async (institutionName, institutionId) => {
     title: $t('dialog.Question'),
     message: $t('banksView.registerInit'),
     yes: async () => {
-      try {
-        const { data } = await api.bankRegisterInit(institutionId, REDIRECT_URL);
-        banksStore.requisitionId = data.requisition_id;
-        banksStore.requisitionName = institutionName;
-        window.open(data.link, '_self');
-      } catch (e) {
-        appStore.alertMessage = api.getErrorMessage(e);
-      }
+      await registerBank(institutionName, institutionId);
     },
     no: () => {},
   });
