@@ -61,7 +61,8 @@
     "registerSuccess": "El banc ha estat enregistrat correctament.",
     "deleteBank": "Et's a punt d'esborrar el banc: %s.\nN'estàs segur?",
     "refreshBank": "Et's a punt d'actualitzar el banc: %s.\nN'estàs segur?",
-    "applyFilters": "Vols aplicar els filtres ara?"
+    "applyFilters": "Vols aplicar els filtres ara?",
+    "reconnect": "Seràs redirigit a ob.gocardless.com per realitzar la reconnexió. D'acord?"
   },
   "importView": {
     "title": "Importa un arxiu CSV",
