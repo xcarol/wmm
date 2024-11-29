@@ -69,7 +69,7 @@ const responseHeight = computed(() =>
 const backupResponseStatus = (status) => {
   tableHeaders.value = [];
   tableItems.value = [];
-  sqlQueryResponse.value = status;
+  sqlQueryResponse.value = JSON.stringify(status);
 };
 
 const resetView = () => {
