@@ -62,7 +62,9 @@
     "deleteBank": "You're about to delete bank: %s.\nAre you sure?",
     "refreshBank": "You're about to update bank: %s.\nAre you sure?",
     "applyFilters": "Do you want to apply the filters now?",
-    "reconnect": "You will be redirected to ob.gocardless.com to continue with the reconnection. Is that ok?"
+    "reconnect": "You will be redirected to ob.gocardless.com to continue with the reconnection. Is that ok?",
+    "connectionsDate": "Connection valid until: %s",
+    "connectionsOutdate": "Connection expired on: %s"
   },
   "importView": {
     "title": "Import CSV File",

@@ -12,6 +12,7 @@
             :key="bank.id"
             :prepend-avatar="bank.logo"
             :title="bank.name"
+            :subtitle="subtitle(bank.date)"
           >
             <template #append>
               <v-icon
@@ -128,6 +129,12 @@ const reconnectColor = (date) => {
 
 const refreshColor = (date) => {
   return outdated(date) ? 'grey' : '';
+};
+
+const subtitle = (date) => {
+  return outdated(date)
+    ? $t('banksView.connectionsOutdate').replace('%s', dayjs(date).format('YYYY-MM-DD'))
+    : $t('banksView.connectionsDate').replace('%s', dayjs(date).format('YYYY-MM-DD'));
 };
 
 const getInstitutions = async () => {

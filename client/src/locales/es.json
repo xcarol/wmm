@@ -62,7 +62,9 @@
     "deleteBank": "Estás a punto de borrar el banco: %s.\n¿Estás seguro?",
     "refreshBank": "Estás a punto de actualizar el banco: %s.\n¿Estás seguro?",
     "applyFilters": "Quieres aplicar los filtros ahora?",
-    "reconnect": "Serás redirigido a ob.gocardless.com para realizar la reconexión. ¿Estás de acuerdo?"
+    "reconnect": "Serás redirigido a ob.gocardless.com para realizar la reconexión. ¿Estás de acuerdo?",
+    "connectionsDate": "Conexión válida hasta: %s",
+    "connectionsOutdate": "Conexión caducada desde: %s"
   },
   "importView": {
     "title": "Importa un archivo CSV",
