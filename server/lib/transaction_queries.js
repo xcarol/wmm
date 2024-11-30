@@ -121,6 +121,9 @@ const queryBankById =
 const queryAddBank =
   'INSERT INTO banks (name, institution_id, requisition_id, validity_date, max_historical_days) VALUES (?, ?, ?, ?, ?)';
 
+const queryUpdateBank =
+  'UPDATE banks SET name = ?, requisition_id = ?, validity_date = ?, max_historical_days = ? WHERE institution_id = ?';
+
 const queryRegisteredBanks =
   'SELECT name, institution_id, requisition_id, validity_date FROM banks';
 
@@ -244,6 +247,7 @@ module.exports = {
   queryAddCategoryFilter,
   queryBankById,
   queryAddBank,
+  queryUpdateBank,
   queryRegisteredBanks,
   queryDeleteBank,
   queryDeleteCategory,

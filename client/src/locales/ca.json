@@ -62,7 +62,9 @@
     "deleteBank": "Et's a punt d'esborrar el banc: %s.\nN'estàs segur?",
     "refreshBank": "Et's a punt d'actualitzar el banc: %s.\nN'estàs segur?",
     "applyFilters": "Vols aplicar els filtres ara?",
-    "reconnect": "Seràs redirigit a ob.gocardless.com per realitzar la reconnexió. D'acord?"
+    "reconnect": "Seràs redirigit a ob.gocardless.com per realitzar la reconnexió. D'acord?",
+    "connectionsDate": "Connexió vàlida fins: %s",
+    "connectionsOutdate": "Connexió caducada des de: %s"
   },
   "importView": {
     "title": "Importa un arxiu CSV",
