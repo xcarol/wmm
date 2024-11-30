@@ -93,6 +93,17 @@ async function addBank(
   }
 
   const dateAccessDays = dayjs().add(accessDays, 'days').format('YYYY-MM-DD');
+
+  const bank = await getBankById(institution_id);
+  if (bank && bank.institution_id === institution_id) {
+    return queryDatabase(
+      queries.queryUpdateBank,
+      [institution_name, requisition_id, dateAccessDays, historicalDays, institution_id],
+      (err) =>
+        `Error [${err}] updating bank ${institution_id} with requisition_id ${requisition_id}.`,
+    );
+  }
+
   return queryDatabase(
     queries.queryAddBank,
     [institution_name, institution_id, requisition_id, dateAccessDays, historicalDays],
