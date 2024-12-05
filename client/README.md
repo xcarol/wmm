@@ -28,8 +28,37 @@ npm run dev
 npm run build
 ```
 
+### Run application in the Production server
+
+```sh
+npm run start
+```
+
+### Preview Production build
+
+```sh
+npm run preview
+```
+
 ### Lint with [ESLint](https://eslint.org/)
 
 ```sh
 npm run lint
 ```
+
+### Format whole project using prettier
+
+```sh
+npm run format
+```
+
+## Environment variables
+
+The application uses the following environment variables
+
+* VITE_API_URL              - The URL of the server (e.g. https://192.168.1.201:3000)  
+* VITE_I18N_LOCALE          - The default locale to use  
+* VITE_I18N_FALLBACK_LOCALE - The fallback locale  
+* VITE_THEME                - Force theme to 'light' or 'dark'
+
+Set the desired variables in the 
