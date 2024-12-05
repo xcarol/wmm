@@ -47,6 +47,10 @@ class Api {
 
   // eslint-disable-next-line class-methods-use-this
   getErrorMessage(error) {
+    if (error && error.response && error.response.statusText) {
+      return `Error status: ${error.response.status} - Error text: ${error.response.statusText}`;
+    }
+
     if (error && error.response && error.response.data && error.response.data.message) {
       return error.response.data.message;
     }
@@ -58,10 +62,6 @@ class Api {
       JSON.stringify(error.response.data) !== '{}'
     ) {
       return JSON.stringify(error.response.data);
-    }
-
-    if (error && error.response && error.response.statusText) {
-      return error.response.statusText;
     }
 
     return error.toString();
