@@ -91,7 +91,7 @@ const queryBalancesWithoutCategoryDescription = 'AND description NOT LIKE ? ';
 const queryBalancesWithoutCategoryEnd = 'AND date >= ? AND date <= ?';
 
 const queryDuplicateRows =
-  'SELECT id, bank, date, description, category, amount FROM transactions t1 \
+  'SELECT id, bank, date, description, category, amount, transaction_id FROM transactions t1 \
     WHERE EXISTS ( \
         SELECT 1 \
         FROM transactions t2 \
