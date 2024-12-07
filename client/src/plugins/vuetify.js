@@ -55,6 +55,21 @@ const defaults = {
     variant: 'outlined',
     density: 'compact',
   },
+  VCardTitle: {
+    style: 'white-space: normal; text-overflow: initial; overflow: visible;',
+  },
+  VCardSubtitle: {
+    style: 'white-space: normal; text-overflow: initial; overflow: visible;',
+  },
+  VCardText: {
+    style: 'white-space: normal; text-overflow: initial; overflow: visible;',
+  },
+  VListItemTitle: {
+    style: 'white-space: normal; text-overflow: initial; overflow: visible;',
+  },
+  VListItemSubtitle: {
+    style: 'white-space: normal; text-overflow: initial; overflow: visible; display: block;',
+  },
 };
 
 const vuetify = createVuetify({
