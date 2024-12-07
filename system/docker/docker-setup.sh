@@ -8,8 +8,8 @@ USERNAME=""
 VERSION=""
 LOCAL_ARCHITECTURE=""
 ARCHITECTURES=""
-VITE_API_URL=""
 TARGET=""
+SET_LATEST="si"
 
 get_out() {
     local message=$1
@@ -26,7 +26,7 @@ get_out() {
 # Funció per obtenir la versió del package.json en la ruta especificada
 get_version() {
     local path=$1
-    VERSION=$(grep '"version":' "$path/package.json" | sed -E 's/.*"([0-9]+\.[0-9]+\.[0-9]+)".*/\1/')
+    VERSION=$(grep '"version":' "$path/package.json" | sed -E 's/.*"([0-9]+\.[0-9]+\.[0-9]+\.*[a-zA-Z]*)".*/\1/')
     if [ -z "$VERSION" ]; then
         get_out "No s'ha trobat la versió al $path/package.json"
     fi
@@ -131,6 +131,10 @@ build_and_push_image() {
         LATEST_IMAGE="$REPO:latest"
     fi
 
+    if [ "$SET_LATEST" != "si" ]; then
+        LATEST_IMAGE=$IMAGE_NAME
+    fi
+
     echo "Construint la imatge Docker $IMAGE_NAME utilitzant $DOCKERFILE..."
 
     build_command="docker buildx build -f $DOCKERFILE -t $IMAGE_NAME -t $LATEST_IMAGE --platform $ARCHITECTURES ../../"
@@ -165,13 +169,12 @@ show_help() {
     echo "  -c  Especifica el component 'server' o 'client'"
     echo "  -t  Especifica el destí (local/dockerhub)"
     echo "  -u  Especifica el nom d'usuari de Docker Hub (només si -t dockerhub)"
-    echo "  -v  Especifica la URL del servidor de wmm (només si -t client)"
-    echo "        exemple: http://192.168.1.39:3000"
+    echo "  -l  Especifica si cal marcar la imatge com a latest 'si' o 'no' (per defecte = si)"
     echo "  -h  Mostrar aquesta ajuda"
 }
 
 # Processar les opcions necessàries
-while getopts ":u:c:v:t:h" opt; do
+while getopts ":u:l:c:t:h" opt; do
     case $opt in
         u)
             USERNAME=$OPTARG
@@ -179,11 +182,11 @@ while getopts ":u:c:v:t:h" opt; do
         c)
             COMPONENT=$OPTARG
             ;;
-        v)
-            VITE_API_URL=$OPTARG
-            ;;
         t)
             TARGET=$OPTARG
+            ;;
+        l)
+            SET_LATEST=$OPTARG
             ;;
         h)
             show_help
