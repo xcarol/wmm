@@ -75,15 +75,6 @@ select_component() {
     get_version "$PACKAGE_PATH"
 }
 
-# Funció per configurar VITE_API_URL i crear el fitxer .env
-setup_env() {
-    if [ -z "$VITE_API_URL" ]; then
-        get_out "Falta la URL del servidor de wmm"
-    fi
-    echo "VITE_API_URL=$VITE_API_URL" > "$PACKAGE_PATH/.env"
-    echo "Fitxer .env creat amb VITE_API_URL=$VITE_API_URL"
-}
-
 # Funció per eliminar el fitxer .env després del build
 cleanup_env() {
     if [ -f "$PACKAGE_PATH/.env" ]; then
@@ -138,11 +129,6 @@ build_and_push_image() {
     else
         IMAGE_NAME="$REPO:$VERSION"
         LATEST_IMAGE="$REPO:latest"
-    fi
-
-    # Si estem treballant amb el client, configurem l'arxiu .env
-    if [ "$COMPONENT" == "client" ]; then
-        setup_env
     fi
 
     echo "Construint la imatge Docker $IMAGE_NAME utilitzant $DOCKERFILE..."

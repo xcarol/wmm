@@ -108,11 +108,13 @@ DB_USER=user_name
 DB_PASSWORD=user_password
 SECRET_ID=secret_id
 SECRET_KEY=secret_key
+VITE_API_URL=http://server_address:3000
 ```
 
-- where _secret\_mysql_ is the password you choose for the database root user
+- where 'secret_mysql' is the password you choose for the database root user
 - 'database_name', 'user_name' and 'user_password' are... well, I guess you'll kown
-- and 'secret_id' and 'secret_key' are your [GoCardless](#gocardless) secret id and key
+- 'secret_id' and 'secret_key' are your [GoCardless](#gocardless) secret id and key
+- 'server_address' is the external IP of the server  
 
 \* if you want to use [Mysql Docker](https://hub.docker.com/_/mysql) set 127.0.0.1 to DB_HOST. localhost won't work because of default mysql binding.
 

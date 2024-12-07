@@ -43,7 +43,10 @@ module.exports = (app) => {
       const client = await getNordigenClient();
       res.json(await client.institution.getInstitutions({ country: COUNTRY }));
     } catch (err) {
-      res.status(err.response.status).send(err.response.data);
+      res.status(err.response.status).send({
+        data: err.response.data,
+        nordigenToken,
+      });
     }
   });
 
