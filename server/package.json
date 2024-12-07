@@ -1,6 +1,6 @@
 {
   "name": "wmm-api",
-  "version": "1.0.4.beta",
+  "version": "1.0.4-beta",
   "description": "Where's My Money - Backend",
   "private": true,
   "main": "index.js",
