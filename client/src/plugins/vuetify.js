@@ -22,9 +22,8 @@ import {
   mdiConnection,
 } from '@mdi/js';
 
-const defaultTheme =
-  import.meta.env.VITE_THEME ||
-  (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+const defaultTheme = import.meta.env.VITE_THEME || (mediaQuery.matches ? 'dark' : 'light');
 
 const defaults = {
   VCardActions: {
@@ -72,6 +71,30 @@ const defaults = {
   },
 };
 
+const darkColorsDevelopment = {
+  background: colors.blueGrey.darken3,
+  surface: colors.blueGrey.darken3,
+  primary: colors.teal.darken1,
+  secondary: colors.teal.darken3,
+};
+
+const lightColorsDevelopment = {
+  background: colors.blueGrey.lighten3,
+  surface: colors.blueGrey.lighten3,
+  primary: colors.teal.darken1,
+  secondary: colors.teal.lighten1,
+};
+
+const darkColorsProduction = {
+  primary: colors.grey.lighten1,
+  secondary: colors.grey.darken1,
+};
+
+const lightColorsProduction = {
+  primary: colors.grey.lighten1,
+  secondary: colors.grey.darken1,
+};
+
 const vuetify = createVuetify({
   directives,
   icons: {
@@ -97,28 +120,12 @@ const vuetify = createVuetify({
     defaultTheme,
     themes: {
       light: {
-        colors: {
-          background: colors.blueGrey.lighten3,
-          surface: colors.blueGrey.lighten3,
-          primary: colors.teal.darken1,
-          secondary: colors.teal.lighten1,
-          success: colors.green.base,
-          warning: colors.yellow.base,
-          error: colors.red.base,
-          info: colors.blue.base,
-        },
+        colors:
+          import.meta.env.MODE === 'production' ? lightColorsProduction : lightColorsDevelopment,
       },
       dark: {
-        colors: {
-          background: colors.blueGrey.darken3,
-          surface: colors.blueGrey.darken3,
-          primary: colors.teal.darken1,
-          secondary: colors.teal.darken3,
-          success: colors.green.base,
-          warning: colors.yellow.base,
-          error: colors.red.base,
-          info: colors.blue.base,
-        },
+        colors:
+          import.meta.env.MODE === 'production' ? darkColorsProduction : darkColorsDevelopment,
       },
     },
   },
@@ -127,6 +134,10 @@ const vuetify = createVuetify({
     current: 'ca',
   },
   defaults,
+});
+
+mediaQuery.addEventListener('change', (e) => {
+  vuetify.theme.global.name.value = e.matches ? 'dark' : 'light';
 });
 
 export default vuetify;
