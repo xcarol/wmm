@@ -1,6 +1,6 @@
 <template>
   <v-snackbar
-    v-model="showSnackBar"
+    :model-value="showSnackBar"
     multi-line
   >
     {{ snackBarText }}
