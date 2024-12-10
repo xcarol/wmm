@@ -315,6 +315,12 @@ async function getTimelineByBank(bank, period, start, end) {
     case 'month':
       query = queries.queryBalancesTimelineByBankByMonth;
       break;
+    case 'day':
+      query = queries.queryBalancesTimelineByBankByDay;
+      break;
+    case 'unit':
+      query = queries.queryBalancesTimelineByBankByUnit;
+      break;
     default:
       throw `Unknown period [${period}]`;
   }

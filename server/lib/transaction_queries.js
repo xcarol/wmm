@@ -171,6 +171,32 @@ const queryBalancesTimelineByBankByMonth =
     AND date <= ? \
   GROUP BY bank, YEAR(date), MONTH(date)';
 
+const queryBalancesTimelineByBankByDay =
+  'SELECT \
+    bank, \
+    YEAR(date) AS year, \
+    MONTH(date) AS month, \
+    DAY(date) AS day, \
+    SUM(amount) AS total_amount, \
+    COUNT(*) AS transaction_count \
+  FROM transactions \
+  WHERE bank = ? \
+    AND date >= ? \
+    AND date <= ? \
+  GROUP BY bank, YEAR(date), MONTH(date), DAY(date)';
+
+const queryBalancesTimelineByBankByUnit =
+  'SELECT \
+    bank, \
+    YEAR(date) AS year, \
+    MONTH(date) AS month, \
+    DAY(date) AS day, \
+    amount, \
+  FROM transactions \
+  WHERE bank = ? \
+    AND date >= ? \
+    AND date <= ?';
+
 const queryBalancesTimelineByCategoryByYear =
   'SELECT \
     category, \
@@ -259,6 +285,8 @@ module.exports = {
   queryUpdateFilter,
   queryBalancesTimelineByBankByYear,
   queryBalancesTimelineByBankByMonth,
+  queryBalancesTimelineByBankByDay,
+  queryBalancesTimelineByBankByUnit,
   queryBalancesTimelineByCategoryByYear,
   queryBalancesTimelineByCategoryByMonth,
   queryBalancesTimelineByCategoryByDay,
