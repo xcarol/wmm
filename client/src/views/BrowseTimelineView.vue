@@ -452,6 +452,44 @@ const getBanksTimeline = async (period) => {
   return banks.sort((c1, c2) => c1.year - c2.year);
 };
 
+const getPeriod = (periodName) => {
+  let period = 'year';
+
+  switch (periodName) {
+    case allPeriodNames.at(allPeriodPositions.month):
+      period = 'month';
+      break;
+    case allPeriodNames.at(allPeriodPositions.day):
+      period = 'day';
+      break;
+    case allPeriodNames.at(allPeriodPositions.unit):
+      period = 'unit';
+      break;
+    default:
+      break;
+  }
+  return period;
+};
+
+const getPeriodName = (period) => {
+  let periodName = allPeriodNames.at(allPeriodPositions.year);
+
+  switch (period) {
+    case 'month':
+      periodName = allPeriodNames.at(allPeriodPositions.month);
+      break;
+    case 'day':
+      periodName = allPeriodNames.at(allPeriodPositions.day);
+      break;
+    case 'unit':
+      periodName = allPeriodNames.at(allPeriodPositions.unit);
+      break;
+    default:
+      break;
+  }
+  return periodName;
+};
+
 const updateTransactions = async () => {
   if (selectedPeriod.value === '') {
     return;
@@ -463,15 +501,7 @@ const updateTransactions = async () => {
   });
 
   try {
-    let period = 'year';
-
-    switch (selectedPeriod.value) {
-      case allPeriodNames.at(allPeriodPositions.month):
-        period = 'month';
-        break;
-      default:
-        break;
-    }
+    const period = getPeriod(selectedPeriod.value);
 
     if (chartType.value === CHART_TYPE_BANKS) {
       selectedBalances.value = await getBanksTimeline(period);
@@ -516,7 +546,7 @@ const updateChart = () => {
   }
 
   if (selectedPeriod.value) {
-    query.period = selectedPeriod.value;
+    query.period = getPeriod(selectedPeriod.value);
   }
 
   query.style = chartStyle.value;
@@ -590,7 +620,7 @@ const parseParams = async () => {
   }
 
   if (period?.length > 0 && selectedPeriod.value !== period) {
-    selectedPeriod.value = period;
+    selectedPeriod.value = getPeriodName(period);
     update = true;
   }
 
