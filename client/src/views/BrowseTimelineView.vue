@@ -604,21 +604,21 @@ const parseParams = async () => {
     }
     updateDrawerSettings();
     updateAvailablePeriods();
-    updateTransactions();
+    await updateTransactions();
   }
 
   timelineTypeChange(category?.length > 0 ? CHART_TYPE_CATEGORIES : CHART_TYPE_BANKS);
 };
 
-const beforeUpdate = () => {
+const beforeUpdate = async () => {
   showDrawer.value = true;
-  parseParams();
+  await parseParams();
 };
 
 const beforeMount = async () => {
   await getCategories();
   await getBanks();
-  beforeUpdate();
+  await beforeUpdate();
 };
 
 onBeforeMount(() => beforeMount());
