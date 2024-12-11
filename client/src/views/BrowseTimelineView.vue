@@ -125,14 +125,20 @@ const banksNames = ref([]);
 const selectedNames = ref([]);
 const selectedBanks = ref([]);
 const selectedCategories = ref([]);
-const allPeriodNames = [$t('browseTimelineView.yearLabel'), $t('browseTimelineView.monthLabel')];
-const allPeriodPositions = { year: 0, month: 1 };
+const allPeriodNames = [
+  $t('browseTimelineView.yearLabel'),
+  $t('browseTimelineView.monthLabel'),
+  $t('browseTimelineView.dayLabel'),
+  $t('browseTimelineView.unitLabel'),
+];
+const allPeriodPositions = { year: 0, month: 1, day: 2, unit: 3 };
 const yearPeriodName = [$t('browseTimelineView.yearLabel')];
 const periodNames = ref(allPeriodNames);
 const selectedPeriod = ref($t('browseTimelineView.yearLabel'));
 const selectedBalances = ref([]);
 const yearsInBalances = ref([]);
 const monthsInBalances = ref([]);
+const daysInBalances = ref([]);
 const banksInBalances = ref([]);
 const categoriesInBalances = ref([]);
 
@@ -202,7 +208,58 @@ const chartDataLabels = () => {
   chartOptions.plugins.legend.title.display = false;
   chartOptions.plugins.legend.title.text = '';
 
-  if (selectedBalances.value.at(0).month !== undefined) {
+  if (selectedBalances.value.at(0).day !== undefined) {
+    [
+      $t('global.january'),
+      $t('global.february'),
+      $t('global.march'),
+      $t('global.april'),
+      $t('global.may'),
+      $t('global.june'),
+      $t('global.july'),
+      $t('global.august'),
+      $t('global.september'),
+      $t('global.october'),
+      $t('global.november'),
+      $t('global.december'),
+    ].forEach((month) => {
+      [
+        '1',
+        '2',
+        '3',
+        '4',
+        '5',
+        '6',
+        '7',
+        '8',
+        '9',
+        '10',
+        '11',
+        '12',
+        '13',
+        '14',
+        '15',
+        '16',
+        '17',
+        '18',
+        '19',
+        '20',
+        '21',
+        '22',
+        '23',
+        '24',
+        '25',
+        '26',
+        '27',
+        '28',
+        '29',
+        '30',
+        '31',
+      ].forEach((day) => {
+        labels.push(`${day} ${month}`);
+      });
+    });
+  } else if (selectedBalances.value.at(0).month !== undefined) {
     chartOptions.plugins.legend.title.display = true;
     if (chartType.value === CHART_TYPE_BANKS) {
       chartOptions.plugins.legend.title.text = selectedBalances.value.at(0).bank;
@@ -239,6 +296,22 @@ const chartDataLabels = () => {
   return labels;
 };
 
+const dayDataset = (label) => {
+  const red = Math.random() * 0xff;
+  const green = Math.random() * 0xff;
+  const blue = Math.random() * 0xff;
+
+  return {
+    fill: false,
+    tension: 0.1,
+    label: `${label}`,
+    backgroundColor: `rgba(${red}, ${green}, ${blue}, 0.2)`,
+    borderColor: `rgb(${red}, ${green}, ${blue})`,
+    borderWidth: 1,
+    data: Array(365).fill(''),
+  };
+};
+
 const monthDataset = (label) => {
   const red = Math.random() * 0xff;
   const green = Math.random() * 0xff;
@@ -272,11 +345,16 @@ const yearDataset = (label) => {
 };
 
 const banksDatasets = () => {
+  const dailyDataset = [];
   const monthlyDataset = [];
   const yearlyDataset = [];
   let datasets = [];
 
-  if (monthsInBalances.value.length > 0) {
+  if (daysInBalances.value.length > 0) {
+    yearsInBalances.value.forEach((year) => {
+      dailyDataset.push(dayDataset(year));
+    });
+  } else if (monthsInBalances.value.length > 0) {
     yearsInBalances.value.forEach((year) => {
       monthlyDataset.push(monthDataset(year));
     });
@@ -288,7 +366,16 @@ const banksDatasets = () => {
     return datasets;
   }
 
-  if (monthsInBalances.value.length > 0) {
+  if (daysInBalances.value.length > 0) {
+    for (let index = 0; index < selectedBalances.value.length; index += 1) {
+      const element = selectedBalances.value[index];
+      const dt = dailyDataset.find((mDataset) => {
+        return mDataset.label === element.year.toString();
+      });
+      dt.data[element.month * 31 + element.day] = element.total_amount * -1;
+    }
+    datasets = dailyDataset;
+  } else if (monthsInBalances.value.length > 0) {
     for (let index = 0; index < selectedBalances.value.length; index += 1) {
       const element = selectedBalances.value[index];
       const dt = monthlyDataset.find((mDataset) => {
@@ -390,6 +477,15 @@ const setMonthsInBalances = () => {
   selectedBalances.value.forEach((balance) => {
     if (balance.month && monthsInBalances.value.includes(balance.month) === false) {
       monthsInBalances.value.push(balance.month);
+    }
+  });
+};
+
+const setDaysInBalances = () => {
+  daysInBalances.value = [];
+  selectedBalances.value.forEach((balance) => {
+    if (balance.day && daysInBalances.value.includes(balance.day) === false) {
+      daysInBalances.value.push(balance.day);
     }
   });
 };
@@ -511,6 +607,7 @@ const updateTransactions = async () => {
 
     setYearsInBalances();
     setMonthsInBalances();
+    setDaysInBalances();
     setBanksInBalances();
     setCategoriesInBalances();
   } catch (e) {
