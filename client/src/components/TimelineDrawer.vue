@@ -6,7 +6,7 @@
     location="left"
     @update:model-value="modelChanged"
   >
-    <v-card>
+    <v-card flat>
       <v-card-text class="align-start">
         <v-btn-toggle
           elevation="2"
