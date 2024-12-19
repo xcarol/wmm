@@ -655,9 +655,11 @@ const updateAvailablePeriods = () => {
   if (selectedNames.value.length > 1) {
     periodNames.value = yearPeriodName;
     selectedPeriod.value = yearPeriodName.at(0);
-  } else {
-    periodNames.value = allPeriodNames;
-  }
+  } else if (selectedNames.value.at(0) === selectedBanks.value.at(0)) {
+      periodNames.value = allPeriodNames.slice(0, -1); // Remove unit period
+    } else {
+      periodNames.value = yearPeriodName;
+    }
 };
 
 const timelineTypeChange = (type) => {
