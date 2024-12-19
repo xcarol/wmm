@@ -185,17 +185,6 @@ const queryBalancesTimelineByBankByDay =
     AND date <= ? \
   GROUP BY bank, YEAR(date), MONTH(date), DAY(date)';
 
-const queryBalancesTimelineByBankByUnit =
-  'SELECT \
-    bank, \
-    date, \
-    amount \
-  FROM transactions \
-  WHERE bank = ? \
-    AND date >= ? \
-    AND date <= ? \
-  ORDER BY date';
-
 const queryBalancesTimelineByCategoryByYear =
   'SELECT \
     category, \
@@ -285,7 +274,6 @@ module.exports = {
   queryBalancesTimelineByBankByYear,
   queryBalancesTimelineByBankByMonth,
   queryBalancesTimelineByBankByDay,
-  queryBalancesTimelineByBankByUnit,
   queryBalancesTimelineByCategoryByYear,
   queryBalancesTimelineByCategoryByMonth,
   queryBalancesTimelineByCategoryByDay,
