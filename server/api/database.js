@@ -361,6 +361,17 @@ async function getTimelineByCategory(category, period, start, end) {
   return result.at(0);
 }
 
+async function getTimelineByCategoryFilter(category, filter, start, end) {
+  const result = await queryDatabase(
+    queries.queryBalancesTimelineByCategoryFilter,
+    [category, filter, start, end],
+    (err) =>
+      `Error [${err}] retrieving the category [${category}] and filter [${filter}] timeline start [${start}] end [${end}].`,
+  );
+
+  return result.at(0);
+}
+
 async function getCategoryFilters(category) {
   const result = await queryDatabase(
     queries.queryCategoryFilters,
@@ -542,6 +553,7 @@ module.exports = {
   getCategoryNonFiltersBalance,
   getTimelineByBank,
   getTimelineByCategory,
+  getTimelineByCategoryFilter,
   getDuplicatedTransactions,
   getRegisteredBanks,
   getTransactions,

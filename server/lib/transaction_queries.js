@@ -236,6 +236,19 @@ const queryBalancesTimelineByCategoryByUnit =
     AND date >= ? \
     AND date <= ?';
 
+const queryBalancesTimelineByCategoryFilter =
+  'SELECT \
+    filter, \
+    YEAR(date) AS year, \
+    MONTH(date) AS month, \
+    DAY(date) AS day, \
+    amount \
+  FROM transactions t \
+  JOIN filters f ON t.filter_id = f.id \
+  WHERE f.category = ? \
+    AND f.filter = ? \
+    AND t.date BETWEEN ? AND ?';
+
 module.exports = {
   queryAddTransaction,
   queryInsertTransactions,
@@ -278,4 +291,5 @@ module.exports = {
   queryBalancesTimelineByCategoryByMonth,
   queryBalancesTimelineByCategoryByDay,
   queryBalancesTimelineByCategoryByUnit,
+  queryBalancesTimelineByCategoryFilter,
 };
