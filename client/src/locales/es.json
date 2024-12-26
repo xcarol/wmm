@@ -170,6 +170,7 @@
     "title": "Exploración cronológica",
     "categoryLabel": "Categoría",
     "periodLabel": "Período",
+    "filtersLabel": "Filtros",
     "searchButton": "Busca",
     "yearLabel": "Anual",
     "monthLabel": "Mensual",
