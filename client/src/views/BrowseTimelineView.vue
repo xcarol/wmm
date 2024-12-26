@@ -4,6 +4,7 @@
       :show="showDrawer"
       :selected-names="selectedNames"
       :selected-period="selectedPeriod"
+      :selected-filter="selectedFilter"
       :selectable-names="namesForSelection"
       :filter-names="filtersNames"
       :periods-names="periodNames"
@@ -12,6 +13,7 @@
       @type-changed="timelineTypeChange"
       @update-selected="updateSelectedItems"
       @update-period="updateSelectedPeriod"
+      @update-filter="updateSelectedFilter"
       @close="closeDrawer"
       @update="updateChart"
     />
@@ -135,8 +137,10 @@ const allPeriodNames = [
 ];
 const allPeriodPositions = { year: 0, month: 1, day: 2, unit: 3 };
 const yearPeriodName = [$t('browseTimelineView.yearLabel')];
+const unitPeriodName = [$t('browseTimelineView.unitLabel')];
 const periodNames = ref(allPeriodNames);
 const selectedPeriod = ref($t('browseTimelineView.yearLabel'));
+const selectedFilter = ref('');
 const selectedBalances = ref([]);
 const yearsInBalances = ref([]);
 const monthsInBalances = ref([]);
@@ -157,7 +161,7 @@ const getCategoryFilters = async () => {
   try {
     if (selectedCategories.value.length === 1) {
       const { data } = await api.getFilters(selectedCategories.value[0]);
-      filtersNames.value = data.map((filter) => filter.filter);
+      filtersNames.value = ['', ...data.map((filter) => filter.filter)];
     } else {
       filtersNames.value = [];
     }
@@ -674,13 +678,17 @@ const updateChart = () => {
 };
 
 const updateAvailablePeriods = () => {
-  if (selectedNames.value.length > 1) {
+  selectedPeriod.value = yearPeriodName.at(0);
+
+  if (selectedNames.value.length > 1) { // Multiple Categories or Banks
     periodNames.value = yearPeriodName;
-    selectedPeriod.value = yearPeriodName.at(0);
-  } else if (selectedNames.value.at(0) === selectedBanks.value.at(0)) {
-    periodNames.value = allPeriodNames.slice(0, -1); // Remove unit period
-  } else {
+  } else if (selectedNames.value.at(0) === selectedBanks.value.at(0)) { // Single Bank
+    periodNames.value = allPeriodNames.slice(0, -1);
+  } else if (selectedFilter.value === '') { // Single Category
     periodNames.value = yearPeriodName;
+  } else { // Single Category with Filter
+    periodNames.value = unitPeriodName;
+    selectedPeriod.value = unitPeriodName.at(0);
   }
 };
 
@@ -713,6 +721,11 @@ const updateSelectedItems = async (items) => {
 
 const updateSelectedPeriod = (period) => {
   selectedPeriod.value = period;
+};
+
+const updateSelectedFilter = (filter) => {
+  selectedFilter.value = filter;
+  updateAvailablePeriods();
 };
 
 const changeChartStyle = (type) => {
