@@ -39,30 +39,13 @@
             </v-list-item>
           </template>
         </v-virtual-scroll>
-        <v-card
+        <v-select
           v-if="filterNames.length > 0"
-          class="my-4 border-sm"
-        >
-          <v-card-text>{{ $t('mainDrawer.filters') }}</v-card-text>
-          <v-virtual-scroll
-            :items="filterNames"
-            :height="filtersAdjustedHeight"
-          >
-            <template #default="{ item }">
-              <v-list-item :title="`${item}`">
-                <template #prepend>
-                  <v-list-item-action start>
-                    <v-checkbox-btn
-                      :model-value="selectedFilter"
-                      :value="item"
-                      @update:model-value="selectedUpdated"
-                    ></v-checkbox-btn>
-                  </v-list-item-action>
-                </template>
-              </v-list-item>
-            </template>
-          </v-virtual-scroll>
-        </v-card>
+          :model-value="selectedFilter"
+          :items="filterNames"
+          :label="$t('browseTimelineView.filtersLabel')"
+          @update:model-value="filterUpdated"
+        />
         <v-select
           :model-value="selectedPeriod"
           :items="periodsNames"
@@ -104,6 +87,7 @@ const emits = defineEmits([
   'modelChanged',
   'typeChanged',
   'updateSelected',
+  'updateFilter',
   'updatePeriod',
   'update',
   'close',
@@ -126,6 +110,10 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  selectedFilter: {
+    type: String,
+    required: true,
+  },
   selectableNames: {
     type: Array,
     required: true,
@@ -141,9 +129,8 @@ const props = defineProps({
 });
 
 const adjustedHeight = computed(() =>
-  props.filterNames.length === 0 ? appStore.viewHeight - 280 : appStore.viewHeight - 515,
+  props.filterNames.length === 0 ? appStore.viewHeight - 280 : appStore.viewHeight - 340,
 );
-const filtersAdjustedHeight = computed(() => appStore.viewHeight - 500);
 const showDrawer = computed(() => props.show);
 const selectedCategories = computed(() => props.selectedNames);
 const selectedPeriod = computed(() => props.selectedPeriod);
@@ -163,6 +150,10 @@ const selectedUpdated = (selectedItems) => {
 
 const periodUpdated = (period) => {
   emits('updatePeriod', period);
+};
+
+const filterUpdated = (filter) => {
+  emits('updateFilter', filter);
 };
 
 const search = () => {
