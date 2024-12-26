@@ -5,6 +5,7 @@
       :selected-names="selectedNames"
       :selected-period="selectedPeriod"
       :selectable-names="namesForSelection"
+      :filter-names="filtersNames"
       :periods-names="periodNames"
       :chart-type="chartType"
       @model-changed="showDrawer = !showDrawer"
@@ -125,6 +126,7 @@ const banksNames = ref([]);
 const selectedNames = ref([]);
 const selectedBanks = ref([]);
 const selectedCategories = ref([]);
+const filtersNames = ref([]);
 const allPeriodNames = [
   $t('browseTimelineView.yearLabel'),
   $t('browseTimelineView.monthLabel'),
@@ -144,6 +146,26 @@ const categoriesInBalances = ref([]);
 
 const closeDrawer = () => {
   appStore.showViewDrawer = false;
+};
+
+const getCategoryFilters = async () => {
+  progressDialog.startProgress({
+    steps: 0,
+    description: $t('progress.retrievingTransactions'),
+  });
+
+  try {
+    if (selectedCategories.value.length === 1) {
+      const { data } = await api.getFilters(selectedCategories.value[0]);
+      filtersNames.value = data.map((filter) => filter.filter);
+    } else {
+      filtersNames.value = [];
+    }
+  } catch (e) {
+    appStore.alertMessage = api.getErrorMessage(e);
+  }
+
+  progressDialog.stopProgress();
 };
 
 const getCategories = async () => {
@@ -656,24 +678,26 @@ const updateAvailablePeriods = () => {
     periodNames.value = yearPeriodName;
     selectedPeriod.value = yearPeriodName.at(0);
   } else if (selectedNames.value.at(0) === selectedBanks.value.at(0)) {
-      periodNames.value = allPeriodNames.slice(0, -1); // Remove unit period
-    } else {
-      periodNames.value = yearPeriodName;
-    }
+    periodNames.value = allPeriodNames.slice(0, -1); // Remove unit period
+  } else {
+    periodNames.value = yearPeriodName;
+  }
 };
 
-const timelineTypeChange = (type) => {
+const timelineTypeChange = async (type) => {
   chartType.value = type;
   if (type === CHART_TYPE_BANKS) {
     namesForSelection.value = banksNames.value;
     selectedNames.value = selectedBanks.value;
+    filtersNames.value = [];
   } else {
     namesForSelection.value = categoriesNames.value;
     selectedNames.value = selectedCategories.value;
+    await getCategoryFilters();
   }
 };
 
-const updateSelectedItems = (items) => {
+const updateSelectedItems = async (items) => {
   selectedCategories.value = [];
   selectedBanks.value = [];
 
@@ -681,6 +705,7 @@ const updateSelectedItems = (items) => {
     selectedBanks.value = items;
   } else {
     selectedCategories.value = items;
+    await getCategoryFilters();
   }
   selectedNames.value = items;
   updateAvailablePeriods();
@@ -745,6 +770,7 @@ const beforeUpdate = async () => {
 };
 
 const beforeMount = async () => {
+  filtersNames.value = [];
   await getCategories();
   await getBanks();
   await beforeUpdate();
