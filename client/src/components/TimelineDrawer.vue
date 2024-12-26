@@ -39,6 +39,30 @@
             </v-list-item>
           </template>
         </v-virtual-scroll>
+        <v-card
+          v-if="filterNames.length > 0"
+          class="my-4 border-sm"
+        >
+          <v-card-text>{{ $t('mainDrawer.filters') }}</v-card-text>
+          <v-virtual-scroll
+            :items="filterNames"
+            :height="filtersAdjustedHeight"
+          >
+            <template #default="{ item }">
+              <v-list-item :title="`${item}`">
+                <template #prepend>
+                  <v-list-item-action start>
+                    <v-checkbox-btn
+                      :model-value="selectedFilter"
+                      :value="item"
+                      @update:model-value="selectedUpdated"
+                    ></v-checkbox-btn>
+                  </v-list-item-action>
+                </template>
+              </v-list-item>
+            </template>
+          </v-virtual-scroll>
+        </v-card>
         <v-select
           :model-value="selectedPeriod"
           :items="periodsNames"
@@ -110,9 +134,16 @@ const props = defineProps({
     type: Array,
     required: true,
   },
+  filterNames: {
+    type: Array,
+    required: true,
+  },
 });
 
-const adjustedHeight = computed(() => appStore.viewHeight - 280);
+const adjustedHeight = computed(() =>
+  props.filterNames.length === 0 ? appStore.viewHeight - 280 : appStore.viewHeight - 515,
+);
+const filtersAdjustedHeight = computed(() => appStore.viewHeight - 500);
 const showDrawer = computed(() => props.show);
 const selectedCategories = computed(() => props.selectedNames);
 const selectedPeriod = computed(() => props.selectedPeriod);
