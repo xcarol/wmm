@@ -109,6 +109,7 @@ const CHART_TYPE_BANKS = 0;
 const CHART_TYPE_CATEGORIES = 1;
 const CHART_STYLE_BARS = 'bar';
 const CHART_STYLE_LINES = 'line';
+const VERY_FIRST_DATE = '1970-01-01';
 
 const route = useRoute();
 const { t: $t } = useI18n();
@@ -165,6 +166,8 @@ const getCategoryFilters = async () => {
     } else {
       filtersNames.value = [];
     }
+    const currentFilter = selectedFilter.value;
+    selectedFilter.value = filtersNames.value.includes(currentFilter) ? currentFilter : '';
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }
@@ -385,8 +388,8 @@ const banksDatasets = () => {
       monthlyDataset.push(monthDataset(year));
     });
   } else if (banksInBalances.value.length > 0) {
-    banksInBalances.value.forEach((category) => {
-      yearlyDataset.push(yearDataset(category));
+    banksInBalances.value.forEach((bank) => {
+      yearlyDataset.push(yearDataset(bank));
     });
   } else {
     return datasets;
@@ -466,6 +469,25 @@ const categoriesDatasets = () => {
   return datasets;
 };
 
+const filterDatasets = () => {
+  const dailyDataset = [];
+
+  yearsInBalances.value.forEach((year) => {
+    dailyDataset.push(dayDataset(year));
+  });
+
+  for (let index = 0; index < selectedBalances.value.length; index += 1) {
+    const element = selectedBalances.value[index];
+    const dt = dailyDataset.find((mDataset) => {
+      return mDataset.label === element.year.toString();
+    });
+    dt.data[selectedBalances.value[index].month * 31 + selectedBalances.value[index].day] =
+      element.amount * -1;
+  }
+
+  return dailyDataset;
+};
+
 const chartDataDatasets = () => {
   let datasets = [];
 
@@ -475,6 +497,8 @@ const chartDataDatasets = () => {
 
   if (chartType.value === CHART_TYPE_BANKS) {
     datasets = banksDatasets();
+  } else if (selectedFilter.value.length > 0) {
+    datasets = filterDatasets();
   } else {
     datasets = categoriesDatasets();
   }
@@ -535,13 +559,14 @@ const setCategoriesInBalances = () => {
 };
 
 const getCategoriesTimeline = async (period) => {
-  const veryFirstDate = '1970-01-01';
   const awaits = [];
   const categories = [];
 
   for (let index = 0; index < selectedNames.value.length; index += 1) {
     const category = selectedNames.value[index];
-    awaits.push(api.categoryTimeline(category, period, veryFirstDate, dayjs().format(DATE_FORMAT)));
+    awaits.push(
+      api.categoryTimeline(category, period, VERY_FIRST_DATE, dayjs().format(DATE_FORMAT)),
+    );
   }
 
   const results = await Promise.all(awaits);
@@ -554,14 +579,24 @@ const getCategoriesTimeline = async (period) => {
   return categories.sort((c1, c2) => c1.year - c2.year);
 };
 
+const getCategoryFilterTimeline = async () => {
+  const { data } = await api.categoryFilterTimeline(
+    selectedNames.value.at(0),
+    selectedFilter.value,
+    VERY_FIRST_DATE,
+    dayjs().format(DATE_FORMAT),
+  );
+
+  return data.sort((c1, c2) => c1.year - c2.year);
+};
+
 const getBanksTimeline = async (period) => {
-  const veryFirstDate = '1970-01-01';
   const awaits = [];
   const banks = [];
 
   for (let index = 0; index < selectedNames.value.length; index += 1) {
     const category = selectedNames.value[index];
-    awaits.push(api.bankTimeline(category, period, veryFirstDate, dayjs().format(DATE_FORMAT)));
+    awaits.push(api.bankTimeline(category, period, VERY_FIRST_DATE, dayjs().format(DATE_FORMAT)));
   }
 
   const results = await Promise.all(awaits);
@@ -627,6 +662,8 @@ const updateTransactions = async () => {
 
     if (chartType.value === CHART_TYPE_BANKS) {
       selectedBalances.value = await getBanksTimeline(period);
+    } else if (selectedFilter.value.length > 0) {
+      selectedBalances.value = await getCategoryFilterTimeline();
     } else {
       selectedBalances.value = await getCategoriesTimeline(period);
     }
@@ -664,6 +701,9 @@ const updateChart = () => {
       query.bank = selectedNames.value;
     } else {
       query.category = selectedNames.value;
+      if (selectedFilter.value.length > 0) {
+        query.filter = selectedFilter.value;
+      }
     }
     selectedNames.value = [];
   }
@@ -680,13 +720,17 @@ const updateChart = () => {
 const updateAvailablePeriods = () => {
   selectedPeriod.value = yearPeriodName.at(0);
 
-  if (selectedNames.value.length > 1) { // Multiple Categories or Banks
+  if (selectedNames.value.length > 1) {
+    // Multiple Categories or Banks
     periodNames.value = yearPeriodName;
-  } else if (selectedNames.value.at(0) === selectedBanks.value.at(0)) { // Single Bank
+  } else if (selectedNames.value.at(0) === selectedBanks.value.at(0)) {
+    // Single Bank
     periodNames.value = allPeriodNames.slice(0, -1);
-  } else if (selectedFilter.value === '') { // Single Category
+  } else if (selectedFilter.value === '') {
+    // Single Category
     periodNames.value = yearPeriodName;
-  } else { // Single Category with Filter
+  } else {
+    // Single Category with Filter
     periodNames.value = unitPeriodName;
     selectedPeriod.value = unitPeriodName.at(0);
   }
@@ -708,9 +752,11 @@ const timelineTypeChange = async (type) => {
 const updateSelectedItems = async (items) => {
   selectedCategories.value = [];
   selectedBanks.value = [];
+  selectedBalances.value = [];
 
   if (chartType.value === CHART_TYPE_BANKS) {
     selectedBanks.value = items;
+    selectedFilter.value = '';
   } else {
     selectedCategories.value = items;
     await getCategoryFilters();
@@ -734,7 +780,7 @@ const changeChartStyle = (type) => {
 
 const parseParams = async () => {
   let update = false;
-  const { bank, category, period, style } = route.query;
+  const { bank, category, filter, period, style } = route.query;
 
   if (category?.length > 0 && JSON.stringify(selectedNames.value) !== JSON.stringify(category)) {
     if (typeof category === 'string') {
@@ -744,6 +790,9 @@ const parseParams = async () => {
     }
     chartType.value = CHART_TYPE_CATEGORIES;
     selectedNames.value = selectedCategories.value;
+    if (filter?.length > 0) {
+    selectedFilter.value = filter;
+  }
     update = true;
   } else if (bank?.length > 0 && JSON.stringify(selectedNames.value) !== JSON.stringify(bank)) {
     if (typeof bank === 'string') {
@@ -774,7 +823,7 @@ const parseParams = async () => {
     await updateTransactions();
   }
 
-  timelineTypeChange(category?.length > 0 ? CHART_TYPE_CATEGORIES : CHART_TYPE_BANKS);
+  await timelineTypeChange(category?.length > 0 ? CHART_TYPE_CATEGORIES : CHART_TYPE_BANKS);
 };
 
 const beforeUpdate = async () => {
