@@ -500,7 +500,7 @@ const chartDataDatasets = () => {
     datasets = banksDatasets();
   } else if (chartType.value === CHART_TYPE_CATEGORIES) {
     datasets = categoriesDatasets();
-  } else {
+  } else if (chartType.value === CHART_TYPE_FILTERS) {
     datasets = filterDatasets();
   }
 
@@ -665,7 +665,7 @@ const updateTransactions = async () => {
       selectedBalances.value = await getBanksTimeline(period);
     } else if (chartType.value === CHART_TYPE_CATEGORIES) {
       selectedBalances.value = await getCategoriesTimeline(period);
-    } else {
+    } else if (chartType.value === CHART_TYPE_FILTERS) {
       selectedBalances.value = await getCategoryFilterTimeline();
     }
 
@@ -687,16 +687,16 @@ const updateDrawerSettings = () => {
     selectedNames.value = selectedBanks.value;
     selectedCategories.value = [];
     selectedFilters.value = [];
-  } else if (chartType.value === CHART_TYPE_FILTERS) {
-    namesForSelection.value = filtersNames.value;
-    selectedNames.value = selectedFilters.value;
-    selectedCategories.value = [];
-    selectedBanks.value = [];
-  } else {
+  } else if (chartType.value === CHART_TYPE_CATEGORIES) {
     namesForSelection.value = categoriesNames.value;
     selectedNames.value = selectedCategories.value;
     selectedBanks.value = [];
     selectedFilters.value = [];
+  } else if (chartType.value === CHART_TYPE_FILTERS) {
+    namesForSelection.value = filtersNames.value;
+    selectedNames.value = selectedFilters.value;
+    // selectedCategories.value = [];
+    selectedBanks.value = [];
   }
 };
 
@@ -709,7 +709,7 @@ const updateChart = () => {
       query.bank = selectedNames.value;
     } else if (chartType.value === CHART_TYPE_CATEGORIES) {
       query.category = selectedNames.value;
-    } else {
+    } else if (chartType.value === CHART_TYPE_FILTERS) {
       query.filter = selectedFilters.value;
     }
     selectedNames.value = [];
@@ -753,7 +753,7 @@ const timelineTypeChange = async (type) => {
     namesForSelection.value = categoriesNames.value;
     selectedNames.value = selectedCategories.value;
     await getCategoryFilters();
-  } else {
+  } else if (chartType.value === CHART_TYPE_FILTERS) {
     namesForSelection.value = filtersNames.value;
     selectedNames.value = selectedFilters.value;
   }
@@ -770,7 +770,7 @@ const updateSelectedItems = async (items) => {
   } else if (chartType.value === CHART_TYPE_CATEGORIES) {
     selectedCategories.value = items;
     await getCategoryFilters();
-  } else {
+  } else if (chartType.value === CHART_TYPE_FILTERS) {
     selectedFilters.value = items;
   }
   selectedNames.value = items;
