@@ -130,6 +130,7 @@ const banksNames = ref([]);
 const selectedNames = ref([]);
 const selectedBanks = ref([]);
 const selectedCategories = ref([]);
+const filters = ref([]);
 const filtersNames = ref([]);
 const allPeriodNames = [
   $t('browseTimelineView.yearLabel'),
@@ -163,7 +164,8 @@ const getCategoryFilters = async () => {
   try {
     if (selectedCategories.value.length === 1) {
       const { data } = await api.getFilters(selectedCategories.value[0]);
-      filtersNames.value = ['', ...data.map((filter) => filter.filter)];
+      filters.value = data;
+      filtersNames.value = data.map((filter) => filter.label.length ?filter.label: filter.filter);
     } else {
       filtersNames.value = [];
     }
