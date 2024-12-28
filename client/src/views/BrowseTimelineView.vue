@@ -726,17 +726,18 @@ const updateChart = () => {
 
 const updateAvailablePeriods = () => {
   selectedPeriod.value = yearPeriodName.at(0);
+  periodNames.value = allPeriodNames;
 
   if (selectedNames.value.length > 1) {
     // Multiple Categories or Banks
     periodNames.value = yearPeriodName;
-  } else if (selectedNames.value.at(0) === selectedBanks.value.at(0)) {
+  } else if (selectedBanks.value.length > 0) {
     // Single Bank
     periodNames.value = allPeriodNames.slice(0, -1);
-  } else if (selectedFilters.value.length === 0) {
+  } else if (selectedCategories.value.length === 1 && selectedFilters.value.length === 0) {
     // Single Category
     periodNames.value = yearPeriodName;
-  } else {
+  } else if (selectedFilters.value.length > 0) {
     // Single Category with Filters
     periodNames.value = unitPeriodName;
     selectedPeriod.value = unitPeriodName.at(0);
