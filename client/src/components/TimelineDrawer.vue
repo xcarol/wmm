@@ -44,13 +44,6 @@
           </template>
         </v-virtual-scroll>
         <v-select
-          v-if="filterNames.length > 0"
-          :model-value="selectedFilter"
-          :items="filterNames"
-          :label="$t('browseTimelineView.filtersLabel')"
-          @update:model-value="filterUpdated"
-        />
-        <v-select
           :model-value="selectedPeriod"
           :items="periodsNames"
           :label="$t('browseTimelineView.periodLabel')"
@@ -91,7 +84,6 @@ const emits = defineEmits([
   'modelChanged',
   'typeChanged',
   'updateSelected',
-  'updateFilter',
   'updatePeriod',
   'update',
   'close',
@@ -114,10 +106,6 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  selectedFilter: {
-    type: String,
-    required: true,
-  },
   selectableNames: {
     type: Array,
     required: true,
@@ -132,9 +120,7 @@ const props = defineProps({
   },
 });
 
-const adjustedHeight = computed(() =>
-  props.filterNames.length === 0 ? appStore.viewHeight - 280 : appStore.viewHeight - 340,
-);
+const adjustedHeight = computed(() => appStore.viewHeight - 280);
 const showDrawer = computed(() => props.show);
 const selectedCategories = computed(() => props.selectedNames);
 const selectedPeriod = computed(() => props.selectedPeriod);
@@ -154,10 +140,6 @@ const selectedUpdated = (selectedItems) => {
 
 const periodUpdated = (period) => {
   emits('updatePeriod', period);
-};
-
-const filterUpdated = (filter) => {
-  emits('updateFilter', filter);
 };
 
 const search = () => {
