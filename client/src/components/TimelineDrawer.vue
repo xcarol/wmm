@@ -4,6 +4,7 @@
     :fixed="$vuetify.display.mdAndDown"
     :bottom="$vuetify.display.xs"
     location="left"
+    width="350"
     @update:model-value="modelChanged"
   >
     <v-card flat>
@@ -18,6 +19,9 @@
           </v-btn>
           <v-btn>
             {{ $t('browseTimelineView.categoriesLabel') }}
+          </v-btn>
+          <v-btn>
+            {{ $t('browseTimelineView.filtersLabel') }}
           </v-btn>
         </v-btn-toggle>
         <v-virtual-scroll
