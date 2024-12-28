@@ -154,23 +154,20 @@ const closeDrawer = () => {
 };
 
 const getCategoryFilters = async () => {
+  if (selectedCategories.value.length > 1) {
+    filtersNames.value = [];
+    return;
+  }
+
   progressDialog.startProgress({
     steps: 0,
     description: $t('progress.retrievingTransactions'),
   });
 
   try {
-    if (selectedCategories.value.length === 1) {
-      const { data } = await api.getFilters(selectedCategories.value[0]);
-      filtersData.value = data;
-      filtersNames.value = data.map((filter) =>
-        filter.label.length ? filter.label : filter.filter,
-      );
-    } else {
-      filtersNames.value = [];
-    }
-    // const currentFilter = selectedFilters.value;
-    // selectedFilters.value = filtersNames.value.includes(currentFilter) ? currentFilter : '';
+    const { data } = await api.getFilters(selectedCategories.value[0]);
+    filtersData.value = data;
+    filtersNames.value = data.map((filter) => (filter.label.length ? filter.label : filter.filter));
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }
