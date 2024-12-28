@@ -4,7 +4,7 @@
       :show="showDrawer"
       :selected-names="selectedNames"
       :selected-period="selectedPeriod"
-      :selected-filter="selectedFilter"
+      :selected-filter="selectedFilters"
       :selectable-names="namesForSelection"
       :filter-names="filtersNames"
       :periods-names="periodNames"
@@ -107,6 +107,7 @@ ChartJS.register(
 const DATE_FORMAT = 'YYYY-MM-DD';
 const CHART_TYPE_BANKS = 0;
 const CHART_TYPE_CATEGORIES = 1;
+const CHART_TYPE_FILTERS = 2;
 const CHART_STYLE_BARS = 'bar';
 const CHART_STYLE_LINES = 'line';
 const VERY_FIRST_DATE = '1970-01-01';
@@ -141,7 +142,7 @@ const yearPeriodName = [$t('browseTimelineView.yearLabel')];
 const unitPeriodName = [$t('browseTimelineView.unitLabel')];
 const periodNames = ref(allPeriodNames);
 const selectedPeriod = ref($t('browseTimelineView.yearLabel'));
-const selectedFilter = ref('');
+const selectedFilters = ref([]);
 const selectedBalances = ref([]);
 const yearsInBalances = ref([]);
 const monthsInBalances = ref([]);
@@ -166,8 +167,8 @@ const getCategoryFilters = async () => {
     } else {
       filtersNames.value = [];
     }
-    const currentFilter = selectedFilter.value;
-    selectedFilter.value = filtersNames.value.includes(currentFilter) ? currentFilter : '';
+    // const currentFilter = selectedFilters.value;
+    // selectedFilters.value = filtersNames.value.includes(currentFilter) ? currentFilter : '';
   } catch (e) {
     appStore.alertMessage = api.getErrorMessage(e);
   }
@@ -497,10 +498,10 @@ const chartDataDatasets = () => {
 
   if (chartType.value === CHART_TYPE_BANKS) {
     datasets = banksDatasets();
-  } else if (selectedFilter.value.length > 0) {
-    datasets = filterDatasets();
-  } else {
+  } else if (chartType.value === CHART_TYPE_CATEGORIES) {
     datasets = categoriesDatasets();
+  } else {
+    datasets = filterDatasets();
   }
 
   return datasets;
@@ -582,7 +583,7 @@ const getCategoriesTimeline = async (period) => {
 const getCategoryFilterTimeline = async () => {
   const { data } = await api.categoryFilterTimeline(
     selectedNames.value.at(0),
-    selectedFilter.value,
+    selectedFilters.value,
     VERY_FIRST_DATE,
     dayjs().format(DATE_FORMAT),
   );
@@ -662,10 +663,10 @@ const updateTransactions = async () => {
 
     if (chartType.value === CHART_TYPE_BANKS) {
       selectedBalances.value = await getBanksTimeline(period);
-    } else if (selectedFilter.value.length > 0) {
-      selectedBalances.value = await getCategoryFilterTimeline();
-    } else {
+    } else if (chartType.value === CHART_TYPE_CATEGORIES) {
       selectedBalances.value = await getCategoriesTimeline(period);
+    } else {
+      selectedBalances.value = await getCategoryFilterTimeline();
     }
 
     setYearsInBalances();
@@ -685,10 +686,17 @@ const updateDrawerSettings = () => {
     namesForSelection.value = banksNames.value;
     selectedNames.value = selectedBanks.value;
     selectedCategories.value = [];
+    selectedFilters.value = [];
+  } else if (chartType.value === CHART_TYPE_FILTERS) {
+    namesForSelection.value = filtersNames.value;
+    selectedNames.value = selectedFilters.value;
+    selectedCategories.value = [];
+    selectedBanks.value = [];
   } else {
     namesForSelection.value = categoriesNames.value;
     selectedNames.value = selectedCategories.value;
     selectedBanks.value = [];
+    selectedFilters.value = [];
   }
 };
 
@@ -699,11 +707,10 @@ const updateChart = () => {
   if (selectedNames.value) {
     if (chartType.value === CHART_TYPE_BANKS) {
       query.bank = selectedNames.value;
-    } else {
+    } else if (chartType.value === CHART_TYPE_CATEGORIES) {
       query.category = selectedNames.value;
-      if (selectedFilter.value.length > 0) {
-        query.filter = selectedFilter.value;
-      }
+    } else {
+      query.filter = selectedFilters.value;
     }
     selectedNames.value = [];
   }
@@ -726,11 +733,11 @@ const updateAvailablePeriods = () => {
   } else if (selectedNames.value.at(0) === selectedBanks.value.at(0)) {
     // Single Bank
     periodNames.value = allPeriodNames.slice(0, -1);
-  } else if (selectedFilter.value === '') {
+  } else if (selectedFilters.value.length === 0) {
     // Single Category
     periodNames.value = yearPeriodName;
   } else {
-    // Single Category with Filter
+    // Single Category with Filters
     periodNames.value = unitPeriodName;
     selectedPeriod.value = unitPeriodName.at(0);
   }
@@ -742,10 +749,13 @@ const timelineTypeChange = async (type) => {
     namesForSelection.value = banksNames.value;
     selectedNames.value = selectedBanks.value;
     filtersNames.value = [];
-  } else {
+  } else if (type === CHART_TYPE_CATEGORIES) {
     namesForSelection.value = categoriesNames.value;
     selectedNames.value = selectedCategories.value;
     await getCategoryFilters();
+  } else {
+    namesForSelection.value = filtersNames.value;
+    selectedNames.value = selectedFilters.value;
   }
 };
 
@@ -756,10 +766,12 @@ const updateSelectedItems = async (items) => {
 
   if (chartType.value === CHART_TYPE_BANKS) {
     selectedBanks.value = items;
-    selectedFilter.value = '';
-  } else {
+    selectedFilters.value = [];
+  } else if (chartType.value === CHART_TYPE_CATEGORIES) {
     selectedCategories.value = items;
     await getCategoryFilters();
+  } else {
+    selectedFilters.value = items;
   }
   selectedNames.value = items;
   updateAvailablePeriods();
@@ -770,7 +782,7 @@ const updateSelectedPeriod = (period) => {
 };
 
 const updateSelectedFilter = (filter) => {
-  selectedFilter.value = filter;
+  selectedFilters.value = filter;
   updateAvailablePeriods();
 };
 
@@ -791,7 +803,7 @@ const parseParams = async () => {
     chartType.value = CHART_TYPE_CATEGORIES;
     selectedNames.value = selectedCategories.value;
     if (filter?.length > 0) {
-    selectedFilter.value = filter;
+    selectedFilters.value = filter;
   }
     update = true;
   } else if (bank?.length > 0 && JSON.stringify(selectedNames.value) !== JSON.stringify(bank)) {
