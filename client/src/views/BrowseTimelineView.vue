@@ -782,11 +782,6 @@ const updateSelectedPeriod = (period) => {
   selectedPeriod.value = period;
 };
 
-const updateSelectedFilter = (filter) => {
-  selectedFilters.value = filter;
-  updateAvailablePeriods();
-};
-
 const changeChartStyle = (type) => {
   chartStyle.value = type;
 };
