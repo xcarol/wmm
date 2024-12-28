@@ -128,7 +128,7 @@ const banksNames = ref([]);
 const selectedNames = ref([]);
 const selectedBanks = ref([]);
 const selectedCategories = ref([]);
-const filters = ref([]);
+const filtersData = ref([]);
 const filtersNames = ref([]);
 const allPeriodNames = [
   $t('browseTimelineView.yearLabel'),
@@ -162,8 +162,10 @@ const getCategoryFilters = async () => {
   try {
     if (selectedCategories.value.length === 1) {
       const { data } = await api.getFilters(selectedCategories.value[0]);
-      filters.value = data;
-      filtersNames.value = data.map((filter) => filter.label.length ?filter.label: filter.filter);
+      filtersData.value = data;
+      filtersNames.value = data.map((filter) =>
+        filter.label.length ? filter.label : filter.filter,
+      );
     } else {
       filtersNames.value = [];
     }
@@ -695,7 +697,6 @@ const updateDrawerSettings = () => {
   } else if (chartType.value === CHART_TYPE_FILTERS) {
     namesForSelection.value = filtersNames.value;
     selectedNames.value = selectedFilters.value;
-    // selectedCategories.value = [];
     selectedBanks.value = [];
   }
 };
@@ -706,11 +707,18 @@ const updateChart = () => {
   const query = {};
   if (selectedNames.value) {
     if (chartType.value === CHART_TYPE_BANKS) {
-      query.bank = selectedNames.value;
+      query.bank = selectedBanks.value;
     } else if (chartType.value === CHART_TYPE_CATEGORIES) {
-      query.category = selectedNames.value;
+      query.category = selectedCategories.value;
     } else if (chartType.value === CHART_TYPE_FILTERS) {
-      query.filter = selectedFilters.value;
+      query.category = selectedCategories.value;
+      query.filter = filtersData.value
+        .filter(
+          (filter) =>
+            selectedFilters.value.includes(filter.filter) ||
+            selectedFilters.value.includes(filter.label),
+        )
+        .map((filter) => filter.filter);
     }
     selectedNames.value = [];
   }
@@ -728,10 +736,10 @@ const updateAvailablePeriods = () => {
   selectedPeriod.value = yearPeriodName.at(0);
   periodNames.value = allPeriodNames;
 
-  if (selectedNames.value.length > 1) {
+  if (selectedBanks.value.length > 1 || selectedCategories.value.length > 1) {
     // Multiple Categories or Banks
     periodNames.value = yearPeriodName;
-  } else if (selectedBanks.value.length > 0) {
+  } else if (selectedBanks.value.length === 1) {
     // Single Bank
     periodNames.value = allPeriodNames.slice(0, -1);
   } else if (selectedCategories.value.length === 1 && selectedFilters.value.length === 0) {
@@ -761,14 +769,14 @@ const timelineTypeChange = async (type) => {
 };
 
 const updateSelectedItems = async (items) => {
-  selectedCategories.value = [];
-  selectedBanks.value = [];
   selectedBalances.value = [];
 
   if (chartType.value === CHART_TYPE_BANKS) {
     selectedBanks.value = items;
+    selectedCategories.value = [];
     selectedFilters.value = [];
   } else if (chartType.value === CHART_TYPE_CATEGORIES) {
+    selectedBanks.value = [];
     selectedCategories.value = items;
     await getCategoryFilters();
   } else if (chartType.value === CHART_TYPE_FILTERS) {
@@ -790,26 +798,39 @@ const parseParams = async () => {
   let update = false;
   const { bank, category, filter, period, style } = route.query;
 
-  if (category?.length > 0 && JSON.stringify(selectedNames.value) !== JSON.stringify(category)) {
-    if (typeof category === 'string') {
-      selectedCategories.value = [category];
-    } else {
-      selectedCategories.value = category;
-    }
-    chartType.value = CHART_TYPE_CATEGORIES;
-    selectedNames.value = selectedCategories.value;
-    if (filter?.length > 0) {
-    selectedFilters.value = filter;
-  }
-    update = true;
-  } else if (bank?.length > 0 && JSON.stringify(selectedNames.value) !== JSON.stringify(bank)) {
-    if (typeof bank === 'string') {
+  if (bank?.length > 0 && JSON.stringify(selectedNames.value) !== JSON.stringify(bank)) {
+    if (typeof banks === 'string') {
       selectedBanks.value = [bank];
     } else {
       selectedBanks.value = bank;
     }
     chartType.value = CHART_TYPE_BANKS;
     selectedNames.value = selectedBanks.value;
+    update = true;
+  }
+
+  if (
+    category?.length > 0 &&
+    JSON.stringify(selectedNames.value) !== JSON.stringify(category)
+  ) {
+    if (typeof categories === 'string') {
+      selectedCategories.value = [category];
+    } else {
+      selectedCategories.value = category;
+    }
+    chartType.value = CHART_TYPE_CATEGORIES;
+    selectedNames.value = selectedCategories.value;
+    update = true;
+  }
+
+  if (filter?.length > 0 && JSON.stringify(selectedNames.value) !== JSON.stringify(filter)) {
+    if (typeof filters === 'string') {
+      selectedFilters.value = [filter];
+    } else {
+      selectedFilters.value = filter;
+    }
+    chartType.value = CHART_TYPE_FILTERS;
+    selectedNames.value = selectedFilters.value;
     update = true;
   }
 
@@ -828,10 +849,11 @@ const parseParams = async () => {
     }
     updateDrawerSettings();
     updateAvailablePeriods();
+    await getCategoryFilters();
     await updateTransactions();
   }
 
-  await timelineTypeChange(category?.length > 0 ? CHART_TYPE_CATEGORIES : CHART_TYPE_BANKS);
+  await timelineTypeChange(chartType.value);
 };
 
 const beforeUpdate = async () => {
