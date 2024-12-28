@@ -4,7 +4,6 @@
       :show="showDrawer"
       :selected-names="selectedNames"
       :selected-period="selectedPeriod"
-      :selected-filter="selectedFilters"
       :selectable-names="namesForSelection"
       :filter-names="filtersNames"
       :periods-names="periodNames"
@@ -13,7 +12,6 @@
       @type-changed="timelineTypeChange"
       @update-selected="updateSelectedItems"
       @update-period="updateSelectedPeriod"
-      @update-filter="updateSelectedFilter"
       @close="closeDrawer"
       @update="updateChart"
     />
