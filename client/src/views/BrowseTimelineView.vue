@@ -799,7 +799,7 @@ const parseParams = async () => {
   const { bank, category, filter, period, style } = route.query;
 
   if (bank?.length > 0 && JSON.stringify(selectedNames.value) !== JSON.stringify(bank)) {
-    if (typeof banks === 'string') {
+    if (typeof bank === 'string') {
       selectedBanks.value = [bank];
     } else {
       selectedBanks.value = bank;
@@ -809,11 +809,8 @@ const parseParams = async () => {
     update = true;
   }
 
-  if (
-    category?.length > 0 &&
-    JSON.stringify(selectedNames.value) !== JSON.stringify(category)
-  ) {
-    if (typeof categories === 'string') {
+  if (category?.length > 0 && JSON.stringify(selectedNames.value) !== JSON.stringify(category)) {
+    if (typeof category === 'string') {
       selectedCategories.value = [category];
     } else {
       selectedCategories.value = category;
@@ -824,7 +821,7 @@ const parseParams = async () => {
   }
 
   if (filter?.length > 0 && JSON.stringify(selectedNames.value) !== JSON.stringify(filter)) {
-    if (typeof filters === 'string') {
+    if (typeof filter === 'string') {
       selectedFilters.value = [filter];
     } else {
       selectedFilters.value = filter;
