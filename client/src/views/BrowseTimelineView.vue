@@ -730,7 +730,6 @@ const updateChart = () => {
 };
 
 const updateAvailablePeriods = () => {
-  selectedPeriod.value = yearPeriodName.at(0);
   periodNames.value = allPeriodNames;
 
   if (selectedBanks.value.length > 1 || selectedCategories.value.length > 1) {
@@ -758,7 +757,7 @@ const timelineTypeChange = async (type) => {
   } else if (type === CHART_TYPE_CATEGORIES) {
     namesForSelection.value = categoriesNames.value;
     selectedNames.value = selectedCategories.value;
-    await getCategoryFilters();
+    // await getCategoryFilters();
   } else if (chartType.value === CHART_TYPE_FILTERS) {
     namesForSelection.value = filtersNames.value;
     selectedNames.value = selectedFilters.value;
@@ -774,6 +773,9 @@ const updateSelectedItems = async (items) => {
     selectedFilters.value = [];
   } else if (chartType.value === CHART_TYPE_CATEGORIES) {
     selectedBanks.value = [];
+    if (selectedCategories.value.length > 1 || selectedCategories.value.at(0) !== items.at(0)) {
+      selectedFilters.value = [];
+    }
     selectedCategories.value = items;
     await getCategoryFilters();
   } else if (chartType.value === CHART_TYPE_FILTERS) {
@@ -781,6 +783,7 @@ const updateSelectedItems = async (items) => {
   }
   selectedNames.value = items;
   updateAvailablePeriods();
+  selectedPeriod.value = periodNames.value.at(0);
 };
 
 const updateSelectedPeriod = (period) => {
