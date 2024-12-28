@@ -757,7 +757,6 @@ const timelineTypeChange = async (type) => {
   } else if (type === CHART_TYPE_CATEGORIES) {
     namesForSelection.value = categoriesNames.value;
     selectedNames.value = selectedCategories.value;
-    // await getCategoryFilters();
   } else if (chartType.value === CHART_TYPE_FILTERS) {
     namesForSelection.value = filtersNames.value;
     selectedNames.value = selectedFilters.value;
