@@ -216,6 +216,20 @@ const chartOptions = {
     },
   },
   plugins: {
+    tooltip: {
+      callbacks: {
+        label: (context) => {
+          let label = context.dataset.label || '';
+          if (label) {
+            label += `(${context.dataset.dataLabel.at(context.dataIndex)}): `;
+          }
+          if (context.parsed.y !== null) {
+            label += context.parsed.y.toLocaleString();
+          }
+          return label;
+        },
+      },
+    },
     legend: {
       display: true,
       labels: {
@@ -338,6 +352,7 @@ const dayDataset = (label) => {
     borderColor: `rgb(${red}, ${green}, ${blue})`,
     borderWidth: 1,
     data: Array(365).fill(''),
+    dataLabel: Array(365).fill(''),
   };
 };
 
@@ -481,6 +496,7 @@ const filterDatasets = () => {
     const dt = dailyDataset.find((mDataset) => {
       return mDataset.label === element.year.toString();
     });
+    dt.dataLabel[selectedBalances.value[index].month * 31 + selectedBalances.value[index].day] = element.filter;
     dt.data[selectedBalances.value[index].month * 31 + selectedBalances.value[index].day] =
       element.amount * -1;
   }
@@ -581,7 +597,7 @@ const getCategoriesTimeline = async (period) => {
 
 const getCategoryFilterTimeline = async () => {
   const { data } = await api.categoryFilterTimeline(
-    selectedNames.value.at(0),
+    selectedCategories.value.at(0),
     selectedFilters.value,
     VERY_FIRST_DATE,
     dayjs().format(DATE_FORMAT),
