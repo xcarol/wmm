@@ -171,6 +171,15 @@ sudo docker pull <docker-username>/wmm-server
 sudo systemctl restart wmm
 ```
 
+### System maintenance
+
+To remove old unused images, run the following commands
+
+```
+sudo docker images | grep <docker-username>/wmm-server | grep "<none>" | awk '{print $3}' | xargs sudo docker rmi
+sudo docker images | grep <docker-username>/wmm-client | grep "<none>" | awk '{print $3}' | xargs sudo docker rmi
+```
+
 ### GoCardless
 
 With this integration, transactions are retrieved directly from the bank. This indeed eliminates the "Duplicates problem" and obsoletes the CSV Import method.
