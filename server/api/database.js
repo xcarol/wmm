@@ -315,16 +315,21 @@ async function getTimelineByBank(bank, period, start, end) {
     case 'month':
       query = queries.queryBalancesTimelineByBankByMonth;
       break;
+    case 'day':
+      query = queries.queryBalancesTimelineByBankByDay;
+      break;
     default:
       throw `Unknown period [${period}]`;
   }
 
-  return queryDatabase(
+  const result = await queryDatabase(
     query,
     [bank, start, end],
     (err) =>
       `Error [${err}] retrieving the bank timeline for period [${period}] start [${start}] end [${end}].`,
   );
+
+  return result.at(0);
 }
 
 async function getTimelineByCategory(category, period, start, end) {
@@ -346,12 +351,31 @@ async function getTimelineByCategory(category, period, start, end) {
       throw `Unknown period [${period}]`;
   }
 
-  return queryDatabase(
+  const result = await queryDatabase(
     query,
     [category, start, end],
     (err) =>
       `Error [${err}] retrieving the category [${category}] timeline for period [${period}] start [${start}] end [${end}].`,
   );
+
+  return result.at(0);
+}
+
+async function getTimelineByCategoryFilter(category, filter, start, end) {
+  const filters = filter.split(',');
+  let filtersString = '';
+
+  filters.forEach((filter) => (filtersString = filtersString.concat(`'${filter}',`)));
+  filtersString = filtersString.slice(0, -1);
+
+  const result = await queryDatabase(
+    queries.queryBalancesTimelineByCategoryFilter,
+    [category, filters, start, end],
+    (err) =>
+      `Error [${err}] retrieving the category [${category}] and filter [${filter}] timeline start [${start}] end [${end}].`,
+  );
+
+  return result.at(0);
 }
 
 async function getCategoryFilters(category) {
@@ -535,6 +559,7 @@ module.exports = {
   getCategoryNonFiltersBalance,
   getTimelineByBank,
   getTimelineByCategory,
+  getTimelineByCategoryFilter,
   getDuplicatedTransactions,
   getRegisteredBanks,
   getTransactions,

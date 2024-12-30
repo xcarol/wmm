@@ -4,9 +4,10 @@
     :fixed="$vuetify.display.mdAndDown"
     :bottom="$vuetify.display.xs"
     location="left"
+    width="350"
     @update:model-value="modelChanged"
   >
-    <v-card>
+    <v-card flat>
       <v-card-text class="align-start">
         <v-btn-toggle
           elevation="2"
@@ -18,6 +19,9 @@
           </v-btn>
           <v-btn>
             {{ $t('browseTimelineView.categoriesLabel') }}
+          </v-btn>
+          <v-btn>
+            {{ $t('browseTimelineView.filtersLabel') }}
           </v-btn>
         </v-btn-toggle>
         <v-virtual-scroll
@@ -107,6 +111,10 @@ const props = defineProps({
     required: true,
   },
   periodsNames: {
+    type: Array,
+    required: true,
+  },
+  filterNames: {
     type: Array,
     required: true,
   },

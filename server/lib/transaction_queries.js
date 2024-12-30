@@ -14,7 +14,7 @@ const queryCategoryNames =
     FROM filters ORDER BY category ASC";
 
 const queryCategoryFilters =
-  'SELECT id, filter, label FROM filters WHERE category=? ORDER BY filter ASC';
+  "SELECT id, filter, label FROM filters WHERE category=? ORDER BY CASE WHEN label = '' THEN filter ELSE label END ASC";
 
 const queryTransactions = 'SELECT id, bank, date, description, category, amount FROM transactions';
 
@@ -171,6 +171,20 @@ const queryBalancesTimelineByBankByMonth =
     AND date <= ? \
   GROUP BY bank, YEAR(date), MONTH(date)';
 
+const queryBalancesTimelineByBankByDay =
+  'SELECT \
+    bank, \
+    YEAR(date) AS year, \
+    MONTH(date) AS month, \
+    DAY(date) AS day, \
+    SUM(amount) AS total_amount, \
+    COUNT(*) AS transaction_count \
+  FROM transactions \
+  WHERE bank = ? \
+    AND date >= ? \
+    AND date <= ? \
+  GROUP BY bank, YEAR(date), MONTH(date), DAY(date)';
+
 const queryBalancesTimelineByCategoryByYear =
   'SELECT \
     category, \
@@ -222,6 +236,19 @@ const queryBalancesTimelineByCategoryByUnit =
     AND date >= ? \
     AND date <= ?';
 
+const queryBalancesTimelineByCategoryFilter =
+  'SELECT \
+    filter, \
+    YEAR(date) AS year, \
+    MONTH(date) AS month, \
+    DAY(date) AS day, \
+    amount \
+  FROM transactions t \
+  JOIN filters f ON t.filter_id = f.id \
+  WHERE f.category = ? \
+    AND f.filter IN(?) \
+    AND t.date BETWEEN ? AND ?';
+
 module.exports = {
   queryAddTransaction,
   queryInsertTransactions,
@@ -259,8 +286,10 @@ module.exports = {
   queryUpdateFilter,
   queryBalancesTimelineByBankByYear,
   queryBalancesTimelineByBankByMonth,
+  queryBalancesTimelineByBankByDay,
   queryBalancesTimelineByCategoryByYear,
   queryBalancesTimelineByCategoryByMonth,
   queryBalancesTimelineByCategoryByDay,
   queryBalancesTimelineByCategoryByUnit,
+  queryBalancesTimelineByCategoryFilter,
 };
