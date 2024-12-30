@@ -348,7 +348,7 @@ const dayDataset = (label) => {
     fill: false,
     tension: 0.1,
     label: `${label}`,
-    backgroundColor: `rgba(${red}, ${green}, ${blue}, 0.2)`,
+    backgroundColor: Array(365).fill(`rgba(${red}, ${green}, ${blue}, 0.2)`),
     borderColor: `rgb(${red}, ${green}, ${blue})`,
     borderWidth: 1,
     data: Array(365).fill(''),
@@ -486,19 +486,31 @@ const categoriesDatasets = () => {
 
 const filterDatasets = () => {
   const dailyDataset = [];
+  const filterColors = [];
+  const filterLabels = [];
 
   yearsInBalances.value.forEach((year) => {
     dailyDataset.push(dayDataset(year));
   });
+
+  for (let index = 0; index < dailyDataset.length; index += 1) {
+    const dt = dailyDataset[index];
+    dt.pointBorderColor = 'rgb(0, 0, 0)';
+    dt.pointRadius = 5;
+  }
 
   for (let index = 0; index < selectedBalances.value.length; index += 1) {
     const element = selectedBalances.value[index];
     const dt = dailyDataset.find((mDataset) => {
       return mDataset.label === element.year.toString();
     });
-    dt.dataLabel[selectedBalances.value[index].month * 31 + selectedBalances.value[index].day] = element.filter;
-    dt.data[selectedBalances.value[index].month * 31 + selectedBalances.value[index].day] =
-      element.amount * -1;
+    if (filterLabels.includes(element.filter) === false) {
+      filterLabels.push(element.filter);
+      filterColors.push(`rgb(${Math.random() * 0xff}, ${Math.random() * 0xff}, ${Math.random() * 0xff})`);
+    }
+    dt.backgroundColor[element.month * 31 + element.day] = filterColors.at(filterLabels.indexOf(element.filter));
+    dt.dataLabel[element.month * 31 + element.day] = element.filter;
+    dt.data[element.month * 31 + element.day] = element.amount * -1;
   }
 
   return dailyDataset;
