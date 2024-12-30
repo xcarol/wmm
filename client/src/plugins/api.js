@@ -24,6 +24,8 @@ class Api {
       '/transactions/category?category={1}&filter={2}&start={3}&end={4}',
     transactionsCategoryTimeline:
       '/transactions/timeline?category={1}&period={2}&start={3}&end={4}',
+    transactionsCategoryFilterTimeline:
+      '/transactions/timeline?category={1}&filter={2}&start={3}&end={4}',
     transactionsBankTimeline: '/transactions/timeline?bank={1}&period={2}&start={3}&end={4}',
     applyFilters: '/transactions/category',
     resetCategoryFromTransactions: '/transactions/category',
@@ -240,6 +242,17 @@ class Api {
       this.endpoints.transactionsCategoryTimeline,
       category,
       period,
+      start,
+      end,
+    );
+    return this.axios.get(url);
+  }
+
+  categoryFilterTimeline(category, filter, start, end) {
+    const url = Api.endpoint(
+      this.endpoints.transactionsCategoryFilterTimeline,
+      category,
+      filter,
       start,
       end,
     );

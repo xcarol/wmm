@@ -170,6 +170,7 @@
     "title": "Browse timeline",
     "categoryLabel": "Category",
     "periodLabel": "Period",
+    "filtersLabel": "Filters",
     "searchButton": "Search",
     "yearLabel": "Yearly",
     "monthLabel": "Monthly",
