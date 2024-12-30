@@ -362,9 +362,15 @@ async function getTimelineByCategory(category, period, start, end) {
 }
 
 async function getTimelineByCategoryFilter(category, filter, start, end) {
+  const filters = filter.split(',');
+  let filtersString = '';
+
+  filters.forEach((filter) => (filtersString = filtersString.concat(`'${filter}',`)));
+  filtersString = filtersString.slice(0, -1);
+
   const result = await queryDatabase(
     queries.queryBalancesTimelineByCategoryFilter,
-    [category, filter, start, end],
+    [category, filters, start, end],
     (err) =>
       `Error [${err}] retrieving the category [${category}] and filter [${filter}] timeline start [${start}] end [${end}].`,
   );

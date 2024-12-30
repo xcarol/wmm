@@ -246,7 +246,7 @@ const queryBalancesTimelineByCategoryFilter =
   FROM transactions t \
   JOIN filters f ON t.filter_id = f.id \
   WHERE f.category = ? \
-    AND f.filter = ? \
+    AND f.filter IN(?) \
     AND t.date BETWEEN ? AND ?';
 
 module.exports = {
