@@ -14,7 +14,7 @@ const queryCategoryNames =
     FROM filters ORDER BY category ASC";
 
 const queryCategoryFilters =
-  'SELECT id, filter, label FROM filters WHERE category=? ORDER BY filter ASC';
+  "SELECT id, filter, label FROM filters WHERE category=? ORDER BY CASE WHEN label = '' THEN filter ELSE label END ASC";
 
 const queryTransactions = 'SELECT id, bank, date, description, category, amount FROM transactions';
 
