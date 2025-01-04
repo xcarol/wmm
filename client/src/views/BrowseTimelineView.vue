@@ -506,9 +506,13 @@ const filterDatasets = () => {
     });
     if (filterLabels.includes(element.filter) === false) {
       filterLabels.push(element.filter);
-      filterColors.push(`rgb(${Math.random() * 0xff}, ${Math.random() * 0xff}, ${Math.random() * 0xff})`);
+      filterColors.push(
+        `rgb(${Math.random() * 0xff}, ${Math.random() * 0xff}, ${Math.random() * 0xff})`,
+      );
     }
-    dt.backgroundColor[element.month * 31 + element.day] = filterColors.at(filterLabels.indexOf(element.filter));
+    dt.backgroundColor[element.month * 31 + element.day] = filterColors.at(
+      filterLabels.indexOf(element.filter),
+    );
     dt.dataLabel[element.month * 31 + element.day] = element.filter;
     dt.data[element.month * 31 + element.day] = element.amount * -1;
   }
@@ -821,6 +825,18 @@ const changeChartStyle = (type) => {
   chartStyle.value = type;
 };
 
+const getFilterNames = (filters) => {
+  const names = [];
+
+  filtersData.value.forEach((filterData) => {
+    if (filters.includes(filterData.filter)) {
+      names.push(filterData.label);
+    }
+  });
+
+  return names;
+};
+
 const parseParams = async () => {
   let update = false;
   const { bank, category, filter, period, style } = route.query;
@@ -847,11 +863,13 @@ const parseParams = async () => {
     update = true;
   }
 
+  await getCategoryFilters();
+
   if (filter?.length > 0 && JSON.stringify(selectedNames.value) !== JSON.stringify(filter)) {
     if (typeof filter === 'string') {
-      selectedFilters.value = [filter];
+      selectedFilters.value = getFilterNames([filter]);
     } else {
-      selectedFilters.value = filter;
+      selectedFilters.value = getFilterNames(filter);
     }
     chartType.value = CHART_TYPE_FILTERS;
     selectedNames.value = selectedFilters.value;
@@ -873,7 +891,6 @@ const parseParams = async () => {
     }
     updateDrawerSettings();
     updateAvailablePeriods();
-    await getCategoryFilters();
     await updateTransactions();
   }
 
