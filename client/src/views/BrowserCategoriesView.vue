@@ -240,6 +240,10 @@ const resetData = () => {
 const nonFilterBalancesToList = (balances) => {
   const balancesList = [];
 
+  if (!balances.data.at(0)) {
+    return balancesList;
+  }
+
   balances.data.at(0).forEach((balance) => {
     balancesList.push({ data: balance });
   });
