@@ -76,31 +76,12 @@ import { useDisplay } from 'vuetify';
 import { useRoute, useRouter } from 'vue-router';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
-import {
-  Chart as ChartJS,
-  PointElement,
-  BarElement,
-  LineElement,
-  CategoryScale,
-  LinearScale,
-  Tooltip,
-  Legend,
-} from 'chart.js';
+import 'chart.js/auto';
 import { Chart } from 'vue-chartjs';
 import { useApi } from '../plugins/api';
 import { useAppStore } from '../stores/app';
 import { useProgressDialogStore } from '../stores/progressDialog';
 import TimelineDrawer from '../components/TimelineDrawer.vue';
-
-ChartJS.register(
-  PointElement,
-  BarElement,
-  LineElement,
-  CategoryScale,
-  LinearScale,
-  Tooltip,
-  Legend,
-);
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 const CHART_TYPE_BANKS = 0;
