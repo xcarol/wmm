@@ -153,6 +153,30 @@ const closeDrawer = () => {
   appStore.showViewDrawer = false;
 };
 
+const getFiltersNames = (filters) => {
+  const names = [];
+
+  filtersData.value.forEach((filterData) => {
+    if (filters.includes(filterData.filter)) {
+      names.push(filterData.label.length ? filterData.label : filterData.filter);
+    }
+  });
+
+  return names;
+};
+
+const getFiltersFromNames = (filters) => {
+  const names = [];
+
+  filtersData.value.forEach((filterData) => {
+    if (filters.includes(filterData.label.length ? filterData.label : filterData.filter)) {
+      names.push(filterData.filter);
+    }
+  });
+
+  return names;
+};
+
 const getCategoryFilters = async () => {
   if (selectedCategories.value.length > 1) {
     filtersNames.value = [];
@@ -506,9 +530,13 @@ const filterDatasets = () => {
     });
     if (filterLabels.includes(element.filter) === false) {
       filterLabels.push(element.filter);
-      filterColors.push(`rgb(${Math.random() * 0xff}, ${Math.random() * 0xff}, ${Math.random() * 0xff})`);
+      filterColors.push(
+        `rgb(${Math.random() * 0xff}, ${Math.random() * 0xff}, ${Math.random() * 0xff})`,
+      );
     }
-    dt.backgroundColor[element.month * 31 + element.day] = filterColors.at(filterLabels.indexOf(element.filter));
+    dt.backgroundColor[element.month * 31 + element.day] = filterColors.at(
+      filterLabels.indexOf(element.filter),
+    );
     dt.dataLabel[element.month * 31 + element.day] = element.filter;
     dt.data[element.month * 31 + element.day] = element.amount * -1;
   }
@@ -610,7 +638,7 @@ const getCategoriesTimeline = async (period) => {
 const getCategoryFilterTimeline = async () => {
   const { data } = await api.categoryFilterTimeline(
     selectedCategories.value.at(0),
-    selectedFilters.value,
+    getFiltersFromNames(selectedFilters.value),
     VERY_FIRST_DATE,
     dayjs().format(DATE_FORMAT),
   );
@@ -847,11 +875,13 @@ const parseParams = async () => {
     update = true;
   }
 
+  await getCategoryFilters();
+
   if (filter?.length > 0 && JSON.stringify(selectedNames.value) !== JSON.stringify(filter)) {
     if (typeof filter === 'string') {
-      selectedFilters.value = [filter];
+      selectedFilters.value = getFiltersNames([filter]);
     } else {
-      selectedFilters.value = filter;
+      selectedFilters.value = getFiltersNames(filter);
     }
     chartType.value = CHART_TYPE_FILTERS;
     selectedNames.value = selectedFilters.value;
@@ -873,7 +903,6 @@ const parseParams = async () => {
     }
     updateDrawerSettings();
     updateAvailablePeriods();
-    await getCategoryFilters();
     await updateTransactions();
   }
 
