@@ -17,22 +17,18 @@ const COUNTRY = process.env.COUNTRY || 'ES';
 let nordigenClient = null;
 let nordigenToken;
 
+// We should reuse the same client for all requests here
+// until the token expires. As calls will come from the frontend,
+// because of user interaction, we can generate new one each time
+// a new request is made.
 const getNordigenClient = async () => {
-  if (
-    nordigenClient === null ||
-    (nordigenToken.expire_date && dayjs() >= dayjs(nordigenToken.expire_date))
-  ) {
-    nordigenClient = new NordigenClient({
-      secretId: process.env.SECRET_ID,
-      secretKey: process.env.SECRET_KEY,
-    });
+  nordigenClient = new NordigenClient({
+    secretId: process.env.SECRET_ID,
+    secretKey: process.env.SECRET_KEY,
+  });
 
-    nordigenToken = await nordigenClient.generateToken();
-    nordigenClient.token = nordigenToken.access;
-    nordigenToken.expire_date = dayjs()
-      .add(nordigenToken.access_expires, 'minutes')
-      .format('YYYY-MM-DD HH:mm:ss');
-  }
+  nordigenToken = await nordigenClient.generateToken();
+  nordigenClient.token = nordigenToken.access;
 
   return nordigenClient;
 };
