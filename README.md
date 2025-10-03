@@ -122,8 +122,11 @@ VITE_API_URL=http://server_address:3000
 
 Follow these steps to setup the wmm system service.
 
-Copy the file named _./system/wmm.service_ to _/etc/systemd/system/wmm.service_ in the production server.  
-Set your installation path at the _WorkingDirectory_ and _Environment_ variables.
+- Copy the _./system/wmm.service_ file here to the server directory of your choice (same as used to store _docker-compose.yml_ earlier is recommended).  
+
+In the server
+- Modify the _.../wmm.service_ and set your installation path at the _WorkingDirectory_ and _Environment_ variables.  
+- Create a symlink from that directory _$PWD/wmm.service_ to _/etc/systemd/system/_.  
 
 Load new service file
 
