@@ -40,6 +40,19 @@
         </v-col>
         <v-col
           cols="12"
+          class="flex-grow-1"
+          sm="6"
+          md="auto"
+        >
+          <v-text-field
+            v-model="selectedFilter"
+            :label="$t('browseTransactionsView.descriptionLabel')"
+            clearable
+            @keyup.enter="routeToData"
+          />
+        </v-col>
+        <v-col
+          cols="12"
           sm="6"
           md="2"
         >
@@ -344,6 +357,10 @@ const routeToData = () => {
 
   if (selectedCategory.value) {
     query.category = selectedCategory.value;
+  }
+
+  if (selectedFilter.value) {
+    query.filter = selectedFilter.value;
   }
 
   router.replace({ query });

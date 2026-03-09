@@ -10,7 +10,7 @@
       <template #prepend>
         <v-app-bar-nav-icon @click.stop="showAppDrawer = !showAppDrawer"></v-app-bar-nav-icon>
       </template>
-      <v-app-bar-title>{{ title }}</v-app-bar-title>
+      <v-app-bar-title style="cursor: pointer;" @click="goHome">{{ title }}</v-app-bar-title>
     </v-app-bar>
     <v-main v-resize="onResize">
       <router-view />
@@ -21,6 +21,7 @@
 
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import {
   VApp,
   VAppBar,
@@ -35,9 +36,15 @@ import MessageDialog from './components/MessageDialog.vue';
 import { useAppStore } from './stores/app';
 
 const appStore = useAppStore();
+const router = useRouter();
 
 const showAppDrawer = ref(false);
 const title = ref("Where's My Money");
+
+const goHome = () => {
+  title.value = "Where's My Money";
+  router.push('/');
+};
 
 const onResize = () => {
   appStore.viewHeight = window.innerHeight;
